@@ -1,3 +1,9 @@
+-   id: detect-key
+    name: detect private key
+    description: detects the presence of private keys.
+    entry: detect-key
+    language: python
+    types: [text]
 -   id: check-added-large-files
     name: check for added large files
     description: prevents giant files from being committed.
