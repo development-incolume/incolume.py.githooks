@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-git-hooks"
-version = "0.2.0a1"
+version = "0.2.0a2"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10, <4"
@@ -50,6 +50,12 @@ docs = [
 
 [project.scripts]
 detect-key = "incolume.py.git_hooks.detect_private_key:main"
+
+[tool.uv]
+
+[tool.uv.build-backend]
+module-root = ""
+module-name = "incolume.py.git_hooks"
 
 [build-system]
 requires = ["uv_build>=0.8.9,<0.9.0"]
