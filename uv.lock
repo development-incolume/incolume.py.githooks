@@ -256,7 +256,7 @@ wheels = [
 
 [[package]]
 name = "incolume-py-git-hooks"
-version = "0.2.0a3"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
