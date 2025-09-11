@@ -22,3 +22,10 @@ docs = [
     "mkdocstrings>=0.30.0",
     "mkdocstrings-python>=1.18.2",
 ]
+
+[project.scripts]
+detect-private-key = "incolume.py.git_hooks.detect_private_key:main"
+
+[build-system]
+requires = ["uv_build>=0.8.9,<0.9.0"]
+build-backend = "uv_build"
