@@ -4,13 +4,13 @@
     entry: detect-key
     language: python
     types: [text]
--   id: check-added-large-files
-    name: check for added large files
-    description: prevents giant files from being committed.
-    entry: check-added-large-files
+-   id: check-valid-filenames
+    name: check if is valid filenames
+    description: Guarantees valid filenames for Python.
+    entry: is-valid-filename
     language: python
+    types: [python,pyi]
     stages: [pre-commit, pre-push, manual]
-    minimum_pre_commit_version: 3.2.0
 -   id: check-ast
     name: check python ast
     description: simply checks whether the files parse as valid python.
