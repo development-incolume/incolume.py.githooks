@@ -1,11 +1,11 @@
 -   id: detect-key
-    name: detect private key
+    name: incolume detect private key
     description: detects the presence of private keys.
     entry: detect-key
     language: python
     types: [text]
 -   id: check-valid-filenames
-    name: check if is valid filenames
+    name: incolume check if is valid filenames
     description: Guarantees valid filenames for Python.
     entry: is-valid-filename
     language: python
