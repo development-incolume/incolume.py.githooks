@@ -1,5 +1,5 @@
 [project]
-name = "incolume-py-git-hooks"
+name = "incolume-py-githooks"
 version = "0.3.0a5"
 description = "Add your description here"
 readme = "README.md"
