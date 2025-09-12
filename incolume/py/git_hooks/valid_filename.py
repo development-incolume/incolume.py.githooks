@@ -1,13 +1,12 @@
 """Hook to validate filenames."""
 
 import argparse
-from typing import Sequence
-
 import re
+from collections.abc import Sequence
 from pathlib import Path
 
-
 SNAKE_CASE_REGEX = re.compile('^[a-z_]+$')
+
 
 def is_valid_filename(filename: str, min_len: int = 3) -> bool:
     """Check if a filename is valid.
@@ -51,3 +50,6 @@ def main(argv: Sequence[str] | None = None) -> int:
         for filename in args.filenames
     ]
     return int(any(results))
+
+if __name__ == '__main__':
+    raise SystemExit(main())
