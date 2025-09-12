@@ -32,4 +32,4 @@ def run():
 
 
 if __name__ == '__main__':  # pragma: no cover
-    run()
+    raise SystemExit(run())
