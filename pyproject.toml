@@ -58,7 +58,7 @@ is-valid-filename = "incolume.py.git_hooks.valid_filename:main"
 
 [tool.uv.build-backend]
 module-root = ""
-module-name = "incolume.py.git_hooks"
+module-name = "incolume.py.githooks"
 
 [build-system]
 requires = ["uv_build>=0.8.9,<0.9.0"]

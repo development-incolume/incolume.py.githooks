@@ -28,7 +28,7 @@ def get_msg(idx: int = 0, *, fixed: bool = False) -> None:
 
 def run():
     """Run it."""
-    get_msg(0, True)
+    get_msg(0, fixed=True)
 
 
 if __name__ == '__main__':  # pragma: no cover
