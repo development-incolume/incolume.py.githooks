@@ -1,9 +1,15 @@
 """Hook to validate filenames."""
 
+# ruff: noqa: T201
+from __future__ import annotations
+
 import argparse
 import re
-from collections.abc import Sequence
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 SNAKE_CASE_REGEX = re.compile('^[a-z_]+$')
 

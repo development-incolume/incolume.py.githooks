@@ -1,7 +1,15 @@
+"""Module check filenames."""
+
+# ruff: noqa: T201
+
 from __future__ import annotations
 
 import argparse
-from collections.abc import Sequence
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 BLACKLIST = [
     b'BEGIN RSA PRIVATE KEY',
@@ -18,6 +26,15 @@ BLACKLIST = [
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """CLI to check private key.
+
+    Args:
+        argv (Sequence[str] | None, optional): _description_. Defaults to None.
+
+    Returns:
+        int: _description_
+
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
@@ -25,7 +42,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     private_key_files = []
 
     for filename in args.filenames:
-        with open(filename, 'rb') as f:
+        with Path(filename).open('rb') as f:
             content = f.read()
             if any(line in content for line in BLACKLIST):
                 private_key_files.append(filename)
