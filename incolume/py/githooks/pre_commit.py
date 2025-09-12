@@ -1,5 +1,6 @@
-#!/usr/bin/python3
-"""this run Python3."""
+"""Module for check branchname."""
+
+# ruff: noqa: T201 E501
 
 import logging
 import platform
@@ -13,7 +14,8 @@ BRANCH = subprocess.check_output(
 REGEX = r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'
 
 
-def run():
+def run() -> None:
+    """Run it."""
     logging.debug(platform.python_version_tuple())
     if not re.match(REGEX, BRANCH):
         print(

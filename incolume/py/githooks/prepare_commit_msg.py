@@ -1,12 +1,12 @@
-#!/usr/bin/python3
-"""this run Python 2.7."""
-import sys
-import re
+"""Module for validate commit message."""
+
+# ruff: noqa: T201 E501
+
 import logging
+import re
+import sys
+from pathlib import Path
 
-# logging.basicConfig(level=logging.DEBUG)
-
-# COMMITFORMAT = r'^((feat|feature|fix|bugfix|chore|refactor|docs|style|test|perf|ci|build|revert|other)(\((.*)\))?\!?: #([0-9]+)|(Merge|Bumping|Revert)) (.*(\n\n.*)*)$'
 COMMITFORMAT = r'^(((Merge|Bumping|Revert)|(bugfix|build|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
 
 MESSAGESUCCESS = '\033[92m{}\033[0m'.format('Commit message is validated [OK]')
@@ -30,27 +30,29 @@ MESSAGERROR = '\033[91m{}\033[0m'.format("""
     More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/""")
 
 
-def prepend_commit_msg():
+def prepend_commit_msg() -> None:
     """Prepend the commit message with `text`."""
     msgfile = sys.argv[1]
     logging.debug('msgfile: %s', msgfile)
-    with open(msgfile) as f:
+
+    with Path(msgfile).open() as f:
         contents = f.read().strip()
         logging.debug('%s', contents)
 
-    regex = re.compile(COMMITFORMAT, flags=re.I)
+    regex = re.compile(COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', str(regex.pattern))
     try:
         if not regex.match(contents):
-            raise AssertionError
+            raise AssertionError  # noqa: TRY301
     except AssertionError:
-        print MESSAGERROR
+        print(MESSAGERROR)
         sys.exit(1)
-    print MESSAGESUCCESS
+    print(MESSAGESUCCESS)
     sys.exit(0)
 
 
-def run():
+def run() -> None:
+    """Run it."""
     prepend_commit_msg()
 
 
