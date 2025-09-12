@@ -9,5 +9,5 @@
     description: Guarantees valid filenames for Python.
     entry: is-valid-filename
     language: python
-    types: [python,pyi]
+    types: [python]
     stages: [pre-commit, pre-push, manual]
