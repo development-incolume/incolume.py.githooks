@@ -11,3 +11,10 @@
     language: python
     types: [python]
     stages: [pre-commit, pre-push, manual]
+-   id: effort-message
+    name: incolume effort message
+    description: Effort message for commit.
+    entry: effort-msg
+    language: python
+    types: [python]
+    stages: [pre-commit, pre-push, manual]

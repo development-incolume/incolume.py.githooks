@@ -2,17 +2,17 @@
 
 # ruff: noqa: T201
 
-import random
+import secrets
 import sys
 
 
-def check():
+def check() -> None:
     """Check arguments."""
-    print('Number of arguments: %d' % len(sys.argv))
-    print('Arguments List: %s' % str(sys.argv))
+    print(f'Number of arguments: {len(sys.argv)}')
+    print(f'Arguments List: {sys.argv!s}')
 
 
-def get_msg(idx: int = 0, *, fixed: bool = False) -> None:
+def get_msg(*, fixed: bool = False) -> None:
     """Get message."""
     msg = [
         'Boa! Continue o bom trabalho com a força, Jedi!',
@@ -20,15 +20,13 @@ def get_msg(idx: int = 0, *, fixed: bool = False) -> None:
         'Executado com sucesso.',
     ]
     base = '\n\033[92m{}\033[0m\n'
-    if fixed:
-        print(base.format(msg[idx]))
-    else:
-        print(base.format(msg[random.randint(0, len(msg) - 1)]))
+    result = base.format(msg[0]) if fixed else base.format(secrets.choice(msg))
+    print(result)
 
 
-def run():
+def run() -> None:
     """Run it."""
-    get_msg(0, True)
+    get_msg(0, fixed=True)
 
 
 if __name__ == '__main__':  # pragma: no cover
