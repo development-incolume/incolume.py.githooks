@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """this run Python 2.7."""
+
 import random
 import sys
 
@@ -20,7 +21,7 @@ def get_msg(idx=0, fixed=False):
     if fixed:
         print(base.format(msg[idx]))
     else:
-        print(base.format(msg[random.randint(0, len(msg)-1)]))
+        print(base.format(msg[random.randint(0, len(msg) - 1)]))
 
 
 def run():
