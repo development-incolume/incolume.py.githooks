@@ -51,8 +51,10 @@ docs = [
 ]
 
 [project.scripts]
-detect-key = "incolume.py.git_hooks.detect_private_key:main"
-is-valid-filename = "incolume.py.git_hooks.valid_filename:main"
+detect-key = "incolume.py.githooks.detect_private_key:main"
+is-valid-filename = "incolume.py.githooks.valid_filename:main"
+effort-msg = "incolume.py.githooks.effort:run"
+
 
 [tool.uv]
 
