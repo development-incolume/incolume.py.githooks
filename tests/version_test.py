@@ -9,7 +9,7 @@ from incolume.py.githooks import REGEX, __version__
 
 
 @pytest.mark.fasttest
-class TestSemVer:
+class TestCaseSemVer:
     """Test case class for Sematic Versions."""
 
     def test_version(self, semver_regex: str) -> None:
