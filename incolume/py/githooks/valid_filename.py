@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 SNAKE_CASE_REGEX = re.compile('^[a-z_]+$')
 
 
-def is_valid_filename(filename: str, min_len: int = 3) -> bool:
+def is_valid_filename(filename: str | Path, min_len: int = 3) -> bool:
     """Check if a filename is valid.
 
     A valid filename is in snake_case and has at least `min_len` characters.
