@@ -5,7 +5,7 @@ import re
 import pytest
 from icecream import ic
 
-from incolume.py.githooks import REGEX, __version__
+from incolume.py.githooks import REGEX_SEMVER, __version__
 
 
 @pytest.mark.fasttest
@@ -72,7 +72,7 @@ class TestCaseSemVer:
         assert (
             bool(
                 re.fullmatch(
-                    REGEX,
+                    REGEX_SEMVER,
                     entrance,
                     flags=re.IGNORECASE,
                 ),

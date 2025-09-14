@@ -8,7 +8,7 @@ from typing import Final
 
 import tomllib as tomli
 
-REGEX: Final = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
+REGEX_SEMVER: Final = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 confproject = Path(__file__).parents[3] / 'pyproject.toml'
 fileversion = Path(__file__).parent / 'version.txt'
 
