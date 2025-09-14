@@ -1,9 +1,10 @@
 """Module to handle commit message hook."""
 
 # ruff: noqa: T201
-from colorama import Fore, Style
 import secrets
 import sys
+
+from colorama import Fore, Style
 
 
 def check() -> None:
