@@ -20,7 +20,7 @@ def get_msg(*, fixed: bool = False) -> None:
         'Executado com sucesso.',
     ]
     msg = messages[0] if fixed else secrets.choice(messages)
-    result = f'\n{Fore.GREEN}' +f'{msg}'+f'{Style.RESSET_ALL}\n'
+    result = f'\n{Fore.GREEN} {msg} {Style.RESET_ALL}\n'
 
     print(result)
 
