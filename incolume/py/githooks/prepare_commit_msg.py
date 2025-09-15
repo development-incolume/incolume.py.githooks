@@ -42,7 +42,7 @@ def prepend_commit_msg() -> int:
 
     result = Result(0, MESSAGESUCCESS)
 
-    with Path(msgfile).open() as f:
+    with Path(msgfile).open(encoding='utf-8') as f:
         contents = f.read().strip()
         logging.debug('%s', contents)
 

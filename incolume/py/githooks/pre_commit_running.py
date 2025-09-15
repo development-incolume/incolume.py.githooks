@@ -1,4 +1,5 @@
 """Verify if pre-commit is installed."""
+# ruff: noqa: E501 T201
 
 from pathlib import Path
 
