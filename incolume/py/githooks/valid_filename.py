@@ -1,12 +1,13 @@
 """Hook to validate filenames."""
 
-# ruff: noqa: T201
 from __future__ import annotations
 
 import argparse
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+import rich
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -23,10 +24,10 @@ def is_valid_filename(filename: str | Path, min_len: int = 3) -> bool:
     name = Path(filename).stem
 
     if too_short := len(name) < min_len:
-        print(f'Name too short ({min_len=}): {filename}')
+        rich.print(f'[red]Name too short ({min_len=}): {filename}[/]')
 
     if not_snake_case := SNAKE_CASE_REGEX.search(name) is None:
-        print(f'Filename is not in snake_case: {filename}')
+        rich.print(f'[red]Filename is not in snake_case: {filename}[/]')
 
     failure = too_short or not_snake_case
     return not failure
