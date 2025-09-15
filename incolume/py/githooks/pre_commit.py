@@ -14,7 +14,7 @@ from incolume.py.githooks import RULE_BRANCHNAME
 
 BRANCH = (
     subprocess.check_output(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],  # noqa: S607
     )
     .strip()
     .decode('utf-8')
