@@ -138,5 +138,24 @@ docstring-code-line-length = "dynamic"
 # Don't bother trying to avoid escapes.
 avoid-escape = false
 docstring-quotes = "double"
-inline-quotes = "double"
+inline-quotes = "single"
 multiline-quotes = "double"
+
+[lint.per-file-ignores]
+# Ignore `E402` (import violations) in all `__init__.py` files, and in `path/to/file.py`.
+#"__init__.py" = ["E402"]
+#"path/to/file.py" = ["E402"]
+"**/{tutorial}/*" = ["N999"]
+"**/{tests,docs,tools,utils}/*" = ["EXE002"]
+"**/{*_tests,test_*,*_test}.py" = [
+  "ANN001",
+  "ANN101",
+  "EXE002",
+  "I001",
+  "PLR6301",
+  "S101",
+  "ANN401",  # suppress due conflit with mypy
+]
+
+[lint.flake8-pytest-style]
+parametrize-names-type = "list"
