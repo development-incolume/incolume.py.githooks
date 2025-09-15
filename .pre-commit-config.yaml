@@ -33,3 +33,33 @@ repos:
     # Run the formatter.
     - id: ruff-format
       args: [--config, ruff.toml]
+
+- repo: local
+  hooks:
+    - id: effort-message
+      name: Incolume Commit Message Effort Hook
+      language: python
+      entry: effort-msg
+
+    - id: detect-key
+      name: Incolume detect private key
+      description: detects the presence of private keys.
+      entry: detect-key
+      language: python
+      types: [text]
+
+    - id: check-valid-filenames
+      name: Incolume check if is valid filenames
+      description: Guarantees valid filenames for Python.
+      entry: is-valid-filename
+      language: python
+      types: [python]
+      stages: [pre-commit, pre-push, manual]
+
+    - id: check-precommit-installed
+      name: Incolume check if pre-commit is installed
+      description: Guarantees pre-commit instalation for project.
+      entry: pre-commit-installed
+      language: python
+      types: [python]
+      stages: [pre-commit, pre-push, manual]

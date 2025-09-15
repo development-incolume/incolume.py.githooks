@@ -1,9 +1,10 @@
 """Module to handle commit message hook."""
 
 # ruff: noqa: T201
-
 import secrets
 import sys
+
+from colorama import Fore, Style
 
 
 def check() -> None:
@@ -14,19 +15,20 @@ def check() -> None:
 
 def get_msg(*, fixed: bool = False) -> None:
     """Get message."""
-    msg = [
+    messages = [
         'Boa! Continue o bom trabalho com a força, Jedi!',
         'Boa! Continue trabalhando campeão!',
         'Executado com sucesso.',
     ]
-    base = '\n\033[92m{}\033[0m\n'
-    result = base.format(msg[0]) if fixed else base.format(secrets.choice(msg))
+    msg = messages[0] if fixed else secrets.choice(messages)
+    result = f'\n{Fore.GREEN} {msg} {Style.RESET_ALL}\n'
+
     print(result)
 
 
 def run() -> None:
     """Run it."""
-    get_msg(0, fixed=True)
+    get_msg()
 
 
 if __name__ == '__main__':  # pragma: no cover
