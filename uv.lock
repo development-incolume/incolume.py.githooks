@@ -365,7 +365,7 @@ wheels = [
 
 [[package]]
 name = "incolume-py-githooks"
-version = "0.3.0a16"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "click" },

@@ -20,6 +20,20 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Adicionado suite de teste pytest;
   - Refinado a configuração pytest conforme padrões JEDI;
 
+## [0.3.0]	 &#8212; 	2025-09-14:
+### Added
+  - Adicionado hook check-precommit-installed;
+  - Adicionado hook effort-message;
+  - Adicionado hook de validação para filenames em Python;
+  - Acrescentados testes unitários;
+  - Acrescentado CHANGELOG.md;
+  - Configurado `pre-commit` para gestringir violação de regras;
+### Changed
+  - Aplicado QA parcialmente ao projeto;
+  - Adicionado suite de teste pytest;
+  - Refinado a configuração pytest conforme padrões JEDI;
+  - Sincronizado versão do projeto com a versão do pacote;
+
 ## [0.2.1]	 &#8212; 	2025-09-11:
 ### Changed
   - Configuração do hook detected-key;
@@ -37,4 +51,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 [0.2.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.1.0...0.2.0
 [0.2.1]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.0...0.2.1
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.1...Unreleased
+[0.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.1...0.3.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...Unreleased
