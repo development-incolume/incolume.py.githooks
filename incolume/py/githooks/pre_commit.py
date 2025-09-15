@@ -7,6 +7,7 @@ import platform
 import re
 import subprocess
 import sys
+from colorama import Fore, Style
 from incolume.py.githooks import RULE_BRANCHNAME
 
 
@@ -18,20 +19,18 @@ BRANCH = subprocess.check_output(
 def run() -> None:
     """Run it."""
     logging.debug(platform.python_version_tuple())
-    if not re.match(REGEX, BRANCH):
-        print(
-            '\033[91mYour commit was rejected due to branching name '
-            'incompatible with rules.\033[0m',
-            "\033[91mPlease rename your branch with '<(enhancement|feature|feat"
-            "|bug|bugfix|fix)>/epoch#<timestamp>' syntax\033[0m",
-            sep='\n',
+    result = f'{Fore.GREEN}branching name rules. [OK]\033[0m'
+    status = 0
+    if not re.match(RULE_BRANCHNAME, BRANCH):
+        result = (
+            f'{Fore.RED}Your commit was rejected due to branching name '
+            f'incompatible with rules.{Style.RESET_ALL}\n'
+            f"{Fore.RED}Please rename your branch with '<(enhancement|feature|feat"
+            f"|bug|bugfix|fix)>/epoch#<timestamp>' syntax{Style.RESET_ALL}"
         )
-        sys.exit(1)
-    else:
-        print()
-        print('\033[92mbranching name rules. [OK]\033[0m')
-        print()
-        sys.exit(0)
+        status = 1
+    print(result)
+    sys.exit(status)
 
 
 if __name__ == '__main__':  # pragma: no cover
