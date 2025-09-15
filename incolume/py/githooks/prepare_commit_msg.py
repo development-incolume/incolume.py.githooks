@@ -1,16 +1,20 @@
-#!/usr/bin/python3
-"""this run Python 2.7."""
-import sys
-import re
+"""Module for validate commit message."""
+
+# ruff: noqa: T201 E501
+
 import logging
+import re
+import sys
+from pathlib import Path
 
-# logging.basicConfig(level=logging.DEBUG)
+from colorama import Fore, Style
 
-# COMMITFORMAT = r'^((feat|feature|fix|bugfix|chore|refactor|docs|style|test|perf|ci|build|revert|other)(\((.*)\))?\!?: #([0-9]+)|(Merge|Bumping|Revert)) (.*(\n\n.*)*)$'
-COMMITFORMAT = r'^(((Merge|Bumping|Revert)|(bugfix|build|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
+from incolume.py.githooks import RULE_COMMITFORMAT, Result
 
-MESSAGESUCCESS = '\033[92m{}\033[0m'.format('Commit message is validated [OK]')
-MESSAGERROR = '\033[91m{}\033[0m'.format("""
+MESSAGESUCCESS = (
+    f'{Fore.GREEN}Commit message is validated [OK]{Style.RESET_ALL}'
+)
+MESSAGERROR = f"""{Fore.RED}
     Your commit was rejected due to the invalid commit message...
 
     Please use the following format:
@@ -27,32 +31,33 @@ MESSAGERROR = '\033[91m{}\033[0m'.format("""
     #6-> git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'
     #7-> git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'
 
-    More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/""")
+    More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/
+    {Style.RESET_ALL}"""
 
 
-def prepend_commit_msg():
+def prepend_commit_msg() -> int:
     """Prepend the commit message with `text`."""
     msgfile = sys.argv[1]
     logging.debug('msgfile: %s', msgfile)
-    with open(msgfile) as f:
+
+    result = Result(0, MESSAGESUCCESS)
+
+    with Path(msgfile).open() as f:
         contents = f.read().strip()
         logging.debug('%s', contents)
 
-    regex = re.compile(COMMITFORMAT, flags=re.I)
+    regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', str(regex.pattern))
-    try:
-        if not regex.match(contents):
-            raise AssertionError
-    except AssertionError:
-        print MESSAGERROR
-        sys.exit(1)
-    print MESSAGESUCCESS
-    sys.exit(0)
+    if not regex.match(contents):
+        result = Result(1, MESSAGERROR)
+    print(result.message)
+    sys.exit(result.code)
 
 
-def run():
+def run() -> None:
+    """Run it."""
     prepend_commit_msg()
 
 
 if __name__ == '__main__':
-    run()
+    raise SystemExit(run())
