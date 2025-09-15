@@ -1,16 +1,15 @@
 """Module to handle commit message hook."""
 
-# ruff: noqa: T201
 import secrets
 import sys
 
-from colorama import Fore, Style
+import rich
 
 
 def check() -> None:
     """Check arguments."""
-    print(f'Number of arguments: {len(sys.argv)}')
-    print(f'Arguments List: {sys.argv!s}')
+    rich.print(f'Number of arguments: {len(sys.argv)}')
+    rich.print(f'Arguments List: {sys.argv!s}')
 
 
 def get_msg(*, fixed: bool = False) -> None:
@@ -21,9 +20,9 @@ def get_msg(*, fixed: bool = False) -> None:
         'Executado com sucesso.',
     ]
     msg = messages[0] if fixed else secrets.choice(messages)
-    result = f'\n{Fore.GREEN} {msg} {Style.RESET_ALL}\n'
+    result = f'\n[green]{msg}[/]\n'
 
-    print(result)
+    rich.print(result)
 
 
 def run() -> None:
