@@ -12,6 +12,8 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [Unreleased]	 &#8212; 	2025-09-14:
 ### Added
+  - Adicionado hook check-precommit-installed;
+  - Adicionado hook effort-message;
   - Adicionado hook de validação para filenames em Python;
 ### Changed
   - Aplicado QA parcialmente ao projeto;
