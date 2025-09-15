@@ -9,6 +9,8 @@ from typing import Final
 import tomllib as tomli
 
 REGEX_SEMVER: Final = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
+RULE_BRANCHNAME: Final = r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'
+
 confproject = Path(__file__).parents[3] / 'pyproject.toml'
 fileversion = Path(__file__).parent / 'version.txt'
 

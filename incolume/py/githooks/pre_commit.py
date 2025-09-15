@@ -7,11 +7,12 @@ import platform
 import re
 import subprocess
 import sys
+from incolume.py.githooks import RULE_BRANCHNAME
+
 
 BRANCH = subprocess.check_output(
     ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
 ).strip()
-REGEX = r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'
 
 
 def run() -> None:
