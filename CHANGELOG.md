@@ -20,7 +20,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Adicionado suite de teste pytest;
   - Refinado a configuração pytest conforme padrões JEDI;
 
-## [0.3.0]	 &#8212; 	2025-09-14:
+## [0.3.0]	 &#8212; 	2025-09-15:
 ### Added
   - Adicionado hook check-precommit-installed;
   - Adicionado hook effort-message;
