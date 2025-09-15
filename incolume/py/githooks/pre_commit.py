@@ -1,6 +1,6 @@
 """Module for check branchname."""
 
-# ruff: noqa: T201 E501
+# ruff: noqa: T201
 
 import logging
 import platform
@@ -8,29 +8,34 @@ import re
 import subprocess
 import sys
 
-BRANCH = subprocess.check_output(
-    ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
-).strip()
-REGEX = r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'
+from colorama import Fore, Style
+
+from incolume.py.githooks import RULE_BRANCHNAME
+
+BRANCH = (
+    subprocess.check_output(
+        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+    )
+    .strip()
+    .decode('utf-8')
+)
 
 
 def run() -> None:
     """Run it."""
     logging.debug(platform.python_version_tuple())
-    if not re.match(REGEX, BRANCH):
-        print(
-            '\033[91mYour commit was rejected due to branching name '
-            'incompatible with rules.\033[0m',
-            "\033[91mPlease rename your branch with '<(enhancement|feature|feat"
-            "|bug|bugfix|fix)>/epoch#<timestamp>' syntax\033[0m",
-            sep='\n',
+    result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
+    status = 0
+    if not re.match(RULE_BRANCHNAME, BRANCH):
+        result = (
+            f'{Fore.RED}Your commit was rejected due to branching name '
+            'incompatible with rules.\n'
+            "Please rename your branch with '<(enhancement|feature|feat"
+            f"|bug|bugfix|fix)>/epoch#<timestamp>' syntax{Style.RESET_ALL}"
         )
-        sys.exit(1)
-    else:
-        print()
-        print('\033[92mbranching name rules. [OK]\033[0m')
-        print()
-        sys.exit(0)
+        status = 1
+    print(result)
+    sys.exit(status)
 
 
 if __name__ == '__main__':  # pragma: no cover
