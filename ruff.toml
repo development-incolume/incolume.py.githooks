@@ -36,6 +36,7 @@ indent-width = 4
 target-version = "py39"
 
 [lint]
+preview = true
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
@@ -98,7 +99,7 @@ select = [
   "UP",  # pyupgrade
   "YTT",    #flake8-2020
 ]
-ignore = ["INP001", "CPY001"]
+ignore = ["COM812", "CPY001", "D203", "D213", "INP001"]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -108,6 +109,8 @@ unfixable = ["B"]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [format]
+preview = true
+
 # Like Black, use double quotes for strings.
 quote-style = "single"
 
