@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-SNAKE_CASE_REGEX = re.compile('^[a-z_]+$')
+SNAKE_CASE_REGEX = re.compile(r'^[a-z_]+$')
 
 
 def is_valid_filename(filename: str | Path, min_len: int = 3) -> bool:

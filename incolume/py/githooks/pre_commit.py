@@ -5,15 +5,15 @@
 import logging
 import platform
 import re
-import subprocess
 import sys
+from subprocess import check_output  # noqa: S404
 
 from colorama import Fore, Style
 
 from incolume.py.githooks import RULE_BRANCHNAME
 
 BRANCH = (
-    subprocess.check_output(
+    check_output(
         ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],  # noqa: S607
     )
     .strip()
