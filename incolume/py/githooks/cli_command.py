@@ -21,7 +21,8 @@ def main() -> int:
     for command in commands:
         try:
             args = command.split(' ')
-            # insert `--json-out` right after `hamilton` for proper stdout parsing
+            # insert `--json-out` right after
+            # `hamilton` for proper stdout parsing
             # no issue if `--json-out` is present twice
             args.insert(1, '--json-out')
             result = subprocess.run(

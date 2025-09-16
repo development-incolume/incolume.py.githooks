@@ -39,12 +39,13 @@ def _create_colab_badge(path: pathlib.Path) -> str:
 def validate_notebook(notebook_path: pathlib.Path) -> int:
     """Check notebook.
 
-    Check that the first code cell install dependencies for the notebook to work
-    in Google Colab, and that the second cell has badges to open the notebook in
+    Check that the first code cell install dependencies
+    for the notebook to work in Google Colab, and that
+    the second cell has badges to open the notebook in
     Google Colab and view the source on GitHub.
 
-    NOTE. For faster notebook startup (especially on Colab), we should disable
-    plugin autoloading
+    NOTE. For faster notebook startup (especially on
+    Colab), we should disable plugin autoloading
 
     .. code-block:: python
 
@@ -88,7 +89,8 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
 
     if second_cell.cell_type != 'markdown':
         issues.append(
-            'The second cell should be markdown with the title, badges, and introduction.'
+            'The second cell should be markdown with'
+            ' the title, badges, and introduction.'
         )
         RETURN_VALUE |= FAILURE
 
@@ -142,7 +144,10 @@ def add_badges_to_title(path: pathlib.Path) -> None:
     updated_content = ''
     for idx, line in enumerate(notebook.cells[1].source.splitlines()):
         if idx == 0:
-            updated_content += f'{line} {_create_colab_badge(path)} {_create_github_badge(path)}\n'
+            updated_content += (
+                f'{line} {_create_colab_badge(path)}'
+                f' {_create_github_badge(path)}\n'
+            )
         else:
             updated_content += f'\n{line}'
 
