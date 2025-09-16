@@ -56,12 +56,12 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
         #%% CELL_2
         # Title of the notebook ![Colab badge](colab_url) ![GitHub badge](github_url)
 
-    """
+    """  # noqa: E501
     return_value: int = SUCCESS
 
     try:
         notebook = nbformat.read(notebook_path, as_version=4)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         rich.print(f'{notebook_path}: {e}')
         return FAILURE
 
@@ -83,7 +83,8 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
 
     if '%pip install' not in first_cell.source:
         issues.append(
-            'In the first cell, use the `%pip` magic to install dependencies for the notebook.'
+            'In the first cell, use the `%pip` magic to install'
+            ' dependencies for the notebook.'
         )
         return_value |= FAILURE
 
@@ -119,7 +120,8 @@ def insert_setup_cell(path: pathlib.Path) -> None:
     """
     notebook = nbformat.read(path, as_version=4)
     setup_cell = nbformat.v4.new_code_cell(
-        '# Execute this cell to install dependencies\n%pip install sf-hamilton[visualization]'
+        '# Execute this cell to install dependencies\n'
+        '%pip install sf-hamilton[visualization]'
     )
     notebook.cells.insert(0, setup_cell)
 

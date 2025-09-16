@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-import subprocess
+import subprocess  # noqa: S404
 import sys
 
 PASS = 0
@@ -25,15 +25,15 @@ def main() -> int:
             # `hamilton` for proper stdout parsing
             # no issue if `--json-out` is present twice
             args.insert(1, '--json-out')
-            result = subprocess.run(
+            result = subprocess.run(  # noqa: S603
                 args, check=False, stdout=subprocess.PIPE, text=True
             )
             response = json.loads(result.stdout)
 
             if response['success'] is False:
-                raise ValueError
+                raise ValueError  # noqa: TRY301
 
-        except Exception:
+        except Exception:  # noqa: BLE001, PERF203
             exit_code |= FAIL
 
     return exit_code
