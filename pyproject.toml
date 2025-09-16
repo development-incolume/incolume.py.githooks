@@ -39,6 +39,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "incolume-py-changelog>=0.17.0",
+    "nbformat>=5.10.4",
     "pre-commit>=4.3.0",
     "pytest-cov>=7.0.0",
     "pytest-mock>=3.15.0",
