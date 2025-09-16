@@ -72,3 +72,13 @@ repos:
       additional_dependencies: [nbformat]  # Python dependency for the script
       files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
       types: [jupyter]  # jupyter is alias for .ipynb files
+
+    - id: validate-message-commit
+      name: Incolume - validate message Commit agree with Conventional Commits
+      entry: is-valid-msg-commit  # script is called from root directory
+      language: python  # script requires the Python interpreter
+      require_serial: false  # don't run in parallel
+      additional_dependencies: [rich]  # Python dependency for the script
+      # files: ^*$  # this catches all .ipynb under examples/
+      # types: [python]  # jupyter is alias for .ipynb files
+      stages: [commit-msg, pre-commit]  # this hook is run at commit time
