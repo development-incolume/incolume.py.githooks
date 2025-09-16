@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
 
@@ -29,6 +30,7 @@ with suppress(FileNotFoundError), confproject.open('rb') as f:
 __version__ = fileversion.read_text().strip()
 
 
+@dataclass
 class Result:
     """Result dataclass for hooks this project."""
 
