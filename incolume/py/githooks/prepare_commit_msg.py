@@ -47,6 +47,8 @@ MESSAGERROR = """[red]
 def prepend_commit_msg() -> int:
     """Prepend the commit message with `text`."""
     ic(sys.argv)
+    ic(fl := Path('.git/COMMIT_EDITMSG'))
+    ic(fl.is_fifo())
     msgfile = sys.argv[1]
     ic(msgfile)
     logging.debug('msgfile: %s', msgfile)
