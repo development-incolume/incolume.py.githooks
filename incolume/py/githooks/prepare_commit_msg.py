@@ -46,7 +46,8 @@ MESSAGERROR = """[red]
 
 def prepend_commit_msg() -> int:
     """Prepend the commit message with `text`."""
-    msgfile = ic(sys.argv[1])
+    ic(sys.argv)
+    msgfile = sys.argv[1]
     ic(msgfile)
     logging.debug('msgfile: %s', msgfile)
 
