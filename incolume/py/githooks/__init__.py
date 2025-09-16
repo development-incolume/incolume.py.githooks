@@ -30,7 +30,7 @@ __version__ = fileversion.read_text().strip()
 
 
 class Result:
-    """Result dataclass."""
+    """Result dataclass for hooks this project."""
 
     code: int
     message: str
