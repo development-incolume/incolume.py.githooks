@@ -8,31 +8,32 @@ import sys
 from pathlib import Path
 
 from colorama import Fore, Style
+import rich
 
 from incolume.py.githooks import RULE_COMMITFORMAT, Result
 
 MESSAGESUCCESS = (
     f'{Fore.GREEN}Commit message is validated [OK]{Style.RESET_ALL}'
 )
-MESSAGERROR = f"""{Fore.RED}
-    Your commit was rejected due to the invalid commit message...
+MESSAGERROR = """[red]
+    Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...
 
     Please use the following format:
-    <type>(optional scope): #id-issue <description>
+      [green]<type>(optional scope): #id-issue <description>[/green]
 
-    types: feature/feat, fix, chore, refactor, docs, style, test, perf, ci, build and revert
+    [cyan]type values: feature / feat, fix, chore, refactor, docs, style, test, perf, ci, build and revert[/cyan]
 
     Examples:
-    #1-> git commit -m 'feature: #1234 feature example comment'
-    #2-> git commit -m 'feat(docs): #1234 feature example comment'
-    #3-> git commit -m 'fix(ui): #4321 bugfix example comment'
-    #4-> git commit -m 'fix!: #4321 chore example comment with possible breaking change'
-    #5-> git commit -m 'chore!: #4321 chore example comment with possible breaking change'
-    #6-> git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'
-    #7-> git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'
+      #1-> git commit -m 'feature: #1234 feature example comment'
+      #2-> git commit -m 'feat(docs): #1234 feature example comment'
+      #3-> git commit -m 'fix(ui): #4321 bugfix example comment'
+      #4-> git commit -m 'fix!: #4321 chore example comment with possible breaking change'
+      #5-> git commit -m 'chore!: #4321 chore example comment with possible breaking change'
+      #6-> git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'
+      #7-> git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'
 
     More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/
-    {Style.RESET_ALL}"""
+    [/]"""
 
 
 def prepend_commit_msg() -> int:
@@ -50,7 +51,7 @@ def prepend_commit_msg() -> int:
     logging.debug('%s', str(regex.pattern))
     if not regex.match(contents):
         result = Result(1, MESSAGERROR)
-    print(result.message)
+    rich.print(result.message)
     sys.exit(result.code)
 
 
