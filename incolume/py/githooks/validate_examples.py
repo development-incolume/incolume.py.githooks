@@ -57,7 +57,7 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
         # Title of the notebook ![Colab badge](colab_url) ![GitHub badge](github_url)
 
     """
-    RETURN_VALUE: int = SUCCESS
+    return_value: int = SUCCESS
 
     try:
         notebook = nbformat.read(notebook_path, as_version=4)
@@ -79,34 +79,34 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
         issues.append(
             'The first cell should be a code cell to set up the notebook.'
         )
-        RETURN_VALUE |= FAILURE
+        return_value |= FAILURE
 
     if '%pip install' not in first_cell.source:
         issues.append(
             'In the first cell, use the `%pip` magic to install dependencies for the notebook.'
         )
-        RETURN_VALUE |= FAILURE
+        return_value |= FAILURE
 
     if second_cell.cell_type != 'markdown':
         issues.append(
             'The second cell should be markdown with'
             ' the title, badges, and introduction.'
         )
-        RETURN_VALUE |= FAILURE
+        return_value |= FAILURE
 
     if _create_colab_badge(notebook_path) not in second_cell.source:
         issues.append('Missing badge to open notebook in Google Colab.')
-        RETURN_VALUE |= FAILURE
+        return_value |= FAILURE
 
     if _create_github_badge(notebook_path) not in second_cell.source:
         issues.append('Missing badge to view source on GitHub.')
-        RETURN_VALUE |= FAILURE
+        return_value |= FAILURE
 
-    if RETURN_VALUE == FAILURE:
+    if return_value == FAILURE:
         joined_issues = '\n\t'.join(issues)
         rich.print(f'{notebook_path}:\n\t{joined_issues}')
 
-    return RETURN_VALUE
+    return return_value
 
 
 def insert_setup_cell(path: pathlib.Path) -> None:
@@ -161,7 +161,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('filenames', nargs='*', type=pathlib.Path)
     args = parser.parse_args(argv)
 
-    RETURN_VALUE = SUCCESS
+    return_value = SUCCESS
     for filename in args.filenames:
         if any(
             filename.is_relative_to(excluded) for excluded in EXCLUDED_EXAMPLES
@@ -169,9 +169,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             logger.info('Ignoring because path is excluded: `%s`', filename)
             continue
 
-        RETURN_VALUE |= validate_notebook(filename)
+        return_value |= validate_notebook(filename)
 
-    return RETURN_VALUE
+    return return_value
 
 
 if __name__ == '__main__':
