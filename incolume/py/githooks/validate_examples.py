@@ -1,35 +1,45 @@
+"""Validate example notebooks for required setup and badges."""
+
 from __future__ import annotations
 
 import argparse
 import logging
 import pathlib
-from collections.abc import Sequence
+from typing import TYPE_CHECKING, Final
 
 import nbformat
+import rich
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 logger = logging.getLogger(__name__)
 
-IGNORE_PRAGMA = '## ignore_ci'
-EXCLUDED_EXAMPLES = []  # "model_examples/", )
+IGNORE_PRAGMA: Final[str] = '## ignore_ci'
+EXCLUDED_EXAMPLES: Final = []  # "model_examples/", )
 
-SUCCESS = 0
-FAILURE = 1
+SUCCESS: Final[int] = 0
+FAILURE: Final[int] = 1
 
 
 def _create_github_badge(path: pathlib.Path) -> str:
     github_url = f'https://github.com/apache/hamilton/blob/main/{path}'
     github_badge = f'[![GitHub badge](https://img.shields.io/badge/github-view_source-2b3137?logo=github)]({github_url})'
+    logger.debug('GitHub badge: %s', github_badge)
     return github_badge
 
 
 def _create_colab_badge(path: pathlib.Path) -> str:
     colab_url = f'https://colab.research.google.com/github/dagworks-inc/hamilton/blob/main/{path}'
     colab_badge = f'[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]({colab_url})'
+    logger.debug('Colab badge: %s', colab_badge)
     return colab_badge
 
 
 def validate_notebook(notebook_path: pathlib.Path) -> int:
-    """Check that the first code cell install dependencies for the notebook to work
+    """Check notebook.
+
+    Check that the first code cell install dependencies for the notebook to work
     in Google Colab, and that the second cell has badges to open the notebook in
     Google Colab and view the source on GitHub.
 
@@ -46,12 +56,12 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
         # Title of the notebook ![Colab badge](colab_url) ![GitHub badge](github_url)
 
     """
-    RETURN_VALUE = SUCCESS
+    RETURN_VALUE: int = SUCCESS
 
     try:
         notebook = nbformat.read(notebook_path, as_version=4)
     except Exception as e:
-        print(f'{notebook_path}: {e}')
+        rich.print(f'{notebook_path}: {e}')
         return FAILURE
 
     first_cell = notebook.cells[0]
@@ -92,12 +102,12 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
 
     if RETURN_VALUE == FAILURE:
         joined_issues = '\n\t'.join(issues)
-        print(f'{notebook_path}:\n\t{joined_issues}')
+        rich.print(f'{notebook_path}:\n\t{joined_issues}')
 
     return RETURN_VALUE
 
 
-def insert_setup_cell(path: pathlib.Path):
+def insert_setup_cell(path: pathlib.Path) -> None:
     """Insert a setup cell at the top of a notebook.
 
     Calling this multiple times will add multiple setup cells.
@@ -119,7 +129,7 @@ def insert_setup_cell(path: pathlib.Path):
     nbformat.write(notebook, path)
 
 
-def add_badges_to_title(path: pathlib.Path):
+def add_badges_to_title(path: pathlib.Path) -> None:
     """Add badges to the second cell of the notebook.
 
     This should be called after inserting the setup cell,
@@ -141,6 +151,7 @@ def add_badges_to_title(path: pathlib.Path):
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Validate example notebooks."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', type=pathlib.Path)
     args = parser.parse_args(argv)
