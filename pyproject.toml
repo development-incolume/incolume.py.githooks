@@ -31,7 +31,7 @@ classifiers = [
 
 dependencies = [
     "click>=8.2.1",
-    "rich>=14.1.0",
+    "rich[jupyter]>=14.1.0",
     "tomli>=2.2.1 ; python_full_version < '3.11'",
     "tqdm>=4.67.1",
 ]
