@@ -31,7 +31,7 @@ classifiers = [
 
 dependencies = [
     "click>=8.2.1",
-    "rich>=14.1.0",
+    "rich[jupyter]>=14.1.0",
     "tomli>=2.2.1 ; python_full_version < '3.11'",
     "tqdm>=4.67.1",
 ]
@@ -57,7 +57,8 @@ docs = [
 detect-key = "incolume.py.githooks.detect_private_key:main"
 is-valid-filename = "incolume.py.githooks.valid_filename:main"
 effort-msg = "incolume.py.githooks.effort_message:run"
-pre-commit-installed = "incolume.py.githooks.pre_commit_running:run"
+is-precommit-installed = "incolume.py.githooks.pre_commit_running:run"
+is-valid-msg-commit = "incolume.py.githooks.prepare_commit_msg:run"
 
 
 [tool.uv]
