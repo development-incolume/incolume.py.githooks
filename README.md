@@ -1,4 +1,4 @@
-<img title="Logo incolume.py.githooks" alt="logo incolume.py.githooks" src="incolume-py-githooks.png" style="float: right; width: 150; margin-left: 100px;">
+<img title="Logo incolume.py.githooks" alt="logo incolume.py.githooks" src="images/incolume-py-githooks.png" style="display: block; margin: 0 auto; width: 150;">
 
 # incolume.py.githooks
 
