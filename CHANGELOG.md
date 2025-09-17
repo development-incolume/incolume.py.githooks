@@ -10,15 +10,10 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-14:
+## [Unreleased]	 &#8212; 	2025-09-17:
 ### Added
-  - Adicionado hook check-precommit-installed;
-  - Adicionado hook effort-message;
-  - Adicionado hook de validação para filenames em Python;
-### Changed
-  - Aplicado QA parcialmente ao projeto;
-  - Adicionado suite de teste pytest;
-  - Refinado a configuração pytest conforme padrões JEDI;
+  - Badging `pre-commit`;
+  - Acrescentado logo do projeto;
 
 ## [0.3.0]	 &#8212; 	2025-09-15:
 ### Added
