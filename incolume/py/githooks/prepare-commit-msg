@@ -8,6 +8,8 @@ YELLOW="\033[0;93m"
 GREEN="\033[0;92m"
 DEFAULT="\033[0m"
 
+echo -e "  >>> ${MESSAGE}"
+
 if ! [[ "$MESSAGE" =~ $COMMITFORMAT ]]; then
   echo -e "${RED}"
   echo "Your commit was rejected due to the invalid commit message..."
