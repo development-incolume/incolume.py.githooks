@@ -49,7 +49,7 @@ def prepend_commit_msg() -> int:
     ic(sys.argv)
     ic(fl := Path('.git/COMMIT_EDITMSG'))
     ic(fl.is_file())
-    ic(fl.read_bytes())
+    ic(fl.read_bytes().decode())
     msgfile = sys.argv[1]
     ic(msgfile)
     logging.debug('msgfile: %s', msgfile)
@@ -73,7 +73,7 @@ def run() -> None:
     prepend_commit_msg()
 
 
-def check_commit_msg() -> None:
+def check_type_commit_msg() -> sys.exit:
     """Check commit message."""
     commit_msg_filepath = sys.argv[1]
 
@@ -81,18 +81,33 @@ def check_commit_msg() -> None:
         commit_message = f.read().decode().strip()
 
     # Example validation: Ensure message starts with a type (e.g., feat, fix, chore)
-    if not re.match(r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):', commit_message):
-        rich.print('Error: Commit message must start with a type (e.g., feat:, fix:).')
+    if not re.match(
+        r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):',
+        commit_message,
+    ):
+        rich.print(
+            'Error: Commit message must start with a type (e.g., feat:, fix:).'
+        )
         sys.exit(1)  # Abort commit
+    sys.exit(0)  # Validation passed, allow commit
+
+
+def check_len_first_line_commit_msg() -> sys.exit:
+    """Check commit message."""
+    commit_msg_filepath = sys.argv[1]
+
+    with Path(commit_msg_filepath).open('rb') as f:
+        commit_message = f.read().decode().strip()
 
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
-    if len(first_line) > 50:
-        rich.print(f"Error: Commit subject line exceeds 50 characters ({len(first_line)}).")
+    if len(first_line) > 50:  # noqa: PLR2004
+        rich.print(
+            f'Error: Commit subject line exceeds 50 characters ({len(first_line)}).'
+        )
         sys.exit(1)
 
     sys.exit(0)  # Validation passed, allow commit
-
 
 
 if __name__ == '__main__':
