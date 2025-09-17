@@ -91,4 +91,4 @@ repos:
       additional_dependencies: [rich]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
       types: [python]  #
-      stages: [prepare-commit-msg, commit-msg]  # this hook is run at commit time
+      stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
