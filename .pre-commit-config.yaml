@@ -75,7 +75,7 @@ repos:
 
     - id: validate-message-commit-0
       name: Incolume - validate message Commit agree with Conventional Commits
-      entry: is-valid-msg-commit  # script is called from root directory
+      entry: ./incolume/py/githooks/prepare-commit-msg  # script is called from root directory
       language: script  # script requires the Python interpreter
       require_serial: false  # don't run in parallel
       additional_dependencies: []  # Python dependency for the script
