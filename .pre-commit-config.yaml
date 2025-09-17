@@ -59,7 +59,7 @@ repos:
     - id: check-precommit-installed
       name: Incolume - check if pre-commit is installed
       description: Guarantees pre-commit instalation for project.
-      entry: pre-commit-installed
+      entry: is-precommit-installed
       language: python
       types: [python]
       stages: [pre-commit, pre-push, manual]
