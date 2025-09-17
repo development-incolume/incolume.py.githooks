@@ -88,7 +88,7 @@ repos:
       entry: is-valid-msg-commit  # script is called from root directory
       language: python  # script requires the Python interpreter
       require_serial: false  # don't run in parallel
-      additional_dependencies: [rich]  # Python dependency for the script
+      additional_dependencies: [colorama,rich]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
       types: [python]  #
       stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
