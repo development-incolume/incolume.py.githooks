@@ -80,7 +80,7 @@ repos:
       require_serial: false  # don't run in parallel
       additional_dependencies: []  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
-      # types: [python]  # jupyter is alias for .ipynb files
+      types: [python]  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, pre-commit]  # this hook is run at commit time
 
     - id: validate-message-commit
@@ -90,5 +90,5 @@ repos:
       require_serial: false  # don't run in parallel
       additional_dependencies: [rich]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
-      # types: [python]  # jupyter is alias for .ipynb files
-      stages: [prepare-commit-msg, commit-msg, pre-commit]  # this hook is run at commit time
+      types: [python]  #
+      stages: [prepare-commit-msg, commit-msg]  # this hook is run at commit time
