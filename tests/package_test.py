@@ -40,4 +40,4 @@ class TestCasePackage:
     )
     def test_package(self, entrance, expected) -> NoReturn:
         """Test package."""
-        assert bool(entrance)
+        assert entrance == expected

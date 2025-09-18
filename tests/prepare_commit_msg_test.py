@@ -47,4 +47,4 @@ class TestCasePrepareCommitMsg:
     @pytest.mark.xfail(reason='Test not implemented yet')
     def test_prepend_commit_msg(self) -> NoReturn:
         """Test prepend commit message."""
-        assert False
+        assert pytest.fail('Test not implemented yet')
