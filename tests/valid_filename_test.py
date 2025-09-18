@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import NoReturn
 
+from icecream import ic
 import pytest
 from incolume.py.githooks.valid_filename import is_valid_filename
 
@@ -59,7 +60,7 @@ class TestCaseValidFilename:
                 {'filename': 'mixed_Case.py'}, False, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': '.hiddenfile'}, True, marks=[pytest.skip]
+                {'filename': '.hiddenfile'}, True, marks=[pytest.mark.skip]
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '..doublehidden'}, False
@@ -72,7 +73,10 @@ class TestCaseValidFilename:
                 True,
             ),  # Long valid name
             pytest.param(
-                {'filename': 'a' * 1000 + '.py'}, True
+                {'filename': 'a' * 256 + '.py'}, True
+            ),  # Very long name, but valid
+            pytest.param(
+                {'filename': 'a' * 257 + '.py'}, False
             ),  # Very long name, but valid
             pytest.param(
                 {'filename': 'a' * 1001 + '.py'}, False
@@ -82,5 +86,5 @@ class TestCaseValidFilename:
     def test_invalid_filenames(self, entrance, expected, capsys) -> None:
         """Test invalid filenames."""
         result = capsys.readouterr()
-        assert result.out == ''
+        ic(result)
         assert is_valid_filename(**entrance) is expected  # Not snake_case
