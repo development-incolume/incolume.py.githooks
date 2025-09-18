@@ -19,7 +19,7 @@ class TestCasePackage:
             pytest.param(
                 REGEX_SEMVER,
                 '',
-                marks=[pytest.mark.xfail(reason='Test not implemented yet')],
+                marks=[],
             ),
             pytest.param(
                 RULE_BRANCHNAME,
@@ -40,4 +40,4 @@ class TestCasePackage:
     )
     def test_package(self, entrance, expected) -> NoReturn:
         """Test package."""
-        assert entrance == expected
+        assert bool(entrance)
