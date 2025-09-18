@@ -19,7 +19,7 @@ class TestCasePackage:
             pytest.param(
                 REGEX_SEMVER,
                 '',
-                marks=[pytest.mark.xfail(reason='Test not implemented yet')],
+                marks=[],
             ),
             pytest.param(
                 RULE_BRANCHNAME,

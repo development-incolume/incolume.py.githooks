@@ -90,5 +90,5 @@ repos:
       require_serial: false  # don't run in parallel
       additional_dependencies: [colorama,rich]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
-      types_or: [file, python]  #
+      types_or: [system-verilog]  #
       stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
