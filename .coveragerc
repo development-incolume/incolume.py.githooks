@@ -24,11 +24,14 @@ exclude_lines =
   def terminal.
   __author__
   class IElements
-  
+
 exclude_also =
     ; Don't complain about missing debug-only code:
     def __repr__
     if self\.debug
+    if TYPE_CHECKING:
+    if DEBUG:
+    if DEBUG_MODE:
 
     ; Don't complain if tests don't hit defensive assertion code:
     raise AssertionError
