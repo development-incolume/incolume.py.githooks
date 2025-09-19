@@ -62,7 +62,7 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
     return result
 
 
-def run() -> sys.exit:
+def prepare_commit_msg_cli() -> sys.exit:
     """Run CLI for prepare-commit-msg hook."""
     msgfile = sys.argv[1]
     ic(fl := Path('.git/COMMIT_EDITMSG'))
