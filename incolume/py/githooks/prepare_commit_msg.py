@@ -45,19 +45,23 @@ MESSAGERROR = """[red]
     [/]"""
 
 
-def prepend_commit_msg() -> int:
+def prepend_commit_msg(msgfile: Path | str | None = None) -> int:
     """Prepend the commit message with `text`."""
-    ic(sys.argv)
+    ic(msgfile, sys.argv)
     ic(fl := Path('.git/COMMIT_EDITMSG'))
     ic(fl.is_file())
     ic(fl.read_bytes().decode())
-    msgfile = sys.argv[1]
+    msgfile = Path(msgfile or sys.argv[1])
     ic(msgfile)
     logging.debug('msgfile: %s', msgfile)
 
-    result = Result(0, MESSAGESUCCESS)
+    result = Result(SUCCESS, MESSAGESUCCESS)
+    if not msgfile.exists():
+        result = Result(FAILURE, MESSAGERROR)
+        rich.print(result.message)
+        sys.exit(result.code)
 
-    with Path(msgfile).open('rb') as f:
+    with msgfile.open('rb') as f:
         content = f.read().strip()
         logging.debug('%s', ic(content))
 
