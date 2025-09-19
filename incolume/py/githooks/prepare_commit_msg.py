@@ -13,9 +13,7 @@ from icecream import ic
 
 from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
 
-MESSAGESUCCESS = (
-    '[green]Commit message is validated [OK][/green]'
-)
+MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
     Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...
 
@@ -44,37 +42,37 @@ MESSAGERROR = """[red]
     [/]"""
 
 
-def prepend_commit_msg(msgfile: Path | str | None = None) -> int:
+def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
     """Prepend the commit message with `text`."""
-    ic(msgfile, sys.argv)
-    ic(fl := Path('.git/COMMIT_EDITMSG'))
-    ic(fl.is_file())
-    ic(fl.read_bytes().decode())
-    msgfile = Path(msgfile or sys.argv[1])
-    ic(msgfile)
-    logging.debug('msgfile: %s', msgfile)
-
+    msgfile = Path(msgfile)
     result = Result(SUCCESS, MESSAGESUCCESS)
-    if not msgfile.exists():
-        result = Result(FAILURE, MESSAGERROR)
-        rich.print(result.message)
-        sys.exit(result.code)
-
-    with msgfile.open('rb') as f:
-        content = f.read().strip()
-        logging.debug('%s', ic(content))
-
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', str(regex.pattern))
-    if not regex.match(content):
+
+    try:
+        with msgfile.open('rb') as f:
+            content = f.read().strip().decode()
+            logging.debug('%s', ic(content))
+
+        if not regex.match(content):
+            raise AssertionError  # noqa: TRY301
+    except (AssertionError, FileNotFoundError, FileExistsError):
         result = Result(FAILURE, MESSAGERROR)
+
+    return result
+
+
+def run() -> sys.exit:
+    """Run CLI for prepare-commit-msg hook."""
+    msgfile = sys.argv[1]
+    ic(fl := Path('.git/COMMIT_EDITMSG'))
+    ic(fl.is_file())
+    logging.debug('msgfile: %s', msgfile)
+
+    result = prepare_commit_msg(msgfile)
+
     rich.print(result.message)
     sys.exit(result.code)
-
-
-def run() -> None:
-    """Run it."""
-    prepend_commit_msg()
 
 
 def check_type_commit_msg() -> sys.exit:
