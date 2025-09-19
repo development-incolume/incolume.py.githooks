@@ -36,7 +36,7 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     for filename in filenames:
         with Path(filename).open('rb') as f:
-            content = f.read()
+            content = f.read().decode()
             if any(line in content for line in BLACKLIST):
                 private_key_files.append(filename)
 
