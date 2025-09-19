@@ -25,6 +25,28 @@ BLACKLIST = [
 ]
 
 
+def has_private_key(*filenames: Sequence[Path]) -> bool:
+    """Check if the content contains a private key.
+
+    Args:
+        filenames (Sequence[Path]): The sequence of file paths to check.
+
+    """
+    private_key_files = []
+
+    for filename in filenames:
+        with Path(filename).open('rb') as f:
+            content = f.read()
+            if any(line in content for line in BLACKLIST):
+                private_key_files.append(filename)
+
+    if private_key_files:
+        for private_key_file in private_key_files:
+            print(f'Private key found: {private_key_file}')
+        return False
+    return True
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
@@ -38,20 +60,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
-
-    private_key_files = []
-
-    for filename in args.filenames:
-        with Path(filename).open('rb') as f:
-            content = f.read()
-            if any(line in content for line in BLACKLIST):
-                private_key_files.append(filename)
-
-    if private_key_files:
-        for private_key_file in private_key_files:
-            print(f'Private key found: {private_key_file}')
-        return 1
-    return 0
+    return has_private_key(args)
 
 
 if __name__ == '__main__':
