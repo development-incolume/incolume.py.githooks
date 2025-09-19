@@ -10,11 +10,12 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-18:
+## [Unreleased]	 &#8212; 	2025-09-19:
 ### Added
   - Badging `pre-commit`;
   - Acrescentado logo do projeto;
   - Acrescentado configuração padrão para editores de código no projeto;
+  - Acrescentado cores em multiplataforma;
 
 ## [0.3.0]	 &#8212; 	2025-09-15:
 ### Added
