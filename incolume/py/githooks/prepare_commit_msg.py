@@ -9,13 +9,12 @@ import sys
 from pathlib import Path
 
 import rich
-from colorama import Fore, Style
 from icecream import ic
 
 from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
 
 MESSAGESUCCESS = (
-    f'{Fore.GREEN}Commit message is validated [OK]{Style.RESET_ALL}'
+    '[green]Commit message is validated [OK][/green]'
 )
 MESSAGERROR = """[red]
     Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...
