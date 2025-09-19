@@ -75,7 +75,7 @@ def prepare_commit_msg_cli() -> sys.exit:
     sys.exit(result.code)
 
 
-def check_type_commit_msg() -> sys.exit:
+def check_type_commit_msg_cli() -> sys.exit:
     """Check commit message."""
     commit_msg_filepath = sys.argv[1]
 
@@ -94,7 +94,16 @@ def check_type_commit_msg() -> sys.exit:
     sys.exit(SUCCESS)  # Validation passed, allow commit
 
 
-def check_len_first_line_commit_msg() -> sys.exit:
+def check_len_first_line_commit_msg() -> bool:
+    """Check len of first line from commit message.
+
+    Returns:
+        bool:
+
+    """
+
+
+def check_len_first_line_commit_msg_cli() -> sys.exit:
     """Check commit message."""
     commit_msg_filepath = sys.argv[1]
 
@@ -113,4 +122,4 @@ def check_len_first_line_commit_msg() -> sys.exit:
 
 
 if __name__ == '__main__':
-    raise SystemExit(run())
+    raise SystemExit(prepare_commit_msg_cli())
