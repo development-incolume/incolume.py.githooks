@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-BLACKLIST = [
+BLACKLIST: list[bytes] = [
     b'BEGIN RSA PRIVATE KEY',
     b'BEGIN DSA PRIVATE KEY',
     b'BEGIN EC PRIVATE KEY',
