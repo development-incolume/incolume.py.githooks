@@ -1,6 +1,7 @@
 """Module for validate commit message."""
 
 # ruff: noqa: E501
+from __future__ import annotations
 
 import logging
 import re
@@ -11,7 +12,7 @@ import rich
 from colorama import Fore, Style
 from icecream import ic
 
-from incolume.py.githooks import RULE_COMMITFORMAT, Result
+from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
 
 MESSAGESUCCESS = (
     f'{Fore.GREEN}Commit message is validated [OK]{Style.RESET_ALL}'
@@ -63,7 +64,7 @@ def prepend_commit_msg() -> int:
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', str(regex.pattern))
     if not regex.match(content):
-        result = Result(1, MESSAGERROR)
+        result = Result(FAILURE, MESSAGERROR)
     rich.print(result.message)
     sys.exit(result.code)
 
@@ -88,8 +89,8 @@ def check_type_commit_msg() -> sys.exit:
         rich.print(
             'Error: Commit message must start with a type (e.g., feat:, fix:).'
         )
-        sys.exit(1)  # Abort commit
-    sys.exit(0)  # Validation passed, allow commit
+        sys.exit(FAILURE)  # Abort commit
+    sys.exit(SUCCESS)  # Validation passed, allow commit
 
 
 def check_len_first_line_commit_msg() -> sys.exit:
@@ -105,9 +106,9 @@ def check_len_first_line_commit_msg() -> sys.exit:
         rich.print(
             f'Error: Commit subject line exceeds 50 characters ({len(first_line)}).'
         )
-        sys.exit(1)
+        sys.exit(FAILURE)
 
-    sys.exit(0)  # Validation passed, allow commit
+    sys.exit(SUCCESS)  # Validation passed, allow commit
 
 
 if __name__ == '__main__':
