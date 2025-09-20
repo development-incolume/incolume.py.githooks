@@ -3,9 +3,11 @@
 # ruff: noqa: E501
 from __future__ import annotations
 
+import argparse
 import logging
 import re
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 import rich
@@ -129,10 +131,14 @@ def check_len_first_line_commit_msg(
     return result
 
 
-def check_len_first_line_commit_msg_cli() -> sys.exit:
+def check_len_first_line_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
     """Check commit message."""
-    commit_msg_filepath = sys.argv[1]
-    result = check_len_first_line_commit_msg(commit_msg_filepath)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
+    result = check_len_first_line_commit_msg(*args.filenames)
 
     rich.print(result.message)
     sys.exit(result.code)  # Validation passed, allow commit
