@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import argparse
+from os import getenv
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -12,6 +13,13 @@ from icecream import ic
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+DEBUG_MODE = getenv('DEBUG_MODE') or getenv('INCOLUME_DEBUG_MODE') or False
+ic.disable()  # Disable by default
+
+if DEBUG_MODE:
+    ic.enable()
 
 BLACKLIST: list[bytes] = [
     b'BEGIN RSA PRIVATE KEY',
