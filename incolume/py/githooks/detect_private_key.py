@@ -5,11 +5,14 @@
 from __future__ import annotations
 
 import argparse
+import logging
 from os import getenv
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from icecream import ic
+
+from incolume.py.githooks import FAILURE, SUCCESS
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -43,9 +46,10 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     """
     private_key_files = []
-    ic(filenames)
+    logging.debug(ic(filenames))
 
     for filename in filenames:
+        logging.info(ic(filename))
         with Path(filename).open('rb') as f:
             content = f.read()
             if any(line in content for line in BLACKLIST):
@@ -54,8 +58,8 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
     if private_key_files:
         for private_key_file in private_key_files:
             print(f'Private key found: {private_key_file}')
-        return False
-    return True
+        return FAILURE
+    return SUCCESS
 
 
 def main(argv: Sequence[str] | None = None) -> int:

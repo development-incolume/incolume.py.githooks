@@ -14,6 +14,7 @@ repos:
     - id: check-xml
     - id: check-yaml
     - id: detect-private-key
+      exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
     - id: double-quote-string-fixer
     - id: end-of-file-fixer
     - id: forbid-new-submodules
@@ -43,11 +44,14 @@ repos:
       additional_dependencies: [colorama,rich]  # Python dependency for the script
 
     - id: detect-key
+      verbose: true
       name: Incolume - detect private key
       description: detects the presence of private keys.
       entry: detect-key
       language: python
       types: [text]
+      files: ''  # The pattern of files to run on.
+      exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
 
     - id: check-valid-filenames
       name: Incolume - check if is valid filenames
