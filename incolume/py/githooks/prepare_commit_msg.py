@@ -3,15 +3,20 @@
 # ruff: noqa: E501
 from __future__ import annotations
 
+import argparse
 import logging
 import re
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import rich
 from icecream import ic
 
 from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
@@ -62,14 +67,18 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
     return result
 
 
-def prepare_commit_msg_cli() -> sys.exit:
+def prepare_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> sys.exit:
     """Run CLI for prepare-commit-msg hook."""
-    msgfile = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
     ic(fl := Path('.git/COMMIT_EDITMSG'))
     ic(fl.is_file())
-    logging.debug('msgfile: %s', msgfile)
+    logging.debug('msgfile: %s', args)
 
-    result = prepare_commit_msg(msgfile)
+    result = prepare_commit_msg(*args.filenames)
 
     rich.print(result.message)
     sys.exit(result.code)
@@ -77,16 +86,16 @@ def prepare_commit_msg_cli() -> sys.exit:
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
+    regex = re.compile(
+        r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):'
+    )
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:
         commit_message = f.read().decode().strip()
 
     # Example validation: Ensure message starts with a type (e.g., feat, fix, chore)
-    if not re.match(
-        r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):',
-        commit_message,
-    ):
+    if not regex.match(commit_message):
         result = Result(
             code=FAILURE,
             message='Error: Commit message must start with a type (e.g., feat:, fix:).',
@@ -94,10 +103,14 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     return result
 
 
-def check_type_commit_msg_cli() -> sys.exit:
+def check_type_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> sys.exit:
     """Check commit message."""
-    commit_msg_filepath = sys.argv[1]
-    result = check_type_commit_msg(commit_msg_filepath)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
+    result = check_type_commit_msg(*args.filenames)
     rich.print(result.message)
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
@@ -129,10 +142,14 @@ def check_len_first_line_commit_msg(
     return result
 
 
-def check_len_first_line_commit_msg_cli() -> sys.exit:
+def check_len_first_line_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
     """Check commit message."""
-    commit_msg_filepath = sys.argv[1]
-    result = check_len_first_line_commit_msg(commit_msg_filepath)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
+    result = check_len_first_line_commit_msg(*args.filenames)
 
     rich.print(result.message)
     sys.exit(result.code)  # Validation passed, allow commit
