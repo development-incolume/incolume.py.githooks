@@ -4,7 +4,12 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 from typing import NoReturn, Callable
-from incolume.py.githooks.detect_private_key import has_private_key, BLACKLIST
+from incolume.py.githooks.detect_private_key import (
+    has_private_key,
+    BLACKLIST,
+    SUCCESS,
+    FAILURE,
+)
 from icecream import ic
 from tempfile import gettempdir
 import pytest
@@ -34,9 +39,11 @@ class TestCaseDetectPrivateKey:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param('test_no_key.txt', True, marks=[]),
+            pytest.param('test_no_key.txt', SUCCESS, marks=[]),
             pytest.param(
-                'test_no_key.py', True, marks=[pytest.mark.xfail(strict=False)]
+                'test_no_key.py',
+                SUCCESS,
+                marks=[pytest.mark.xfail(strict=False)],
             ),
         ],
     )
@@ -55,7 +62,7 @@ class TestCaseDetectPrivateKey:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_private_key.txt'
         test_file.write_text(f'----- {entrance} -----\n')
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_rsa_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -66,7 +73,7 @@ class TestCaseDetectPrivateKey:
             '-----END RSA PRIVATE KEY-----\n'
         )
 
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_dsa_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -76,7 +83,7 @@ class TestCaseDetectPrivateKey:
             'MIIBuwIBAAKBgQDc5g5h5y5v5y5v5y5v5y5v5y5v5y5v5y5v5y5v\n'
             '-----END DSA PRIVATE KEY-----\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_ec_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -86,7 +93,7 @@ class TestCaseDetectPrivateKey:
             'MHcCAQEEIO7r+6G9k5g5h5y5v5y5v5y5v5y5v5y5v'
             '-----END EC PRIVATE KEY -----\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_openssh_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -97,7 +104,7 @@ class TestCaseDetectPrivateKey:
             'cnNhAAAAAwEAAQAAAQEArw7r+6G9k5g5h5y5v5y5v5y5v5y5v5y5v5y5v5y5v\n'
             '-----END OPENSSH PRIVATE KEY-----\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_pgp_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -110,7 +117,7 @@ class TestCaseDetectPrivateKey:
             '=abcd\n'
             '-----END PGP PRIVATE KEY BLOCK-----\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_putty_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -125,7 +132,7 @@ class TestCaseDetectPrivateKey:
             'AAABAQC7r+6G9k5g5h5y5v5y5v5y5v5y5v5y5v5y5v\n'
             'Private-MAC: abcd1234abcd1234abcd1234abcd1234abcd1234\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_ssh2_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -139,7 +146,7 @@ class TestCaseDetectPrivateKey:
             'AAABAQC7r+6G9k5g5h5y5v5y5v5y5v5y5v5y5v5y5v\n'
             '---- END SSH2 ENCRYPTED PRIVATE KEY ----\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE
 
     def test_has_openvpn_key(self) -> NoReturn:
         """Test with a file that contains a private key."""
@@ -149,4 +156,4 @@ class TestCaseDetectPrivateKey:
             'abcd1234abcd1234abcd1234abcd1234\n'
             '-----END OpenVPN Static key V1-----\n'
         )
-        assert has_private_key(test_file) is False
+        assert has_private_key(test_file) is FAILURE

@@ -409,6 +409,8 @@ version = "0.4.0a15"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
+    { name = "colorama" },
+    { name = "icecream" },
     { name = "rich", extra = ["jupyter"] },
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "tqdm" },
@@ -434,6 +436,8 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "click", specifier = ">=8.2.1" },
+    { name = "colorama", specifier = ">=0.4.6" },
+    { name = "icecream", specifier = ">=2.1.7" },
     { name = "rich", extras = ["jupyter"], specifier = ">=14.1.0" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.2.1" },
     { name = "tqdm", specifier = ">=4.67.1" },
