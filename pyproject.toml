@@ -1,7 +1,7 @@
 [project]
 name = "incolume-py-githooks"
-version = "0.3.0"
-description = "Add your description here"
+version = "0.4.0"
+description = "Hooks git for incolume projects"
 readme = "README.md"
 requires-python = ">=3.10, <4"
 
@@ -31,12 +31,17 @@ classifiers = [
 
 dependencies = [
     "click>=8.2.1",
+    "colorama>=0.4.6",
+    "icecream>=2.1.7",
+    "rich[jupyter]>=14.1.0",
+    "tomli>=2.2.1 ; python_full_version < '3.11'",
     "tqdm>=4.67.1",
 ]
 
 [dependency-groups]
 dev = [
     "incolume-py-changelog>=0.17.0",
+    "nbformat>=5.10.4",
     "pre-commit>=4.3.0",
     "pytest-cov>=7.0.0",
     "pytest-mock>=3.15.0",
@@ -54,7 +59,8 @@ docs = [
 detect-key = "incolume.py.githooks.detect_private_key:main"
 is-valid-filename = "incolume.py.githooks.valid_filename:main"
 effort-msg = "incolume.py.githooks.effort_message:run"
-pre-commit-installed = "incolume.py.githooks.pre_commit_running:run"
+is-precommit-installed = "incolume.py.githooks.pre_commit_running:run"
+is-valid-msg-commit = "incolume.py.githooks.prepare_commit_msg:prepare_commit_msg_cli"
 
 
 [tool.uv]

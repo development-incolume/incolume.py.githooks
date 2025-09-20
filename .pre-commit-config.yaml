@@ -14,6 +14,7 @@ repos:
     - id: check-xml
     - id: check-yaml
     - id: detect-private-key
+      exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
     - id: double-quote-string-fixer
     - id: end-of-file-fixer
     - id: forbid-new-submodules
@@ -37,29 +38,63 @@ repos:
 - repo: local
   hooks:
     - id: effort-message
-      name: Incolume Commit Message Effort Hook
+      name: Incolume - Commit Message Effort Hook
       language: python
       entry: effort-msg
+      additional_dependencies: [colorama,rich]  # Python dependency for the script
 
     - id: detect-key
-      name: Incolume detect private key
+      verbose: true
+      name: Incolume - detect private key
       description: detects the presence of private keys.
       entry: detect-key
       language: python
       types: [text]
+      files: ''  # The pattern of files to run on.
+      exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
 
     - id: check-valid-filenames
-      name: Incolume check if is valid filenames
+      name: Incolume - check if is valid filenames
       description: Guarantees valid filenames for Python.
       entry: is-valid-filename
       language: python
+      additional_dependencies: [icecream,rich]  # Python dependency for the script
       types: [python]
       stages: [pre-commit, pre-push, manual]
 
     - id: check-precommit-installed
-      name: Incolume check if pre-commit is installed
+      name: Incolume - check if pre-commit is installed
       description: Guarantees pre-commit instalation for project.
-      entry: pre-commit-installed
+      entry: is-precommit-installed
       language: python
       types: [python]
       stages: [pre-commit, pre-push, manual]
+
+    # - id: validate-example-notebooks
+    #   name: Incolume - validate example notebooks
+    #   entry: python ./incolume/py/githooks/validate_examples.py  # script is called from root directory
+    #   language: python  # script requires the Python interpreter
+    #   require_serial: true  # don't run in parallel because one call of the script parses all files
+    #   additional_dependencies: [nbformat]  # Python dependency for the script
+    #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
+    #   types: [jupyter]  # jupyter is alias for .ipynb files
+
+    # - id: validate-message-commit-0
+    #   name: Incolume - validate message Commit [bash] agree with Conventional Commits
+    #   entry: ./incolume/py/githooks/prepare-commit-msg  # script is called from root directory
+    #   language: script  # script requires the Python interpreter
+    #   require_serial: false  # don't run in parallel
+    #   additional_dependencies: []  # Python dependency for the script
+    #   # files: ^*$  # this catches all .ipynb under examples/
+    #   types: [python]  # jupyter is alias for .ipynb files
+    #   stages: [prepare-commit-msg, pre-commit]  # this hook is run at commit time
+
+    - id: validate-message-commit
+      name: Incolume - validate message Commit agree with Conventional Commits
+      entry: is-valid-msg-commit  # script is called from root directory
+      language: python  # script requires the Python interpreter
+      require_serial: false  # don't run in parallel
+      additional_dependencies: [colorama,rich]  # Python dependency for the script
+      # files: ^*$  # this catches all .ipynb under examples/
+      types_or: [system-verilog]  #
+      stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
