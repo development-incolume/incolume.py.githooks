@@ -8,6 +8,8 @@ import argparse
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from icecream import ic
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
@@ -33,6 +35,7 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     """
     private_key_files = []
+    ic(filenames)
 
     for filename in filenames:
         with Path(filename).open('rb') as f:
@@ -60,7 +63,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
-    return has_private_key(args)
+    return has_private_key(*args.filenames)
 
 
 if __name__ == '__main__':
