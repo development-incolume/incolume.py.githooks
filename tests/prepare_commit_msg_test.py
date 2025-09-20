@@ -12,6 +12,8 @@ from incolume.py.githooks.prepare_commit_msg import (
     MESSAGERROR,
     MESSAGESUCCESS,
     prepare_commit_msg,
+    check_len_first_line_commit_msg,
+    check_type_commit_msg,
 )
 from tempfile import gettempdir
 from pathlib import Path
@@ -124,3 +126,26 @@ class TestCasePrepareCommitMsg:
         result = prepare_commit_msg(entrance.msg_file)
         ic(result)
         assert result == entrance.expected
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(
+                Entrance(msg_file=test_dir / 'abc.txt', msg_commit='a' * 50)
+            ),
+            pytest.param(
+                Entrance(msg_file=test_dir / 'bcd.txt', msg_commit='b' * 49)
+            ),
+            pytest.param(
+                Entrance(msg_file=test_dir / 'bcd.txt', msg_commit='b' * 1000)
+            ),
+        ],
+    )
+    def test_check_len_first_line_commit_msg(self, entrance) -> NoReturn:
+        """Test for check len first line commit messages."""
+        entrance.msg_file.write_text(entrance.msg_commit)
+        assert check_len_first_line_commit_msg(entrance.msg_file)
+
+    def test_check_type_commit_msg(self) -> NoReturn:
+        """Test for check type commit message."""
+        assert check_type_commit_msg(self.test_dir / 'bcd.txt')
