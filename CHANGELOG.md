@@ -10,7 +10,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-19:
+## [0.4.0]	 &#8212; 	2025-09-20:
 ### Added
   - Badging `pre-commit`;
   - Acrescentado logo do projeto;
@@ -49,4 +49,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [0.2.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.1.0...0.2.0
 [0.2.1]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.0...0.2.1
 [0.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.1...0.3.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...Unreleased
+[0.4.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...0.4.0
