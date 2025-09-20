@@ -1,6 +1,7 @@
 """Module for validate commit message."""
 
 # ruff: noqa: E501
+from __future__ import annotations
 
 import logging
 import re
@@ -8,14 +9,11 @@ import sys
 from pathlib import Path
 
 import rich
-from colorama import Fore, Style
 from icecream import ic
 
-from incolume.py.githooks import RULE_COMMITFORMAT, Result
+from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
 
-MESSAGESUCCESS = (
-    f'{Fore.GREEN}Commit message is validated [OK]{Style.RESET_ALL}'
-)
+MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
     Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...
 
@@ -44,39 +42,43 @@ MESSAGERROR = """[red]
     [/]"""
 
 
-def prepend_commit_msg() -> int:
+def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
     """Prepend the commit message with `text`."""
-    ic(sys.argv)
-    ic(fl := Path('.git/COMMIT_EDITMSG'))
-    ic(fl.is_file())
-    ic(fl.read_bytes().decode())
-    msgfile = sys.argv[1]
-    ic(msgfile)
-    logging.debug('msgfile: %s', msgfile)
-
-    result = Result(0, MESSAGESUCCESS)
-
-    with Path(msgfile).open('rb') as f:
-        content = f.read().strip()
-        logging.debug('%s', ic(content))
-
+    msgfile = Path(msgfile)
+    result = Result(SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', str(regex.pattern))
-    if not regex.match(content):
-        result = Result(1, MESSAGERROR)
+
+    try:
+        with msgfile.open('rb') as f:
+            content = f.read().strip().decode()
+            logging.debug('%s', ic(content))
+
+        if not regex.match(content):
+            raise AssertionError  # noqa: TRY301
+    except (AssertionError, FileNotFoundError, FileExistsError):
+        result = Result(FAILURE, MESSAGERROR)
+
+    return result
+
+
+def prepare_commit_msg_cli() -> sys.exit:
+    """Run CLI for prepare-commit-msg hook."""
+    msgfile = sys.argv[1]
+    ic(fl := Path('.git/COMMIT_EDITMSG'))
+    ic(fl.is_file())
+    logging.debug('msgfile: %s', msgfile)
+
+    result = prepare_commit_msg(msgfile)
+
     rich.print(result.message)
     sys.exit(result.code)
 
 
-def run() -> None:
-    """Run it."""
-    prepend_commit_msg()
-
-
-def check_type_commit_msg() -> sys.exit:
-    """Check commit message."""
-    commit_msg_filepath = sys.argv[1]
-
+def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
+    """Check type commit messagem."""
+    commit_msg_filepath = Path(commit_msg_filepath)
+    result = Result(SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:
         commit_message = f.read().decode().strip()
 
@@ -85,30 +87,56 @@ def check_type_commit_msg() -> sys.exit:
         r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):',
         commit_message,
     ):
-        rich.print(
-            'Error: Commit message must start with a type (e.g., feat:, fix:).'
+        result = Result(
+            code=FAILURE,
+            message='Error: Commit message must start with a type (e.g., feat:, fix:).',
         )
-        sys.exit(1)  # Abort commit
-    sys.exit(0)  # Validation passed, allow commit
+    return result
 
 
-def check_len_first_line_commit_msg() -> sys.exit:
+def check_type_commit_msg_cli() -> sys.exit:
     """Check commit message."""
     commit_msg_filepath = sys.argv[1]
+    result = check_type_commit_msg(commit_msg_filepath)
+    rich.print(result.message)
+    sys.exit(result.code)  # Validation passed or failure, allowing commit
+
+
+def check_len_first_line_commit_msg(
+    commit_msg_filepath: Path | str, len_line: int = 50
+) -> Result:
+    """Check len of first line from commit message.
+
+    Returns:
+        bool:
+
+    """
+    commit_msg_filepath = Path(commit_msg_filepath)
+    len_line = min(50, len_line)
+    len_line = max(50, len_line)
+    result = Result(SUCCESS, MESSAGESUCCESS)
 
     with Path(commit_msg_filepath).open('rb') as f:
         commit_message = f.read().decode().strip()
 
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
-    if len(first_line) > 50:  # noqa: PLR2004
-        rich.print(
-            f'Error: Commit subject line exceeds 50 characters ({len(first_line)}).'
+    if len(first_line) > len_line:
+        result = Result(
+            code=FAILURE,
+            message=f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).',
         )
-        sys.exit(1)
+    return result
 
-    sys.exit(0)  # Validation passed, allow commit
+
+def check_len_first_line_commit_msg_cli() -> sys.exit:
+    """Check commit message."""
+    commit_msg_filepath = sys.argv[1]
+    result = check_len_first_line_commit_msg(commit_msg_filepath)
+
+    rich.print(result.message)
+    sys.exit(result.code)  # Validation passed, allow commit
 
 
 if __name__ == '__main__':
-    raise SystemExit(run())
+    raise SystemExit(prepare_commit_msg_cli())

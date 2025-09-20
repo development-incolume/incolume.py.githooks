@@ -14,7 +14,8 @@ with suppress(ImportError, ModuleNotFoundError):
 with suppress(ImportError, ModuleNotFoundError):
     import tomli  # type: ignore[import]
 
-
+SUCCESS: Final[int] = 0
+FAILURE: Final[int] = 1
 REGEX_SEMVER: Final = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME: Final = r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'
 RULE_COMMITFORMAT = r'^(((Merge|Bumping|Revert)|(bugfix|build|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
