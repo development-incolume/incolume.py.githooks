@@ -75,10 +75,10 @@ def prepare_commit_msg_cli() -> sys.exit:
     sys.exit(result.code)
 
 
-def check_type_commit_msg_cli() -> sys.exit:
-    """Check commit message."""
-    commit_msg_filepath = sys.argv[1]
-
+def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
+    """Check type commit messagem."""
+    commit_msg_filepath = Path(commit_msg_filepath)
+    result = Result(SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:
         commit_message = f.read().decode().strip()
 
@@ -87,38 +87,55 @@ def check_type_commit_msg_cli() -> sys.exit:
         r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):',
         commit_message,
     ):
-        rich.print(
-            'Error: Commit message must start with a type (e.g., feat:, fix:).'
+        result = Result(
+            code=FAILURE,
+            message='Error: Commit message must start with a type (e.g., feat:, fix:).',
         )
-        sys.exit(FAILURE)  # Abort commit
-    sys.exit(SUCCESS)  # Validation passed, allow commit
+    return result
 
 
-def check_len_first_line_commit_msg() -> bool:
+def check_type_commit_msg_cli() -> sys.exit:
+    """Check commit message."""
+    commit_msg_filepath = sys.argv[1]
+    result = check_type_commit_msg(commit_msg_filepath)
+    rich.print(result.message)
+    sys.exit(result.code)  # Validation passed or failure, allowing commit
+
+
+def check_len_first_line_commit_msg(
+    commit_msg_filepath: Path | str, len_line: int = 50
+) -> Result:
     """Check len of first line from commit message.
 
     Returns:
         bool:
 
     """
-
-
-def check_len_first_line_commit_msg_cli() -> sys.exit:
-    """Check commit message."""
-    commit_msg_filepath = sys.argv[1]
+    commit_msg_filepath = Path(commit_msg_filepath)
+    len_line = min(50, len_line)
+    len_line = max(50, len_line)
+    result = Result(SUCCESS, MESSAGESUCCESS)
 
     with Path(commit_msg_filepath).open('rb') as f:
         commit_message = f.read().decode().strip()
 
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
-    if len(first_line) > 50:  # noqa: PLR2004
-        rich.print(
-            f'Error: Commit subject line exceeds 50 characters ({len(first_line)}).'
+    if len(first_line) > len_line:
+        result = Result(
+            code=FAILURE,
+            message=f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).',
         )
-        sys.exit(FAILURE)
+    return result
 
-    sys.exit(SUCCESS)  # Validation passed, allow commit
+
+def check_len_first_line_commit_msg_cli() -> sys.exit:
+    """Check commit message."""
+    commit_msg_filepath = sys.argv[1]
+    result = check_len_first_line_commit_msg(commit_msg_filepath)
+
+    rich.print(result.message)
+    sys.exit(result.code)  # Validation passed, allow commit
 
 
 if __name__ == '__main__':
