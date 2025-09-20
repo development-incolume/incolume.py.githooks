@@ -54,6 +54,7 @@ repos:
       description: Guarantees valid filenames for Python.
       entry: is-valid-filename
       language: python
+      additional_dependencies: [icecream,rich]  # Python dependency for the script
       types: [python]
       stages: [pre-commit, pre-push, manual]
 
