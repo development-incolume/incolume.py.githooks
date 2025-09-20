@@ -10,17 +10,14 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-14:
+## [0.4.0]	 &#8212; 	2025-09-20:
 ### Added
-  - Adicionado hook check-precommit-installed;
-  - Adicionado hook effort-message;
-  - Adicionado hook de validação para filenames em Python;
-### Changed
-  - Aplicado QA parcialmente ao projeto;
-  - Adicionado suite de teste pytest;
-  - Refinado a configuração pytest conforme padrões JEDI;
+  - Badging `pre-commit`;
+  - Acrescentado logo do projeto;
+  - Acrescentado configuração padrão para editores de código no projeto;
+  - Acrescentado cores em multiplataforma;
 
-## [0.3.0]	 &#8212; 	2025-09-14:
+## [0.3.0]	 &#8212; 	2025-09-15:
 ### Added
   - Adicionado hook check-precommit-installed;
   - Adicionado hook effort-message;
@@ -52,4 +49,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [0.2.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.1.0...0.2.0
 [0.2.1]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.0...0.2.1
 [0.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.1...0.3.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...Unreleased
+[0.4.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...0.4.0

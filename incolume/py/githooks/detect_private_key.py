@@ -5,13 +5,26 @@
 from __future__ import annotations
 
 import argparse
+import logging
+from os import getenv
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+from icecream import ic
+
+from incolume.py.githooks import FAILURE, SUCCESS
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-BLACKLIST = [
+
+DEBUG_MODE = getenv('DEBUG_MODE') or getenv('INCOLUME_DEBUG_MODE') or False
+ic.disable()  # Disable by default
+
+if DEBUG_MODE:
+    ic.enable()
+
+BLACKLIST: list[bytes] = [
     b'BEGIN RSA PRIVATE KEY',
     b'BEGIN DSA PRIVATE KEY',
     b'BEGIN EC PRIVATE KEY',
@@ -23,6 +36,30 @@ BLACKLIST = [
     b'BEGIN ENCRYPTED PRIVATE KEY',
     b'BEGIN OpenVPN Static key V1',
 ]
+
+
+def has_private_key(*filenames: Sequence[Path]) -> bool:
+    """Check if the content contains a private key.
+
+    Args:
+        filenames (Sequence[Path]): The sequence of file paths to check.
+
+    """
+    private_key_files = []
+    logging.debug(ic(filenames))
+
+    for filename in filenames:
+        logging.info(ic(filename))
+        with Path(filename).open('rb') as f:
+            content = f.read()
+            if any(line in content for line in BLACKLIST):
+                private_key_files.append(filename)
+
+    if private_key_files:
+        for private_key_file in private_key_files:
+            print(f'Private key found: {private_key_file}')
+        return FAILURE
+    return SUCCESS
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -38,20 +75,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
-
-    private_key_files = []
-
-    for filename in args.filenames:
-        with Path(filename).open('rb') as f:
-            content = f.read()
-            if any(line in content for line in BLACKLIST):
-                private_key_files.append(filename)
-
-    if private_key_files:
-        for private_key_file in private_key_files:
-            print(f'Private key found: {private_key_file}')
-        return 1
-    return 0
+    return has_private_key(*args.filenames)
 
 
 if __name__ == '__main__':
