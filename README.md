@@ -2,6 +2,7 @@
 
 # incolume.py.githooks
 
+![PyPI - Version](https://img.shields.io/pypi/v/incolume.py.githooks?color=00FFFF&label=pypi+package)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 ---
