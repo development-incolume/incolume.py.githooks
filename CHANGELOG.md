@@ -24,7 +24,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Adicionado hook de validação para filenames em Python;
   - Acrescentados testes unitários;
   - Acrescentado CHANGELOG.md;
-  - Configurado `pre-commit` para gestringir violação de regras;
+  - Configurado `pre-commit` para gerir e restringir violação de regras;
 ### Changed
   - Aplicado QA parcialmente ao projeto;
   - Adicionado suite de teste pytest;
