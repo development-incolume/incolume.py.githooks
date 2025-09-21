@@ -15,6 +15,26 @@ class TestCaseValidFilename:
         ['entrance', 'expected'],
         [
             pytest.param(
+                {'filename': '_validname01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'validname01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'valid_name01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'validname_01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'valid_name_01.py'},
+                True,
+            ),
+            pytest.param(
                 {'filename': 'validname.py'}, True, id='validname.py'
             ),
             pytest.param(
