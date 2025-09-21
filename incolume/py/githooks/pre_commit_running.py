@@ -1,5 +1,5 @@
 """Verify if pre-commit is installed."""
-# ruff: noqa: E501 T201
+# ruff: noqa: T201
 
 from pathlib import Path
 
@@ -10,7 +10,8 @@ def run() -> int:
     """Run it."""
     if not Path('.pre-commit-config.yaml').exists():
         print(
-            f'{Fore.RED}pre-commit configuration detected, but `pre-commit install` was never run{Style.RESET_ALL}',
+            f'{Fore.RED}pre-commit configuration detected,'
+            f' but `pre-commit install` was never run{Style.RESET_ALL}',
         )
         return 1
     return 0
