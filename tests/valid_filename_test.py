@@ -15,6 +15,14 @@ class TestCaseValidFilename:
         ['entrance', 'expected'],
         [
             pytest.param(
+                {'filename': '__main__.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': '__init__.py'},
+                True,
+            ),
+            pytest.param(
                 {'filename': '_validname01.py'},
                 True,
             ),
@@ -64,6 +72,15 @@ class TestCaseValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+            pytest.param(
+                {'filename': '0_invalid_name.py'}, False, marks=[]
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '0_Invalid_Name.py'}, False, marks=[]
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '0InvalidName.py'}, False, marks=[]
+            ),  # Not snake_case
             pytest.param(
                 {'filename': 'InvalidName.py'}, False, marks=[]
             ),  # Not snake_case
