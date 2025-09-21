@@ -12,6 +12,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [Unreleased]	 &#8212; 	2025-09-21:
 ### Added
+  - Adicionado hook pre-commit-installed;
   - Testes unitários para CLI;
   - Refactor: Cobertura de testes em código Python ampliada;
   - Estrutura `assets` definida;
