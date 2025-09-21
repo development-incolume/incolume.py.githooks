@@ -15,8 +15,8 @@ def run() -> int:
     result = SUCCESS
     if not Path('.pre-commit-config.yaml').exists():
         rich.print(
-            '[red]pre-commit configuration detected,'
-            ' but `pre-commit install` was never run[/red]',
+            '\n\n[red]`pre-commit` configuration detected,'
+            ' but `pre-commit install` was never ran.[/red]\n',
         )
         result |= FAILURE
     return sys.exit(result)
