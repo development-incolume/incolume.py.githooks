@@ -1,5 +1,5 @@
 - id: detect-key
-  name: incolume detect private key
+  name: Incolume - detect private key
   description: detects the presence of private keys.
   entry: detect-key
   language: python
@@ -7,17 +7,26 @@
   exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
 
 - id: check-valid-filenames
-  name: incolume check if is valid filenames
+  name: Incolume - check if is valid filenames
   description: Guarantees valid filenames for Python.
   entry: is-valid-filename
   language: python
+  additional_dependencies: [icecream,rich]  # Python dependency for the script
   types: [python]
   stages: [pre-commit, pre-push, manual]
 
 - id: effort-message
-  name: incolume effort message
+  name: Incolume - Commit Message Effort Hook
   description: Effort message for commit.
   entry: effort-msg
+  language: python
+  types: [python]
+  stages: [pre-commit, pre-push, manual]
+
+- id: check-precommit-installed
+  name: Incolume - check if pre-commit is installed
+  description: Guarantees pre-commit instalation for project.
+  entry: is-precommit-installed
   language: python
   types: [python]
   stages: [pre-commit, pre-push, manual]
