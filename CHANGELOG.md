@@ -10,12 +10,12 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-19:
+## [Unreleased]	 &#8212; 	2025-09-21:
 ### Added
-  - Badging `pre-commit`;
-  - Acrescentado logo do projeto;
-  - Acrescentado configuração padrão para editores de código no projeto;
-  - Acrescentado cores em multiplataforma;
+  - Testes unitários para CLI;
+  - Refactor: Cobertura de testes em código Python ampliada;
+  - Estrutura `assets` definida;
+  - Modelos de exemplos retirados da estrutura principal;
 
 ## [0.4.0]	 &#8212; 	2025-09-20:
 ### Added
