@@ -20,7 +20,7 @@ ic.disable()  # Disable by default
 if DEBUG_MODE:
     ic.enable()
 
-SNAKE_CASE_REGEX = re.compile(r'^[a-z_]+$')
+SNAKE_CASE_REGEX = re.compile(r'^[a-z_][a-z_0-9]+$')
 
 
 def is_valid_filename(

@@ -10,6 +10,14 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
+## [Unreleased]	 &#8212; 	2025-09-21:
+### Added
+  - Adicionado hook pre-commit-installed;
+  - Testes unitários para CLI;
+  - Refactor: Cobertura de testes em código Python ampliada;
+  - Estrutura `assets` definida;
+  - Modelos de exemplos retirados da estrutura principal;
+
 ## [0.4.0]	 &#8212; 	2025-09-20:
 ### Added
   - Badging `pre-commit`;
@@ -24,7 +32,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Adicionado hook de validação para filenames em Python;
   - Acrescentados testes unitários;
   - Acrescentado CHANGELOG.md;
-  - Configurado `pre-commit` para gestringir violação de regras;
+  - Configurado `pre-commit` para gerir e restringir violação de regras;
 ### Changed
   - Aplicado QA parcialmente ao projeto;
   - Adicionado suite de teste pytest;
@@ -50,3 +58,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [0.2.1]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.0...0.2.1
 [0.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.1...0.3.0
 [0.4.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...0.4.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.4.0...Unreleased
