@@ -43,8 +43,8 @@ MESSAGERROR = """[red]
       #7 <type>(scope)!: #id-issue <description>:
             git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'
 
-    [yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/]
-    [/]"""
+    [yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/yellow]
+    [/red]"""
 
 
 def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
