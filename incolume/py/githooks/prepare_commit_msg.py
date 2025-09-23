@@ -181,24 +181,36 @@ def check_max_len_first_line_commit_msg_cli(
     sys.exit(result.code)  # Validation passed, allow commit
 
 
-def clean_commit_msg(
-    commit_msg_file: Path | str, commit_source: str, commit_hash: str
+def clean_commit_msg_cli(
+    argv: Sequence[str] | None = None,
 ) -> int:
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
 
     Args:
-        commit_msg_file (Path or str): The path to the commit message file.
-        commit_source (str): The source of the commit message.
-        commit_hash (str): The commit hash.
+        argv: Arguments values sequence:
+          - commit_msg_file (Path or str): The path to the commit message file.
+          - commit_source (str): The source of the commit message.
+          - commit_hash (str): The commit hash.
 
     Returns:
         int: SUCCESS code if the operation completes.
 
     """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('commit_msg_file', help='Filename for commit message')
+    parser.add_argument('commit_source', help='Commit source')
+    parser.add_argument('commit_hash', help='Commit hash')
+    args = parser.parse_args(argv)
+    commit_msg_file = args.commit_msg_file
+    commit_source = args.commit_source
+    commit_hash = args.commit_hash
+
     ic(commit_msg_file, commit_source, commit_hash)
+
     commit_msg_file = Path(commit_msg_file)
+
     backup = commit_msg_file.with_suffix(commit_msg_file.suffix + '.bak')
     backup.write_bytes(commit_msg_file.read_bytes())
 
