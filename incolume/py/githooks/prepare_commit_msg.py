@@ -115,7 +115,33 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
-def check_len_first_line_commit_msg(
+def check_min_len_first_line_commit_msg(
+    commit_msg_filepath: Path | str, len_line: int = 10
+) -> Result:
+    """Check len of first line from commit message.
+
+    Returns:
+        bool:
+
+    """
+    commit_msg_filepath = Path(commit_msg_filepath)
+    len_line = max(10, len_line)
+    result = Result(SUCCESS, MESSAGESUCCESS)
+
+    with Path(commit_msg_filepath).open('rb') as f:
+        commit_message = f.read().decode().strip()
+
+    # Example validation: Check subject line length (e.g., 50 character limit)
+    first_line = commit_message.split('\n')[0]
+    if len(first_line) > len_line:
+        result = Result(
+            code=FAILURE,
+            message=f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)}).',
+        )
+    return result
+
+
+def check_max_len_first_line_commit_msg(
     commit_msg_filepath: Path | str, len_line: int = 50
 ) -> Result:
     """Check len of first line from commit message.
@@ -142,14 +168,14 @@ def check_len_first_line_commit_msg(
     return result
 
 
-def check_len_first_line_commit_msg_cli(
+def check_max_len_first_line_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
     """Check commit message."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
-    result = check_len_first_line_commit_msg(*args.filenames)
+    result = check_max_len_first_line_commit_msg(*args.filenames)
 
     rich.print(result.message)
     sys.exit(result.code)  # Validation passed, allow commit
