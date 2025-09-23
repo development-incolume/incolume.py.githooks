@@ -17,6 +17,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
     prepare_commit_msg_cli,
+    clean_commit_msg_cli,
 )
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
@@ -196,3 +197,12 @@ class TestCasePrepareCommitMsg:
         assert bool(result) is bool(expected)
         assert 'Error: Commit subject line exceeds' in captured.out
         assert not captured.err
+
+    def test_clean_commit_msg_cli(self) -> NoReturn:
+        """Test CLI for clean-commit-msg-cli."""
+        with NamedTemporaryFile(delete=False) as fl:
+            filename = Path(fl.name)
+            filename.write_text(
+                '#Please enter the commit message', encoding='utf-8'
+            )
+        assert clean_commit_msg_cli([filename.as_posix(), '', '']) == 0
