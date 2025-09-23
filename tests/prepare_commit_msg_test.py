@@ -198,11 +198,16 @@ class TestCasePrepareCommitMsg:
         assert 'Error: Commit subject line exceeds' in captured.out
         assert not captured.err
 
-    def test_clean_commit_msg_cli(self) -> NoReturn:
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('#Please enter the commit message', SUCCESS),
+            pytest.param('feat: #61 Please enter the commit message', SUCCESS),
+        ],
+    )
+    def test_clean_commit_msg_cli(self, entrance, expected) -> NoReturn:
         """Test CLI for clean-commit-msg-cli."""
         with NamedTemporaryFile(delete=False) as fl:
             filename = Path(fl.name)
-            filename.write_text(
-                '#Please enter the commit message', encoding='utf-8'
-            )
-        assert clean_commit_msg_cli([filename.as_posix(), '', '']) == 0
+            filename.write_text(entrance, encoding='utf-8')
+        assert clean_commit_msg_cli([filename.as_posix(), '', '']) == expected
