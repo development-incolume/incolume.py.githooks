@@ -12,9 +12,9 @@ from incolume.py.githooks.prepare_commit_msg import (
     MESSAGERROR,
     MESSAGESUCCESS,
     prepare_commit_msg,
-    check_len_first_line_commit_msg,
+    check_max_len_first_line_commit_msg,
     check_type_commit_msg,
-    check_len_first_line_commit_msg_cli,
+    check_max_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
     prepare_commit_msg_cli,
 )
@@ -147,7 +147,7 @@ class TestCasePrepareCommitMsg:
     def test_check_len_first_line_commit_msg(self, entrance) -> NoReturn:
         """Test for check len first line commit messages."""
         entrance.msg_file.write_text(entrance.msg_commit)
-        assert check_len_first_line_commit_msg(entrance.msg_file)
+        assert check_max_len_first_line_commit_msg(entrance.msg_file)
 
     def test_check_type_commit_msg(self) -> NoReturn:
         """Test for check type commit message."""
@@ -189,7 +189,7 @@ class TestCasePrepareCommitMsg:
 
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
         with pytest.raises(expected_exception=SystemExit):
-            result = check_len_first_line_commit_msg_cli([
+            result = check_max_len_first_line_commit_msg_cli([
                 test_file.as_posix()
             ])
         captured = capsys.readouterr()

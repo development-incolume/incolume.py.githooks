@@ -141,7 +141,7 @@ def check_min_len_first_line_commit_msg(
     return result
 
 
-def check_len_first_line_commit_msg(
+def check_max_len_first_line_commit_msg(
     commit_msg_filepath: Path | str, len_line: int = 50
 ) -> Result:
     """Check len of first line from commit message.
@@ -168,14 +168,14 @@ def check_len_first_line_commit_msg(
     return result
 
 
-def check_len_first_line_commit_msg_cli(
+def check_max_len_first_line_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
     """Check commit message."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
-    result = check_len_first_line_commit_msg(*args.filenames)
+    result = check_max_len_first_line_commit_msg(*args.filenames)
 
     rich.print(result.message)
     sys.exit(result.code)  # Validation passed, allow commit
