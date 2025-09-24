@@ -43,8 +43,7 @@ def insert_git_diff(commit_msg_file: Path, diff_output: str) -> None:
 
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
 
-
-def main() -> None:
+def main(argv: Sequence[str] | None = None) -> int:
     """CLI for module."""
     parser = argparse.ArgumentParser(
         description='Processa mensagens de commit como no hook original em Perl.'
@@ -57,7 +56,7 @@ def main() -> None:
     )
     parser.add_argument('commit_hash', help='SHA1 do commit ou vazio')
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if (args.commit_source, args.commit_hash) in [('', ''), ('template', '')]:
         diff_output = get_git_diff()
