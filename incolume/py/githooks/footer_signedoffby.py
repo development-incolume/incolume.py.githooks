@@ -9,11 +9,13 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from incolume.py.githooks import SUCCESS
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-def clean_commit_msg(path: Path) -> None:
+def clean_commit_msg(path: Path) -> bool:
     """Remove linhas do arquivo de commit.
 
     Entre:
@@ -27,7 +29,7 @@ def clean_commit_msg(path: Path) -> None:
         path (Path): Caminho para o arquivo de mensagem de commit.
 
     Returns:
-        None
+        True, se o arquivo foi modificado; caso contrário, False.
 
     """
     backup: Path = path.with_suffix(path.suffix + '.bak')
@@ -52,6 +54,7 @@ def clean_commit_msg(path: Path) -> None:
 
     if changed:
         path.write_text(''.join(result), encoding='utf-8')
+    return changed
 
 
 def get_signed_off_by() -> str:
@@ -71,7 +74,9 @@ def get_signed_off_by() -> str:
         ident: str = subprocess.check_output(
             ['git', 'var', 'GIT_COMMITTER_IDENT'], text=True
         ).strip()
-    except subprocess.CalledProcessError as e:
+    except (
+        subprocess.CalledProcessError
+    ) as e:  # pragma: no cover; noqa: S110 todo cover in future
         msg = 'Falha ao obter GIT_COMMITTER_IDENT'
         raise RuntimeError(msg) from e
 
@@ -93,14 +98,14 @@ def add_signed_off_by(path: Path, sob: str | None = None) -> None:
 
     """
     sob = sob or get_signed_off_by()
-    subprocess.run(
+    subprocess.run(  # noqa: S603
         [
             'git',
             'interpret-trailers',
             '--in-place',
             '--trailer',
             sob,
-            str(path),
+            path.as_posix(),
         ],
         check=True,
     )
@@ -151,15 +156,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
     )
     parser.add_argument(
-        'commit_source', help='Origem do commit (pode ser vazio)'
+        'commit_source', default='', help='Origem do commit (pode ser vazio)'
     )
-    parser.add_argument('sha1', help='SHA1 do commit (pode ser vazio)')
+    parser.add_argument(
+        'commit_hash', default='', help='SHA1 do commit (pode ser vazio)'
+    )
 
     args = parser.parse_args(argv)
 
     clean_commit_msg(args.commit_msg_file)
     add_signed_off_by(args.commit_msg_file)
     add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
+    return SUCCESS
 
 
 if __name__ == '__main__':
