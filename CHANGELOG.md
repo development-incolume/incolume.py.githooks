@@ -18,6 +18,16 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Estrutura `assets` definida;
   - Modelos de exemplos retirados da estrutura principal;
 
+## [0.5.0]	 &#8212; 	2025-09-23:
+### Added
+  - Adicionado hook check-len-first-line-commit-msg;
+  - Adicionado Enum para validar tipos do conventional commits;
+  - Adicionado hook pre-commit-installed;
+  - Testes unitários para CLI;
+  - Refactor: Cobertura de testes em código Python ampliada;
+  - Estrutura `assets` definida;
+  - Modelos de exemplos retirados da estrutura principal;
+
 ## [0.5.0rc1]	 &#8212; 	2025-09-22:
 ### Added
   - Adicionado hook pre-commit-installed;
@@ -67,4 +77,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [0.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.2.1...0.3.0
 [0.4.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.3.0...0.4.0
 [0.5.0rc1]: https://github.com/development-incolume/incolume.py.githooks/compare/0.4.0...0.5.0rc1
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.5.0rc1...Unreleased
+[0.5.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.5.0rc1...0.5.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/0.5.0...Unreleased
