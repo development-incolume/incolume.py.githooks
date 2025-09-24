@@ -211,3 +211,4 @@ class TestCasePrepareCommitMsg:
             filename = Path(fl.name)
             filename.write_text(entrance, encoding='utf-8')
         assert clean_commit_msg_cli([filename.as_posix(), '', '']) == expected
+        assert filename.read_text(encoding='utf-8') == entrance
