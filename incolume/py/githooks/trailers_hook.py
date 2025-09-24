@@ -116,8 +116,7 @@ def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
     if not content.startswith('\n'):
         path.write_text('\n' + content, encoding='utf-8')
 
-
-def main() -> None:
+def main(argv: Sequence[str] | None = None) -> int:
     """Função principal que processa os argumentos e aplica
     as transformações no arquivo de commit.
 
@@ -141,7 +140,7 @@ def main() -> None:
     )
     parser.add_argument('sha1', help='SHA1 do commit (pode ser vazio)')
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     clean_commit_msg(args.commit_msg_file)
     add_signed_off_by(args.commit_msg_file)
