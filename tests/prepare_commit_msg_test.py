@@ -17,6 +17,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
     prepare_commit_msg_cli,
+    clean_commit_msg_cli,
 )
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
@@ -92,8 +93,8 @@ class TestCasePrepareCommitMsg:
                     "git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'",
                     '#7 <type>(scope)!: #id-issue <description>:',
                     "git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'",
-                    '[yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/]',
-                    '[/]',
+                    '[yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/yellow]',
+                    '[/red]',
                 ],
                 marks=[],
             ),
@@ -196,3 +197,18 @@ class TestCasePrepareCommitMsg:
         assert bool(result) is bool(expected)
         assert 'Error: Commit subject line exceeds' in captured.out
         assert not captured.err
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('#Please enter the commit message', SUCCESS),
+            pytest.param('feat: #61 Please enter the commit message', SUCCESS),
+        ],
+    )
+    def test_clean_commit_msg_cli(self, entrance, expected) -> NoReturn:
+        """Test CLI for clean-commit-msg-cli."""
+        with NamedTemporaryFile(delete=False) as fl:
+            filename = Path(fl.name)
+            filename.write_text(entrance, encoding='utf-8')
+        assert clean_commit_msg_cli([filename.as_posix(), '', '']) == expected
+        assert filename.read_text(encoding='utf-8') == entrance
