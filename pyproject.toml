@@ -64,7 +64,7 @@ effort-msg = "incolume.py.githooks.effort_message:run"
 is-precommit-installed = "incolume.py.githooks.pre_commit_installed:run"
 is-valid-filename = "incolume.py.githooks.valid_filename:main"
 is-valid-msg-commit = "incolume.py.githooks.prepare_commit_msg:prepare_commit_msg_cli"
-
+set-footer-signed-off-by = "incolume.py.githooks.footer_signeoffby:main"
 
 
 [tool.uv]
