@@ -1,14 +1,22 @@
 """Module trailers hook."""
 
+# ruff: noqa: S404 S607
+from __future__ import annotations
+
 import argparse
 import shutil
 import subprocess
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 def clean_commit_msg(path: Path) -> None:
-    """Remove linhas do arquivo de commit entre:
+    """Remove linhas do arquivo de commit.
+
+    Entre:
 
     - A linha que começa com 'Please enter the commit message'
     - Até a linha contendo apenas '#'
@@ -64,12 +72,13 @@ def get_signed_off_by() -> str:
             ['git', 'var', 'GIT_COMMITTER_IDENT'], text=True
         ).strip()
     except subprocess.CalledProcessError as e:
-        raise RuntimeError('Falha ao obter GIT_COMMITTER_IDENT') from e
+        msg = 'Falha ao obter GIT_COMMITTER_IDENT'
+        raise RuntimeError(msg) from e
 
     return f'Signed-off-by: {ident.split(">", maxsplit=1)[0]}>'
 
 
-def add_signed_off_by(path: Path, sob: Optional[str] = None) -> None:
+def add_signed_off_by(path: Path, sob: str | None = None) -> None:
     """Adiciona a linha 'Signed-off-by' ao arquivo de commit.
 
     Usa `git interpret-trailers` para inserir o trailer corretamente.
@@ -98,8 +107,10 @@ def add_signed_off_by(path: Path, sob: Optional[str] = None) -> None:
 
 
 def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
-    """Insere uma linha em branco no topo do arquivo de commit caso
-    `commit_source` seja vazio e o arquivo não comece com linha em branco.
+    """Insere uma linha em branco no topo do arquivo de commit.
+
+    caso `commit_source` seja vazio e o arquivo não comece
+      com linha em branco.
 
     Args:
         path (Path): Caminho para o arquivo de mensagem de commit.
@@ -116,9 +127,11 @@ def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
     if not content.startswith('\n'):
         path.write_text('\n' + content, encoding='utf-8')
 
+
 def main(argv: Sequence[str] | None = None) -> int:
-    """Função principal que processa os argumentos e aplica
-    as transformações no arquivo de commit.
+    """Função principal que processa os argumentos.
+
+    E aplica as transformações no arquivo de commit.
 
     Fluxo:
     1. Remove linhas desnecessárias do template de commit.
@@ -130,7 +143,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     """
     parser = argparse.ArgumentParser(
-        description='Hook Git em Python equivalente ao script original em Perl/Shell.'
+        description=(
+            'Hook Git em Python equivalente ao script original em Perl/Shell.'
+        )
     )
     parser.add_argument(
         'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
@@ -148,4 +163,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())
