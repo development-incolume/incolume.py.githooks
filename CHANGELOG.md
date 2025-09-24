@@ -10,15 +10,13 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-21:
+## [Unreleased]	 &#8212; 	2025-09-24:
 ### Added
-  - Adicionado hook pre-commit-installed;
-  - Testes unitários para CLI;
-  - Refactor: Cobertura de testes em código Python ampliada;
-  - Estrutura `assets` definida;
-  - Modelos de exemplos retirados da estrutura principal;
+  - Hook footer-signed-off-by;
+  - Hook clean-commit-message;
+  - Hook git-diff;
 
-## [0.5.0]	 &#8212; 	2025-09-23:
+## [0.5.0]	 &#8212; 	2025-09-24:
 ### Added
   - Adicionado hook check-len-first-line-commit-msg;
   - Adicionado Enum para validar tipos do conventional commits;
