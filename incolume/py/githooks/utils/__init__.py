@@ -16,11 +16,11 @@ except ImportError:
 def debug_enable() -> bool:
     """Enable debug mode."""
     valid: list = ['1', 'True', 'true']
-    debug: str = (
-        getenv('DEBUG') in valid
+    debug: bool = (
+        False
+        or getenv('DEBUG') in valid
         or getenv('DEBUG_MODE') in valid
         or getenv('INCOLUME_DEBUG_MODE') in valid
-        or False
     )
 
     ic.disable()  # Disable by default
