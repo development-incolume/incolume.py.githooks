@@ -75,6 +75,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
+    ic(args)
     return has_private_key(*args.filenames)
 
 

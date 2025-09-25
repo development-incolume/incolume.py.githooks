@@ -5,7 +5,7 @@ from typing import NoReturn
 
 from icecream import ic
 import pytest
-from incolume.py.githooks.valid_filename import is_valid_filename
+from incolume.py.githooks.valid_filename import is_valid_filename, main
 
 
 class TestCaseValidFilename:
@@ -14,6 +14,34 @@ class TestCaseValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+            pytest.param(
+                {'filename': '__main__.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': '__init__.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': '_validname01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'validname01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'valid_name01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'validname_01.py'},
+                True,
+            ),
+            pytest.param(
+                {'filename': 'valid_name_01.py'},
+                True,
+            ),
             pytest.param(
                 {'filename': 'validname.py'}, True, id='validname.py'
             ),
@@ -44,6 +72,15 @@ class TestCaseValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+            pytest.param(
+                {'filename': '0_invalid_name.py'}, False, marks=[]
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '0_Invalid_Name.py'}, False, marks=[]
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '0InvalidName.py'}, False, marks=[]
+            ),  # Not snake_case
             pytest.param(
                 {'filename': 'InvalidName.py'}, False, marks=[]
             ),  # Not snake_case
@@ -88,3 +125,20 @@ class TestCaseValidFilename:
         result = capsys.readouterr()
         ic(result)
         assert is_valid_filename(**entrance) is expected  # Not snake_case
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('Jürgen', 'Filename is not in snake_case:', marks=[]),
+            pytest.param('x' * 257, 'Name too long', marks=[]),
+            pytest.param('x.py', 'Name too short', marks=[]),
+            pytest.param(
+                'xVar.toml', 'Filename is not in snake_case', marks=[]
+            ),
+        ],
+    )
+    def test_main(self, capsys, entrance, expected) -> None:
+        """Test CLI."""
+        main([entrance])
+        captured = capsys.readouterr()
+        assert expected in captured.out
