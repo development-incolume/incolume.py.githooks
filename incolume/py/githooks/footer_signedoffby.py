@@ -76,7 +76,7 @@ def get_signed_off_by() -> str:
         ).strip()
     except (
         subprocess.CalledProcessError
-    ) as e:  # pragma: no cover; noqa: S110 todo cover in future
+    ) as e:  # pragma: no cover; noqa: S110 TODO cover in future
         msg = 'Falha ao obter GIT_COMMITTER_IDENT'
         raise RuntimeError(msg) from e
 
@@ -161,11 +161,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         'commit_hash', default='', help='SHA1 do commit (pode ser vazio)'
     )
+    parser.add_argument(
+        '--signoff',
+        default=True,
+        dest='signed',
+        action='store_false',
+        help='Não adicionar Signed-off-by',
+    )
 
     args = parser.parse_args(argv)
 
     clean_commit_msg(args.commit_msg_file)
-    add_signed_off_by(args.commit_msg_file)
+    if args.signed:
+        add_signed_off_by(args.commit_msg_file)
     add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
     return SUCCESS
 
