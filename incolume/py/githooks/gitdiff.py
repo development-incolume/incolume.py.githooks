@@ -19,7 +19,7 @@ def get_git_diff() -> str:
         return subprocess.check_output(
             ['git', 'diff', '--cached', '--name-status', '-r'], text=True
         ).strip()
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError as e:  # pragma: no cover
         msg = 'Falha ao executar git diff'
         raise RuntimeError(msg) from e
 
