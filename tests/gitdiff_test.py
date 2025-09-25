@@ -22,13 +22,25 @@ class TestCaseGitDiff:
         ['commit_msg_file', 'diff_output', 'expected'],
         [
             pytest.param('', '', '', marks=[]),
+            pytest.param(
+                '',
+                'A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                '',
+                marks=[],
+            ),
+            pytest.param(
+                'feat: bla bla bla\n\n#',
+                'A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                'feat: bla bla bla\n\n\nA\tincolume/py/fake/nothing.py'
+                '\nM\tincolume/py/none.py\n#',
+                marks=[],
+            ),
         ],
     )
     def test_insert_git_diff(
         self, commit_msg_file, diff_output, expected
     ) -> None:
         """Test insert_git_diff function."""
-        # pytest.skip('Not implemented yet')
         with tempfile.NamedTemporaryFile() as tf:
             test_file = Path(tf.name)
         test_file.write_text(commit_msg_file, encoding='utf-8')
