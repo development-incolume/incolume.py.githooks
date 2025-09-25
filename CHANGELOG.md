@@ -10,11 +10,15 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-24:
+## [Unreleased]	 &#8212; 	2025-09-25:
 ### Added
+  - Hook check-max-len-first-line-commit-msg;
+  - Hook check-min-len-first-line-commit-msg;
   - Hook footer-signed-off-by;
   - Hook clean-commit-message;
   - Hook git-diff;
+### Removed
+  - Hook check-len-first-line-commit-msg;
 
 ## [0.5.0]	 &#8212; 	2025-09-24:
 ### Added
