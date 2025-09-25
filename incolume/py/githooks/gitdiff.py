@@ -9,8 +9,16 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from icecream import ic
+
+from incolume.py.githooks import SUCCESS
+from incolume.py.githooks.utils import debug_enable
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+debug_enable()
 
 
 def get_git_diff() -> str:
@@ -67,10 +75,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('commit_hash', help='SHA1 do commit ou vazio')
 
     args = parser.parse_args(argv)
+    ic(args)
 
     if (args.commit_source, args.commit_hash) in {('', ''), ('template', '')}:
         diff_output = get_git_diff()
         insert_git_diff(args.commit_msg_file, diff_output)
+
+    return SUCCESS
 
 
 if __name__ == '__main__':
