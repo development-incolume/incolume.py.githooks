@@ -4,6 +4,24 @@ import incolume.py.githooks.gitdiff as pkg
 import pytest
 import tempfile
 from pathlib import Path
+from dataclasses import dataclass
+
+
+@dataclass
+class Expected:
+    """Expected values."""
+
+    code: int
+    msg: str
+
+@dataclass
+class MainEntrance:
+    """Entrance values."""
+
+    commit_msg_file: str
+    commit_source: str
+    commit_hash: str
+    diff_output: str
 
 
 class TestCaseGitDiff:
