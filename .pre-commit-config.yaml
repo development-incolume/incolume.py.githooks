@@ -35,6 +35,12 @@ repos:
     - id: ruff-format
       args: [--config, ruff.toml]
 
+- repo: https://github.com/development-incolume/incolume.py.githooks
+  rev: 1.0.0
+  hooks:
+    - id: check-valid-filenames
+
+
 - repo: local
   hooks:
     - id: effort-message
