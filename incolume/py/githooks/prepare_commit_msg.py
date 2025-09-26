@@ -133,11 +133,9 @@ def check_min_len_first_line_commit_msg(
 
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
-    if len(first_line) > len_line:
-        result = Result(
-            code=FAILURE,
-            message=f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)}).',
-        )
+    if len(first_line) < len_line:
+        result.code = FAILURE
+        result.message = f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)}).'
     return result
 
 
