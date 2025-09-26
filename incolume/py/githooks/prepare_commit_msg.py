@@ -125,19 +125,16 @@ def check_min_len_first_line_commit_msg(
 
     """
     commit_msg_filepath = Path(commit_msg_filepath)
-    len_line = max(10, len_line)
+    len_line = min(10, len_line)
     result = Result(SUCCESS, MESSAGESUCCESS)
 
-    with Path(commit_msg_filepath).open('rb') as f:
-        commit_message = f.read().decode().strip()
+    commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
 
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
-    if len(first_line) > len_line:
-        result = Result(
-            code=FAILURE,
-            message=f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)}).',
-        )
+    if len(first_line) < len_line:
+        result.code = FAILURE
+        result.message = f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)}).'
     return result
 
 
@@ -152,19 +149,15 @@ def check_max_len_first_line_commit_msg(
     """
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(50, len_line)
-    len_line = max(50, len_line)
     result = Result(SUCCESS, MESSAGESUCCESS)
 
-    with Path(commit_msg_filepath).open('rb') as f:
-        commit_message = f.read().decode().strip()
+    commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
 
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
     if len(first_line) > len_line:
-        result = Result(
-            code=FAILURE,
-            message=f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).',
-        )
+        result.code = FAILURE
+        result.message = f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).'
     return result
 
 
