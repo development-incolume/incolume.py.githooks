@@ -77,9 +77,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     ic(args)
 
-    if (args.commit_source, args.commit_hash) in {('', ''), ('template', '')}:
-        diff_output = get_git_diff()
-        insert_git_diff(args.commit_msg_file, diff_output)
+    diff_output = get_git_diff()
+    insert_git_diff(args.commit_msg_file, diff_output)
 
     return SUCCESS
 
