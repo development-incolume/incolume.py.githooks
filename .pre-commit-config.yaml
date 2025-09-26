@@ -35,6 +35,12 @@ repos:
     - id: ruff-format
       args: [--config, ruff.toml]
 
+- repo: https://github.com/development-incolume/incolume.py.githooks
+  rev: 1.0.0
+  hooks:
+    - id: check-valid-filenames
+
+
 - repo: local
   hooks:
     - id: effort-message
@@ -70,24 +76,27 @@ repos:
       types: [python]
       stages: [pre-commit, pre-push, manual]
 
-    # - id: validate-example-notebooks
-    #   name: Incolume - validate example notebooks
-    #   entry: python ./incolume/py/githooks/validate_examples.py  # script is called from root directory
-    #   language: python  # script requires the Python interpreter
+    - id: footer-signed-off-by
+      name: Incolume - Seting footer with Signed-off-by
+      entry: set-footer-signet-off-by  # script is called from root directory
+      language: python  # script requires the Python interpreter
     #   require_serial: true  # don't run in parallel because one call of the script parses all files
-    #   additional_dependencies: [nbformat]  # Python dependency for the script
+      additional_dependencies: []  # Python dependency for the script
     #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
-    #   types: [jupyter]  # jupyter is alias for .ipynb files
+      # types: []  # jupyter is alias for .ipynb files
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      verbose: true
 
-    # - id: validate-message-commit-0
-    #   name: Incolume - validate message Commit [bash] agree with Conventional Commits
-    #   entry: ./incolume/py/githooks/prepare-commit-msg  # script is called from root directory
-    #   language: script  # script requires the Python interpreter
+    - id: clean-commit-message
+      name: Incolume - Clean Commit message
+      entry: clean-commit-msg
+      language: python  # script requires the Python interpreter
     #   require_serial: false  # don't run in parallel
     #   additional_dependencies: []  # Python dependency for the script
     #   # files: ^*$  # this catches all .ipynb under examples/
     #   types: [python]  # jupyter is alias for .ipynb files
-    #   stages: [prepare-commit-msg, pre-commit]  # this hook is run at commit time
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      verbose: false
 
     - id: validate-message-commit
       name: Incolume - validate message Commit agree with Conventional Commits

@@ -14,9 +14,11 @@ from incolume.py.githooks.prepare_commit_msg import (
     prepare_commit_msg,
     check_max_len_first_line_commit_msg,
     check_type_commit_msg,
+    check_min_len_first_line_commit_msg,
     check_max_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
     prepare_commit_msg_cli,
+    clean_commit_msg_cli,
 )
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
@@ -92,8 +94,8 @@ class TestCasePrepareCommitMsg:
                     "git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'",
                     '#7 <type>(scope)!: #id-issue <description>:',
                     "git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'",
-                    '[yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/]',
-                    '[/]',
+                    '[yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/yellow]',
+                    '[/red]',
                 ],
                 marks=[],
             ),
@@ -149,11 +151,135 @@ class TestCasePrepareCommitMsg:
         entrance.msg_file.write_text(entrance.msg_commit)
         assert check_max_len_first_line_commit_msg(entrance.msg_file)
 
-    def test_check_type_commit_msg(self) -> NoReturn:
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(
+                Entrance(
+                    msg_commit='a' * 51,
+                    expected=Result(
+                        FAILURE,
+                        message='Error: Commit message must start with a type',
+                    ),
+                ),
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='fix: fixed a fake file',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                ),
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='added: bcd.txt',
+                    expected=Result(
+                        code=FAILURE, message='Error: Commit message'
+                    ),
+                ),
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='chore: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='docs: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='style: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='refactor: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='test: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='perf: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='ci: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='build: fake feature',
+                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                )
+            ),
+        ],
+    )
+    def test_check_type_commit_msg(self, entrance: Entrance) -> NoReturn:
         """Test for check type commit message."""
-        test_file = self.test_dir / 'bcd.txt'
-        test_file.write_bytes(b'xpto: abc')
-        assert check_type_commit_msg(test_file).code == FAILURE
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(entrance.msg_commit.encode())
+        result = check_type_commit_msg(test_file)
+        assert result.code == entrance.expected.code
+        assert entrance.expected.message in result.message
+
+    @pytest.mark.parametrize(
+        ['entrance', 'len_line'],
+        [
+            pytest.param(
+                Entrance(
+                    msg_commit='a' * 3,
+                    expected=Result(
+                        FAILURE,
+                        'Error: Commit subject line has an insufficient number of 10 characters allowed (3).',
+                    ),
+                ),
+                10,
+            ),
+            pytest.param(
+                Entrance(msg_commit='b' * 10, expected=Result(SUCCESS, '')), 10
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='c' * 20,
+                    expected=Result(
+                        SUCCESS,
+                        '[green]Commit message is validated [OK][/green]',
+                    ),
+                ),
+                15,
+            ),
+        ],
+    )
+    def test_min_len_first_line_commit_msg(
+        self, entrance: Entrance, len_line: int
+    ) -> NoReturn:
+        """Test for min len first line commit messages."""
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(entrance.msg_commit.encode())
+        result = check_min_len_first_line_commit_msg(test_file, len_line)
+        assert result.code == entrance.expected.code
+        assert entrance.expected.message in result.message
 
     def test_prepare_commit_msg_cli(self) -> NoReturn:
         """Test CLI prepend commit message."""
@@ -196,3 +322,48 @@ class TestCasePrepareCommitMsg:
         assert bool(result) is bool(expected)
         assert 'Error: Commit subject line exceeds' in captured.out
         assert not captured.err
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(
+                Entrance(
+                    msg_commit='Please enter the commit message\n\n#',
+                    expected=Result(SUCCESS, ''),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: #61 Please enter the commit message',
+                    expected=Result(
+                        SUCCESS, 'feat: #61 Please enter the commit message'
+                    ),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit=(
+                        'Please enter the commit message\n\n#'
+                        '\nconteúdo fake para teste.'
+                        '\nA\tfile1.txt'
+                        '\nB\tfile2.txt'
+                        '\n#\n# On branch main\n'
+                    ),
+                    expected=Result(
+                        SUCCESS,
+                        'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
+                    ),
+                )
+            ),
+        ],
+    )
+    def test_clean_commit_msg_cli(self, entrance) -> NoReturn:
+        """Test CLI for clean-commit-msg-cli."""
+        with NamedTemporaryFile() as fl:
+            filename = Path(fl.name)
+        filename.write_text(entrance.msg_commit, encoding='utf-8')
+        result = clean_commit_msg_cli([filename.as_posix(), '', ''])
+        assert result == entrance.expected.code
+        assert (
+            filename.read_text(encoding='utf-8') == entrance.expected.message
+        )
