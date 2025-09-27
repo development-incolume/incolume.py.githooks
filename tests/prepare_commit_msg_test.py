@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import shutil
-from typing import NoReturn
+from typing import NoReturn, TYPE_CHECKING
 from icecream import ic
 import pytest
 from incolume.py.githooks import SUCCESS, FAILURE, Result
@@ -15,7 +15,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg,
     check_type_commit_msg,
     check_min_len_first_line_commit_msg,
-    check_max_len_first_line_commit_msg_cli,
+    check_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
     prepare_commit_msg_cli,
     clean_commit_msg_cli,
@@ -24,6 +24,9 @@ from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
 from inspect import stack
 from dataclasses import dataclass, field
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 @dataclass
@@ -263,7 +266,7 @@ class TestCasePrepareCommitMsg:
                     msg_commit='c' * 20,
                     expected=Result(
                         SUCCESS,
-                        '[green]Commit message is validated [OK][/green]',
+                        '[green]Commit minimum length for message is validated [OK][/green]',
                     ),
                 ),
                 15,
@@ -297,31 +300,60 @@ class TestCasePrepareCommitMsg:
             assert check_type_commit_msg_cli([test_file.as_posix()])
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        'entrance',
         [
             pytest.param(
-                'bugfix(refactor)!: bla bla bla bla bla bla bla', 0, marks=[]
+                Entrance(
+                    msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
+                    expected=Result(
+                        0,
+                        [
+                            'Commit minimum length for message is validated',
+                            'Commit maximum length for message is validated',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
             ),
-            pytest.param('feat' * 15, 0, marks=[]),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat' * 15,
+                    expected=Result(
+                        0,
+                        [
+                            'Error: Commit subject line exceeds',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
         ],
     )
     def test_check_len_first_line_commit_msg_cli(
-        self, capsys, entrance, expected
+        self, capsys: Generator, entrance: Entrance
     ) -> NoReturn:
         """Test CLI for check len first line commit messages."""
         result = None
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
 
-        test_file.write_bytes(f'----- {entrance} -----\n'.encode())
+        test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
         with pytest.raises(expected_exception=SystemExit):
-            result = check_max_len_first_line_commit_msg_cli([
-                test_file.as_posix()
+            result = check_len_first_line_commit_msg_cli([
+                test_file.as_posix(),
             ])
         captured = capsys.readouterr()
-        assert bool(result) is bool(expected)
-        assert 'Error: Commit subject line exceeds' in captured.out
-        assert not captured.err
+        assert bool(result) is bool(entrance.expected.code)
+        assert ic(captured.out.split('\n'))
+        assert sum(
+            m in n
+            for m in entrance.expected.message
+            for n in ic(captured.out.split('\n'))
+        ) == len(entrance.expected.message)
 
     @pytest.mark.parametrize(
         'entrance',
