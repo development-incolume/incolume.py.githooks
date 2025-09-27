@@ -64,11 +64,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         type=int,
         help='Minimum length for a filename.',
     )
+    parser.add_argument(
+        '--max-len',
+        default=256,
+        type=int,
+        help='Maximum length for a filename.',
+    )
 
     args = parser.parse_args(argv)
 
     results = [
-        not is_valid_filename(filename, args.min_len)
+        not is_valid_filename(
+            filename=filename, min_len=args.min_len, max_len=args.max_len
+        )
         for filename in args.filenames
     ]
     return int(any(results))
