@@ -143,6 +143,11 @@ class TestCaseValidFilename:
                 'Name too short',
                 marks=[],
             ),
+            pytest.param(
+                {'abcdefghijklm.py', '--max-len=10'},
+                'Name too long',
+                marks=[],
+            ),
         ],
     )
     def test_main(self, capsys, entrance, expected) -> None:
