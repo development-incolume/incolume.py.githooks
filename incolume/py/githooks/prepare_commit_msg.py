@@ -167,6 +167,12 @@ def check_max_len_first_line_commit_msg_cli(
     """Check commit message."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--min-first-line',
+        default=10,
+        type=int,
+        help='Minimum Length of line for first line',
+    )
     args = parser.parse_args(argv)
     result = check_max_len_first_line_commit_msg(*args.filenames)
 
