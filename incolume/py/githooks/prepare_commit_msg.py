@@ -173,6 +173,12 @@ def check_max_len_first_line_commit_msg_cli(
         type=int,
         help='Minimum Length of line for first line',
     )
+    parser.add_argument(
+        '--max-first-line',
+        default=50,
+        type=int,
+        help='Maximum Length of line for first line',
+    )
     args = parser.parse_args(argv)
     result = check_max_len_first_line_commit_msg(*args.filenames)
 
