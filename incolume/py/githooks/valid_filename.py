@@ -4,21 +4,18 @@ from __future__ import annotations
 
 import argparse
 import re
-from os import getenv
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
 from icecream import ic
 
+from incolume.py.githooks.utils import debug_enable
+
+debug_enable()
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
-
-DEBUG_MODE = getenv('DEBUG_MODE') or getenv('INCOLUME_DEBUG_MODE') or False
-ic.disable()  # Disable by default
-
-if DEBUG_MODE:
-    ic.enable()
 
 SNAKE_CASE_REGEX = re.compile(r'^[a-z_][a-z_0-9]+$')
 
