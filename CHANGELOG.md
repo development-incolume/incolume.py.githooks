@@ -14,6 +14,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Changed
   - Cobertura total do código implementado;
   - Chamada de hooks com argumentos configuráveis através do arquivo yaml;
+  - Added hook `detect-key` disponibilizado;
 
 ## [1.0.0]	 &#8212; 	2025-09-26:
 ### Added
