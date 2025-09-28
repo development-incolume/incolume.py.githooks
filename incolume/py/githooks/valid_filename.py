@@ -12,10 +12,10 @@ from icecream import ic
 
 from incolume.py.githooks.utils import debug_enable
 
-debug_enable()
-
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+debug_enable()
 
 SNAKE_CASE_REGEX = re.compile(r'^[a-z_][a-z_0-9]+$')
 
