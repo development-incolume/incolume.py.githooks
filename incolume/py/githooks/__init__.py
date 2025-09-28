@@ -8,11 +8,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Final
 
+from incolume.py.githooks.utils import debug_enable
+
 with suppress(ImportError, ModuleNotFoundError):
     import tomllib as tomli  # type: ignore[import]
 
 with suppress(ImportError, ModuleNotFoundError):
     import tomli  # type: ignore[import]
+
+debug_enable()
 
 SUCCESS: Final[int] = 0
 FAILURE: Final[int] = 1
