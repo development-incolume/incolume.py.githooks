@@ -90,6 +90,20 @@ class TestCaseGitDiff:
                 Expected(SUCCESS, 'ci: #123 added ci/cd\n\n#'),
                 marks=[],
             ),
+            pytest.param(
+                MainEntrance(
+                    commit_source='template',
+                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                    diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                ),
+                Expected(
+                    code=SUCCESS,
+                    msg='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
+                    'nothing.py'
+                    '\nM\tincolume/py/none.py\n#',
+                ),
+                marks=[],
+            ),
         ],
     )
     def test_main(

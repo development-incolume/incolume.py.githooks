@@ -129,16 +129,29 @@ class TestCaseValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param('Jürgen', 'Filename is not in snake_case:', marks=[]),
-            pytest.param('x' * 257, 'Name too long', marks=[]),
-            pytest.param('x.py', 'Name too short', marks=[]),
             pytest.param(
-                'xVar.toml', 'Filename is not in snake_case', marks=[]
+                {'Jürgen'}, 'Filename is not in snake_case:', marks=[]
+            ),
+            pytest.param({'x' * 257}, 'Name too long', marks=[]),
+            pytest.param({'x.py'}, 'Name too short', marks=[]),
+            pytest.param(
+                {'xVar.toml'}, 'Filename is not in snake_case', marks=[]
+            ),
+            pytest.param({'x.py', '--min-len=5'}, 'Name too short', marks=[]),
+            pytest.param(
+                {'abc_defg.py', '--min-len=10'},
+                'Name too short',
+                marks=[],
+            ),
+            pytest.param(
+                {'abcdefghijklm.py', '--max-len=10'},
+                'Name too long',
+                marks=[],
             ),
         ],
     )
     def test_main(self, capsys, entrance, expected) -> None:
         """Test CLI."""
-        main([entrance])
+        main([*entrance])
         captured = capsys.readouterr()
         assert expected in captured.out

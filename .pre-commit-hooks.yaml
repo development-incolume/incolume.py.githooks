@@ -15,14 +15,14 @@
   types: [python]
   stages: [pre-commit, pre-push, manual]
 
-# - id: detect-key
-  # name: Incolume - detect private key
-  # description: detects the presence of private keys.
-  # entry: detect-key
-  # language: python
-  # types: [text]
-  # exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
-# 
+- id: detect-key
+  name: Incolume - detect private key
+  description: detects the presence of private keys.
+  entry: detect-key
+  language: python
+  types: [text]
+  exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
+
 # - id: effort-message
   # name: Incolume - Commit Message Effort Hook
   # description: Effort message for commit.
@@ -30,7 +30,7 @@
   # language: python
   # types: [python]
   # stages: [pre-commit, pre-push, manual]
-# 
+#
 # - id: footer-signed-off-by
   # name: Incolume - Seting footer with Signed-off-by
   # entry: set-footer-signet-off-by  # script is called from root directory
@@ -38,4 +38,4 @@
   # additional_dependencies: []  # Python dependency for the script
   # stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   # verbose: true
-# 
+#

@@ -14,9 +14,12 @@ import rich
 from icecream import ic
 
 from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
+from incolume.py.githooks.utils import debug_enable
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+debug_enable()
 
 MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
@@ -126,7 +129,10 @@ def check_min_len_first_line_commit_msg(
     """
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(10, len_line)
-    result = Result(SUCCESS, MESSAGESUCCESS)
+    result = Result(
+        SUCCESS,
+        '[green]Commit minimum length for message is validated [OK][/green]',
+    )
 
     commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
 
@@ -149,7 +155,10 @@ def check_max_len_first_line_commit_msg(
     """
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(50, len_line)
-    result = Result(SUCCESS, MESSAGESUCCESS)
+    result = Result(
+        SUCCESS,
+        '[green]Commit maximum length for message is validated [OK][/green]',
+    )
 
     commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
 
@@ -161,17 +170,40 @@ def check_max_len_first_line_commit_msg(
     return result
 
 
-def check_max_len_first_line_commit_msg_cli(
+def check_len_first_line_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
     """Check commit message."""
+    results = []
+    result_code = SUCCESS
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--min-first-line',
+        default=10,
+        type=int,
+        help='Minimum Length of line for first line',
+    )
+    parser.add_argument(
+        '--max-first-line',
+        default=50,
+        type=int,
+        help='Maximum Length of line for first line',
+    )
     args = parser.parse_args(argv)
-    result = check_max_len_first_line_commit_msg(*args.filenames)
+    results.extend((
+        check_min_len_first_line_commit_msg(
+            *args.filenames, len_line=args.min_first_line
+        ),
+        check_max_len_first_line_commit_msg(
+            *args.filenames, len_line=args.max_first_line
+        ),
+    ))
+    for result in results:
+        rich.print(result.message)
+        result_code |= result.code
 
-    rich.print(result.message)
-    sys.exit(result.code)  # Validation passed, allow commit
+    sys.exit(result_code)  # Validation passed, allow commit
 
 
 def clean_commit_msg_cli(

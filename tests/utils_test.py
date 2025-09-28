@@ -92,6 +92,9 @@ class TestCaseUtilsEnum:
             pytest.param('DOC', 'docs', marks=[]),
             pytest.param('FEATURE', 'feat', marks=[]),
             pytest.param('TESTS', 'test', marks=[]),
+            pytest.param(' BugFix ', 'fix', marks=[]),
+            pytest.param('BugFix ', 'fix', marks=[]),
+            pytest.param(' BugFix', 'fix', marks=[]),
             pytest.param(
                 'bug',
                 {'expected_exception': ValueError, 'match': ''},
