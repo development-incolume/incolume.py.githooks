@@ -35,6 +35,7 @@ class Entrance:
 
     msg_file: str | Path = None
     msg_commit: str = ''
+    params: list[str] = field(default_factory=list)
     expected: Result = field(
         default_factory=lambda: Result(FAILURE, MESSAGERROR)
     )
@@ -331,6 +332,37 @@ class TestCasePrepareCommitMsg:
                     # pytest.mark.skip
                 ],
             ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat',
+                    expected=Result(
+                        0,
+                        [
+                            'Error: Commit subject line has an insufficient number of',
+                            'Commit maximum length for message is validated',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat',
+                    params=['--min-first-line=4', '--max-first-line=5'],
+                    expected=Result(
+                        0,
+                        [
+                            'Commit minimum length for message is validated',
+                            'Commit maximum length for message is validated',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
         ],
     )
     def test_check_len_first_line_commit_msg_cli(
@@ -345,6 +377,7 @@ class TestCasePrepareCommitMsg:
         with pytest.raises(expected_exception=SystemExit):
             result = check_len_first_line_commit_msg_cli([
                 test_file.as_posix(),
+                *entrance.params,
             ])
         captured = capsys.readouterr()
         assert bool(result) is bool(entrance.expected.code)
