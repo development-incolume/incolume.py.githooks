@@ -4,21 +4,18 @@ from __future__ import annotations
 
 import argparse
 import re
-from os import getenv
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
 from icecream import ic
 
+from incolume.py.githooks.utils import debug_enable
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-DEBUG_MODE = getenv('DEBUG_MODE') or getenv('INCOLUME_DEBUG_MODE') or False
-ic.disable()  # Disable by default
-
-if DEBUG_MODE:
-    ic.enable()
+debug_enable()
 
 SNAKE_CASE_REGEX = re.compile(r'^[a-z_][a-z_0-9]+$')
 
@@ -64,11 +61,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         type=int,
         help='Minimum length for a filename.',
     )
+    parser.add_argument(
+        '--max-len',
+        default=256,
+        type=int,
+        help='Maximum length for a filename.',
+    )
 
     args = parser.parse_args(argv)
 
     results = [
-        not is_valid_filename(filename, args.min_len)
+        not is_valid_filename(
+            filename=filename, min_len=args.min_len, max_len=args.max_len
+        )
         for filename in args.filenames
     ]
     return int(any(results))

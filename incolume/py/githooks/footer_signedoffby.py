@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -129,7 +130,7 @@ def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
         return
 
     content: str = path.read_text(encoding='utf-8')
-    if not content.startswith('\n'):
+    if re.fullmatch(r'[^\n].+', content):
         path.write_text('\n' + content, encoding='utf-8')
 
 

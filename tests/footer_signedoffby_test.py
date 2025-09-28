@@ -62,7 +62,7 @@ class TestCaseFooterSignedOffBy:
     @pytest.mark.parametrize(
         ['entrance', 'commit_source', 'expected'],
         [
-            pytest.param('', '', '\n', marks=[]),
+            pytest.param('', '', '', marks=[]),
             pytest.param(
                 'Initial commit message',
                 '',
@@ -70,6 +70,7 @@ class TestCaseFooterSignedOffBy:
                 marks=[],
             ),
             pytest.param('', 'feat: add new feature', '', marks=[]),
+            pytest.param('blue', '', '\nblue', marks=[]),
         ],
     )
     def test_add_blank_line_if_needed(
