@@ -44,7 +44,7 @@ class TestCaseDetectPrivateKey:
             pytest.param(
                 'test_no_key.py',
                 SUCCESS,
-                marks=[pytest.mark.xfail(strict=False)],
+                marks=[],
             ),
         ],
     )
