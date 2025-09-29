@@ -7,7 +7,8 @@ import shutil
 from typing import NoReturn, TYPE_CHECKING
 from icecream import ic
 import pytest
-from incolume.py.githooks import SUCCESS, FAILURE, Result
+from incolume.py.githooks.utils import Result
+from incolume.py.githooks.rules import SUCCESS, FAILURE
 from incolume.py.githooks.prepare_commit_msg import (
     MESSAGERROR,
     MESSAGESUCCESS,

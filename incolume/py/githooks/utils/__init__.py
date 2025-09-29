@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum, auto
 from os import getenv
 
@@ -29,6 +30,14 @@ def debug_enable() -> bool:
         ic.enable()
 
     return debug
+
+
+@dataclass
+class Result:
+    """Result dataclass for hooks this project."""
+
+    code: int
+    message: str
 
 
 class AutoName(Enum):

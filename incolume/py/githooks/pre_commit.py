@@ -10,7 +10,7 @@ from subprocess import check_output  # noqa: S404
 
 from colorama import Fore, Style
 
-from incolume.py.githooks import RULE_BRANCHNAME
+from incolume.py.githooks.rules import RULE_BRANCHNAME
 
 BRANCH = (
     check_output(

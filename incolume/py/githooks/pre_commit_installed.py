@@ -7,7 +7,7 @@ from pathlib import Path
 
 import rich
 
-from incolume.py.githooks import FAILURE, SUCCESS
+from incolume.py.githooks.rules import FAILURE, SUCCESS
 
 
 def run() -> int:
