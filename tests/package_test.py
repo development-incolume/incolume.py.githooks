@@ -1,7 +1,7 @@
 """Test module for package."""
 # ruff: noqa: E501
 
-from incolume.py.githooks import (
+from incolume.py.githooks.rules import (
     REGEX_SEMVER,
     RULE_BRANCHNAME,
     RULE_COMMITFORMAT,

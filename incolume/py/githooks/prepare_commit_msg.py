@@ -13,8 +13,12 @@ from typing import TYPE_CHECKING
 import rich
 from icecream import ic
 
-from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.rules import (
+    FAILURE,
+    RULE_COMMITFORMAT,
+    SUCCESS,
+)
+from incolume.py.githooks.utils import Result, debug_enable
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from incolume.py.githooks import SUCCESS
+from incolume.py.githooks.rules import SUCCESS
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

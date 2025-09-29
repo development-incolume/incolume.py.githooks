@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 from icecream import ic
 
-from incolume.py.githooks import FAILURE, SUCCESS
+from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.utils import debug_enable
 
 if TYPE_CHECKING:

@@ -5,7 +5,8 @@ import re
 import pytest
 from icecream import ic
 
-from incolume.py.githooks import REGEX_SEMVER, __version__
+from incolume.py.githooks import __version__
+from incolume.py.githooks.rules import REGEX_SEMVER
 
 
 @pytest.mark.fasttest
