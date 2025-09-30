@@ -56,35 +56,41 @@ class TestCaseAllCLI:
         shutil.rmtree(cls.test_dir)
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
-                {'Jürgen'}, 'Filename is not in snake_case:', marks=[]
+                {'Jürgen'}, 1, 'Filename is not in snake_case:', marks=[]
             ),
-            pytest.param({'x' * 257}, 'Name too long', marks=[]),
-            pytest.param({'x.py'}, 'Name too short', marks=[]),
+            pytest.param({'x' * 257}, 1, 'Name too long', marks=[]),
+            pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
             pytest.param(
-                {'xVar.toml'}, 'Filename is not in snake_case', marks=[]
+                {'xVar.toml'}, 1, 'Filename is not in snake_case', marks=[]
             ),
-            pytest.param({'x.py', '--min-len=5'}, 'Name too short', marks=[]),
+            pytest.param(
+                {'x.py', '--min-len=5'}, 1, 'Name too short', marks=[]
+            ),
             pytest.param(
                 {'abc_defg.py', '--min-len=10'},
+                1,
                 'Name too short',
                 marks=[],
             ),
             pytest.param(
                 {'abcdefghijklm.py', '--max-len=10'},
+                1,
                 'Name too long',
                 marks=[],
             ),
+            pytest.param({'__main__.py'}, 0, '', marks=[]),
         ],
     )
     def test_check_valid_filenames_cli(
-        self, capsys, entrance, expected
+        self, capsys, entrance, result_expected, expected
     ) -> None:
         """Test CLI."""
-        cli.check_valid_filenames_cli([*entrance])
+        result = cli.check_valid_filenames_cli([*entrance])
         captured = capsys.readouterr()
+        assert result == result_expected
         assert expected in captured.out
 
     @pytest.mark.parametrize(
