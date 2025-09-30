@@ -15,12 +15,3 @@ def effort_msg(message: str = '') -> None:
     """Effort message."""
     message = message or 'Boa! Continue trabalhando com dedicação!'
     print(f'{Fore.GREEN}{message}{Style.NORMAL}')
-
-
-def run() -> None:
-    """Run it."""
-    effort_msg()
-
-
-if __name__ == '__main__':
-    run()

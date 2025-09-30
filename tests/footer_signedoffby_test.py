@@ -82,26 +82,3 @@ class TestCaseFooterSignedOffBy:
         test_file.write_text(entrance, encoding='utf-8')
         pkg.add_blank_line_if_needed(test_file, commit_source)
         assert test_file.read_text(encoding='utf-8') == expected
-
-    @pytest.mark.parametrize(
-        ['args', 'expected'],
-        [
-            pytest.param(['--help'], '', marks=[pytest.mark.skip]),
-            pytest.param(['message fake for commit', '', ''], 0, marks=[]),
-            pytest.param(
-                ['style: message fake for commit', '', '', '--signoff'],
-                0,
-                marks=[],
-            ),
-        ],
-    )
-    def test_main(self, args, expected, capsys) -> NoReturn:
-        """Test main function."""
-        with tempfile.NamedTemporaryFile() as tf:
-            test_file = Path(tf.name)
-        test_file.write_text(args[0], encoding='utf-8')
-        args[0] = test_file.as_posix()
-        result = pkg.main(args)
-        captured = capsys.readouterr()
-        assert result == expected
-        assert not captured.out
