@@ -74,23 +74,6 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
     return result
 
 
-def prepare_commit_msg_cli(
-    argv: Sequence[str] | None = None,
-) -> sys.exit:
-    """Run CLI for prepare-commit-msg hook."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    args = parser.parse_args(argv)
-    ic(fl := Path('.git/COMMIT_EDITMSG'))
-    ic(fl.is_file())
-    logging.debug('msgfile: %s', args)
-
-    result = prepare_commit_msg(*args.filenames)
-
-    rich.print(result.message)
-    sys.exit(result.code)
-
-
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
     regex = re.compile(
@@ -256,7 +239,3 @@ def check_prospect() -> None:
     #   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
     # fi
     """
-
-
-if __name__ == '__main__':
-    raise SystemExit(prepare_commit_msg_cli())

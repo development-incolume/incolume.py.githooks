@@ -63,7 +63,7 @@ detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.cli:effort_msg_cli"
 is-precommit-installed = "incolume.py.githooks.cli:pre_commit_installed_cli"
 is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
-is-valid-msg-commit = "incolume.py.githooks.prepare_commit_msg:prepare_commit_msg_cli"
+is-valid-msg-commit = "incolume.py.githooks.cli:prepare_commit_msg_cli"
 set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signeoffby_cli"
 
 

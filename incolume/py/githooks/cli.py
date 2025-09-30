@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import logging
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -17,6 +18,7 @@ from incolume.py.githooks.footer_signedoffby import (
     add_signed_off_by,
     clean_commit_msg,
 )
+from incolume.py.githooks.prepare_commit_msg import prepare_commit_msg
 from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.utils import debug_enable
 from incolume.py.githooks.valid_filename import is_valid_filename
@@ -183,8 +185,25 @@ def clean_commit_msg_cli(
     return SUCCESS
 
 
+def prepare_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> sys.exit:
+    """Run CLI for prepare-commit-msg hook."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
+    ic(fl := Path('.git/COMMIT_EDITMSG'))
+    ic(fl.is_file())
+    logging.debug('msgfile: %s', args)
+
+    result = prepare_commit_msg(*args.filenames)
+
+    rich.print(result.message)
+    sys.exit(result.code)
+
+
 def pre_commit_installed_cli() -> int:
-    """Run it."""
+    """Run pre-commit-installed hook."""
     result = SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)

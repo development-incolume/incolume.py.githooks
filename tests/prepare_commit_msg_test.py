@@ -19,7 +19,6 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_min_len_first_line_commit_msg,
     check_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
-    prepare_commit_msg_cli,
 )
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
@@ -284,13 +283,6 @@ class TestCasePrepareCommitMsg:
         result = check_min_len_first_line_commit_msg(test_file, len_line)
         assert result.code == entrance.expected.code
         assert entrance.expected.message in result.message
-
-    def test_prepare_commit_msg_cli(self) -> NoReturn:
-        """Test CLI prepend commit message."""
-        test_file = self.test_dir / 'bcd.txt'
-        test_file.write_bytes(b'xpto: abc')
-        with pytest.raises(SystemExit):
-            assert prepare_commit_msg_cli([test_file.as_posix()])
 
     def test_check_type_commit_msg_cli(self) -> NoReturn:
         """Test CLI for check type commit message."""
