@@ -102,3 +102,20 @@ class TestCaseAllCLI:
         captured = capsys.readouterr()
         assert result == expected
         assert not captured.out
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(
+                '', marks=[pytest.mark.skip(reason='Dont mocked it.')]
+            ),
+        ],
+    )
+    def test_precommit_installed(self, mocker, entrance) -> NoReturn:
+        """Test for pre-commit installed."""
+        ic(entrance)
+        ic(__name__)
+        with mocker.patch('pathlib.Path.cwd') as m:
+            m.return_value = Path(entrance) if entrance else []
+            with pytest.raises(SystemExit):
+                cli.pre_commit_installed_cli()

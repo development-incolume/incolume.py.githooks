@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import rich
 from icecream import ic
 
 from incolume.py.githooks.detect_private_key import has_private_key
@@ -14,7 +16,7 @@ from incolume.py.githooks.footer_signedoffby import (
     add_signed_off_by,
     clean_commit_msg,
 )
-from incolume.py.githooks.rules import SUCCESS
+from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.utils import debug_enable
 from incolume.py.githooks.valid_filename import is_valid_filename
 
@@ -118,3 +120,17 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
         add_signed_off_by(args.commit_msg_file)
     add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
     return SUCCESS
+
+
+def pre_commit_installed_cli() -> int:
+    """Run it."""
+    result = SUCCESS
+    files = list(Path.cwd().glob('.pre-commit-config.yaml'))
+    ic(files)
+    if not files:
+        rich.print(
+            '\n\n[red]`pre-commit` configuration detected,'
+            ' but `pre-commit install` was never ran.[/red]\n',
+        )
+        result |= FAILURE
+    return sys.exit(result)
