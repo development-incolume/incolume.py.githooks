@@ -79,3 +79,26 @@ class TestCaseAllCLI:
         cli.detect_private_key_cli([test_file.as_posix()])
         captured = capsys.readouterr()
         assert f'Private key found: {test_file.as_posix()}' in captured.out
+
+    @pytest.mark.parametrize(
+        ['args', 'expected'],
+        [
+            pytest.param(['--help'], '', marks=[pytest.mark.skip]),
+            pytest.param(['message fake for commit', '', ''], 0, marks=[]),
+            pytest.param(
+                ['style: message fake for commit', '', '', '--signoff'],
+                0,
+                marks=[],
+            ),
+        ],
+    )
+    def test_footer_signedoffby_cli(self, args, expected, capsys) -> NoReturn:
+        """Test main function."""
+        with NamedTemporaryFile() as tf:
+            test_file = Path(tf.name)
+        test_file.write_text(args[0], encoding='utf-8')
+        args[0] = test_file.as_posix()
+        result = cli.footer_signedoffby_cli(args)
+        captured = capsys.readouterr()
+        assert result == expected
+        assert not captured.out
