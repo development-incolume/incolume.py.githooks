@@ -13,8 +13,12 @@ from typing import TYPE_CHECKING
 import rich
 from icecream import ic
 
-from incolume.py.githooks import FAILURE, RULE_COMMITFORMAT, SUCCESS, Result
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.rules import (
+    FAILURE,
+    RULE_COMMITFORMAT,
+    SUCCESS,
+)
+from incolume.py.githooks.utils import Result, debug_enable
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -68,23 +72,6 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
         result = Result(FAILURE, MESSAGERROR)
 
     return result
-
-
-def prepare_commit_msg_cli(
-    argv: Sequence[str] | None = None,
-) -> sys.exit:
-    """Run CLI for prepare-commit-msg hook."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    args = parser.parse_args(argv)
-    ic(fl := Path('.git/COMMIT_EDITMSG'))
-    ic(fl.is_file())
-    logging.debug('msgfile: %s', args)
-
-    result = prepare_commit_msg(*args.filenames)
-
-    rich.print(result.message)
-    sys.exit(result.code)
 
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
@@ -206,61 +193,6 @@ def check_len_first_line_commit_msg_cli(
     sys.exit(result_code)  # Validation passed, allow commit
 
 
-def clean_commit_msg_cli(
-    argv: Sequence[str] | None = None,
-) -> int:
-    """Remove the help message.
-
-    Remove "# Please enter the commit message..." from help message.
-
-    Args:
-        argv: Arguments values sequence:
-          - commit_msg_file (Path or str): The path to the commit message file.
-          - commit_source (str): The source of the commit message.
-          - commit_hash (str): The commit hash.
-
-    Returns:
-        int: SUCCESS code if the operation completes.
-
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('commit_msg_file', help='Filename for commit message')
-    parser.add_argument('commit_source', help='Commit source')
-    parser.add_argument('commit_hash', help='Commit hash')
-    args = parser.parse_args(argv)
-    commit_msg_file = args.commit_msg_file
-    commit_source = args.commit_source
-    commit_hash = args.commit_hash
-
-    ic(commit_msg_file, commit_source, commit_hash)
-
-    commit_msg_file = Path(commit_msg_file)
-
-    backup = commit_msg_file.with_suffix(commit_msg_file.suffix + '.bak')
-    backup.write_bytes(commit_msg_file.read_bytes())
-
-    result = []
-    skipping = False
-
-    for line in commit_msg_file.read_text(encoding='utf-8').splitlines(
-        keepends=True
-    ):
-        if not skipping and line.lstrip().startswith(
-            'Please enter the commit message'
-        ):
-            skipping = True
-            continue
-        if skipping and line.strip() == '#':
-            skipping = False
-            continue
-        if not skipping:
-            result.append(line)
-
-    commit_msg_file.write_text(''.join(result), encoding='utf-8')
-
-    return SUCCESS
-
-
 def check_prospect() -> None:
     r"""Check prospect.
 
@@ -307,7 +239,3 @@ def check_prospect() -> None:
     #   /usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
     # fi
     """
-
-
-if __name__ == '__main__':
-    raise SystemExit(prepare_commit_msg_cli())

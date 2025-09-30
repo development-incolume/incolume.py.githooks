@@ -2,18 +2,13 @@
 
 from __future__ import annotations
 
-import argparse
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import rich
 from icecream import ic
 
 from incolume.py.githooks.utils import debug_enable
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 debug_enable()
 
@@ -43,41 +38,3 @@ def is_valid_filename(
 
     failure = (too_short or too_long) or not_snake_case
     return not failure
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    """Maint entry point for the script."""
-    parser = argparse.ArgumentParser(
-        prog='validate-filename',
-    )
-    parser.add_argument(
-        'filenames',
-        nargs='+',
-        help='Filenames to process.',
-    )
-    parser.add_argument(
-        '--min-len',
-        default=3,
-        type=int,
-        help='Minimum length for a filename.',
-    )
-    parser.add_argument(
-        '--max-len',
-        default=256,
-        type=int,
-        help='Maximum length for a filename.',
-    )
-
-    args = parser.parse_args(argv)
-
-    results = [
-        not is_valid_filename(
-            filename=filename, min_len=args.min_len, max_len=args.max_len
-        )
-        for filename in args.filenames
-    ]
-    return int(any(results))
-
-
-if __name__ == '__main__':
-    raise SystemExit(main())

@@ -3,17 +3,13 @@
 # ruff: noqa: S404 S607
 from __future__ import annotations
 
-import argparse
 import re
 import shutil
 import subprocess
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from incolume.py.githooks import SUCCESS
-
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from pathlib import Path
 
 
 def clean_commit_msg(path: Path) -> bool:
@@ -132,52 +128,3 @@ def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
     content: str = path.read_text(encoding='utf-8')
     if re.fullmatch(r'[^\n].+', content):
         path.write_text('\n' + content, encoding='utf-8')
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    """Função principal que processa os argumentos.
-
-    E aplica as transformações no arquivo de commit.
-
-    Fluxo:
-    1. Remove linhas desnecessárias do template de commit.
-    2. Adiciona 'Signed-off-by' do committer atual.
-    3. Adiciona linha em branco no topo se necessário.
-
-    Returns:
-        None
-
-    """
-    parser = argparse.ArgumentParser(
-        description=(
-            'Hook Git em Python equivalente ao script original em Perl/Shell.'
-        )
-    )
-    parser.add_argument(
-        'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
-    )
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (pode ser vazio)'
-    )
-    parser.add_argument(
-        'commit_hash', default='', help='SHA1 do commit (pode ser vazio)'
-    )
-    parser.add_argument(
-        '--signoff',
-        default=True,
-        dest='signed',
-        action='store_false',
-        help='Não adicionar Signed-off-by',
-    )
-
-    args = parser.parse_args(argv)
-
-    clean_commit_msg(args.commit_msg_file)
-    if args.signed:
-        add_signed_off_by(args.commit_msg_file)
-    add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
-    return SUCCESS
-
-
-if __name__ == '__main__':
-    raise SystemExit(main())
