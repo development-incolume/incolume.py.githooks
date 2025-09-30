@@ -9,10 +9,9 @@ from incolume.py.githooks.detect_private_key import (
     BLACKLIST,
     SUCCESS,
     FAILURE,
-    main,
 )
 from icecream import ic
-from tempfile import gettempdir, NamedTemporaryFile
+from tempfile import gettempdir
 import pytest
 
 
@@ -64,20 +63,6 @@ class TestCaseDetectPrivateKey:
         test_file = self.test_dir / 'with_private_key.txt'
         test_file.write_text(f'----- {entrance} -----\n')
         assert has_private_key(test_file) is FAILURE
-
-    @pytest.mark.parametrize(
-        'entrance', [pytest.param(line, marks=[]) for line in BLACKLIST]
-    )
-    def test_main(self, capsys, entrance) -> NoReturn:
-        """Test CLI."""
-        with NamedTemporaryFile(dir=self.test_dir) as fl:
-            test_file = Path(fl.name)
-
-        ic(test_file, type(test_file))
-        test_file.write_bytes(f'----- {entrance} -----\n'.encode())
-        main([test_file.as_posix()])
-        captured = capsys.readouterr()
-        assert f'Private key found: {test_file.as_posix()}' in captured.out
 
     def test_has_rsa_key(self) -> NoReturn:
         """Test with a file that contains a private key."""

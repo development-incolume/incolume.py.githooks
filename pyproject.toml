@@ -59,7 +59,7 @@ docs = [
 
 [project.scripts]
 clean-commit-msg = "incolume.py.githooks.prepare_commit_msg:clean_commit_msg_cli"
-detect-key = "incolume.py.githooks.detect_private_key:main"
+detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.effort_message:run"
 is-precommit-installed = "incolume.py.githooks.pre_commit_installed:run"
 is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
