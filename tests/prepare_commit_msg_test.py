@@ -3,6 +3,7 @@
 # ruff: noqa: E501
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 import shutil
 from typing import NoReturn, TYPE_CHECKING
 from icecream import ic
@@ -19,12 +20,10 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_len_first_line_commit_msg_cli,
     check_type_commit_msg_cli,
     prepare_commit_msg_cli,
-    clean_commit_msg_cli,
 )
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
 from inspect import stack
-from dataclasses import dataclass, field
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -388,48 +387,3 @@ class TestCasePrepareCommitMsg:
             for m in entrance.expected.message
             for n in ic(captured.out.split('\n'))
         ) == len(entrance.expected.message)
-
-    @pytest.mark.parametrize(
-        'entrance',
-        [
-            pytest.param(
-                Entrance(
-                    msg_commit='Please enter the commit message\n\n#',
-                    expected=Result(SUCCESS, ''),
-                )
-            ),
-            pytest.param(
-                Entrance(
-                    msg_commit='feat: #61 Please enter the commit message',
-                    expected=Result(
-                        SUCCESS, 'feat: #61 Please enter the commit message'
-                    ),
-                )
-            ),
-            pytest.param(
-                Entrance(
-                    msg_commit=(
-                        'Please enter the commit message\n\n#'
-                        '\nconteúdo fake para teste.'
-                        '\nA\tfile1.txt'
-                        '\nB\tfile2.txt'
-                        '\n#\n# On branch main\n'
-                    ),
-                    expected=Result(
-                        SUCCESS,
-                        'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
-                    ),
-                )
-            ),
-        ],
-    )
-    def test_clean_commit_msg_cli(self, entrance) -> NoReturn:
-        """Test CLI for clean-commit-msg-cli."""
-        with NamedTemporaryFile() as fl:
-            filename = Path(fl.name)
-        filename.write_text(entrance.msg_commit, encoding='utf-8')
-        result = clean_commit_msg_cli([filename.as_posix(), '', ''])
-        assert result == entrance.expected.code
-        assert (
-            filename.read_text(encoding='utf-8') == entrance.expected.message
-        )

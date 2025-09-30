@@ -1,5 +1,10 @@
 """Test module for CLI."""
 
+# ruff: noqa: E501
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
 from tempfile import NamedTemporaryFile, gettempdir
@@ -10,6 +15,22 @@ from icecream import ic
 
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
+
+from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
+from incolume.py.githooks.rules import FAILURE, SUCCESS
+from incolume.py.githooks.utils import Result
+
+
+@dataclass
+class Entrance:
+    """Entrance dataclass for tests."""
+
+    msg_file: str | Path = None
+    msg_commit: str = ''
+    params: list[str] = field(default_factory=list)
+    expected: Result = field(
+        default_factory=lambda: Result(FAILURE, MESSAGERROR)
+    )
 
 
 class TestCaseAllCLI:
@@ -103,6 +124,57 @@ class TestCaseAllCLI:
         assert result == expected
         assert not captured.out
 
+    def test_effort_msg_cli(self, capsys) -> None:
+        """Teste CLI."""
+        cli.effort_msg_cli()
+        captured = capsys.readouterr()
+        assert 'Boa! Continue trabalhando com dedicação!' in captured.out
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(
+                Entrance(
+                    msg_commit='Please enter the commit message\n\n#',
+                    expected=Result(SUCCESS, ''),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: #61 Please enter the commit message',
+                    expected=Result(
+                        SUCCESS, 'feat: #61 Please enter the commit message'
+                    ),
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit=(
+                        'Please enter the commit message\n\n#'
+                        '\nconteúdo fake para teste.'
+                        '\nA\tfile1.txt'
+                        '\nB\tfile2.txt'
+                        '\n#\n# On branch main\n'
+                    ),
+                    expected=Result(
+                        SUCCESS,
+                        'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
+                    ),
+                )
+            ),
+        ],
+    )
+    def test_clean_commit_msg_cli(self, entrance) -> NoReturn:
+        """Test CLI for clean-commit-msg-cli."""
+        with NamedTemporaryFile() as fl:
+            filename = Path(fl.name)
+        filename.write_text(entrance.msg_commit, encoding='utf-8')
+        result = cli.clean_commit_msg_cli([filename.as_posix(), '', ''])
+        assert result == entrance.expected.code
+        assert (
+            filename.read_text(encoding='utf-8') == entrance.expected.message
+        )
+
     @pytest.mark.parametrize(
         'entrance',
         [
@@ -119,9 +191,3 @@ class TestCaseAllCLI:
             m.return_value = Path(entrance) if entrance else []
             with pytest.raises(SystemExit):
                 cli.pre_commit_installed_cli()
-
-    def test_run(self, capsys) -> None:
-        """Teste CLI."""
-        cli.effort_msg_cli()
-        captured = capsys.readouterr()
-        assert 'Boa! Continue trabalhando com dedicação!' in captured.out

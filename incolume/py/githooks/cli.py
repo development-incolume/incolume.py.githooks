@@ -123,6 +123,66 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     return SUCCESS
 
 
+def effort_msg_cli() -> None:
+    """Run it."""
+    effort_msg()
+
+
+def clean_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
+    """Remove the help message.
+
+    Remove "# Please enter the commit message..." from help message.
+
+    Args:
+        argv: Arguments values sequence:
+          - commit_msg_file (Path or str): The path to the commit message file.
+          - commit_source (str): The source of the commit message.
+          - commit_hash (str): The commit hash.
+
+    Returns:
+        int: SUCCESS code if the operation completes.
+
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('commit_msg_file', help='Filename for commit message')
+    parser.add_argument('commit_source', help='Commit source')
+    parser.add_argument('commit_hash', help='Commit hash')
+    args = parser.parse_args(argv)
+    commit_msg_file = args.commit_msg_file
+    commit_source = args.commit_source
+    commit_hash = args.commit_hash
+
+    ic(commit_msg_file, commit_source, commit_hash)
+
+    commit_msg_file = Path(commit_msg_file)
+
+    backup = commit_msg_file.with_suffix(commit_msg_file.suffix + '.bak')
+    backup.write_bytes(commit_msg_file.read_bytes())
+
+    result = []
+    skipping = False
+
+    for line in commit_msg_file.read_text(encoding='utf-8').splitlines(
+        keepends=True
+    ):
+        if not skipping and line.lstrip().startswith(
+            'Please enter the commit message'
+        ):
+            skipping = True
+            continue
+        if skipping and line.strip() == '#':
+            skipping = False
+            continue
+        if not skipping:
+            result.append(line)
+
+    commit_msg_file.write_text(''.join(result), encoding='utf-8')
+
+    return SUCCESS
+
+
 def pre_commit_installed_cli() -> int:
     """Run it."""
     result = SUCCESS
@@ -135,8 +195,3 @@ def pre_commit_installed_cli() -> int:
         )
         result |= FAILURE
     return sys.exit(result)
-
-
-def effort_msg_cli() -> None:
-    """Run it."""
-    effort_msg()
