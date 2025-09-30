@@ -11,6 +11,7 @@ import rich
 from icecream import ic
 
 from incolume.py.githooks.detect_private_key import has_private_key
+from incolume.py.githooks.effort_message import effort_msg
 from incolume.py.githooks.footer_signedoffby import (
     add_blank_line_if_needed,
     add_signed_off_by,
@@ -134,3 +135,8 @@ def pre_commit_installed_cli() -> int:
         )
         result |= FAILURE
     return sys.exit(result)
+
+
+def effort_msg_cli() -> None:
+    """Run it."""
+    effort_msg()

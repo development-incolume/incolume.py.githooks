@@ -119,3 +119,9 @@ class TestCaseAllCLI:
             m.return_value = Path(entrance) if entrance else []
             with pytest.raises(SystemExit):
                 cli.pre_commit_installed_cli()
+
+    def test_run(self, capsys) -> None:
+        """Teste CLI."""
+        cli.effort_msg_cli()
+        captured = capsys.readouterr()
+        assert 'Boa! Continue trabalhando com dedicação!' in captured.out
