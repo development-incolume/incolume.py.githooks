@@ -126,5 +126,5 @@ class TestCaseGitDiff:
             entrance.commit_hash,
         ]
 
-        assert pkg.main(entrance) == expected.code
+        assert pkg.insert_diff_cli(entrance) == expected.code
         assert test_file.read_text(encoding='utf-8') == expected.msg

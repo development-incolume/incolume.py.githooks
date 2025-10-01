@@ -17,7 +17,7 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
-from incolume.py.githooks.rules import FAILURE, SUCCESS
+from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
 from incolume.py.githooks.utils import Result
 
 
@@ -207,3 +207,9 @@ class TestCaseAllCLI:
             m.return_value = Path(entrance) if entrance else []
             with pytest.raises(SystemExit):
                 cli.pre_commit_installed_cli()
+
+    def test_get_msg_cli(self, capsys) -> None:
+        """Test get_msg function."""
+        cli.get_msg_cli()
+        captured = capsys.readouterr()
+        assert captured.out.strip() in MESSAGES
