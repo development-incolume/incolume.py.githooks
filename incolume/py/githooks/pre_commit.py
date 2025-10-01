@@ -6,19 +6,12 @@ import logging
 import platform
 import re
 import sys
-from subprocess import check_output  # noqa: S404
 
 from colorama import Fore, Style
 
 from incolume.py.githooks.rules import RULE_BRANCHNAME
+from incolume.py.githooks.utils import get_branchname
 
-BRANCH = (
-    check_output(
-        ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],  # noqa: S607
-    )
-    .strip()
-    .decode('utf-8')
-)
 
 
 def run() -> None:
@@ -26,7 +19,7 @@ def run() -> None:
     logging.debug(platform.python_version_tuple())
     result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
     status = 0
-    if not re.match(RULE_BRANCHNAME, BRANCH):
+    if not re.match(RULE_BRANCHNAME, get_branchname()):
         result = (
             f'{Fore.RED}Your commit was rejected due to branching name '
             'incompatible with rules.\n'
