@@ -60,8 +60,8 @@ def insert_git_diff(commit_msg_file: Path, diff_output: str) -> None:
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
 
 
-def main(argv: Sequence[str] | None = None) -> int:
-    """CLI for module."""
+def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
+    """CLI for module gitdiff."""
     parser = argparse.ArgumentParser(
         description='Processa mensagens de commit'
         ' como no hook original em Perl.'
@@ -70,9 +70,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
     )
     parser.add_argument(
-        'commit_source', help='Origem do commit (ex.: template)'
+        'commit_source', default='', help='Origem do commit (ex.: template)'
     )
-    parser.add_argument('commit_hash', help='SHA1 do commit ou vazio')
+    parser.add_argument(
+        'commit_hash', default='', help='SHA1 do commit ou vazio'
+    )
 
     args = parser.parse_args(argv)
     ic(args)
@@ -84,4 +86,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    raise SystemExit(insert_diff_cli())
