@@ -56,6 +56,35 @@ class TestCaseAllCLI:
         shutil.rmtree(cls.test_dir)
 
     @pytest.mark.parametrize(
+        ['entrance', 'exit_code', 'message'],
+        [
+            pytest.param(
+                'WIP',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with',
+                marks=[],
+            ),
+            pytest.param(
+                'enhancement-1234567890',
+                1,
+                'xpto',
+                marks=[],
+            ),
+        ],
+    )
+    def test_check_valid_branchname(
+        self, capsys, mocker, entrance, exit_code, message
+    ) -> None:
+        """Test check_valid_branchname function."""
+        with mocker.patch(
+            'incolume.py.githooks.utils.get_branchname', return_value=entrance
+        ):
+            result = cli.check_valid_branchname()
+        captured = capsys.readouterr()
+        assert result == exit_code
+        assert message in captured.out
+
+    @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
