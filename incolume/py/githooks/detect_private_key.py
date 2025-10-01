@@ -1,7 +1,5 @@
 """Module check filenames."""
 
-# ruff: noqa: T201
-
 from __future__ import annotations
 
 import logging
@@ -11,7 +9,7 @@ from typing import TYPE_CHECKING
 from icecream import ic
 
 from incolume.py.githooks.rules import FAILURE, SUCCESS
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.utils import Result, debug_enable
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -32,7 +30,7 @@ BLACKLIST: list[bytes] = [
 ]
 
 
-def has_private_key(*filenames: Sequence[Path]) -> bool:
+def has_private_key(*filenames: Sequence[Path]) -> Result:
     """Check if the content contains a private key.
 
     Args:
@@ -40,6 +38,7 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     """
     private_key_files = []
+    result = Result(code=SUCCESS, message='')
     logging.debug(ic(filenames))
 
     for filename in filenames:
@@ -51,6 +50,6 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     if private_key_files:
         for private_key_file in private_key_files:
-            print(f'Private key found: {private_key_file}')
-        return FAILURE
-    return SUCCESS
+            result.message += f'Private key found: {private_key_file}\n'
+        result.code |= FAILURE
+    return result

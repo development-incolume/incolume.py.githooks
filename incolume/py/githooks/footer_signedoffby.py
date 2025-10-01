@@ -108,7 +108,7 @@ def add_signed_off_by(path: Path, sob: str | None = None) -> None:
     )
 
 
-def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
+def add_blank_line_if_needed(path: Path, commit_source: str = '') -> None:
     """Insere uma linha em branco no topo do arquivo de commit.
 
     caso `commit_source` seja vazio e o arquivo não comece
@@ -127,4 +127,4 @@ def add_blank_line_if_needed(path: Path, commit_source: str) -> None:
 
     content: str = path.read_text(encoding='utf-8')
     if re.fullmatch(r'[^\n].+', content):
-        path.write_text('\n' + content, encoding='utf-8')
+        path.write_text(f'\n{content}', encoding='utf-8')

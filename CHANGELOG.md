@@ -10,13 +10,17 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-09-30:
+## [Unreleased]	 &#8212; 	2025-10-01:
 ### Added
   - Disponibilizar hook check-len-first-line-commit-msg;
   - Disponibilizar Hook footer-signed-off-by;
   - Disponibilizar Hook clean-commit-message;
   - Disponibilizar Hook git-diff;
   - Disponibilizar hook pre-commit-installed;
+
+## [1.2.0]	 &#8212; 	2025-10-01:
+### Added
+  - Disponibilizado hook effort-message;
 ### Changed
   - Interfaces para hooks centralizadas no módulo CLI;
 ### Removed
@@ -104,4 +108,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [0.5.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.5.0rc1...0.5.0
 [1.0.0]: https://github.com/development-incolume/incolume.py.githooks/compare/0.5.0...1.0.0
 [1.1.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.0.0...1.1.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.1.0...Unreleased
+[1.2.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.1.0...1.2.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.2.0...Unreleased

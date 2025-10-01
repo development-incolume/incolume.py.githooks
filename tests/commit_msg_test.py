@@ -1,7 +1,8 @@
 """Test for commit message hook."""
 
 import pytest
-from incolume.py.githooks.commit_msg import check, get_msg, MESSAGES
+from incolume.py.githooks.commit_msg import check, get_msg, get_msg_cli
+from incolume.py.githooks.rules import MESSAGES
 
 
 class TestCaseCommitMsg:
@@ -20,8 +21,13 @@ class TestCaseCommitMsg:
         captured = capsys.readouterr()
         assert expected in captured.out
 
-    def test_get_msg(self, capsys) -> None:
+    def test_get_msg(self) -> None:
         """Test get_msg function."""
-        get_msg()
+        result = get_msg()
+        assert any(msg in result.strip() for msg in MESSAGES)
+
+    def test_get_msg_cli(self, capsys) -> None:
+        """Test get_msg function."""
+        get_msg_cli()
         captured = capsys.readouterr()
         assert captured.out.strip() in MESSAGES
