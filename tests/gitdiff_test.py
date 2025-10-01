@@ -1,6 +1,6 @@
 """Test Module for gitdiff."""
 
-from incolume.py.githooks import SUCCESS
+from incolume.py.githooks.rules import SUCCESS
 import incolume.py.githooks.gitdiff as pkg
 import pytest
 import tempfile

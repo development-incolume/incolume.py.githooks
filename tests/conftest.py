@@ -3,7 +3,7 @@
 import pytest
 from click.testing import CliRunner
 
-from incolume.py.githooks import REGEX_SEMVER
+from incolume.py.githooks.rules import REGEX_SEMVER
 
 __author__ = '@britodfbr'  # pragma: no cover
 

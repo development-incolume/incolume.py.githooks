@@ -1,18 +1,15 @@
 """Module check filenames."""
 
-# ruff: noqa: T201
-
 from __future__ import annotations
 
-import argparse
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from icecream import ic
 
-from incolume.py.githooks import FAILURE, SUCCESS
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.rules import FAILURE, SUCCESS
+from incolume.py.githooks.utils import Result, debug_enable
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -33,7 +30,7 @@ BLACKLIST: list[bytes] = [
 ]
 
 
-def has_private_key(*filenames: Sequence[Path]) -> bool:
+def has_private_key(*filenames: Sequence[Path]) -> Result:
     """Check if the content contains a private key.
 
     Args:
@@ -41,6 +38,7 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     """
     private_key_files = []
+    result = Result(code=SUCCESS, message='')
     logging.debug(ic(filenames))
 
     for filename in filenames:
@@ -52,27 +50,6 @@ def has_private_key(*filenames: Sequence[Path]) -> bool:
 
     if private_key_files:
         for private_key_file in private_key_files:
-            print(f'Private key found: {private_key_file}')
-        return FAILURE
-    return SUCCESS
-
-
-def main(argv: Sequence[str] | None = None) -> int:
-    """CLI to check private key.
-
-    Args:
-        argv (Sequence[str] | None, optional): _description_. Defaults to None.
-
-    Returns:
-        int: _description_
-
-    """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    args = parser.parse_args(argv)
-    ic(args)
-    return has_private_key(*args.filenames)
-
-
-if __name__ == '__main__':
-    raise SystemExit(main())
+            result.message += f'Private key found: {private_key_file}\n'
+        result.code |= FAILURE
+    return result

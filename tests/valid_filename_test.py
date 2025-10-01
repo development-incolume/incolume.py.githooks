@@ -5,7 +5,7 @@ from typing import NoReturn
 
 from icecream import ic
 import pytest
-from incolume.py.githooks.valid_filename import is_valid_filename, main
+from incolume.py.githooks.valid_filename import is_valid_filename
 
 
 class TestCaseValidFilename:
@@ -67,7 +67,7 @@ class TestCaseValidFilename:
     )
     def test_valid_filenames(self, entrance, expected) -> NoReturn:
         """Test valid filenames."""
-        assert is_valid_filename(**entrance) is expected
+        assert is_valid_filename(**entrance).code is expected
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
@@ -124,34 +124,4 @@ class TestCaseValidFilename:
         """Test invalid filenames."""
         result = capsys.readouterr()
         ic(result)
-        assert is_valid_filename(**entrance) is expected  # Not snake_case
-
-    @pytest.mark.parametrize(
-        ['entrance', 'expected'],
-        [
-            pytest.param(
-                {'Jürgen'}, 'Filename is not in snake_case:', marks=[]
-            ),
-            pytest.param({'x' * 257}, 'Name too long', marks=[]),
-            pytest.param({'x.py'}, 'Name too short', marks=[]),
-            pytest.param(
-                {'xVar.toml'}, 'Filename is not in snake_case', marks=[]
-            ),
-            pytest.param({'x.py', '--min-len=5'}, 'Name too short', marks=[]),
-            pytest.param(
-                {'abc_defg.py', '--min-len=10'},
-                'Name too short',
-                marks=[],
-            ),
-            pytest.param(
-                {'abcdefghijklm.py', '--max-len=10'},
-                'Name too long',
-                marks=[],
-            ),
-        ],
-    )
-    def test_main(self, capsys, entrance, expected) -> None:
-        """Test CLI."""
-        main([*entrance])
-        captured = capsys.readouterr()
-        assert expected in captured.out
+        assert is_valid_filename(**entrance).code is expected  # Not snake_case
