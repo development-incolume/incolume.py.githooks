@@ -130,11 +130,13 @@ class TestCaseAllCLI:
         assert result == expected
         assert not captured.out
 
-    def test_effort_msg_cli(self, capsys) -> None:
+    def test_effort_msg_cli(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Teste CLI."""
-        cli.effort_msg_cli()
+        result = cli.effort_msg_cli()
         captured = capsys.readouterr()
-        assert 'Boa! Continue trabalhando com dedicação!' in captured.out
+        assert result == 0
+        assert 'Boa! Continue trabalhando com' in captured.out
+        assert '\033[32m' in captured.out  # Fore.GREEN
 
     @pytest.mark.parametrize(
         'entrance',

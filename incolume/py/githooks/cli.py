@@ -131,9 +131,10 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     return SUCCESS
 
 
-def effort_msg_cli() -> None:
+def effort_msg_cli() -> int:
     """Run it."""
-    effort_msg()
+    rich.print(effort_msg())
+    return 0
 
 
 def clean_commit_msg_cli(
