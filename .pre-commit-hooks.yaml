@@ -23,13 +23,13 @@
   types: [text]
   exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
 
-# - id: effort-message
-  # name: Incolume - Commit Message Effort Hook
-  # description: Effort message for commit.
-  # entry: effort-msg
-  # language: python
-  # types: [python]
-  # stages: [pre-commit, pre-push, manual]
+- id: effort-message
+  name: Incolume - Commit Message Effort Hook
+  description: Effort message for commit.
+  entry: effort-msg
+  language: python
+  types: [python]
+  stages: [pre-commit, pre-push, manual]
 #
 # - id: footer-signed-off-by
   # name: Incolume - Seting footer with Signed-off-by
