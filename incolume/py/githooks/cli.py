@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 import rich
 from icecream import ic
 
+from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg
 from incolume.py.githooks.footer_signedoffby import (
@@ -239,3 +240,8 @@ def pre_commit_installed_cli() -> int:
         )
         result |= FAILURE
     return sys.exit(result)
+
+
+def get_msg_cli() -> None:
+    """Run it."""
+    rich.print(get_msg())
