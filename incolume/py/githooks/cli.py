@@ -30,7 +30,10 @@ if TYPE_CHECKING:
 
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
-    """Maint entry point for the script."""
+    """Maint entry point for the script.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     codes: int = SUCCESS
     parser = argparse.ArgumentParser(
         prog='validate-filename',
@@ -70,6 +73,8 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
 def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
+    Hook designed for stages: all
+
     Args:
         argv (Sequence[str] | None, optional): _description_. Defaults to None.
 
@@ -90,6 +95,8 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     """Função principal que processa os argumentos.
 
     E aplica as transformações no arquivo de commit.
+
+    Hook designed for stages: pre-commit, pre-push, manual
 
     Fluxo:
     1. Remove linhas desnecessárias do template de commit.
@@ -132,7 +139,10 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
 
 
 def effort_msg_cli() -> int:
-    """Run it."""
+    """Run it.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     rich.print(effort_msg())
     return 0
 
@@ -143,6 +153,8 @@ def clean_commit_msg_cli(
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
+
+    Hook designed for stages: pre-commit, pre-push, manual
 
     Args:
         argv: Arguments values sequence:
@@ -195,7 +207,10 @@ def clean_commit_msg_cli(
 def prepare_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> sys.exit:
-    """Run CLI for prepare-commit-msg hook."""
+    """Run CLI for prepare-commit-msg hook.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
@@ -210,7 +225,10 @@ def prepare_commit_msg_cli(
 
 
 def pre_commit_installed_cli() -> int:
-    """Run pre-commit-installed hook."""
+    """Run pre-commit-installed hook.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     result = SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
