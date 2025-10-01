@@ -4,15 +4,10 @@ from __future__ import annotations
 
 import secrets
 import sys
-from typing import Final
 
 import rich
 
-MESSAGES: Final[str] = [
-    'Boa! Continue o bom trabalho com a força, Jedi!',
-    'Boa! Continue trabalhando campeão!',
-    'Executado com sucesso.',
-]
+from incolume.py.githooks.rules import MESSAGES
 
 
 def check() -> None:
