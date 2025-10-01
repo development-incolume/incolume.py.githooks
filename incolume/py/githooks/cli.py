@@ -20,7 +20,7 @@ from incolume.py.githooks.footer_signedoffby import (
 )
 from incolume.py.githooks.prepare_commit_msg import prepare_commit_msg
 from incolume.py.githooks.rules import FAILURE, SUCCESS
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.utils import Result, debug_enable
 from incolume.py.githooks.valid_filename import is_valid_filename
 
 debug_enable()
@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     """Maint entry point for the script."""
+    codes: int = SUCCESS
     parser = argparse.ArgumentParser(
         prog='validate-filename',
     )
@@ -54,13 +55,16 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
 
-    results = [
-        not is_valid_filename(
+    results: list[Result] = [
+        is_valid_filename(
             filename=filename, min_len=args.min_len, max_len=args.max_len
         )
         for filename in args.filenames
     ]
-    return int(any(results))
+    for result in results:
+        rich.print(result.message)
+        codes |= not result.code
+    return codes
 
 
 def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
@@ -77,7 +81,9 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
     ic(args)
-    return has_private_key(*args.filenames)
+    result = has_private_key(*args.filenames)
+    rich.print(result.message)
+    return result.code
 
 
 def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
@@ -125,9 +131,10 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     return SUCCESS
 
 
-def effort_msg_cli() -> None:
+def effort_msg_cli() -> int:
     """Run it."""
-    effort_msg()
+    rich.print(effort_msg())
+    return 0
 
 
 def clean_commit_msg_cli(

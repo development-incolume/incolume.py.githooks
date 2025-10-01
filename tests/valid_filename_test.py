@@ -67,7 +67,7 @@ class TestCaseValidFilename:
     )
     def test_valid_filenames(self, entrance, expected) -> NoReturn:
         """Test valid filenames."""
-        assert is_valid_filename(**entrance) is expected
+        assert is_valid_filename(**entrance).code is expected
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
@@ -124,4 +124,4 @@ class TestCaseValidFilename:
         """Test invalid filenames."""
         result = capsys.readouterr()
         ic(result)
-        assert is_valid_filename(**entrance) is expected  # Not snake_case
+        assert is_valid_filename(**entrance).code is expected  # Not snake_case
