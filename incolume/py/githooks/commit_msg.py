@@ -4,15 +4,10 @@ from __future__ import annotations
 
 import secrets
 import sys
-from typing import Final
 
 import rich
 
-MESSAGES: Final[str] = [
-    'Boa! Continue o bom trabalho com a força, Jedi!',
-    'Boa! Continue trabalhando campeão!',
-    'Executado com sucesso.',
-]
+from incolume.py.githooks.rules import MESSAGES
 
 
 def check() -> None:
@@ -21,19 +16,17 @@ def check() -> None:
     rich.print(f'Arguments List: {sys.argv!s}')
 
 
-def get_msg(*, fixed: bool = False, messages: list[str] | None = None) -> None:
+def get_msg(*, fixed: bool = False, messages: list[str] | None = None) -> str:
     """Get message."""
     messages = messages or MESSAGES
     msg = messages[0] if fixed else secrets.choice(messages)
-    result = f'\n[green]{msg}[/]\n'
-
-    rich.print(result)
+    return f'\n[green]{msg}[/]\n'
 
 
-def run() -> None:
+def get_msg_cli() -> None:
     """Run it."""
-    get_msg()
+    rich.print(get_msg())
 
 
 if __name__ == '__main__':  # pragma: no cover
-    raise SystemExit(run())
+    raise SystemExit(get_msg_cli())

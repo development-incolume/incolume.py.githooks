@@ -7,11 +7,12 @@ from pathlib import Path
 
 from icecream import ic
 
+from incolume.py.githooks.rules import SNAKE_CASE
 from incolume.py.githooks.utils import Result, debug_enable
 
 debug_enable()
 
-SNAKE_CASE_REGEX = re.compile(r'^[a-z_][a-z_0-9]+$')
+SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 
 
 def is_valid_filename(
