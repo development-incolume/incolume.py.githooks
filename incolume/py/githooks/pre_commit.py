@@ -13,8 +13,7 @@ from incolume.py.githooks.rules import RULE_BRANCHNAME
 from incolume.py.githooks.utils import get_branchname
 
 
-
-def run() -> None:
+def valid_branchname() -> None:
     """Run it."""
     logging.debug(platform.python_version_tuple())
     result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
@@ -32,4 +31,4 @@ def run() -> None:
 
 
 if __name__ == '__main__':  # pragma: no cover
-    raise SystemExit(run())
+    raise SystemExit(valid_branchname())
