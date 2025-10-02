@@ -50,7 +50,7 @@ repos:
       additional_dependencies: [colorama,rich]  # Python dependency for the script
 
     - id: detect-key
-      verbose: true
+      verbose: false
       name: Incolume - detect private key
       description: detects the presence of private keys.
       entry: detect-key
