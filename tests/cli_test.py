@@ -79,9 +79,8 @@ class TestCaseAllCLI:
         """Test check_valid_branchname function."""
         ic(entrance, exit_code, message)
 
-        with patch(
-            'incolume.py.githooks.utils.get_branchname', return_value=entrance
-        ):
+        with patch('incolume.py.githooks.utils') as m:
+            m.get_branchname.return_value = entrance
             result = cli.check_valid_branchname()
             ic(result)
             captured = capsys.readouterr()
