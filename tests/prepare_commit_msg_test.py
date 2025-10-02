@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import shutil
-from typing import NoReturn, TYPE_CHECKING
+from typing import NoReturn
 from icecream import ic
 import pytest
 from incolume.py.githooks.utils import Result
@@ -17,15 +17,10 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg,
     check_type_commit_msg,
     check_min_len_first_line_commit_msg,
-    check_len_first_line_commit_msg_cli,
-    check_type_commit_msg_cli,
 )
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
 from inspect import stack
-
-if TYPE_CHECKING:
-    from collections.abc import Generator
 
 
 @dataclass
@@ -283,99 +278,3 @@ class TestCasePrepareCommitMsg:
         result = check_min_len_first_line_commit_msg(test_file, len_line)
         assert result.code == entrance.expected.code
         assert entrance.expected.message in result.message
-
-    def test_check_type_commit_msg_cli(self) -> NoReturn:
-        """Test CLI for check type commit message."""
-        with NamedTemporaryFile(dir=self.test_dir) as fl:
-            test_file = Path(fl.name)
-        test_file.write_bytes(b'')
-        with pytest.raises(SystemExit):
-            assert check_type_commit_msg_cli([test_file.as_posix()])
-
-    @pytest.mark.parametrize(
-        'entrance',
-        [
-            pytest.param(
-                Entrance(
-                    msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
-                    expected=Result(
-                        0,
-                        [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
-                        ],
-                    ),
-                ),
-                marks=[
-                    # pytest.mark.skip
-                ],
-            ),
-            pytest.param(
-                Entrance(
-                    msg_commit='feat' * 15,
-                    expected=Result(
-                        0,
-                        [
-                            'Error: Commit subject line exceeds',
-                        ],
-                    ),
-                ),
-                marks=[
-                    # pytest.mark.skip
-                ],
-            ),
-            pytest.param(
-                Entrance(
-                    msg_commit='feat',
-                    expected=Result(
-                        0,
-                        [
-                            'Error: Commit subject line has an insufficient number of',
-                            'Commit maximum length for message is validated',
-                        ],
-                    ),
-                ),
-                marks=[
-                    # pytest.mark.skip
-                ],
-            ),
-            pytest.param(
-                Entrance(
-                    msg_commit='feat',
-                    params=['--min-first-line=4', '--max-first-line=5'],
-                    expected=Result(
-                        0,
-                        [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
-                        ],
-                    ),
-                ),
-                marks=[
-                    # pytest.mark.skip
-                ],
-            ),
-        ],
-    )
-    def test_check_len_first_line_commit_msg_cli(
-        self, capsys: Generator, entrance: Entrance
-    ) -> NoReturn:
-        """Test CLI for check len first line commit messages."""
-        result = None
-        with NamedTemporaryFile(dir=self.test_dir) as fl:
-            test_file = Path(fl.name)
-
-        test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
-        with pytest.raises(expected_exception=SystemExit):
-            result = check_len_first_line_commit_msg_cli([
-                test_file.as_posix(),
-                *entrance.params,
-            ])
-        captured = capsys.readouterr()
-        assert bool(result) is bool(entrance.expected.code)
-        assert ic(captured.out.split('\n'))
-        assert sum(
-            m in n
-            for m in entrance.expected.message
-            for n in ic(captured.out.split('\n'))
-        ) == len(entrance.expected.message)

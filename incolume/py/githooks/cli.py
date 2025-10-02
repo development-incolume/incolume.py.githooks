@@ -22,7 +22,12 @@ from incolume.py.githooks.footer_signedoffby import (
     add_signed_off_by,
     clean_commit_msg,
 )
-from incolume.py.githooks.prepare_commit_msg import prepare_commit_msg
+from incolume.py.githooks.prepare_commit_msg import (
+    check_max_len_first_line_commit_msg,
+    check_min_len_first_line_commit_msg,
+    check_type_commit_msg,
+    prepare_commit_msg,
+)
 from incolume.py.githooks.rules import FAILURE, RULE_BRANCHNAME, SUCCESS
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 from incolume.py.githooks.valid_filename import is_valid_filename
@@ -31,6 +36,54 @@ debug_enable()
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+def check_len_first_line_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
+    """Check commit message."""
+    results = []
+    result_code = SUCCESS
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--min-first-line',
+        default=10,
+        type=int,
+        help='Minimum Length of line for first line',
+    )
+    parser.add_argument(
+        '--max-first-line',
+        default=50,
+        type=int,
+        help='Maximum Length of line for first line',
+    )
+    args = parser.parse_args(argv)
+    results.extend((
+        check_min_len_first_line_commit_msg(
+            *args.filenames, len_line=args.min_first_line
+        ),
+        check_max_len_first_line_commit_msg(
+            *args.filenames, len_line=args.max_first_line
+        ),
+    ))
+    for result in results:
+        rich.print(result.message)
+        result_code |= result.code
+
+    sys.exit(result_code)  # Validation passed, allow commit
+
+
+def check_type_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> sys.exit:
+    """Check commit message."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
+    result = check_type_commit_msg(*args.filenames)
+    rich.print(result.message)
+    sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
 def check_valid_branchname() -> int:
