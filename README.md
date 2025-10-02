@@ -10,4 +10,24 @@
 
 ---
 
-Hooks git for incolume projects
+Hooks git for incolume projects.
+
+## Usage
+
+### Configuration
+
+Model for .pre-commit-config.yaml, bellow:
+
+```yaml
+# .pre-commit-config.yaml
+
+
+- repo: https://github.com/development-incolume/incolume.py.githooks
+  rev: main
+  hooks:
+    - id: check-precommit-installed
+    - id: check-valid-filenames
+    - id: detect-key
+    - id: effort-message
+
+```
