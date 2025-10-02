@@ -12,6 +12,7 @@ from incolume.py.githooks.rules import MESSAGES
 
 def check() -> None:
     """Check arguments."""
+    # TODO @<britodfbr> function not necessary; possible remove.
     rich.print(f'Number of arguments: {len(sys.argv)}')
     rich.print(f'Arguments List: {sys.argv!s}')
 
