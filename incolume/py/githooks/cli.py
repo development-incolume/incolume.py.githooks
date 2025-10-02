@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import argparse
 import logging
+import platform
+import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
+from colorama import Fore, Style
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
@@ -20,14 +23,38 @@ from incolume.py.githooks.footer_signedoffby import (
     clean_commit_msg,
 )
 from incolume.py.githooks.prepare_commit_msg import prepare_commit_msg
-from incolume.py.githooks.rules import FAILURE, SUCCESS
-from incolume.py.githooks.utils import Result, debug_enable
+from incolume.py.githooks.rules import FAILURE, RULE_BRANCHNAME, SUCCESS
+from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 from incolume.py.githooks.valid_filename import is_valid_filename
 
 debug_enable()
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+
+def check_valid_branchname() -> int:
+    """Check valid branchname.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+
+    Returns:
+        int: SUCCESS or FAILURE
+
+    """
+    logging.debug(platform.python_version_tuple())
+    result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
+    status = SUCCESS
+    if not re.match(RULE_BRANCHNAME, get_branchname()):
+        result = (
+            f'{Fore.RED}Your commit was rejected due to branching name '
+            'incompatible with rules.\n'
+            "Please rename your branch with '<(enhancement|feature|feat"
+            f"|bug|bugfix|fix)>/epoch#<timestamp>' syntax{Style.RESET_ALL}"
+        )
+        status |= FAILURE
+    rich.print(result)
+    return status
 
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:

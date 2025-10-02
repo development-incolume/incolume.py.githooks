@@ -1,11 +1,12 @@
 """Tests for util."""
 
 import pytest
-from incolume.py.githooks.utils import debug_enable, TypeCommit
+from incolume.py.githooks import utils
 from unittest import mock
 import os
 from icecream import ic
 import contextlib
+from unittest.mock import patch
 
 
 class TestCaseUtilsEnviron:
@@ -53,10 +54,10 @@ class TestCaseUtilsEnviron:
         """Test debug enable."""
         with mock.patch.dict(os.environ, clear=True):
             os.environ[envname] = str(entrance)
-            assert debug_enable() is expected
+            assert utils.debug_enable() is expected
 
 
-class TestCaseUtilsEnum:
+class TestCaseUtilsModule:
     """Testcase for utils module."""
 
     @pytest.mark.parametrize(
@@ -106,6 +107,20 @@ class TestCaseUtilsEnum:
         """Test for Enum TypeCommit."""
         if 'expected_exception' in expected:
             with pytest.raises(**expected):  # noqa: PT010
-                TypeCommit(entrance)
+                utils.TypeCommit(entrance)
         else:
-            assert TypeCommit(entrance).value == expected
+            assert utils.TypeCommit(entrance).value == expected
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param('80-fatora-código\n', marks=[]),
+            pytest.param('\n80-açaí-código\n\n', marks=[]),
+        ],
+    )
+    def test_get_branchname(self, entrance: str) -> None:
+        """Test for get branch names."""
+        with patch.object(
+            utils, 'check_output', return_value=entrance.encode()
+        ):
+            assert utils.get_branchname() == entrance.strip()

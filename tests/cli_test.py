@@ -19,6 +19,7 @@ from inspect import stack
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
 from incolume.py.githooks.utils import Result
+from unittest.mock import patch
 
 
 @dataclass
@@ -54,6 +55,64 @@ class TestCaseAllCLI:
         """
         ic(f'teardown for {cls.__name__}')
         shutil.rmtree(cls.test_dir)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'exit_code', 'message'],
+        [
+            pytest.param(
+                'WIP',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with',
+                marks=[],
+            ),
+            pytest.param(
+                '123-jesus-loves-you',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'enhancement/epoch#1234567890',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'feat/issue#123',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'enhancement-1234567890',
+                0,
+                'Branching name rules. [OK]',
+                marks=[
+                    pytest.mark.xfail(reason='New format not validated yet.')
+                ],
+            ),
+            pytest.param(
+                '80-açaí',
+                0,
+                'Branching name rules. [OK]',
+                marks=[
+                    pytest.mark.xfail(reason='New format not validated yet.')
+                ],
+            ),
+        ],
+    )
+    def test_check_valid_branchname(
+        self, capsys, entrance, exit_code, message
+    ) -> None:
+        """Test check_valid_branchname function."""
+        ic(entrance, exit_code, message)
+
+        with patch.object(cli, 'get_branchname', return_value=entrance):
+            result = cli.check_valid_branchname()
+            ic(result)
+            captured = capsys.readouterr()
+            assert message in captured.out
+            assert result == exit_code
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
