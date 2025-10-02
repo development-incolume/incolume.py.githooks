@@ -27,6 +27,7 @@ Model for .pre-commit-config.yaml, bellow:
   hooks:
     - id: check-precommit-installed
     - id: check-valid-filenames
+      args: ['--min-len=3', '--max-len=256']
     - id: detect-key
     - id: effort-message
 
