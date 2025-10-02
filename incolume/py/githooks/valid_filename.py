@@ -18,11 +18,26 @@ SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 def is_valid_filename(
     filename: str | Path, min_len: int = 3, max_len: int = 256
 ) -> Result:
-    """Check if a filename is valid.
+    r"""Check if a filename is valid.
 
     A valid filename is in snake_case and has at least `min_len` characters.
     extract the name so that `/my/repo/x.py` becomes `x`
-    """
+
+    Args:
+        filename: The filename to check.
+        min_len: Minimum length of the filename (default: 3).
+        max_len: Maximum length of the filename (default: 256).
+
+    Returns:
+        Result: The result of the check.
+
+    Examples:
+        >>> is_valid_filename('valid_name.py')
+        Result(code=True, message='')
+        >>> is_valid_filename('sh.py', min_len=3)
+        Result(code=False, message='\n[red]Name too short (min_len=3): sh.py[/]')
+
+    """  # noqa: E501
     msg_return = ''
     name = Path(filename).stem
     refname = re.sub(r'[^a-z0-9]', '', name)
