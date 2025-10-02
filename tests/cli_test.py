@@ -19,7 +19,7 @@ from inspect import stack
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
 from incolume.py.githooks.utils import Result
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 
 @dataclass
@@ -79,8 +79,7 @@ class TestCaseAllCLI:
         """Test check_valid_branchname function."""
         ic(entrance, exit_code, message)
 
-        with patch('incolume.py.githooks.utils', return_value=Mock()) as m:
-            m.get_branchname.return_value = entrance
+        with patch.object(cli, 'get_branchname', return_value=entrance):
             result = cli.check_valid_branchname()
             ic(result)
             captured = capsys.readouterr()
