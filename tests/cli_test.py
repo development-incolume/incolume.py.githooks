@@ -68,8 +68,36 @@ class TestCaseAllCLI:
             pytest.param(
                 '123-jesus-loves-you',
                 0,
-                'xpto',
+                'Branching name rules. [OK]',
                 marks=[],
+            ),
+            pytest.param(
+                'enhancement/epoch#1234567890',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'feat/issue#123',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'enhancement-1234567890',
+                0,
+                'Branching name rules. [OK]',
+                marks=[
+                    pytest.mark.xfail(reason='New format not validated yet.')
+                ],
+            ),
+            pytest.param(
+                '80-açaí',
+                0,
+                'Branching name rules. [OK]',
+                marks=[
+                    pytest.mark.xfail(reason='New format not validated yet.')
+                ],
             ),
         ],
     )
