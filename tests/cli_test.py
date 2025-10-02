@@ -80,7 +80,7 @@ class TestCaseAllCLI:
         ic(entrance, exit_code, message)
 
         with patch('incolume.py.githooks.utils') as m:
-            m.get_branchname.return_value = entrance
+            m.__enter__.return_value.get_branchname.return_value = entrance
             result = cli.check_valid_branchname()
             ic(result)
             captured = capsys.readouterr()
