@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import Callable, NoReturn
+from typing import Callable, NoReturn, TYPE_CHECKING
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
@@ -17,8 +17,12 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
-from incolume.py.githooks.rules import FAILURE, SUCCESS
+from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
 from incolume.py.githooks.utils import Result
+from unittest.mock import patch
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 @dataclass
@@ -54,6 +58,160 @@ class TestCaseAllCLI:
         """
         ic(f'teardown for {cls.__name__}')
         shutil.rmtree(cls.test_dir)
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(
+                Entrance(
+                    msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
+                    expected=Result(
+                        0,
+                        [
+                            'Commit minimum length for message is validated',
+                            'Commit maximum length for message is validated',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat' * 15,
+                    expected=Result(
+                        0,
+                        [
+                            'Error: Commit subject line exceeds',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat',
+                    expected=Result(
+                        0,
+                        [
+                            'Error: Commit subject line has an insufficient number of',
+                            'Commit maximum length for message is validated',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat',
+                    params=['--min-first-line=4', '--max-first-line=5'],
+                    expected=Result(
+                        0,
+                        [
+                            'Commit minimum length for message is validated',
+                            'Commit maximum length for message is validated',
+                        ],
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
+        ],
+    )
+    def test_check_len_first_line_commit_msg_cli(
+        self, capsys: Generator, entrance: Entrance
+    ) -> NoReturn:
+        """Test CLI for check len first line commit messages."""
+        result = None
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+
+        test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
+        with pytest.raises(expected_exception=SystemExit):
+            result = cli.check_len_first_line_commit_msg_cli([
+                test_file.as_posix(),
+                *entrance.params,
+            ])
+        captured = capsys.readouterr()
+        assert bool(result) is bool(entrance.expected.code)
+        assert ic(captured.out.split('\n'))
+        assert sum(
+            m in n
+            for m in entrance.expected.message
+            for n in ic(captured.out.split('\n'))
+        ) == len(entrance.expected.message)
+
+    def test_check_type_commit_msg_cli(self) -> NoReturn:
+        """Test CLI for check type commit message."""
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(b'')
+        with pytest.raises(SystemExit):
+            assert cli.check_type_commit_msg_cli([test_file.as_posix()])
+
+    @pytest.mark.parametrize(
+        ['entrance', 'exit_code', 'message'],
+        [
+            pytest.param(
+                'WIP',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with',
+                marks=[],
+            ),
+            pytest.param(
+                '123-jesus-loves-you',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'enhancement/epoch#1234567890',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'feat/issue#123',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'enhancement-1234567890',
+                0,
+                'Branching name rules. [OK]',
+                marks=[
+                    pytest.mark.xfail(reason='New format not validated yet.')
+                ],
+            ),
+            pytest.param(
+                '80-açaí',
+                0,
+                'Branching name rules. [OK]',
+                marks=[
+                    pytest.mark.xfail(reason='New format not validated yet.')
+                ],
+            ),
+        ],
+    )
+    def test_check_valid_branchname(
+        self, capsys, entrance, exit_code, message
+    ) -> None:
+        """Test check_valid_branchname function."""
+        ic(entrance, exit_code, message)
+
+        with patch.object(cli, 'get_branchname', return_value=entrance):
+            result = cli.check_valid_branchname()
+            ic(result)
+            captured = capsys.readouterr()
+            assert message in captured.out
+            assert result == exit_code
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
@@ -207,3 +365,9 @@ class TestCaseAllCLI:
             m.return_value = Path(entrance) if entrance else []
             with pytest.raises(SystemExit):
                 cli.pre_commit_installed_cli()
+
+    def test_get_msg_cli(self, capsys) -> None:
+        """Test get_msg function."""
+        cli.get_msg_cli()
+        captured = capsys.readouterr()
+        assert captured.out.strip() in MESSAGES
