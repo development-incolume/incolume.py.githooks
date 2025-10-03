@@ -15,6 +15,8 @@ try:
 except ImportError:
     from typing_extensions import Self
 
+ic.disable()
+
 
 def debug_enable() -> bool:
     """Enable debug mode."""
