@@ -63,15 +63,6 @@ class TestCaseValidFilename:
                 True,
                 id='another_valid_name.txt',
             ),
-        ],
-    )
-    def test_valid_filenames(self, entrance, expected) -> NoReturn:
-        """Test valid filenames."""
-        assert is_valid_filename(**entrance).code is expected
-
-    @pytest.mark.parametrize(
-        ['entrance', 'expected'],
-        [
             pytest.param(
                 {'filename': '0_invalid_name.py'}, False, marks=[]
             ),  # Not snake_case
@@ -97,7 +88,40 @@ class TestCaseValidFilename:
                 {'filename': 'mixed_Case.py'}, False, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': '.hiddenfile'}, True, marks=[pytest.mark.skip]
+                {'filename': '.hiddenfile'},
+                True,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '.gitignore'},
+                True,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '.editorconfig'},
+                True,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '.coveragerc'},
+                True,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '..doublehidden'}, False
@@ -118,9 +142,41 @@ class TestCaseValidFilename:
             pytest.param(
                 {'filename': 'a' * 1001 + '.py'}, False
             ),  # Very long name, but valid
+            pytest.param(
+                {'filename': 'incolume/py/fakepackage/fake_module.py'}, True
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'tests/fake_module.py'},
+                False,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'tests/test_fake_module.py'},
+                False,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'tests/fake_module_test.py'},
+                True,
+                marks=[
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
+                ],
+            ),  # Path, but valid name
         ],
     )
-    def test_invalid_filenames(self, entrance, expected, capsys) -> None:
+    def test_check_if_valid_filenames(
+        self, entrance, expected, capsys
+    ) -> NoReturn:
         """Test invalid filenames."""
         result = capsys.readouterr()
         ic(result)
