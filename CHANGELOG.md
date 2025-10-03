@@ -19,6 +19,13 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Changed
   - Acrescentado modelo de configuração dos hooks ao README.md;
 
+## [1.4.0]	 &#8212; 	2025-10-03:
+### Added
+  - Disponibilizado hook footer-signed-off-by;
+### Changed
+  - Alteração no modo verboso;
+  - Atualizado README.md;
+
 ## [1.4.0rc2]	 &#8212; 	2025-10-03:
 ### Changed
   - Alteração no modo verboso;
@@ -125,4 +132,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.2.0...1.3.0
 [1.4.0rc1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.3.0...1.4.0rc1
 [1.4.0rc2]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0rc1...1.4.0rc2
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0rc2...Unreleased
+[1.4.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0rc2...1.4.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0...Unreleased
