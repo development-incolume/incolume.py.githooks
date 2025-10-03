@@ -36,10 +36,13 @@ repos:
       args: [--config, ruff.toml]
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: 1.0.0
+  rev: 1.3.0
   hooks:
+    - id: check-precommit-installed
     - id: check-valid-filenames
-
+      args: ['--min-len=3', '--max-len=256']
+    - id: detect-key
+    - id: effort-message
 
 - repo: local
   hooks:
@@ -50,7 +53,7 @@ repos:
       additional_dependencies: [colorama,rich]  # Python dependency for the script
 
     - id: detect-key
-      verbose: true
+      verbose: false
       name: Incolume - detect private key
       description: detects the presence of private keys.
       entry: detect-key

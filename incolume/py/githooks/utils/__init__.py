@@ -15,6 +15,8 @@ try:
 except ImportError:
     from typing_extensions import Self
 
+ic.disable()
+
 
 def debug_enable() -> bool:
     """Enable debug mode."""
@@ -69,6 +71,8 @@ class TypeCommit(AutoName):
     STYLE = auto()
     TEST = auto()
     BUGFIX = 'fix'
+    CICD = 'ci'
+    CD = 'ci'
     DOC = 'docs'
     FEATURE = 'feat'
     TESTS = 'test'

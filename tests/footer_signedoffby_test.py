@@ -6,6 +6,7 @@ import incolume.py.githooks.footer_signedoffby as pkg
 import pytest
 import tempfile
 from pathlib import Path
+from unittest.mock import patch
 
 
 class TestCaseFooterSignedOffBy:
@@ -35,15 +36,20 @@ class TestCaseFooterSignedOffBy:
         test_file.write_text(content, encoding='utf-8')
         assert pkg.clean_commit_msg(test_file)
 
-    def test_get_signed_off_by(self, mocker) -> NoReturn:
+    def test_get_signed_off_by(self) -> NoReturn:
         """Test get_signed_off_by function."""
-        with mocker.patch(
-            'subprocess.check_output',
+        with patch.object(
+            pkg.subprocess,
+            'check_output',
             return_value='John Doe <john_doe@example.com>',
-        ):
+        ) as m:
             assert (
                 pkg.get_signed_off_by()
                 == 'Signed-off-by: John Doe <john_doe@example.com>'
+            )
+            m.assert_called_once_with(
+                ['git', 'var', 'GIT_COMMITTER_IDENT'],
+                text=True,
             )
 
     def test_add_signed_off_by(self) -> NoReturn:

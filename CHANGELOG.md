@@ -16,6 +16,16 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Disponibilizar Hook footer-signed-off-by;
   - Disponibilizar Hook clean-commit-message;
   - Disponibilizar Hook git-diff;
+### Changed
+  - Acrescentado modelo de configuração dos hooks ao README.md;
+
+## [1.4.0rc2]	 &#8212; 	2025-10-03:
+### Changed
+  - Alteração no modo verboso;
+
+## [1.4.0rc1]	 &#8212; 	2025-10-03:
+### Added
+  - Disponibilizado hook footer-signed-off-by;
 
 ## [1.3.0]	 &#8212; 	2025-10-02:
 ### Added
@@ -113,4 +123,6 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.1.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.0.0...1.1.0
 [1.2.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.1.0...1.2.0
 [1.3.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.2.0...1.3.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.3.0...Unreleased
+[1.4.0rc1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.3.0...1.4.0rc1
+[1.4.0rc2]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0rc1...1.4.0rc2
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0rc2...Unreleased
