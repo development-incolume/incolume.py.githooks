@@ -21,6 +21,16 @@ Model for .pre-commit-config.yaml, bellow:
 ```yaml
 # .pre-commit-config.yaml
 
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.13.0
+  hooks:
+    # Run the linter.
+    - id: ruff-check
+      args: [--config, ruff.toml, --fix ]
+    # Run the formatter.
+    - id: ruff-format
+      args: [--config, ruff.toml]
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
   rev: 1.3.0

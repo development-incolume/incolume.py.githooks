@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.4.0a4"
+version = "1.4.0"
 description = "Hooks git for incolume projects"
 readme = "README.md"
 requires-python = ">=3.10, <4"
