@@ -140,11 +140,11 @@ class TestCaseAllCLI:
             ])
         captured = capsys.readouterr()
         assert bool(result) is bool(entrance.expected.code)
-        assert ic(captured.out.split('\n'))
+        assert captured.out.split('\n')
         assert sum(
             m in n
             for m in entrance.expected.message
-            for n in ic(captured.out.split('\n'))
+            for n in captured.out.split('\n')
         ) == len(entrance.expected.message)
 
     def test_check_type_commit_msg_cli(self) -> NoReturn:

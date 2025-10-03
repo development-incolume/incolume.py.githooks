@@ -23,10 +23,11 @@ Model for .pre-commit-config.yaml, bellow:
 
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: main
+  rev: 1.3.0
   hooks:
     - id: check-precommit-installed
     - id: check-valid-filenames
+      args: ['--min-len=3', '--max-len=256']
     - id: detect-key
     - id: effort-message
 
