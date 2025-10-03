@@ -7,7 +7,7 @@ from pathlib import Path
 
 from icecream import ic
 
-from incolume.py.githooks.rules import SNAKE_CASE
+from incolume.py.githooks.rules import FAILURE, SNAKE_CASE, SUCCESS
 from incolume.py.githooks.utils import Result, debug_enable
 
 debug_enable()
@@ -37,20 +37,33 @@ def is_valid_filename(
         >>> is_valid_filename('sh.py', min_len=3)
         Result(code=False, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
-    """  # noqa: E501
+    """
+    filename = Path(filename)
     msg_return = ''
-    name = Path(filename).stem
+    code_return = SUCCESS
+    path = filename.parent
+    name = filename.stem
+
     refname = re.sub(r'[^a-z0-9]', '', name)
     ic(name, len(name), refname, len(refname), min_len, max_len)
 
-    if too_short := len(refname) < min_len:
+    if len(refname) < min_len:
         msg_return += f'\n[red]Name too short ({min_len=}): {filename}[/]'
+        code_return |= FAILURE
 
-    if too_long := len(refname) > max_len:
+    if len(refname) > max_len:
         msg_return += f'\n[red]Name too long ({max_len=}): {filename}[/]'
+        code_return |= FAILURE
 
-    if not_snake_case := SNAKE_CASE_REGEX.search(name) is None:
+    if SNAKE_CASE_REGEX.search(name) is None:
         msg_return += f'\n[red]Filename is not in snake_case: {filename}[/]'
+        code_return |= FAILURE
 
-    failure = (too_short or too_long) or not_snake_case
-    return Result(code=not failure, message=msg_return)
+    # if not (
+    #     bool(re.match(r'tests?', path.stem))
+    #     and not re.match(r'.*_test$', name)
+    # ):
+    #     msg_return += f'\n[red]Filename should not be in a path: {filename}[/]'
+    #     code_return |= FAILURE
+
+    return Result(code=not code_return, message=msg_return)
