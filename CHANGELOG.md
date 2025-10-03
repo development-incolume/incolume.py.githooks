@@ -16,6 +16,8 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Disponibilizar Hook footer-signed-off-by;
   - Disponibilizar Hook clean-commit-message;
   - Disponibilizar Hook git-diff;
+### Changed
+  - Acrescentado modelo de configuração dos hooks ao README.md;
 
 ## [1.3.0]	 &#8212; 	2025-10-02:
 ### Added

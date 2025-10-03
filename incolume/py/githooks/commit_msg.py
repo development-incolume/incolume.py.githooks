@@ -3,18 +3,8 @@
 from __future__ import annotations
 
 import secrets
-import sys
-
-import rich
 
 from incolume.py.githooks.rules import MESSAGES
-
-
-def check() -> None:
-    """Check arguments."""
-    # TODO @<britodfbr> function not necessary; possible remove.
-    rich.print(f'Number of arguments: {len(sys.argv)}')
-    rich.print(f'Arguments List: {sys.argv!s}')
 
 
 def get_msg(*, fixed: bool = False, messages: list[str] | None = None) -> str:

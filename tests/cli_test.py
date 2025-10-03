@@ -140,11 +140,11 @@ class TestCaseAllCLI:
             ])
         captured = capsys.readouterr()
         assert bool(result) is bool(entrance.expected.code)
-        assert ic(captured.out.split('\n'))
+        assert captured.out.split('\n')
         assert sum(
             m in n
             for m in entrance.expected.message
-            for n in ic(captured.out.split('\n'))
+            for n in captured.out.split('\n')
         ) == len(entrance.expected.message)
 
     def test_check_type_commit_msg_cli(self) -> NoReturn:
@@ -350,21 +350,29 @@ class TestCaseAllCLI:
             assert cli.prepare_commit_msg_cli([test_file.as_posix()])
 
     @pytest.mark.parametrize(
-        'entrance',
+        ['entrance', 'expected'],
         [
             pytest.param(
-                '', marks=[pytest.mark.skip(reason='Dont mocked it.')]
+                '.pre-commit-config.yaml',
+                SUCCESS,
+                marks=[],
+            ),
+            pytest.param(
+                '',
+                FAILURE,
+                marks=[],
             ),
         ],
     )
-    def test_precommit_installed(self, mocker, entrance) -> NoReturn:
+    def test_precommit_installed(self, entrance, expected) -> NoReturn:
         """Test for pre-commit installed."""
-        ic(entrance)
-        ic(__name__)
-        with mocker.patch('pathlib.Path.cwd') as m:
-            m.return_value = Path(entrance) if entrance else []
-            with pytest.raises(SystemExit):
-                cli.pre_commit_installed_cli()
+        result = FAILURE
+        with patch.object(Path, 'cwd') as m:
+            m.return_value.glob.return_value = (
+                [Path(entrance)] if entrance else []
+            )
+            result = cli.pre_commit_installed_cli()
+        assert result == expected
 
     def test_get_msg_cli(self, capsys) -> None:
         """Test get_msg function."""

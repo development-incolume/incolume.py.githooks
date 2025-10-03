@@ -319,7 +319,7 @@ def pre_commit_installed_cli() -> int:
             ' but `pre-commit install` was never ran.[/red]\n',
         )
         result |= FAILURE
-    return sys.exit(result)
+    return result
 
 
 def get_msg_cli() -> None:
