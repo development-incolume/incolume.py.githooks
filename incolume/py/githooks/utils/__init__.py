@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from enum import Enum, auto
 from os import getenv
+from subprocess import check_output  # noqa: S404
 
 from icecream import ic
 
@@ -80,3 +82,16 @@ class TypeCommit(AutoName):
             if value == key:
                 return member
         return None
+
+
+def get_branchname() -> str:
+    """Get current branch name."""
+    branch = (
+        check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],  # noqa: S607
+        )
+        .strip()
+        .decode('utf-8')
+    )
+    logging.debug(ic(branch))
+    return branch

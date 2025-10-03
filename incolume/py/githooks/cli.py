@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import argparse
 import logging
+import platform
+import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
+from colorama import Fore, Style
 from icecream import ic
 
+from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg
 from incolume.py.githooks.footer_signedoffby import (
@@ -18,9 +22,14 @@ from incolume.py.githooks.footer_signedoffby import (
     add_signed_off_by,
     clean_commit_msg,
 )
-from incolume.py.githooks.prepare_commit_msg import prepare_commit_msg
-from incolume.py.githooks.rules import FAILURE, SUCCESS
-from incolume.py.githooks.utils import Result, debug_enable
+from incolume.py.githooks.prepare_commit_msg import (
+    check_max_len_first_line_commit_msg,
+    check_min_len_first_line_commit_msg,
+    check_type_commit_msg,
+    prepare_commit_msg,
+)
+from incolume.py.githooks.rules import FAILURE, RULE_BRANCHNAME, SUCCESS
+from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 from incolume.py.githooks.valid_filename import is_valid_filename
 
 debug_enable()
@@ -29,8 +38,83 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
+def check_len_first_line_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
+    """Check commit message."""
+    results = []
+    result_code = SUCCESS
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--min-first-line',
+        default=10,
+        type=int,
+        help='Minimum Length of line for first line',
+    )
+    parser.add_argument(
+        '--max-first-line',
+        default=50,
+        type=int,
+        help='Maximum Length of line for first line',
+    )
+    args = parser.parse_args(argv)
+    results.extend((
+        check_min_len_first_line_commit_msg(
+            *args.filenames, len_line=args.min_first_line
+        ),
+        check_max_len_first_line_commit_msg(
+            *args.filenames, len_line=args.max_first_line
+        ),
+    ))
+    for result in results:
+        rich.print(result.message)
+        result_code |= result.code
+
+    sys.exit(result_code)  # Validation passed, allow commit
+
+
+def check_type_commit_msg_cli(
+    argv: Sequence[str] | None = None,
+) -> sys.exit:
+    """Check commit message."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    args = parser.parse_args(argv)
+    result = check_type_commit_msg(*args.filenames)
+    rich.print(result.message)
+    sys.exit(result.code)  # Validation passed or failure, allowing commit
+
+
+def check_valid_branchname() -> int:
+    """Check valid branchname.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+
+    Returns:
+        int: SUCCESS or FAILURE
+
+    """
+    logging.debug(platform.python_version_tuple())
+    result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
+    status = SUCCESS
+    if not re.match(RULE_BRANCHNAME, get_branchname()):
+        result = (
+            f'{Fore.RED}Your commit was rejected due to branching name '
+            'incompatible with rules.\n'
+            "Please rename your branch with '<(enhancement|feature|feat"
+            f"|bug|bugfix|fix)>/epoch#<timestamp>' syntax{Style.RESET_ALL}"
+        )
+        status |= FAILURE
+    rich.print(result)
+    return status
+
+
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
-    """Maint entry point for the script."""
+    """Maint entry point for the script.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     codes: int = SUCCESS
     parser = argparse.ArgumentParser(
         prog='validate-filename',
@@ -70,6 +154,8 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
 def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
+    Hook designed for stages: all
+
     Args:
         argv (Sequence[str] | None, optional): _description_. Defaults to None.
 
@@ -90,6 +176,8 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     """Função principal que processa os argumentos.
 
     E aplica as transformações no arquivo de commit.
+
+    Hook designed for stages: pre-commit, pre-push, manual
 
     Fluxo:
     1. Remove linhas desnecessárias do template de commit.
@@ -132,7 +220,10 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
 
 
 def effort_msg_cli() -> int:
-    """Run it."""
+    """Run it.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     rich.print(effort_msg())
     return 0
 
@@ -143,6 +234,8 @@ def clean_commit_msg_cli(
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
+
+    Hook designed for stages: pre-commit, pre-push, manual
 
     Args:
         argv: Arguments values sequence:
@@ -195,7 +288,10 @@ def clean_commit_msg_cli(
 def prepare_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> sys.exit:
-    """Run CLI for prepare-commit-msg hook."""
+    """Run CLI for prepare-commit-msg hook.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
@@ -210,7 +306,10 @@ def prepare_commit_msg_cli(
 
 
 def pre_commit_installed_cli() -> int:
-    """Run pre-commit-installed hook."""
+    """Run pre-commit-installed hook.
+
+    Hook designed for stages: pre-commit, pre-push, manual
+    """
     result = SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
@@ -221,3 +320,8 @@ def pre_commit_installed_cli() -> int:
         )
         result |= FAILURE
     return sys.exit(result)
+
+
+def get_msg_cli() -> None:
+    """Run it."""
+    rich.print(get_msg())
