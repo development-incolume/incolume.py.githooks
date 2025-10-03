@@ -5,6 +5,7 @@ from typing import NoReturn
 
 from icecream import ic
 import pytest
+from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.valid_filename import is_valid_filename
 
 
@@ -16,80 +17,80 @@ class TestCaseValidFilename:
         [
             pytest.param(
                 {'filename': '__main__.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
                 {'filename': '__init__.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
                 {'filename': '_validname01.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
                 {'filename': 'validname01.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
                 {'filename': 'valid_name01.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
                 {'filename': 'validname_01.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
                 {'filename': 'valid_name_01.py'},
-                True,
+                SUCCESS,
             ),
             pytest.param(
-                {'filename': 'validname.py'}, True, id='validname.py'
+                {'filename': 'validname.py'}, SUCCESS, id='validname.py'
             ),
             pytest.param(
-                {'filename': 'valid_name.py'}, True, id='valid_name.py'
+                {'filename': 'valid_name.py'}, SUCCESS, id='valid_name.py'
             ),
             pytest.param(
                 {'filename': 'another_valid_name.txt'},
-                True,
+                SUCCESS,
                 id='another_valid_name.txt',
             ),
             pytest.param(
                 {'filename': 'a_bc.py', 'min_len': 3},
-                True,
+                SUCCESS,
                 id='another_valid_name.txt',
             ),
             pytest.param(
                 {'filename': 'snake_case_file.md'},
-                True,
+                SUCCESS,
                 id='another_valid_name.txt',
             ),
             pytest.param(
-                {'filename': '0_invalid_name.py'}, False, marks=[]
+                {'filename': '0_invalid_name.py'}, FAILURE, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': '0_Invalid_Name.py'}, False, marks=[]
+                {'filename': '0_Invalid_Name.py'}, FAILURE, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': '0InvalidName.py'}, False, marks=[]
+                {'filename': '0InvalidName.py'}, FAILURE, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': 'InvalidName.py'}, False, marks=[]
+                {'filename': 'InvalidName.py'}, FAILURE, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': 'short.py', 'min_len': 6}, False, marks=[]
+                {'filename': 'short.py', 'min_len': 6}, FAILURE, marks=[]
             ),  # Too short
             pytest.param(
-                {'filename': 'noextension'}, True, marks=[]
+                {'filename': 'noextension'}, SUCCESS, marks=[]
             ),  # No extension, but valid name
             pytest.param(
-                {'filename': 'UPPERCASE.TXT'}, False, marks=[]
+                {'filename': 'UPPERCASE.TXT'}, FAILURE, marks=[]
             ),  # Not snake_case
             pytest.param(
-                {'filename': 'mixed_Case.py'}, False, marks=[]
+                {'filename': 'mixed_Case.py'}, FAILURE, marks=[]
             ),  # Not snake_case
             pytest.param(
                 {'filename': '.hiddenfile'},
-                True,
+                SUCCESS,
                 marks=[
                     pytest.mark.xfail(
                         raises=AssertionError, reason='Not implemented yet'
@@ -98,7 +99,7 @@ class TestCaseValidFilename:
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '.gitignore'},
-                True,
+                SUCCESS,
                 marks=[
                     pytest.mark.xfail(
                         raises=AssertionError, reason='Not implemented yet'
@@ -107,7 +108,7 @@ class TestCaseValidFilename:
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '.editorconfig'},
-                True,
+                SUCCESS,
                 marks=[
                     pytest.mark.xfail(
                         raises=AssertionError, reason='Not implemented yet'
@@ -116,7 +117,7 @@ class TestCaseValidFilename:
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '.coveragerc'},
-                True,
+                SUCCESS,
                 marks=[
                     pytest.mark.xfail(
                         raises=AssertionError, reason='Not implemented yet'
