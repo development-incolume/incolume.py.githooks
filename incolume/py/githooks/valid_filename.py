@@ -59,11 +59,10 @@ def is_valid_filename(
         msg_return += f'\n[red]Filename is not in snake_case: {filename}[/]'
         code_return |= FAILURE
 
-    # if not (
-    #     bool(re.match(r'tests?', path.stem))
-    #     and not re.match(r'.*_test$', name)
-    # ):
-    #     msg_return += f'\n[red]Filename should not be in a path: {filename}[/]'
-    #     code_return |= FAILURE
+    if re.match(r'^.*tests?.*$', path.stem) and not re.match(
+        r'.*_test$', name
+    ):
+        msg_return += f'\n[red]Filename should not be in a path: {filename}[/]'
+        code_return |= FAILURE
 
-    return Result(code=not code_return, message=msg_return)
+    return Result(code=code_return, message=msg_return)
