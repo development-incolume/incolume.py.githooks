@@ -33,14 +33,15 @@ Model for .pre-commit-config.yaml, bellow:
       args: [--config, ruff.toml]
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: 1.3.0
+  rev: 1.5.0
   hooks:
     - id: check-precommit-installed
     - id: check-valid-filenames
-      args: ['--min-len=3', '--max-len=256']
+    #   args: ['--min-len=3', '--max-len=256']
     - id: detect-key
     - id: effort-message
     - id: footer-signed-off-by
-      args: [--signoff]
+    #   args: [--signoff]
+    - id: insert-diff-commit
 
 ```
