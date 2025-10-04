@@ -22,6 +22,7 @@ from incolume.py.githooks.footer_signedoffby import (
     add_signed_off_by,
     clean_commit_msg,
 )
+from incolume.py.githooks.gitdiff import get_git_diff, insert_git_diff
 from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg,
     check_min_len_first_line_commit_msg,
@@ -147,7 +148,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     ]
     for result in results:
         rich.print(result.message)
-        codes |= not result.code
+        codes |= result.code
     return codes
 
 
@@ -325,3 +326,28 @@ def pre_commit_installed_cli() -> int:
 def get_msg_cli() -> None:
     """Run it."""
     rich.print(get_msg())
+
+
+def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
+    """CLI for module gitdiff."""
+    parser = argparse.ArgumentParser(
+        description='Processa mensagens de commit'
+        ' como no hook original em Perl.'
+    )
+    parser.add_argument(
+        'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
+    )
+    parser.add_argument(
+        'commit_source', default='', help='Origem do commit (ex.: template)'
+    )
+    parser.add_argument(
+        'commit_hash', default='', help='SHA1 do commit ou vazio'
+    )
+
+    args = parser.parse_args(argv)
+    ic(args)
+
+    diff_output = get_git_diff()
+    insert_git_diff(args.commit_msg_file, diff_output)
+
+    return SUCCESS
