@@ -26,6 +26,24 @@ if TYPE_CHECKING:
 
 
 @dataclass
+class Expected:
+    """Expected values."""
+
+    code: int = SUCCESS
+    msg: str = ''
+
+
+@dataclass
+class MainEntrance:
+    """Entrance values."""
+
+    commit_msg_file: str = ''
+    commit_source: str = ''
+    commit_hash: str = ''
+    diff_output: str = ''
+
+
+@dataclass
 class Entrance:
     """Entrance dataclass for tests."""
 
@@ -382,3 +400,65 @@ class TestCaseAllCLI:
         cli.get_msg_cli()
         captured = capsys.readouterr()
         assert captured.out.strip() in MESSAGES
+
+    @pytest.mark.parametrize(
+        [
+            'entrance',
+            'expected',
+        ],
+        [
+            pytest.param(MainEntrance(), Expected(SUCCESS, ''), marks=[]),
+            pytest.param(
+                MainEntrance(
+                    commit_msg_file='feat: bla bla bla\n\n#',
+                    diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                ),
+                Expected(
+                    msg='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
+                    'nothing.py\nM\tincolume/py/none.py\n#',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                MainEntrance(commit_msg_file='ci: #123 added ci/cd\n\n#'),
+                Expected(SUCCESS, 'ci: #123 added ci/cd\n\n#'),
+                marks=[],
+            ),
+            pytest.param(
+                MainEntrance(
+                    commit_source='template',
+                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                    diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                ),
+                Expected(
+                    code=SUCCESS,
+                    msg='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
+                    'nothing.py'
+                    '\nM\tincolume/py/none.py\n#',
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_insert_diff_cli(
+        self,
+        mocker,
+        entrance: MainEntrance,
+        expected: Expected,
+    ) -> None:
+        """Test CLI function."""
+        mocker.patch(
+            'subprocess.check_output',
+            return_value=entrance.diff_output,
+        )
+        with NamedTemporaryFile() as tf:
+            test_file = Path(tf.name)
+        test_file.write_text(entrance.commit_msg_file, encoding='utf-8')
+        entrance = [
+            test_file.as_posix(),
+            entrance.commit_source,
+            entrance.commit_hash,
+        ]
+
+        assert cli.insert_diff_cli(entrance) == expected.code
+        assert test_file.read_text(encoding='utf-8') == expected.msg
