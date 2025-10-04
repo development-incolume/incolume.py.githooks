@@ -114,3 +114,11 @@ repos:
       # files: ^*$  # this catches all .ipynb under examples/
       types_or: [system-verilog]  #
       stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
+
+    - id: insert-diff-commit
+      name: Incolume - Insert Git Diff into Commit Message
+      entry: insert-diff-commit
+      language: python  # script requires the Python interpreter
+      additional_dependencies: []  # Python dependency for the script
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      verbose: false
