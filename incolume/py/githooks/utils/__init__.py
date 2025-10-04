@@ -10,6 +10,8 @@ from subprocess import check_output  # noqa: S404
 
 from icecream import ic
 
+from incolume.py.githooks.rules import SUCCESS
+
 try:
     from typing import Self
 except ImportError:
@@ -40,8 +42,8 @@ def debug_enable() -> bool:
 class Result:
     """Result dataclass for hooks this project."""
 
-    code: int
-    message: str
+    code: int = SUCCESS
+    message: str = ''
 
 
 class AutoName(Enum):
