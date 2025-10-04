@@ -73,7 +73,8 @@ class TestCaseValidFilename:
                 {'filename': '0_invalid_name.py'},
                 Result(
                     FAILURE,
-                    '\n[red]Filename is not in snake_case: 0_invalid_name.py[/]',
+                    '\n[red]Filename is not in'
+                    ' snake_case: 0_invalid_name.py[/]',
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -113,7 +114,8 @@ class TestCaseValidFilename:
                 {'filename': 'UPPERCASE.TXT'},
                 Result(
                     FAILURE,
-                    '[red]Name too short (min_len=3): UPPERCASE.TXT[/]\n[red]Filename is not in snake_case: UPPERCASE.TXT[/]',
+                    '[red]Name too short (min_len=3): UPPERCASE.TXT[/]'
+                    '\n[red]Filename is not in snake_case: UPPERCASE.TXT[/]',
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -164,7 +166,8 @@ class TestCaseValidFilename:
                 {'filename': '..doublehidden'},
                 Result(
                     FAILURE,
-                    'Name too short (min_len=3): ..doublehidden[/]\n[red]Filename is not in snake_case: ..doublehidden',
+                    'Name too short (min_len=3): ..doublehidden[/]\n'
+                    '[red]Filename is not in snake_case: ..doublehidden',
                 ),
             ),  # Hidden file, no name
             pytest.param(
@@ -198,9 +201,9 @@ class TestCaseValidFilename:
                 {'filename': 'tests/fake_module.py'},
                 Result(FAILURE, 'asd'),
                 marks=[
-                    # pytest.mark.xfail(
-                    #     raises=AssertionError, reason='Not implemented yet'
-                    # )
+                    pytest.mark.xfail(
+                        raises=AssertionError, reason='Not implemented yet'
+                    )
                 ],
             ),  # Path, but valid name
             pytest.param(

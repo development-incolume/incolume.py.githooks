@@ -217,29 +217,32 @@ class TestCaseAllCLI:
         ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
-                {'Jürgen'}, 1, 'Filename is not in snake_case:', marks=[]
+                {'Jürgen'}, FAILURE, 'Filename is not in snake_case:', marks=[]
             ),
-            pytest.param({'x' * 257}, 1, 'Name too long', marks=[]),
+            pytest.param({'x' * 257}, FAILURE, 'Name too long', marks=[]),
             pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
             pytest.param(
-                {'xVar.toml'}, 1, 'Filename is not in snake_case', marks=[]
+                {'xVar.toml'},
+                FAILURE,
+                'Filename is not in snake_case',
+                marks=[],
             ),
             pytest.param(
-                {'x.py', '--min-len=5'}, 1, 'Name too short', marks=[]
+                {'x.py', '--min-len=5'}, FAILURE, 'Name too short', marks=[]
             ),
             pytest.param(
                 {'abc_defg.py', '--min-len=10'},
-                1,
+                FAILURE,
                 'Name too short',
                 marks=[],
             ),
             pytest.param(
                 {'abcdefghijklm.py', '--max-len=10'},
-                1,
+                FAILURE,
                 'Name too long',
                 marks=[],
             ),
-            pytest.param({'__main__.py'}, 0, '', marks=[]),
+            pytest.param({'__main__.py'}, SUCCESS, '', marks=[]),
         ],
     )
     def test_check_valid_filenames_cli(

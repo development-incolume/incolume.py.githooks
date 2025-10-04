@@ -147,7 +147,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     ]
     for result in results:
         rich.print(result.message)
-        codes |= not result.code
+        codes |= result.code
     return codes
 
 

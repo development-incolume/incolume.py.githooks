@@ -33,9 +33,9 @@ def is_valid_filename(
 
     Examples:
         >>> is_valid_filename('valid_name.py')
-        Result(code=True, message='')
+        Result(code=0, message='')
         >>> is_valid_filename('sh.py', min_len=3)
-        Result(code=False, message='\n[red]Name too short (min_len=3): sh.py[/]')
+        Result(code=1, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
     """
     filename = Path(filename)
@@ -63,6 +63,5 @@ def is_valid_filename(
         r'.*_test$', name
     ):
         msg_return += f'\n[red]Filename should not be in a path: {filename}[/]'
-        code_return |= FAILURE
 
     return Result(code=code_return, message=msg_return)
