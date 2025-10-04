@@ -4,19 +4,13 @@
 
 from __future__ import annotations
 
-import argparse
 import subprocess
-from pathlib import Path
 from typing import TYPE_CHECKING
 
-from icecream import ic
-
-from incolume.py.githooks.rules import SUCCESS
 from incolume.py.githooks.utils import debug_enable
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-
+    from pathlib import Path
 
 debug_enable()
 
@@ -58,32 +52,3 @@ def insert_git_diff(commit_msg_file: Path, diff_output: str) -> None:
         result.extend(lines)
 
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
-
-
-def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
-    """CLI for module gitdiff."""
-    parser = argparse.ArgumentParser(
-        description='Processa mensagens de commit'
-        ' como no hook original em Perl.'
-    )
-    parser.add_argument(
-        'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
-    )
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (ex.: template)'
-    )
-    parser.add_argument(
-        'commit_hash', default='', help='SHA1 do commit ou vazio'
-    )
-
-    args = parser.parse_args(argv)
-    ic(args)
-
-    diff_output = get_git_diff()
-    insert_git_diff(args.commit_msg_file, diff_output)
-
-    return SUCCESS
-
-
-if __name__ == '__main__':
-    raise SystemExit(insert_diff_cli())

@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.4.0"
+version = "1.5.0"
 description = "Hooks git for incolume projects"
 readme = "README.md"
 requires-python = ">=3.10, <4"
@@ -61,6 +61,7 @@ docs = [
 clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"
 detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.cli:effort_msg_cli"
+insert-diff-commit = "incolume.py.githooks.cli:insert_diff_cli"
 is-precommit-installed = "incolume.py.githooks.cli:pre_commit_installed_cli"
 is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
 is-valid-msg-commit = "incolume.py.githooks.cli:prepare_commit_msg_cli"
