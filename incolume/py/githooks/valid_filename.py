@@ -24,6 +24,8 @@ class ValidateFilename:
     filename: Path | str = ''
     alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
     considers_underscore: bool = False
+    min_len: int = 3
+    max_len: int = 256
     code: int = field(default=SUCCESS, init=False)
     message: str = field(default='', init=False)
 
