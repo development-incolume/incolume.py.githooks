@@ -81,8 +81,8 @@ class ValidateFilename:
     def has_testing_in_pathname(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
         pathname = self.filename.parent
-        self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is None
-        self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
+        self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is not None
+        # self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
         return self
 
     def has_testing_in_filename(self) -> Self:

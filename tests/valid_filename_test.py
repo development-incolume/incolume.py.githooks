@@ -11,10 +11,13 @@ from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.utils import Result
 from incolume.py.githooks.valid_filename import ValidateFilename
 from . import Expected
+from inspect import stack
 
 
 class TestCaseValidFilename:
     """Test cases for the `is_valid_filename` function."""
+
+    test_dir = Path(gettempdir()) / stack()[0][3]
 
     @pytest.fixture(scope='class')
     def filefortest(self) -> Path:
@@ -145,6 +148,29 @@ class TestCaseValidFilename:
         result = vf.is_snake_case()
         assert result.code == expected.code
         assert result.message == expected.message
+
+    @pytest.mark.parametrize(
+        ['filename', 'expected'],
+        [
+            pytest.param(
+                test_dir / 'tests' / 'fake_module.py',
+                Result(SUCCESS, ''),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                'incolume/py/githooks/fakepackage/fake_test_module.py',
+                Result(FAILURE, ''),
+                marks=[],
+            ),  # Path, but valid name
+        ],
+    )
+    def test_has_testing_in_pathname(
+        self, filename, expected: Expected
+    ) -> NoReturn:
+        """Test the has_testing_in_pathname method."""
+        vf = ValidateFilename(filename=filename)
+        result = vf.has_testing_in_pathname()
+        assert result.code == FAILURE
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
