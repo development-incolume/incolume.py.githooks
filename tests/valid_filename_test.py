@@ -10,6 +10,7 @@ import pytest
 from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.utils import Result
 from incolume.py.githooks.valid_filename import ValidateFilename
+from . import Expected
 
 
 class TestCaseValidFilename:
@@ -48,6 +49,42 @@ class TestCaseValidFilename:
         """Test the refname property."""
         vf = ValidateFilename(filename=filefortest)
         assert vf.refname == filefortest.stem
+
+    @pytest.mark.parametrize(
+        ['filename', 'min_len', 'expected'],
+        [
+            pytest.param(
+                'ab.py',
+                3,
+                Expected(
+                    code=1,
+                    message='\n[red]Name too short '
+                    '(self.min_len=3): /tmp/ab.py[/]',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'abcefghij.py',
+                10,
+                Expected(
+                    code=1,
+                    message='\n[red]Name too short'
+                    ' (self.min_len=10): /tmp/abcefghij.py[/]',
+                ),
+                marks=[],
+            ),
+            pytest.param('abcd.py', 3, Expected(code=0, message=''), marks=[]),
+        ],
+    )
+    def test_is_too_short(
+        self, filefortest: Path, filename, min_len, expected: Expected
+    ) -> NoReturn:
+        """Test the is_too_short method."""
+        filename = filefortest.with_name(filename)
+        vf = ValidateFilename(filename=filename, min_len=min_len)
+        result = vf.is_too_short()
+        assert result.code == expected.code
+        assert result.message == expected.message
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],

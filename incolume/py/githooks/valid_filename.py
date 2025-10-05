@@ -53,14 +53,12 @@ class ValidateFilename:
 
     def is_too_short(self) -> Self:
         """Check if the filename is too short."""
-        name = Path(self.filename).stem
-
-        refname = re.sub(r'[^a-z0-9]', '', name)
-
-        if len(refname) < self.min_len:
+        if len(self.refname) < self.min_len:
             self.message += (
                 f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
             )
+            self.code |= FAILURE
+        return self
 
             self.code |= FAILURE
 
