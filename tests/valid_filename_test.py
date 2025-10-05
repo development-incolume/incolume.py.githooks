@@ -1,7 +1,9 @@
 """Module to validate filenames."""
 
 from __future__ import annotations
+from pathlib import Path
 from typing import NoReturn
+from tempfile import NamedTemporaryFile, gettempdir
 
 from icecream import ic
 import pytest
@@ -18,6 +20,11 @@ class TestCaseValidFilename:
         """Get the path to this file."""
         with NamedTemporaryFile(dir=gettempdir(), suffix='.py') as tf:
             return Path(tf.name)
+
+    def test_refname(self, filefortest: Path) -> NoReturn:
+        """Test the refname property."""
+        vf = ValidateFilename(filename=filefortest)
+        assert vf.refname == filefortest.stem
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],

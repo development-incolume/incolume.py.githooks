@@ -41,6 +41,15 @@ class ValidateFilename:
         self.filename = Path(self.filename)
         # logging.debug(ic(self.filename))
 
+    @property
+    def refname(self) -> str:
+        """Get the reference name."""
+        name = self.filename.stem
+        regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
+        refname = re.sub(regex, '', name)
+        ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
+        return refname
+
     @staticmethod
     def is_valid(
         filename: str | Path, min_len: int = 3, max_len: int = 256
