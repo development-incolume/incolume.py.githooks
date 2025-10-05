@@ -12,7 +12,12 @@ from incolume.py.githooks.utils import Result, debug_enable
 
 debug_enable()
 
+class ValidateFilename:
+"""Rules for valid filename."""
+
 SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
+code=1
+message=1
 
 
 def is_valid_filename(
