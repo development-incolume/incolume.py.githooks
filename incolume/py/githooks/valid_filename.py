@@ -30,11 +30,16 @@ class ValidateFilename:
 
     filename: Path | str = ''
     alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
-    considers_underscore: bool = False
+    considers_underscore: bool = True
     min_len: int = 3
     max_len: int = 256
     code: int = field(default=SUCCESS, init=False)
     message: str = field(default='', init=False)
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        self.filename = Path(self.filename)
+        # logging.debug(ic(self.filename))
 
     @staticmethod
     def is_valid(
