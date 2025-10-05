@@ -87,6 +87,40 @@ class TestCaseValidFilename:
         assert result.message == expected.message
 
     @pytest.mark.parametrize(
+        ['filename', 'max_len', 'expected'],
+        [
+            pytest.param(
+                'abcefghijk.py',
+                9,
+                Expected(
+                    code=1,
+                    message='\n[red]Name too long'
+                    ' (self.max_len=9): /tmp/abcefghijk.py[/]',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'abcefghijk.py',
+                10,
+                Expected(
+                    code=0,
+                    message='',
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_is_too_long(
+        self, filefortest: Path, filename, max_len, expected: Expected
+    ) -> NoReturn:
+        """Test the is_too_long method."""
+        filename = filefortest.with_name(filename)
+        vf = ValidateFilename(filename=filename, max_len=max_len)
+        result = vf.is_too_long()
+        assert result.code == expected.code
+        assert result.message == expected.message
+
+    @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
             pytest.param(

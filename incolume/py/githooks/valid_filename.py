@@ -60,7 +60,14 @@ class ValidateFilename:
             self.code |= FAILURE
         return self
 
+    def is_too_long(self) -> Self:
+        """Check if the filename is too long."""
+        if len(self.refname) > self.max_len:
+            self.message += (
+                f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
+            )
             self.code |= FAILURE
+        return self
 
         return self
 
