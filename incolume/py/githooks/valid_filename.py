@@ -78,10 +78,18 @@ class ValidateFilename:
             self.code |= FAILURE
         return self
 
-    def has_testing_in_name(self) -> Self:
+    def has_testing_in_pathname(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
-        self.code |= bool(re.match(r'^.*tests?.*$', self.filename))
-        self.code |= re.match(r'^(?:(?!tests?).)*$', self.filename) is None
+        pathname = self.filename.parent
+        self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is None
+        self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
+        return self
+
+    def has_testing_in_filename(self) -> Self:
+        """Check if the filename has 'test' or 'tests' in its name."""
+        filename = self.filename.stem
+        self.code |= bool(re.match(r'^.*tests?.*$', filename))
+        self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is None
         return self
 
     @staticmethod
