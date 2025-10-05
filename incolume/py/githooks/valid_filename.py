@@ -25,7 +25,7 @@ class ValidateFilename:
     message: str = field(default='', init=False)
 
     @staticmethod
-    def is_valid_filename(
+    def is_valid(
         filename: str | Path, min_len: int = 3, max_len: int = 256
     ) -> Result:
         r"""Check if a filename is valid.
@@ -42,9 +42,9 @@ class ValidateFilename:
             Result: The result of the check.
 
         Examples:
-            >>> ValidateFilename.is_valid_filename('valid_name.py')
+            >>> ValidateFilename.is_valid('valid_name.py')
             Result(code=0, message='')
-            >>> ValidateFilename.is_valid_filename('sh.py', min_len=3)
+            >>> ValidateFilename.is_valid('sh.py', min_len=3)
             Result(code=1, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # noqa: E501

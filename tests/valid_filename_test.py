@@ -248,7 +248,7 @@ class TestCaseValidFilename:
         self, entrance: dict, expected: Result
     ) -> NoReturn:
         """Test invalid filenames."""
-        result = ValidateFilename.is_valid_filename(**entrance)
+        result = ValidateFilename.is_valid(**entrance)
         ic(result)
         assert result.code is expected.code  # Not snake_case
         assert expected.message in result.message
