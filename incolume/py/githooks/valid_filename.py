@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from icecream import ic
@@ -20,8 +20,9 @@ SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 class ValidateFilename:
     """Rules for valid filename."""
 
-    code: int = SUCCESS
-    message: str = ''
+    filename: Path | str = ''
+    code: int = field(default=SUCCESS, init=False)
+    message: str = field(default='', init=False)
 
     @staticmethod
     def is_valid_filename(
