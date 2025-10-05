@@ -7,7 +7,7 @@ from icecream import ic
 import pytest
 from incolume.py.githooks.rules import FAILURE, SUCCESS
 from incolume.py.githooks.utils import Result
-from incolume.py.githooks.valid_filename import is_valid_filename
+from incolume.py.githooks.valid_filename import ValidateFilename
 
 
 class TestCaseValidFilename:
@@ -248,7 +248,7 @@ class TestCaseValidFilename:
         self, entrance: dict, expected: Result
     ) -> NoReturn:
         """Test invalid filenames."""
-        result = is_valid_filename(**entrance)
+        result = ValidateFilename.is_valid_filename(**entrance)
         ic(result)
         assert result.code is expected.code  # Not snake_case
         assert expected.message in result.message
