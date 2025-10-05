@@ -21,6 +21,29 @@ class TestCaseValidFilename:
         with NamedTemporaryFile(dir=gettempdir(), suffix='.py') as tf:
             return Path(tf.name)
 
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                'alphabet',
+                'abcdefghijklmnopqrstuvwxyz0123456789_áàãâéèêíìîóòõôúùûç',
+                marks=[],
+            ),
+            pytest.param('considers_underscore', True, marks=[]),
+            pytest.param('min_len', 3, marks=[]),
+            pytest.param('max_len', 256, marks=[]),
+            pytest.param('code', SUCCESS, marks=[]),
+            pytest.param('message', '', marks=[]),
+        ],
+    )
+    def test_validfilename_init(
+        self, filefortest: Path, entrance: str, expected: object
+    ) -> NoReturn:
+        """Test the initialization of the ValidateFilename class."""
+        vf = ValidateFilename(filename=filefortest)
+        assert filefortest.as_posix() in vf.filename.as_posix()
+        assert getattr(vf, entrance) == expected
+
     def test_refname(self, filefortest: Path) -> NoReturn:
         """Test the refname property."""
         vf = ValidateFilename(filename=filefortest)

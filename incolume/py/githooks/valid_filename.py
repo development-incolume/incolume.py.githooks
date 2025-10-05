@@ -15,6 +15,7 @@ from incolume.py.githooks.utils import Result, debug_enable
 
 with suppress(ImportError, ModuleNotFoundError):
     from typing import Self  # type: ignore[import]
+
 with suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
 
@@ -49,6 +50,27 @@ class ValidateFilename:
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
+
+    def is_too_short(self) -> Self:
+        """Check if the filename is too short."""
+        name = Path(self.filename).stem
+
+        refname = re.sub(r'[^a-z0-9]', '', name)
+
+        if len(refname) < self.min_len:
+            self.message += (
+                f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
+            )
+
+            self.code |= FAILURE
+
+        return self
+
+    def has_testing_in_name(self) -> Self:
+        """Check if the filename has 'test' or 'tests' in its name."""
+        self.code |= bool(re.match(r'^.*tests?.*$', self.filename))
+        self.code |= re.match(r'^(?:(?!tests?).)*$', self.filename) is None
+        return self
 
     @staticmethod
     def is_valid(
