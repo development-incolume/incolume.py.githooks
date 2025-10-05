@@ -13,6 +13,12 @@ from incolume.py.githooks.valid_filename import ValidateFilename
 class TestCaseValidFilename:
     """Test cases for the `is_valid_filename` function."""
 
+    @pytest.fixture(scope='class')
+    def filefortest(self) -> Path:
+        """Get the path to this file."""
+        with NamedTemporaryFile(dir=gettempdir(), suffix='.py') as tf:
+            return Path(tf.name)
+
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
