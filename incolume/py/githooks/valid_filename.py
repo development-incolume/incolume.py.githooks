@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
+from string import ascii_lowercase, digits
 
 from icecream import ic
 
@@ -21,6 +22,7 @@ class ValidateFilename:
     """Rules for valid filename."""
 
     filename: Path | str = ''
+    alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
     code: int = field(default=SUCCESS, init=False)
     message: str = field(default='', init=False)
 
