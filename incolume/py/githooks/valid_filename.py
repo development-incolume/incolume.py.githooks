@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from string import ascii_lowercase, digits
@@ -11,6 +12,12 @@ from icecream import ic
 
 from incolume.py.githooks.rules import FAILURE, SNAKE_CASE, SUCCESS
 from incolume.py.githooks.utils import Result, debug_enable
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+
 
 debug_enable()
 
