@@ -69,6 +69,13 @@ class ValidateFilename:
             self.code |= FAILURE
         return self
 
+    def is_snake_case(self) -> Self:
+        """Check if the filename is in snake_case."""
+        if SNAKE_CASE_REGEX.search(self.filename.stem) is None:
+            self.message += (
+                f'\n[red]Filename is not in snake_case: {self.filename}[/]'
+            )
+            self.code |= FAILURE
         return self
 
     def has_testing_in_name(self) -> Self:

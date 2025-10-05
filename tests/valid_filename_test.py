@@ -121,6 +121,32 @@ class TestCaseValidFilename:
         assert result.message == expected.message
 
     @pytest.mark.parametrize(
+        ['filename', 'expected'],
+        [
+            pytest.param(
+                'valid_name.py', Expected(code=0, message=''), marks=[]
+            ),
+            pytest.param(
+                'invalidName.py',
+                Expected(
+                    code=1,
+                    message='\n[red]Filename is not in snake_case:'
+                    ' /tmp/invalidName.py[/]',
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_is_snake_case(
+        self, filefortest: Path, filename: Path, expected: Expected
+    ) -> NoReturn:
+        """Test the is_snake_case method."""
+        vf = ValidateFilename(filename=filefortest.with_name(filename))
+        result = vf.is_snake_case()
+        assert result.code == expected.code
+        assert result.message == expected.message
+
+    @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
             pytest.param(
