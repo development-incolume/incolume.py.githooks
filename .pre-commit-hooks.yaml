@@ -1,3 +1,9 @@
+- id: check-len-first-line
+  name: Incolume - check length of first line in commit message
+  description: Guarantees that the first line of the commit message does not exceed a specified length.
+  entry: check-len-first-line
+  language: python
+
 - id: check-precommit-installed
   name: Incolume - check if pre-commit is installed
   description: Guarantees pre-commit instalation for project.
