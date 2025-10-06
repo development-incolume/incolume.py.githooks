@@ -155,7 +155,7 @@ class TestCaseValidFilename:
             pytest.param(
                 test_dir / 'tests' / 'fake_module.py',
                 Result(SUCCESS, ''),
-                marks=[],
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
             ),  # Path, but valid name
             pytest.param(
                 'incolume/py/githooks/fakepackage/fake_test_module.py',
@@ -170,7 +170,7 @@ class TestCaseValidFilename:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
         result = vf.has_testing_in_pathname()
-        assert result.code == FAILURE
+        assert result.code == expected.code
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],

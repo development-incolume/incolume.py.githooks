@@ -40,7 +40,6 @@ class ValidateFilename:
     def __post_init__(self) -> None:
         """Post init."""
         self.filename = Path(self.filename)
-        # logging.debug(ic(self.filename))
 
     @property
     def refname(self) -> str:
@@ -82,7 +81,7 @@ class ValidateFilename:
         """Check if the filename has 'test' or 'tests' in its name."""
         pathname = self.filename.parent
         self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is not None
-        # self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
+        self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
         return self
 
     def has_testing_in_filename(self) -> Self:
