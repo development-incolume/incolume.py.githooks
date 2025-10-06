@@ -141,7 +141,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     results: list[Result] = [
-        ValidateFilename.is_valid_filename(
+        ValidateFilename.is_valid(
             filename=filename, min_len=args.min_len, max_len=args.max_len
         )
         for filename in args.filenames

@@ -3,13 +3,22 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from contextlib import suppress
+from dataclasses import dataclass, field
 from pathlib import Path
+from string import ascii_lowercase, digits
 
 from icecream import ic
 
 from incolume.py.githooks.rules import FAILURE, SNAKE_CASE, SUCCESS
 from incolume.py.githooks.utils import Result, debug_enable
+
+with suppress(ImportError, ModuleNotFoundError):
+    from typing import Self  # type: ignore[import]
+
+with suppress(ImportError, ModuleNotFoundError):
+    from typing_extensions import Self  # type: ignore[import]
+
 
 debug_enable()
 
@@ -20,11 +29,70 @@ SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 class ValidateFilename:
     """Rules for valid filename."""
 
-    code: int = SUCCESS
-    message: str = ''
+    filename: Path | str = ''
+    alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
+    considers_underscore: bool = True
+    min_len: int = 3
+    max_len: int = 256
+    code: int = field(default=SUCCESS, init=False)
+    message: str = field(default='', init=False)
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        self.filename = Path(self.filename)
+
+    @property
+    def refname(self) -> str:
+        """Get the reference name."""
+        name = self.filename.stem
+        regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
+        refname = re.sub(regex, '', name)
+        ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
+        return refname
+
+    def is_too_short(self) -> Self:
+        """Check if the filename is too short."""
+        if len(self.refname) < self.min_len:
+            self.message += (
+                f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
+            )
+            self.code |= FAILURE
+        return self
+
+    def is_too_long(self) -> Self:
+        """Check if the filename is too long."""
+        if len(self.refname) > self.max_len:
+            self.message += (
+                f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
+            )
+            self.code |= FAILURE
+        return self
+
+    def is_snake_case(self) -> Self:
+        """Check if the filename is in snake_case."""
+        if SNAKE_CASE_REGEX.search(self.filename.stem) is None:
+            self.message += (
+                f'\n[red]Filename is not in snake_case: {self.filename}[/]'
+            )
+            self.code |= FAILURE
+        return self
+
+    def has_testing_in_pathname(self) -> Self:
+        """Check if the filename has 'test' or 'tests' in its name."""
+        pathname = self.filename.parent
+        self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is not None
+        self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
+        return self
+
+    def has_testing_in_filename(self) -> Self:
+        """Check if the filename has 'test' or 'tests' in its name."""
+        filename = self.filename.stem
+        self.code |= bool(re.match(r'^.*tests?.*$', filename))
+        self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is None
+        return self
 
     @staticmethod
-    def is_valid_filename(
+    def is_valid(
         filename: str | Path, min_len: int = 3, max_len: int = 256
     ) -> Result:
         r"""Check if a filename is valid.
@@ -41,9 +109,9 @@ class ValidateFilename:
             Result: The result of the check.
 
         Examples:
-            >>> ValidateFilename.is_valid_filename('valid_name.py')
+            >>> ValidateFilename.is_valid('valid_name.py')
             Result(code=0, message='')
-            >>> ValidateFilename.is_valid_filename('sh.py', min_len=3)
+            >>> ValidateFilename.is_valid('sh.py', min_len=3)
             Result(code=1, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # noqa: E501
