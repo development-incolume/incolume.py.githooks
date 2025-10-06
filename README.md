@@ -19,7 +19,30 @@ Hooks git for incolume projects.
 Model for .pre-commit-config.yaml, bellow:
 
 ```yaml
-# .pre-commit-config.yaml
+# File .pre-commit-config.yaml
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  # See https://pre-commit.com for more information
+  # See https://pre-commit.com/hooks.html for more hooks  rev: v6.0.0
+  hooks:
+    - id: check-added-large-files
+    - id: check-ast
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: check-illegal-windows-names
+    - id: check-json
+    - id: check-toml
+    - id: check-xml
+    - id: check-yaml
+    - id: detect-private-key
+    - id: double-quote-string-fixer
+    - id: end-of-file-fixer
+    - id: forbid-new-submodules
+    - id: forbid-submodules
+    - id: name-tests-test
+    - id: no-commit-to-branch
+    - id: pretty-format-json
+    - id: trailing-whitespace
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
@@ -33,6 +56,7 @@ Model for .pre-commit-config.yaml, bellow:
       args: [--config, ruff.toml]
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
+  # https://github.com/development-incolume/incolume.py.githooks/blob/dev/README.md
   rev: 1.6.0
   hooks:
     - id: check-len-first-line
