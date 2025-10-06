@@ -21,26 +21,11 @@ from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
 from incolume.py.githooks.utils import Result
 from unittest.mock import patch
 
+from . import Expected, MainEntrance
+
+
 if TYPE_CHECKING:
     from collections.abc import Generator
-
-
-@dataclass
-class Expected:
-    """Expected values."""
-
-    code: int = SUCCESS
-    msg: str = ''
-
-
-@dataclass
-class MainEntrance:
-    """Entrance values."""
-
-    commit_msg_file: str = ''
-    commit_source: str = ''
-    commit_hash: str = ''
-    diff_output: str = ''
 
 
 @dataclass
@@ -414,7 +399,7 @@ class TestCaseAllCLI:
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                 ),
                 Expected(
-                    msg='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
+                    message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
                     'nothing.py\nM\tincolume/py/none.py\n#',
                 ),
                 marks=[],
@@ -432,7 +417,7 @@ class TestCaseAllCLI:
                 ),
                 Expected(
                     code=SUCCESS,
-                    msg='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
+                    message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
                     'nothing.py'
                     '\nM\tincolume/py/none.py\n#',
                 ),
@@ -461,4 +446,4 @@ class TestCaseAllCLI:
         ]
 
         assert cli.insert_diff_cli(entrance) == expected.code
-        assert test_file.read_text(encoding='utf-8') == expected.msg
+        assert test_file.read_text(encoding='utf-8') == expected.message
