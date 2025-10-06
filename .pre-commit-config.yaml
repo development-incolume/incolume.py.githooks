@@ -57,21 +57,13 @@ repos:
       entry: check-len-first-line
       language: python
 
-    - id: effort-message
-      name: Incolume - Commit Message Effort Hook
+    - id: check-precommit-installed
+      name: Incolume - check if pre-commit is installed
+      description: Guarantees pre-commit instalation for project.
+      entry: is-precommit-installed
       language: python
-      entry: effort-msg
-      additional_dependencies: [colorama,rich]  # Python dependency for the script
-
-    - id: detect-key
-      verbose: false
-      name: Incolume - detect private key
-      description: detects the presence of private keys.
-      entry: detect-key
-      language: python
-      types: [text]
-      files: ''  # The pattern of files to run on.
-      exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
+      types: [python]
+      stages: [pre-commit, pre-push, manual]
 
     - id: check-valid-filenames
       name: Incolume - check if is valid filenames
@@ -81,25 +73,6 @@ repos:
       additional_dependencies: [icecream,rich]  # Python dependency for the script
       types: [python]
       stages: [pre-commit, pre-push, manual]
-
-    - id: check-precommit-installed
-      name: Incolume - check if pre-commit is installed
-      description: Guarantees pre-commit instalation for project.
-      entry: is-precommit-installed
-      language: python
-      types: [python]
-      stages: [pre-commit, pre-push, manual]
-
-    - id: footer-signed-off-by
-      name: Incolume - Seting footer with Signed-off-by
-      entry: set-footer-signet-off-by  # script is called from root directory
-      language: python  # script requires the Python interpreter
-    #   require_serial: true  # don't run in parallel because one call of the script parses all files
-      additional_dependencies: []  # Python dependency for the script
-    #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
-      # types: []  # jupyter is alias for .ipynb files
-      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      verbose: true
 
     - id: clean-commit-message
       name: Incolume - Clean Commit message
@@ -112,6 +85,41 @@ repos:
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
       verbose: false
 
+    - id: detect-key
+      verbose: false
+      name: Incolume - detect private key
+      description: detects the presence of private keys.
+      entry: detect-key
+      language: python
+      types: [text]
+      files: ''  # The pattern of files to run on.
+      exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
+
+    - id: effort-message
+      name: Incolume - Commit Message Effort Hook
+      language: python
+      entry: effort-msg
+      additional_dependencies: [colorama,rich]  # Python dependency for the script
+
+    - id: footer-signed-off-by
+      name: Incolume - Seting footer with Signed-off-by
+      entry: set-footer-signet-off-by  # script is called from root directory
+      language: python  # script requires the Python interpreter
+    #   require_serial: true  # don't run in parallel because one call of the script parses all files
+      additional_dependencies: []  # Python dependency for the script
+    #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
+      # types: []  # jupyter is alias for .ipynb files
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      verbose: true
+
+    - id: insert-diff-commit
+      name: Incolume - Insert Git Diff into Commit Message
+      entry: insert-diff-commit
+      language: python  # script requires the Python interpreter
+      additional_dependencies: []  # Python dependency for the script
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      verbose: false
+
     - id: validate-message-commit
       name: Incolume - validate message Commit agree with Conventional Commits
       entry: is-valid-msg-commit  # script is called from root directory
@@ -121,11 +129,3 @@ repos:
       # files: ^*$  # this catches all .ipynb under examples/
       types_or: [system-verilog]  #
       stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
-
-    - id: insert-diff-commit
-      name: Incolume - Insert Git Diff into Commit Message
-      entry: insert-diff-commit
-      language: python  # script requires the Python interpreter
-      additional_dependencies: []  # Python dependency for the script
-      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      verbose: false
