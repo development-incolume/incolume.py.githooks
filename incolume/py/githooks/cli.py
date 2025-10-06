@@ -31,7 +31,7 @@ from incolume.py.githooks.prepare_commit_msg import (
 )
 from incolume.py.githooks.rules import FAILURE, RULE_BRANCHNAME, SUCCESS
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
-from incolume.py.githooks.valid_filename import is_valid_filename
+from incolume.py.githooks.valid_filename import ValidateFilename
 
 debug_enable()
 
@@ -141,7 +141,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     results: list[Result] = [
-        is_valid_filename(
+        ValidateFilename.is_valid(
             filename=filename, min_len=args.min_len, max_len=args.max_len
         )
         for filename in args.filenames
