@@ -5,9 +5,17 @@
 from __future__ import annotations
 
 from typing import Final
+from enum import Enum
 
-SUCCESS: Final[int] = 0
-FAILURE: Final[int] = 1
+
+class Status(Enum):
+    """Status result for CLI."""
+    SUCCESS: int = 0
+    FAILURE: int = 1
+
+SUCCESS: Final[int] = Status.SUCCESS
+FAILURE: Final[int] = Status.FAILURE
+
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME: Final[str] = (
     r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'
