@@ -50,8 +50,15 @@ class ValidateFilename:
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
 
+    def __is_python_file(self) -> bool:
+        """Check if the file is a Python file."""
+        return self.filename.suffix == '.py'
+
     def is_too_short(self) -> Self:
         """Check if the filename is too short."""
+        if not self.__is_python_file():
+            return self
+
         if len(self.refname) < self.min_len:
             self.message += (
                 f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
@@ -61,6 +68,9 @@ class ValidateFilename:
 
     def is_too_long(self) -> Self:
         """Check if the filename is too long."""
+        if not self.__is_python_file():
+            return self
+
         if len(self.refname) > self.max_len:
             self.message += (
                 f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
@@ -70,6 +80,9 @@ class ValidateFilename:
 
     def is_snake_case(self) -> Self:
         """Check if the filename is in snake_case."""
+        if not self.__is_python_file():
+            return self
+
         if SNAKE_CASE_REGEX.search(self.filename.stem) is None:
             self.message += (
                 f'\n[red]Filename is not in snake_case: {self.filename}[/]'
@@ -79,6 +92,9 @@ class ValidateFilename:
 
     def has_testing_in_pathname(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
+        if not self.__is_python_file():
+            return self
+
         pathname = self.filename.parent
         self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is not None
         self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
