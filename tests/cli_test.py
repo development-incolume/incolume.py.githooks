@@ -272,7 +272,7 @@ class TestCaseAllCLI:
     @pytest.mark.parametrize(
         'entrance', [pytest.param(line, marks=[]) for line in BLACKLIST]
     )
-    def test_main(self, capsys, entrance) -> NoReturn:
+    def test_detect_private_key_cli(self, capsys, entrance) -> NoReturn:
         """Test CLI."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
