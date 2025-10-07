@@ -4,14 +4,34 @@
 
 from __future__ import annotations
 
-from typing import Final
+import contextlib
 from enum import Enum
+from types import UnionType
+from typing import Final
+
+with contextlib.suppress(ImportError, ModuleNotFoundError):
+    pass  # type: ignore[import]
+
+with contextlib.suppress(ImportError, ModuleNotFoundError):
+    pass  # type: ignore[import]
 
 
 class Status(Enum):
     """Status result for CLI."""
+
     SUCCESS: int = 0
     FAILURE: int = 1
+
+    def __or__(self, value) -> UnionType:
+        """Override the | operator to combine Status values."""
+        if isinstance(value, int):
+            value = Status(value)
+        return self.value | value.value
+
+    def __ror__(self, value) -> UnionType:
+        """Override the | operator to combine Status values."""
+        return self.__or__(value)
+
 
 SUCCESS: Final[int] = Status.SUCCESS
 FAILURE: Final[int] = Status.FAILURE
