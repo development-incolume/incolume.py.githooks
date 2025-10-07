@@ -42,7 +42,7 @@ repos:
     - id: check-len-first-line
     - id: check-precommit-installed
     - id: check-valid-filenames
-    #  args: ['--min-len=3', '--max-len=256']
+      args: ['--min-len=3', '--max-len=256']
     - id: detect-key
     - id: effort-message
     - id: footer-signed-off-by
