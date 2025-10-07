@@ -6,14 +6,16 @@ from __future__ import annotations
 
 import contextlib
 from enum import Enum
-from types import UnionType
-from typing import Final
+from typing import TYPE_CHECKING, Final
+
+if TYPE_CHECKING:
+    from types import UnionType
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
-    pass  # type: ignore[import]
+    from typing import Self  # type: ignore[import]
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
-    pass  # type: ignore[import]
+    from typing_extensions import Self  # type: ignore[import]
 
 
 class Status(Enum):
@@ -22,19 +24,19 @@ class Status(Enum):
     SUCCESS: int = 0
     FAILURE: int = 1
 
-    def __or__(self, value) -> UnionType:
+    def __or__(self, value: Self | int) -> UnionType:
         """Override the | operator to combine Status values."""
         if isinstance(value, int):
             value = Status(value)
         return self.value | value.value
 
-    def __ror__(self, value) -> UnionType:
+    def __ror__(self, value: Self | int) -> UnionType:
         """Override the | operator to combine Status values."""
         return self.__or__(value)
 
 
-SUCCESS: Final[int] = Status.SUCCESS
-FAILURE: Final[int] = Status.FAILURE
+SUCCESS: Final[Status] = Status.SUCCESS
+FAILURE: Final[Status] = Status.FAILURE
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME: Final[str] = (

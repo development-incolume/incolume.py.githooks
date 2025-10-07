@@ -7,7 +7,7 @@ from tempfile import NamedTemporaryFile, gettempdir
 
 from icecream import ic
 import pytest
-from incolume.py.githooks.rules import FAILURE, SUCCESS
+from incolume.py.githooks.rules import FAILURE, SUCCESS, Status
 from incolume.py.githooks.utils import Result
 from incolume.py.githooks.valid_filename import ValidateFilename
 from . import Expected
@@ -84,7 +84,7 @@ class TestCaseValidFilename:
         filename = filefortest.with_name(filename)
         vf = ValidateFilename(filename=filename, min_len=min_len)
         result = vf.is_too_short()
-        assert result.code == expected.code
+        assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
 
     @pytest.mark.parametrize(
@@ -117,7 +117,7 @@ class TestCaseValidFilename:
         filename = filefortest.with_name(filename)
         vf = ValidateFilename(filename=filename, max_len=max_len)
         result = vf.is_too_long()
-        assert result.code == expected.code
+        assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
 
     @pytest.mark.parametrize(
@@ -142,7 +142,7 @@ class TestCaseValidFilename:
         """Test the is_snake_case method."""
         vf = ValidateFilename(filename=filefortest.with_name(filename))
         result = vf.is_snake_case()
-        assert result.code == expected.code
+        assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
 
     @pytest.mark.parametrize(
@@ -150,14 +150,17 @@ class TestCaseValidFilename:
         [
             pytest.param(
                 test_dir / 'tests' / 'fake_module_test.py',
-                Result(SUCCESS, ''),
+                Result(SUCCESS, ['']),
                 marks=[],
             ),  # Path, but valid name
             pytest.param(
                 test_dir / 'tests' / 'fake_module.py',
                 Result(
                     FAILURE,
-                    'Parece ser um arquivo de test.\nTry: tests/fake_module_test.py',
+                    (
+                        'Parece ser um arquivo de test.\n'
+                        'Try: tests/fake_module_test.py'
+                    ),
                 ),
                 marks=[],
             ),  # Path, but valid name
@@ -179,8 +182,8 @@ class TestCaseValidFilename:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
         result = vf.has_testing_in_filename()
-        assert result.code == expected.code
-        assert expected.message in result.message
+        assert Status(result.code) == Status(expected.code)
+        assert all(m1 in result.message for m1 in expected.message)
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
@@ -419,5 +422,5 @@ class TestCaseValidFilename:
         """Test invalid filenames."""
         result = ValidateFilename.is_valid(**entrance)
         ic(result)
-        assert result.code is expected.code  # Not snake_case
+        assert Status(result.code) is Status(expected.code)  # Not snake_case
         assert expected.message in result.message

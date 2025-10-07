@@ -172,7 +172,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
     result = has_private_key(*args.filenames)
     rich.print(result.message)
-    return result.code
+    return result.code.value
 
 
 def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
@@ -322,7 +322,7 @@ def pre_commit_installed_cli() -> int:
             ' but `pre-commit install` was never ran.[/red]\n',
         )
         result |= FAILURE
-    return result
+    return result.value
 
 
 def get_msg_cli() -> None:

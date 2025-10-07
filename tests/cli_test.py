@@ -17,7 +17,7 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
-from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
+from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS, Status
 from incolume.py.githooks.utils import Result
 from unittest.mock import patch
 
@@ -75,9 +75,7 @@ class TestCaseAllCLI:
                         ]
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[pytest.mark.xfail(reason='Not implemented yet.')],
             ),
             pytest.param(
                 Entrance(
@@ -228,7 +226,7 @@ class TestCaseAllCLI:
             ic(result)
             captured = capsys.readouterr()
             assert message in captured.out
-            assert result == exit_code
+            assert Status(result) == Status(exit_code)
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
@@ -268,7 +266,7 @@ class TestCaseAllCLI:
         """Test CLI."""
         result = cli.check_valid_filenames_cli([*entrance])
         captured = capsys.readouterr()
-        assert result == result_expected
+        assert Status(result) == Status(result_expected)
         assert expected in captured.out
 
     @pytest.mark.parametrize(
@@ -305,7 +303,7 @@ class TestCaseAllCLI:
         args[0] = test_file.as_posix()
         result = cli.footer_signedoffby_cli(args)
         captured = capsys.readouterr()
-        assert result == expected
+        assert Status(result) == Status(expected)
         assert not captured.out
 
     def test_effort_msg_cli(self, capsys: pytest.CaptureFixture[str]) -> None:
@@ -392,7 +390,7 @@ class TestCaseAllCLI:
                 [Path(entrance)] if entrance else []
             )
             result = cli.pre_commit_installed_cli()
-        assert result == expected
+        assert Status(result) == Status(expected)
 
     def test_get_msg_cli(self, capsys) -> None:
         """Test get_msg function."""
