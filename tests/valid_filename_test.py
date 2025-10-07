@@ -149,14 +149,27 @@ class TestCaseValidFilename:
         ['filename', 'expected'],
         [
             pytest.param(
-                test_dir / 'tests' / 'fake_module.py',
+                test_dir / 'tests' / 'fake_module_test.py',
                 Result(SUCCESS, ''),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                test_dir / 'tests' / 'fake_module.py',
+                Result(
+                    FAILURE,
+                    'Parece ser um arquivo de test.\nTry: tests/fake_module_test.py',
+                ),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                'incolume/py/githooks/fakepackage/test_fake_module.py',
+                Result(FAILURE, 'kxz'),
                 marks=[pytest.mark.xfail(reason='Not implemented yet')],
             ),  # Path, but valid name
             pytest.param(
                 'incolume/py/githooks/fakepackage/fake_test_module.py',
-                Result(FAILURE, ''),
-                marks=[],
+                Result(FAILURE, 'kxz'),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
             ),  # Path, but valid name
         ],
     )
@@ -165,8 +178,9 @@ class TestCaseValidFilename:
     ) -> NoReturn:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
-        result = vf.has_testing_in_pathname()
+        result = vf.has_testing_in_filename()
         assert result.code == expected.code
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],

@@ -84,21 +84,25 @@ class ValidateFilename:
             self.code |= FAILURE
         return self
 
-    def has_testing_in_pathname(self) -> Self:
+    def __has_test_in_pathname(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
-        if not self.__is_python_file():
-            return self
-
-        pathname = self.filename.parent
-        self.code |= re.match(r'^(?:(?!tests?).)*$', str(pathname)) is not None
-        self.code |= bool(re.match(r'^.*tests?.*$', str(pathname)))
-        return self
+        pathname = str(self.filename.parent)
+        return bool(re.match(r'^.*tests?.*$', str(pathname)))
 
     def has_testing_in_filename(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
         filename = self.filename.stem
-        self.code |= bool(re.match(r'^.*tests?.*$', filename))
-        self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is None
+        if (
+            self.__is_python_file()
+            and self.__has_test_in_pathname()
+            and not re.match(r'^.*_test$', filename)
+        ):
+            self.code |= re.match(r'^.*_tests?$', filename) is None
+            self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is not None
+            self.message += (
+                '\n[red]Parece ser um arquivo de test.'
+                f'\nTry: {Path("tests", filename + "_test.py")}[/red]'
+            )
         return self
 
     @staticmethod
