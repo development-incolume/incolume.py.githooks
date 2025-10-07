@@ -10,9 +10,9 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-10-05:
+## [1.7.0]	 &#8212; 	2025-10-06:
 ### Added
-  - Disponibilizar Hook clean-commit-message;
+  - Disponibilizado hook clean-commit-message;
 
 ## [1.6.0]	 &#8212; 	2025-10-05:
 ### Added
@@ -140,4 +140,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.4.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0rc2...1.4.0
 [1.5.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0...1.5.0
 [1.6.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.5.0...1.6.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...Unreleased
+[1.7.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...1.7.0

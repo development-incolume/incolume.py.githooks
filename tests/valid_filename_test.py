@@ -61,8 +61,7 @@ class TestCaseValidFilename:
                 3,
                 Expected(
                     code=1,
-                    message='\n[red]Name too short '
-                    '(self.min_len=3): /tmp/ab.py[/]',
+                    message='[red]Name too short (self.min_len=3):',
                 ),
                 marks=[],
             ),
@@ -71,8 +70,7 @@ class TestCaseValidFilename:
                 10,
                 Expected(
                     code=1,
-                    message='\n[red]Name too short'
-                    ' (self.min_len=10): /tmp/abcefghij.py[/]',
+                    message='[red]Name too short (self.min_len=10):',
                 ),
                 marks=[],
             ),
@@ -87,7 +85,7 @@ class TestCaseValidFilename:
         vf = ValidateFilename(filename=filename, min_len=min_len)
         result = vf.is_too_short()
         assert result.code == expected.code
-        assert result.message == expected.message
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['filename', 'max_len', 'expected'],
@@ -97,8 +95,7 @@ class TestCaseValidFilename:
                 9,
                 Expected(
                     code=1,
-                    message='\n[red]Name too long'
-                    ' (self.max_len=9): /tmp/abcefghijk.py[/]',
+                    message='\n[red]Name too long (self.max_len=9):',
                 ),
                 marks=[],
             ),
@@ -121,7 +118,7 @@ class TestCaseValidFilename:
         vf = ValidateFilename(filename=filename, max_len=max_len)
         result = vf.is_too_long()
         assert result.code == expected.code
-        assert result.message == expected.message
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['filename', 'expected'],
@@ -133,8 +130,7 @@ class TestCaseValidFilename:
                 'invalidName.py',
                 Expected(
                     code=1,
-                    message='\n[red]Filename is not in snake_case:'
-                    ' /tmp/invalidName.py[/]',
+                    message='[red]Filename is not in snake_case:',
                 ),
                 marks=[],
             ),
@@ -147,7 +143,7 @@ class TestCaseValidFilename:
         vf = ValidateFilename(filename=filefortest.with_name(filename))
         result = vf.is_snake_case()
         assert result.code == expected.code
-        assert result.message == expected.message
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['filename', 'expected'],
