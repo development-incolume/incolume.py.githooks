@@ -126,7 +126,7 @@ class ValidateFilename:
             >>> ValidateFilename.is_valid('valid_name.py')
             Result(code=<Status.SUCCESS: 0>, message='')
             >>> ValidateFilename.is_valid('sh.py', min_len=3)
-            Result(code=1, message='\n[red]Name too short (min_len=3): sh.py[/]')
+            Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # noqa: E501
         filename = Path(filename)

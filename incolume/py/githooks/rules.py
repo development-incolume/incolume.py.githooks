@@ -21,13 +21,13 @@ class Status(Enum):
     SUCCESS: int = 0
     FAILURE: int = 1
 
-    def __or__(self, obj: Self | int) -> int:
+    def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""
         if isinstance(obj, int):
             obj = Status(obj)
-        return self.value | obj.value
+        return Status(self.value | obj.value)
 
-    def __ror__(self, value: Self | int) -> int:
+    def __ror__(self, value: Self | int) -> Status:
         """Override the | operator to combine Status values."""
         return self.__or__(value)
 
