@@ -24,11 +24,11 @@ class Status(Enum):
     SUCCESS: int = 0
     FAILURE: int = 1
 
-    def __or__(self, value: Self | int) -> UnionType:
+    def __or__(self, obj: Self | int) -> UnionType:
         """Override the | operator to combine Status values."""
-        if isinstance(value, int):
-            value = Status(value)
-        return self.value | value.value
+        if isinstance(obj, int):
+            obj = Status(obj)
+        return self.value | obj.value
 
     def __ror__(self, value: Self | int) -> UnionType:
         """Override the | operator to combine Status values."""
