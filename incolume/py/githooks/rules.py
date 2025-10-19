@@ -6,10 +6,7 @@ from __future__ import annotations
 
 import contextlib
 from enum import Enum
-from typing import TYPE_CHECKING, Final
-
-if TYPE_CHECKING:
-    from types import UnionType
+from typing import Final
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing import Self  # type: ignore[import]
@@ -24,13 +21,14 @@ class Status(Enum):
     SUCCESS: int = 0
     FAILURE: int = 1
 
-    def __or__(self, obj: Self | int) -> UnionType:
+    def __or__(self, obj: Self | int) -> Self:
         """Override the | operator to combine Status values."""
         if isinstance(obj, int):
             obj = Status(obj)
-        return self.value | obj.value
+        self.value = Status(self.value | obj.value)
+        return self
 
-    def __ror__(self, value: Self | int) -> UnionType:
+    def __ror__(self, value: Self | int) -> Self:
         """Override the | operator to combine Status values."""
         return self.__or__(value)
 
