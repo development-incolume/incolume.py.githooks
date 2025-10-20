@@ -49,7 +49,7 @@ def check_len_first_line_commit_msg_cli(
 ) -> int:
     """Check commit message."""
     results = []
-    result_code = SUCCESS
+    result_code: Status = Status.SUCCESS
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     parser.add_argument(
@@ -79,7 +79,8 @@ def check_len_first_line_commit_msg_cli(
         rich.print(result.message)
         result_code |= result.code
 
-    sys.exit(result_code.value)  # Validation passed, allow commit
+    sys.exit(result_code.value)
+    return result_code.value  # Validation passed, allow commit
 
 
 def check_type_commit_msg_cli(
