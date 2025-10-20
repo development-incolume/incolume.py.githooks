@@ -67,6 +67,20 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 Entrance(
+                    msg_commit='docs: #85 Atualizado README.md\nacrescentado os hooks padrões para pre-commit pertinentes ao ecossistema incolume',
+                    expected=Result(
+                        message=[
+                            'Commit minimum length for message is validated',
+                            'Commit maximum length for message is validated',
+                        ]
+                    ),
+                ),
+                marks=[
+                    # pytest.mark.skip
+                ],
+            ),
+            pytest.param(
+                Entrance(
                     msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
                     expected=Result(
                         0,

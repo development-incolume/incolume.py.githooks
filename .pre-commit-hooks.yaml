@@ -21,6 +21,17 @@
   types: [python]
   stages: [pre-commit, pre-push, manual]
 
+- id: clean-commit-message
+  name: Incolume - Clean Commit message
+  entry: clean-commit-msg
+  language: python  # script requires the Python interpreter
+#   require_serial: false  # don't run in parallel
+#   additional_dependencies: []  # Python dependency for the script
+#   # files: ^*$  # this catches all .ipynb under examples/
+#   types: [python]  # jupyter is alias for .ipynb files
+  stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+  verbose: false
+
 - id: detect-key
   name: Incolume - detect private key
   description: detects the presence of private keys.
