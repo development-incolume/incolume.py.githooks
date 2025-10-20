@@ -390,11 +390,7 @@ class TestCaseValidFilename:
             pytest.param(
                 {'filename': 'tests/fake_module_test.py'},
                 Result(SUCCESS, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
+                marks=[],
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'test/fake_module.py'},
