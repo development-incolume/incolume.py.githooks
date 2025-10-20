@@ -8,6 +8,8 @@ import contextlib
 from enum import Enum
 from typing import Final
 
+from icecream import ic
+
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing import Self  # type: ignore[import]
 
@@ -20,6 +22,16 @@ class Status(Enum):
 
     SUCCESS: int = 0
     FAILURE: int = 1
+
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            ic(value, key, member.name, member.value)
+            if value == key:
+                return member
+        return None
 
     def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""
