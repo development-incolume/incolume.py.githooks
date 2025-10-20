@@ -10,7 +10,8 @@ from subprocess import check_output  # noqa: S404
 
 from icecream import ic
 
-from incolume.py.githooks.rules import SUCCESS
+from incolume.py.githooks.rules import SUCCESS as SUCCESS
+from incolume.py.githooks.rules import Status
 
 try:
     from typing import Self
@@ -25,9 +26,9 @@ def debug_enable() -> bool:
     valid: list = ['1', 'True', 'true']
     debug: bool = (
         False
-        or getenv('DEBUG') in valid
-        or getenv('DEBUG_MODE') in valid
         or getenv('INCOLUME_DEBUG_MODE') in valid
+        or getenv('DEBUG_MODE') in valid
+        or getenv('DEBUG') in valid
     )
 
     ic.disable()  # Disable by default
@@ -42,7 +43,7 @@ def debug_enable() -> bool:
 class Result:
     """Result dataclass for hooks this project."""
 
-    code: int = SUCCESS
+    code: Status = Status.SUCCESS
     message: str = ''
 
 

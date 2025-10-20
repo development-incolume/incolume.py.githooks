@@ -29,7 +29,12 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_type_commit_msg,
     prepare_commit_msg,
 )
-from incolume.py.githooks.rules import FAILURE, RULE_BRANCHNAME, SUCCESS
+from incolume.py.githooks.rules import (
+    FAILURE,
+    RULE_BRANCHNAME,
+    SUCCESS,
+    Status,
+)
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 from incolume.py.githooks.valid_filename import ValidateFilename
 
@@ -74,7 +79,7 @@ def check_len_first_line_commit_msg_cli(
         rich.print(result.message)
         result_code |= result.code
 
-    sys.exit(result_code)  # Validation passed, allow commit
+    sys.exit(result_code.value)  # Validation passed, allow commit
 
 
 def check_type_commit_msg_cli(
@@ -118,7 +123,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    codes: int = SUCCESS
+    codes: Status = SUCCESS
     parser = argparse.ArgumentParser(
         prog='validate-filename',
     )
@@ -151,7 +156,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     for result in results:
         rich.print(result.message)
         codes |= result.code
-    return codes
+    return codes.value
 
 
 def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
@@ -172,7 +177,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
     result = has_private_key(*args.filenames)
     rich.print(result.message)
-    return result.code
+    return result.code.value
 
 
 def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
@@ -322,7 +327,7 @@ def pre_commit_installed_cli() -> int:
             ' but `pre-commit install` was never ran.[/red]\n',
         )
         result |= FAILURE
-    return result
+    return result.value
 
 
 def get_msg_cli() -> None:
