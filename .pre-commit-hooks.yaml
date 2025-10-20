@@ -3,6 +3,8 @@
   description: Guarantees that the first line of the commit message does not exceed a specified length.
   entry: check-len-first-line
   language: python
+  types: [python]
+  stages: [prepare-commit-msg, manual]
 
 - id: check-precommit-installed
   name: Incolume - check if pre-commit is installed
