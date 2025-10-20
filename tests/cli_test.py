@@ -75,42 +75,38 @@ class TestCaseAllCLI:
                         ]
                     ),
                 ),
-                marks=[pytest.mark.xfail(reason='Not implemented yet.')],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
                     expected=Result(
-                        0,
+                        SUCCESS,
                         [
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat' * 15,
                     expected=Result(
-                        0,
+                        FAILURE,
                         [
                             'Error: Commit subject line exceeds',
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat',
                     expected=Result(
-                        0,
+                        FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of',
                             'Commit maximum length for message is validated',
@@ -126,7 +122,7 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
-                        0,
+                        SUCCESS,
                         [
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
@@ -148,13 +144,12 @@ class TestCaseAllCLI:
             test_file = Path(fl.name)
 
         test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
-        with pytest.raises(expected_exception=SystemExit):
-            result = cli.check_len_first_line_commit_msg_cli([
-                test_file.as_posix(),
-                *entrance.params,
-            ])
+        result = cli.check_len_first_line_commit_msg_cli([
+            test_file.as_posix(),
+            *entrance.params,
+        ])
         captured = capsys.readouterr()
-        assert bool(result) is bool(entrance.expected.code)
+        assert result is entrance.expected.code.value
         assert captured.out.split('\n')
         assert sum(
             m in n
