@@ -13,6 +13,13 @@
   types: [python]
   stages: [pre-commit, pre-push, manual]
 
+- id: check-valid-branchname
+  name: Incolume - check if is valid branchnames
+  description: Guarantees valid branchname for project.
+  entry: is-valid-branchname
+  language: python
+  stages: [pre-commit, pre-push, manual]
+
 - id: check-valid-filenames
   name: Incolume - check if is valid filenames
   description: Guarantees valid filenames for Python.
