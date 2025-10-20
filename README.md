@@ -57,10 +57,11 @@ Model for .pre-commit-config.yaml, bellow:
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
   # https://github.com/development-incolume/incolume.py.githooks/blob/dev/README.md
-  rev: 1.6.0
+  rev: 1.8.0
   hooks:
     - id: check-len-first-line
     - id: check-precommit-installed
+    - id: check-valid-branchnames
     - id: check-valid-filenames
     #   args: ['--min-len=3', '--max-len=256']
     - id: detect-key
@@ -68,6 +69,7 @@ Model for .pre-commit-config.yaml, bellow:
     - id: footer-signed-off-by
     #   args: [--signoff]
     - id: insert-diff-commit
+    - id: validate-message-commit
 
 
 ```

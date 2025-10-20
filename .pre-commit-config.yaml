@@ -56,6 +56,7 @@ repos:
       description: Guarantees that the first line of the commit message does not exceed a specified length.
       entry: check-len-first-line
       language: python
+      stages: [prepare-commit-msg, manual]
 
     - id: check-precommit-installed
       name: Incolume - check if pre-commit is installed
@@ -63,6 +64,13 @@ repos:
       entry: is-precommit-installed
       language: python
       types: [python]
+      stages: [pre-commit, pre-push, manual]
+
+    - id: check-valid-branchname
+      name: Incolume - check if is valid branchnames
+      description: Guarantees valid branchname for project.
+      entry: is-valid-branchname
+      language: python
       stages: [pre-commit, pre-push, manual]
 
     - id: check-valid-filenames

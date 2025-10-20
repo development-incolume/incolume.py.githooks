@@ -69,17 +69,16 @@ def check_len_first_line_commit_msg_cli(
         ic(filename)
         results.extend((
             check_min_len_first_line_commit_msg(
-                filename, len_line=args.min_first_line
+                commit_msg_filepath=filename, len_line=args.min_first_line
             ),
             check_max_len_first_line_commit_msg(
-                filename, len_line=args.max_first_line
+                commit_msg_filepath=filename, len_line=args.max_first_line
             ),
         ))
     for result in results:
         rich.print(result.message)
         result_code |= result.code
 
-    sys.exit(result_code.value)
     return result_code.value  # Validation passed, allow commit
 
 
@@ -116,7 +115,7 @@ def check_valid_branchname() -> int:
         )
         status |= FAILURE
     rich.print(result)
-    return status
+    return status.value
 
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
