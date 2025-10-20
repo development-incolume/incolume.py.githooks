@@ -115,7 +115,7 @@ def check_valid_branchname() -> int:
         )
         status |= FAILURE
     rich.print(result)
-    return status
+    return status.value
 
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
