@@ -248,7 +248,7 @@ class TestCasePrepareCommitMsg:
                     msg_commit='a' * 3,
                     expected=Result(
                         FAILURE,
-                        'Error: Commit subject line has an insufficient number of 10 characters allowed (3).',
+                        'Error: Commit subject line has an insufficient number of 10 characters allowed (3 - aaa).',
                     ),
                 ),
                 10,
