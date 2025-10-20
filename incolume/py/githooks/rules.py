@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import contextlib
-from enum import Enum
+from enum import Enum, auto
 from typing import Final
 
 from icecream import ic
@@ -15,6 +15,50 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
+
+
+class AutoName(Enum):
+    """Rule for next value."""
+
+    @staticmethod
+    def _generate_next_value_(
+        name: str, start: any, count: any, last_values: any
+    ) -> str:
+        """Gernerate next value."""
+        ic(name, start, count, last_values)
+        return name.casefold()
+
+
+class TypeCommit(AutoName):
+    """Enum para Type commiting."""
+
+    BUILD = auto()
+    CHORE = auto()
+    CI = auto()
+    DOCS = auto()
+    FEAT = auto()
+    FIX = auto()
+    PERF = auto()
+    REFACTOR = auto()
+    REVERT = auto()
+    STYLE = auto()
+    TEST = auto()
+    BUGFIX = 'fix'
+    CICD = 'ci'
+    CD = 'ci'
+    DOC = 'docs'
+    FEATURE = 'feat'
+    TESTS = 'test'
+
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            ic(value, key, member.name, member.value)
+            if value == key:
+                return member
+        return None
 
 
 class Status(Enum):

@@ -2,6 +2,7 @@
 
 import pytest
 from incolume.py.githooks import utils
+from incolume.py.githooks.rules import TypeCommit
 from unittest import mock
 import os
 from icecream import ic
@@ -107,9 +108,9 @@ class TestCaseUtilsModule:
         """Test for Enum TypeCommit."""
         if 'expected_exception' in expected:
             with pytest.raises(**expected):  # noqa: PT010
-                utils.TypeCommit(entrance)
+                TypeCommit(entrance)
         else:
-            assert utils.TypeCommit(entrance).value == expected
+            assert TypeCommit(entrance).value == expected
 
     @pytest.mark.parametrize(
         'entrance',

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from enum import Enum, auto
 from os import getenv
 from subprocess import check_output  # noqa: S404
 
@@ -12,11 +11,6 @@ from icecream import ic
 
 from incolume.py.githooks.rules import SUCCESS as SUCCESS
 from incolume.py.githooks.rules import Status
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
 
 ic.disable()
 
@@ -45,50 +39,6 @@ class Result:
 
     code: Status = Status.SUCCESS
     message: str = ''
-
-
-class AutoName(Enum):
-    """Rule for next value."""
-
-    @staticmethod
-    def _generate_next_value_(
-        name: str, start: any, count: any, last_values: any
-    ) -> str:
-        """Gernerate next value."""
-        ic(name, start, count, last_values)
-        return name.casefold()
-
-
-class TypeCommit(AutoName):
-    """Enum para Type commiting."""
-
-    BUILD = auto()
-    CHORE = auto()
-    CI = auto()
-    DOCS = auto()
-    FEAT = auto()
-    FIX = auto()
-    PERF = auto()
-    REFACTOR = auto()
-    REVERT = auto()
-    STYLE = auto()
-    TEST = auto()
-    BUGFIX = 'fix'
-    CICD = 'ci'
-    CD = 'ci'
-    DOC = 'docs'
-    FEATURE = 'feat'
-    TESTS = 'test'
-
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
-            if value == key:
-                return member
-        return None
 
 
 def get_branchname() -> str:
