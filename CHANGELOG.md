@@ -10,6 +10,10 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
+## [1.8.0]	 &#8212; 	2025-10-20:
+### Added
+  - Disponibilizado hook check-valid-branchname;
+
 ## [1.7.0]	 &#8212; 	2025-10-06:
 ### Added
   - Disponibilizado hook clean-commit-message;
@@ -141,3 +145,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.5.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.4.0...1.5.0
 [1.6.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.5.0...1.6.0
 [1.7.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...1.7.0
+[1.8.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.7.0...1.8.0
