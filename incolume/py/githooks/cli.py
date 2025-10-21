@@ -133,6 +133,16 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
         help='Filenames to process.',
     )
     parser.add_argument(
+        '--msg-commit',
+        default='',
+        type=str,
+        help='Message commit.',
+    )
+    parser.add_argument(
+        '--obj-commit',
+        help='Object commit.',
+    )
+    parser.add_argument(
         '--min-len',
         default=3,
         type=int,
