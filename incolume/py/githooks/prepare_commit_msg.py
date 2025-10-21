@@ -6,7 +6,6 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
-from subprocess import check_output  # noqa: S404
 
 from icecream import ic
 
@@ -15,7 +14,7 @@ from incolume.py.githooks.rules import (
     RULE_COMMITFORMAT,
     SUCCESS,
 )
-from incolume.py.githooks.utils import Result, debug_enable
+from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
 debug_enable()
 
@@ -150,12 +149,8 @@ def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result()
 
-    branch = check_output([  # noqa: S607
-        'git',
-        'symbolic-ref',
-        '--short',
-        'HEAD',
-    ]).strip()
+    branch = get_branchname()
+
     regex = r'(feature|hotfix)\/(\w+-\d+)'
     if re.match(regex, branch):
         issue = re.match(regex, branch).group(2)
