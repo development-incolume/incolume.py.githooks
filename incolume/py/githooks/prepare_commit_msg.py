@@ -6,6 +6,7 @@ from __future__ import annotations
 import logging
 import re
 from pathlib import Path
+from subprocess import check_output  # noqa: S404
 
 from icecream import ic
 
@@ -135,4 +136,34 @@ def check_max_len_first_line_commit_msg(
     if len(first_line) > len_line:
         result.code = FAILURE
         result.message = f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).'
+    return result
+
+
+def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
+    """Automatically prefixing git commit messages.
+
+    Explanation:
+      This will match branch names like, this `feature/ISSUE-123` or `hotfix/ISSUE-1234`
+      and prefixing `[ISSUE-123]` on message git commit, except in master, main, dev or tags.
+
+    """
+    commit_msg_filepath = Path(commit_msg_filepath)
+    result = Result()
+
+    branch = check_output([  # noqa: S607
+        'git',
+        'symbolic-ref',
+        '--short',
+        'HEAD',
+    ]).strip()
+    regex = r'(feature|hotfix)\/(\w+-\d+)'
+    if re.match(regex, branch):
+        issue = re.match(regex, branch).group(2)
+        with commit_msg_filepath.open('r+', encoding='utf-8') as fh:
+            commit_msg = fh.read()
+            fh.seek(0, 0)
+            fh.write(f'[{issue}] {commit_msg}')
+    elif branch not in {'master', 'dev', 'main', 'tags'}:
+        result.message += '\nIncorrect branch name'
+        result.code |= FAILURE
     return result

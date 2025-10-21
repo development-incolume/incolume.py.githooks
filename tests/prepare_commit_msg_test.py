@@ -6,18 +6,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import shutil
 from typing import NoReturn
+from unittest.mock import patch
 from icecream import ic
 import pytest
 from incolume.py.githooks.utils import Result
 from incolume.py.githooks.rules import SUCCESS, FAILURE
-from incolume.py.githooks.prepare_commit_msg import (
-    MESSAGERROR,
-    MESSAGESUCCESS,
-    prepare_commit_msg,
-    check_max_len_first_line_commit_msg,
-    check_type_commit_msg,
-    check_min_len_first_line_commit_msg,
-)
+import incolume.py.githooks.prepare_commit_msg as pkg
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
 from inspect import stack
@@ -31,7 +25,7 @@ class Entrance:
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
     expected: Result = field(
-        default_factory=lambda: Result(FAILURE, MESSAGERROR)
+        default_factory=lambda: Result(FAILURE, pkg.MESSAGERROR)
     )
 
 
@@ -61,12 +55,12 @@ class TestCasePrepareCommitMsg:
         ['entrance', 'expected'],
         [
             pytest.param(
-                MESSAGESUCCESS,
+                pkg.MESSAGESUCCESS,
                 ['Commit message is validated [OK]'],
                 marks=[],
             ),
             pytest.param(
-                MESSAGERROR,
+                pkg.MESSAGERROR,
                 [
                     'Your commit was rejected due to the',
                     'invalid commit message',
@@ -117,7 +111,7 @@ class TestCasePrepareCommitMsg:
                 Entrance(
                     msg_file=test_dir / 'valid-msg.txt',
                     msg_commit='feat: #1 implementado o metodo fake.',
-                    expected=Result(SUCCESS, MESSAGESUCCESS),
+                    expected=Result(SUCCESS, pkg.MESSAGESUCCESS),
                 ),
                 marks=[],
             ),
@@ -126,7 +120,7 @@ class TestCasePrepareCommitMsg:
     def test_prepare_commit_msg(self, entrance) -> NoReturn:
         """Test prepend commit message."""
         entrance.msg_file.write_text(entrance.msg_commit)
-        result = prepare_commit_msg(entrance.msg_file)
+        result = pkg.prepare_commit_msg(entrance.msg_file)
         ic(result)
         assert result == entrance.expected
 
@@ -147,7 +141,7 @@ class TestCasePrepareCommitMsg:
     def test_check_len_first_line_commit_msg(self, entrance) -> NoReturn:
         """Test for check len first line commit messages."""
         entrance.msg_file.write_text(entrance.msg_commit)
-        assert check_max_len_first_line_commit_msg(entrance.msg_file)
+        assert pkg.check_max_len_first_line_commit_msg(entrance.msg_file)
 
     @pytest.mark.parametrize(
         'entrance',
@@ -164,7 +158,7 @@ class TestCasePrepareCommitMsg:
             pytest.param(
                 Entrance(
                     msg_commit='fix: fixed a fake file',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 ),
             ),
             pytest.param(
@@ -178,55 +172,55 @@ class TestCasePrepareCommitMsg:
             pytest.param(
                 Entrance(
                     msg_commit='feat: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='chore: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='docs: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='style: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='refactor: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='test: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='perf: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='ci: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='build: fake feature',
-                    expected=Result(code=SUCCESS, message=MESSAGESUCCESS),
+                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
                 )
             ),
         ],
@@ -236,7 +230,7 @@ class TestCasePrepareCommitMsg:
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(entrance.msg_commit.encode())
-        result = check_type_commit_msg(test_file)
+        result = pkg.check_type_commit_msg(test_file)
         assert result.code == entrance.expected.code
         assert entrance.expected.message in result.message
 
@@ -275,6 +269,54 @@ class TestCasePrepareCommitMsg:
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(entrance.msg_commit.encode())
-        result = check_min_len_first_line_commit_msg(test_file, len_line)
+        result = pkg.check_min_len_first_line_commit_msg(test_file, len_line)
         assert result.code == entrance.expected.code
         assert entrance.expected.message in result.message
+
+    @pytest.mark.parametrize(
+        ['message_commit', 'return_value', 'expected'],
+        [
+            pytest.param(
+                'new feature implemented about issue.',
+                'feature/issue-1234',
+                Result(
+                    SUCCESS,
+                    '',
+                ),
+            ),
+            pytest.param(
+                'fixed implemented about bug.',
+                'hotfix/issue-4321',
+                Result(
+                    SUCCESS,
+                    '',
+                ),
+            ),
+            pytest.param(
+                'incolume-py-githooks 1.9.0',
+                'main',
+                Result(
+                    SUCCESS,
+                    '',
+                ),
+            ),
+        ],
+    )
+    def test_prefixing_commit_msg(
+        self, message_commit: str, return_value: str, expected: Result
+    ) -> None:
+        """Test prefixing commit message."""
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(message_commit.encode())
+        with patch.object(
+            pkg,
+            'check_output',
+            return_value=return_value,
+        ):
+            result = pkg.prefixing_commit_msg(test_file)
+            assert result == expected
+            assert (
+                test_file.read_text(encoding='utf-8')
+                == f'[{return_value.rsplit("/", maxsplit=1)[-1]}] {message_commit}'
+            )
