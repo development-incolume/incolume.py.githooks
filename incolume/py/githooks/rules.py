@@ -4,10 +4,93 @@
 
 from __future__ import annotations
 
+import contextlib
+from enum import Enum, auto
 from typing import Final
 
-SUCCESS: Final[int] = 0
-FAILURE: Final[int] = 1
+from icecream import ic
+
+with contextlib.suppress(ImportError, ModuleNotFoundError):
+    from typing import Self  # type: ignore[import]
+
+with contextlib.suppress(ImportError, ModuleNotFoundError):
+    from typing_extensions import Self  # type: ignore[import]
+
+
+class AutoName(Enum):
+    """Rule for next value."""
+
+    @staticmethod
+    def _generate_next_value_(
+        name: str, start: any, count: any, last_values: any
+    ) -> str:
+        """Gernerate next value."""
+        ic(name, start, count, last_values)
+        return name.casefold()
+
+
+class TypeCommit(AutoName):
+    """Enum para Type commiting."""
+
+    BUILD = auto()
+    CHORE = auto()
+    CI = auto()
+    DOCS = auto()
+    FEAT = auto()
+    FIX = auto()
+    PERF = auto()
+    REFACTOR = auto()
+    REVERT = auto()
+    STYLE = auto()
+    TEST = auto()
+    BUGFIX = 'fix'
+    CICD = 'ci'
+    CD = 'ci'
+    DOC = 'docs'
+    FEATURE = 'feat'
+    TESTS = 'test'
+
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            ic(value, key, member.name, member.value)
+            if value == key:
+                return member
+        return None
+
+
+class Status(Enum):
+    """Status result for CLI."""
+
+    SUCCESS: int = 0
+    FAILURE: int = 1
+
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            ic(value, key, member.name, member.value)
+            if value == key:
+                return member
+        return None
+
+    def __or__(self, obj: Self | int) -> Status:
+        """Override the | operator to combine Status values."""
+        if isinstance(obj, int):
+            obj = Status(obj)
+        return Status(self.value | obj.value)
+
+    def __ror__(self, value: Self | int) -> Status:
+        """Override the | operator to combine Status values."""
+        return self.__or__(value)
+
+
+SUCCESS: Final[Status] = Status.SUCCESS
+FAILURE: Final[Status] = Status.FAILURE
+
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME: Final[str] = (
     r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9\-]+))$'

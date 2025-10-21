@@ -17,7 +17,7 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
-from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS
+from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS, Status
 from incolume.py.githooks.utils import Result
 from unittest.mock import patch
 
@@ -75,44 +75,38 @@ class TestCaseAllCLI:
                         ]
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
                     expected=Result(
-                        0,
+                        SUCCESS,
                         [
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat' * 15,
                     expected=Result(
-                        0,
+                        FAILURE,
                         [
                             'Error: Commit subject line exceeds',
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat',
                     expected=Result(
-                        0,
+                        FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of',
                             'Commit maximum length for message is validated',
@@ -128,7 +122,7 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
-                        0,
+                        SUCCESS,
                         [
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
@@ -150,13 +144,12 @@ class TestCaseAllCLI:
             test_file = Path(fl.name)
 
         test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
-        with pytest.raises(expected_exception=SystemExit):
-            result = cli.check_len_first_line_commit_msg_cli([
-                test_file.as_posix(),
-                *entrance.params,
-            ])
+        result = cli.check_len_first_line_commit_msg_cli([
+            test_file.as_posix(),
+            *entrance.params,
+        ])
         captured = capsys.readouterr()
-        assert bool(result) is bool(entrance.expected.code)
+        assert result is entrance.expected.code.value
         assert captured.out.split('\n')
         assert sum(
             m in n
@@ -228,7 +221,7 @@ class TestCaseAllCLI:
             ic(result)
             captured = capsys.readouterr()
             assert message in captured.out
-            assert result == exit_code
+            assert Status(result) == Status(exit_code)
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
@@ -268,13 +261,13 @@ class TestCaseAllCLI:
         """Test CLI."""
         result = cli.check_valid_filenames_cli([*entrance])
         captured = capsys.readouterr()
-        assert result == result_expected
+        assert Status(result) == Status(result_expected)
         assert expected in captured.out
 
     @pytest.mark.parametrize(
         'entrance', [pytest.param(line, marks=[]) for line in BLACKLIST]
     )
-    def test_main(self, capsys, entrance) -> NoReturn:
+    def test_detect_private_key_cli(self, capsys, entrance) -> NoReturn:
         """Test CLI."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -305,7 +298,7 @@ class TestCaseAllCLI:
         args[0] = test_file.as_posix()
         result = cli.footer_signedoffby_cli(args)
         captured = capsys.readouterr()
-        assert result == expected
+        assert Status(result) == Status(expected)
         assert not captured.out
 
     def test_effort_msg_cli(self, capsys: pytest.CaptureFixture[str]) -> None:
@@ -392,7 +385,7 @@ class TestCaseAllCLI:
                 [Path(entrance)] if entrance else []
             )
             result = cli.pre_commit_installed_cli()
-        assert result == expected
+        assert Status(result) == Status(expected)
 
     def test_get_msg_cli(self, capsys) -> None:
         """Test get_msg function."""
