@@ -14,7 +14,7 @@ from incolume.py.githooks.rules import (
     RULE_COMMITFORMAT,
     SUCCESS,
 )
-from incolume.py.githooks.utils import Result, debug_enable
+from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
 debug_enable()
 
@@ -135,4 +135,30 @@ def check_max_len_first_line_commit_msg(
     if len(first_line) > len_line:
         result.code = FAILURE
         result.message = f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).'
+    return result
+
+
+def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
+    """Automatically prefixing git commit messages.
+
+    Explanation:
+      This will match branch names like, this `feature/ISSUE-123` or `hotfix/ISSUE-1234`
+      and prefixing `[ISSUE-123]` on message git commit, except in master, main, dev or tags.
+
+    """
+    commit_msg_filepath = Path(commit_msg_filepath)
+    result = Result()
+
+    branch = get_branchname()
+
+    regex = r'(feature|hotfix)\/(\w+-\d+)'
+    if re.match(regex, branch):
+        issue = re.match(regex, branch).group(2)
+        with commit_msg_filepath.open('r+', encoding='utf-8') as fh:
+            commit_msg = fh.read()
+            fh.seek(0, 0)
+            fh.write(f'[{issue}] {commit_msg}')
+    elif branch not in {'master', 'dev', 'main', 'tags'}:
+        result.message += '\nIncorrect branch name'
+        result.code |= FAILURE
     return result

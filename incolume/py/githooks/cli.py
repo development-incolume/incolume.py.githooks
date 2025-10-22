@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
-from colorama import Fore, Style
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
@@ -56,12 +55,14 @@ def check_len_first_line_commit_msg_cli(
         '--min-first-line',
         default=10,
         type=int,
+        required=False,
         help='Minimum Length of line for first line',
     )
     parser.add_argument(
         '--max-first-line',
         default=50,
         type=int,
+        required=False,
         help='Maximum Length of line for first line',
     )
     args = parser.parse_args(argv)
@@ -104,14 +105,14 @@ def check_valid_branchname() -> int:
 
     """
     logging.debug(platform.python_version_tuple())
-    result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
+    result = '[green]Branching name rules. [OK][/green]'
     status = SUCCESS
     if not re.match(RULE_BRANCHNAME, get_branchname()):
         result = (
-            f'{Fore.RED}Your commit was rejected due to branching name '
+            '[red]Your commit was rejected due to branching name '
             'incompatible with rules.\n'
             "Please rename your branch with '<(enhancement|feature|feat"
-            f"|bug|bugfix|fix)>/epoch#<timestamp>' syntax{Style.RESET_ALL}"
+            "|bug|bugfix|fix)>/epoch#<timestamp>' syntax[/red]"
         )
         status |= FAILURE
     rich.print(result)
@@ -136,12 +137,14 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
         '--min-len',
         default=3,
         type=int,
+        required=False,
         help='Minimum length for a filename.',
     )
     parser.add_argument(
         '--max-len',
         default=256,
         type=int,
+        required=False,
         help='Maximum length for a filename.',
     )
 

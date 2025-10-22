@@ -113,9 +113,7 @@ class TestCaseAllCLI:
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -129,9 +127,7 @@ class TestCaseAllCLI:
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
         ],
     )
@@ -149,7 +145,7 @@ class TestCaseAllCLI:
             *entrance.params,
         ])
         captured = capsys.readouterr()
-        assert result is entrance.expected.code.value
+        assert result == entrance.expected.code.value
         assert captured.out.split('\n')
         assert sum(
             m in n
