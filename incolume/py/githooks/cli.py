@@ -103,7 +103,7 @@ def check_valid_branchname() -> int:
 
     """
     logging.debug(platform.python_version_tuple())
-    result = '[GREEN]Branching name rules. [OK][/green]'
+    result = '[green]Branching name rules. [OK][/green]'
     status = SUCCESS
     if not re.match(RULE_BRANCHNAME, get_branchname()):
         result = (
