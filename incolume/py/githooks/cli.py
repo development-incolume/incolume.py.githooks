@@ -68,10 +68,10 @@ def check_len_first_line_commit_msg_cli(
         ic(filename)
         results.extend((
             check_min_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=10
+                commit_msg_filepath=filename, len_line=args.min_first_line
             ),
             check_max_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=50
+                commit_msg_filepath=filename, len_line=args.max_first_line
             ),
         ))
     for result in results:
