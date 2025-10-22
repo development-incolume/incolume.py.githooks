@@ -55,12 +55,14 @@ def check_len_first_line_commit_msg_cli(
         '--min-first-line',
         default=10,
         type=int,
+        required=False,
         help='Minimum Length of line for first line',
     )
     parser.add_argument(
         '--max-first-line',
         default=50,
         type=int,
+        required=False,
         help='Maximum Length of line for first line',
     )
     args = parser.parse_args(argv)
