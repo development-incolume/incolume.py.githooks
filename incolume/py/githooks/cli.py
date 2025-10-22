@@ -52,26 +52,24 @@ def check_len_first_line_commit_msg_cli(
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     parser.add_argument(
-        '--min-first-line',
-        default=10,
-        type=int,
-        help='Minimum Length of line for first line',
+        'msg-commit',
+        type=str,
+        help='Message for commit.',
     )
     parser.add_argument(
-        '--max-first-line',
-        default=50,
-        type=int,
-        help='Maximum Length of line for first line',
+        'obj-commit',
+        type=str,
+        help='Commit object.',
     )
     args = parser.parse_args(argv)
     for filename in args.filenames:
         ic(filename)
         results.extend((
             check_min_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=args.min_first_line
+                commit_msg_filepath=filename, len_line=10
             ),
             check_max_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=args.max_first_line
+                commit_msg_filepath=filename, len_line=50
             ),
         ))
     for result in results:
