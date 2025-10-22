@@ -95,7 +95,7 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
-def check_valid_branchname() -> int:
+def check_valid_branchname_cli() -> int:
     """Check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual

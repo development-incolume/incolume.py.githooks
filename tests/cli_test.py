@@ -213,7 +213,7 @@ class TestCaseAllCLI:
         ic(entrance, exit_code, message)
 
         with patch.object(cli, 'get_branchname', return_value=entrance):
-            result = cli.check_valid_branchname()
+            result = cli.check_valid_branchname_cli()
             ic(result)
             captured = capsys.readouterr()
             assert message in captured.out
@@ -426,6 +426,11 @@ class TestCaseAllCLI:
                 ),
                 marks=[],
             ),
+            pytest.param(
+                MainEntrance(args='--nonexequi'),
+                Expected(SUCCESS, ''),
+                marks=[pytest.mark.skip],
+            ),
         ],
     )
     def test_insert_diff_cli(
@@ -442,11 +447,12 @@ class TestCaseAllCLI:
         with NamedTemporaryFile() as tf:
             test_file = Path(tf.name)
         test_file.write_text(entrance.commit_msg_file, encoding='utf-8')
-        entrance = [
+        entries = [
             test_file.as_posix(),
             entrance.commit_source,
             entrance.commit_hash,
+            entrance.args,
         ]
 
-        assert cli.insert_diff_cli(entrance) == expected.code
+        assert cli.insert_diff_cli(entries) == expected.code
         assert test_file.read_text(encoding='utf-8') == expected.message
