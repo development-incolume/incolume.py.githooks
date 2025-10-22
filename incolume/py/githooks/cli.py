@@ -95,7 +95,7 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
-def check_valid_branchname() -> int:
+def check_valid_branchname_cli() -> int:
     """Check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -353,9 +353,19 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         'commit_hash', default='', help='SHA1 do commit ou vazio'
     )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
 
     args = parser.parse_args(argv)
     ic(args)
+
+    if args.nonexequi:
+        return SUCCESS
 
     diff_output = get_git_diff()
     insert_git_diff(args.commit_msg_file, diff_output)
