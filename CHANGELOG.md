@@ -10,9 +10,11 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-10-05:
+## [Unreleased]	 &#8212; 	2025-10-22:
 ### Added
-  - Disponibilizar Hook clean-commit-message;
+  - Rules.Status(Enum);
+  - Rules.ProtectedBranchName(Enum);
+  - Parametro `--nonexequi` para inativar qualquer hook do projeto;
 
 ## [1.8.0]	 &#8212; 	2025-10-20:
 ### Added
