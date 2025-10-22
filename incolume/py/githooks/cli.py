@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
-from colorama import Fore, Style
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
@@ -104,14 +103,14 @@ def check_valid_branchname() -> int:
 
     """
     logging.debug(platform.python_version_tuple())
-    result = f'{Fore.GREEN}Branching name rules. [OK]{Style.RESET_ALL}'
+    result = '[GREEN]Branching name rules. [OK][/green]'
     status = SUCCESS
     if not re.match(RULE_BRANCHNAME, get_branchname()):
         result = (
-            f'{Fore.RED}Your commit was rejected due to branching name '
+            '[red]Your commit was rejected due to branching name '
             'incompatible with rules.\n'
             "Please rename your branch with '<(enhancement|feature|feat"
-            f"|bug|bugfix|fix)>/epoch#<timestamp>' syntax{Style.RESET_ALL}"
+            "|bug|bugfix|fix)>/epoch#<timestamp>' syntax[/red]"
         )
         status |= FAILURE
     rich.print(result)
