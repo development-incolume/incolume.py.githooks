@@ -66,7 +66,18 @@ def check_len_first_line_commit_msg_cli(
         required=False,
         help='Maximum Length of line for first line',
     )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
     args = parser.parse_args(argv)
+
+    if args.nonexequi:
+        return result_code.value
+
     for filename in args.filenames:
         ic(filename)
         results.extend((

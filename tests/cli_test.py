@@ -129,6 +129,19 @@ class TestCaseAllCLI:
                 ),
                 marks=[],
             ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat',
+                    params=['--nonexequi'],
+                    expected=Result(
+                        SUCCESS,
+                        [
+                            '',
+                        ],
+                    ),
+                ),
+                marks=[],
+            ),
         ],
     )
     def test_check_len_first_line_commit_msg_cli(
