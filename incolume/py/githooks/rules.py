@@ -64,6 +64,15 @@ class TypeCommit(AutoName):
         return None
 
 
+class ProtectedBranchName(AutoName):
+    """Protected Branchname for project."""
+
+    MAIN: str = auto()
+    MASTER: str = auto()
+    TAGS: str = auto()
+    DEV: str = auto()
+
+
 class Status(Enum):
     """Status result for CLI."""
 
