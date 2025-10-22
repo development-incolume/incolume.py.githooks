@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import re
 import shutil
 from typing import NoReturn
 from unittest.mock import patch
@@ -293,12 +294,22 @@ class TestCasePrepareCommitMsg:
                 ),
             ),
             pytest.param(
-                'incolume-py-githooks 1.9.0',
+                'incolume-py-githooks 1.99.0',
                 'main',
                 Result(
                     SUCCESS,
                     '',
                 ),
+                marks=[],
+            ),
+            pytest.param(
+                'incolume-py-githooks 1.99.0',
+                'tests/issue-234',
+                Result(
+                    FAILURE,
+                    '\nIncorrect branch name',
+                ),
+                marks=[],
             ),
         ],
     )
@@ -311,12 +322,21 @@ class TestCasePrepareCommitMsg:
         test_file.write_bytes(message_commit.encode())
         with patch.object(
             pkg,
-            'check_output',
+            'get_branchname',
             return_value=return_value,
         ):
             result = pkg.prefixing_commit_msg(test_file)
             assert result == expected
-            assert (
-                test_file.read_text(encoding='utf-8')
-                == f'[{return_value.rsplit("/", maxsplit=1)[-1]}] {message_commit}'
+            v = (
+                f'[{x.group(2)}] {message_commit}'
+                if (
+                    x := (
+                        re.compile(r'(feature|hotfix)/(\w+-\d+)').fullmatch(
+                            return_value
+                        )
+                    )
+                )
+                else f'{message_commit}'
             )
+            ic(v)
+            assert test_file.read_text(encoding='utf-8') == v
