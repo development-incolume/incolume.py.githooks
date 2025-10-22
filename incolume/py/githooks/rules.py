@@ -31,6 +31,16 @@ class AutoName(Enum):
         ic(name, start, count, last_values)
         return name.casefold()
 
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            ic(value, key, member.name, member.value)
+            if value == key:
+                return member
+        return None
+
 
 class TypeCommit(AutoName):
     """Enum para Type commiting."""
@@ -53,15 +63,24 @@ class TypeCommit(AutoName):
     FEATURE = 'feat'
     TESTS = 'test'
 
+
+class ProtectedBranchName(AutoName):
+    """Protected Branchname for project."""
+
+    DEV: str = auto()
+    MAIN: str = auto()
+    MASTER: str = auto()
+    TAGS: str = auto()
+
     @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
-            if value == key:
-                return member
-        return None
+    def to_set(cls) -> set[str]:
+        """Enum to set."""
+        return set(cls._value2member_map_)
+
+    @classmethod
+    def to_list(cls) -> list[str]:
+        """Enum to list."""
+        return list(cls.to_set())
 
 
 class Status(Enum):
@@ -96,7 +115,7 @@ FAILURE: Final[Status] = Status.FAILURE
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME: Final[str] = (
-    r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùç\-]+))$'
+    r'^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùüç\-]+))$'
 )
 RULE_COMMITFORMAT: Final[str] = (
     r'^(((Merge|Bumping|Revert)|(bugfix|build|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'

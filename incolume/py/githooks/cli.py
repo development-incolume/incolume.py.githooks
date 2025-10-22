@@ -32,6 +32,7 @@ from incolume.py.githooks.rules import (
     FAILURE,
     RULE_BRANCHNAME,
     SUCCESS,
+    ProtectedBranchName,
     Status,
 )
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
@@ -101,13 +102,19 @@ def check_valid_branchname_cli() -> int:
     Hook designed for stages: pre-commit, pre-push, manual
 
     Returns:
-        int: SUCCESS or FAILURE
+        int: 0 to SUCCESS or 1 to FAILURE
 
     """
     logging.debug(platform.python_version_tuple())
     result = '[green]Branching name rules. [OK][/green]'
     status = SUCCESS
-    if not re.match(RULE_BRANCHNAME, get_branchname()):
+    branchname = get_branchname()
+
+    if branchname in ProtectedBranchName.to_list():
+        rich.print(result)
+        return status.value
+
+    if not re.match(RULE_BRANCHNAME, branchname):
         result = (
             '[red]Your commit was rejected due to branching name '
             'incompatible with rules.\n'
