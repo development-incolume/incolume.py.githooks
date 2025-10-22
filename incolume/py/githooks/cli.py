@@ -51,6 +51,18 @@ def check_len_first_line_commit_msg_cli(
     result_code: Status = Status.SUCCESS
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--min-first-line',
+        default=10,
+        type=int,
+        help='Minimum Length of line for first line',
+    )
+    parser.add_argument(
+        '--max-first-line',
+        default=50,
+        type=int,
+        help='Maximum Length of line for first line',
+    )
     args = parser.parse_args(argv)
     for filename in args.filenames:
         ic(filename)
