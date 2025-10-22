@@ -197,12 +197,10 @@ class TestCaseAllCLI:
                 ],
             ),
             pytest.param(
-                '80-açaí',
+                '80-açaí itú água é ação de sertões',
                 0,
                 'Branching name rules. [OK]',
-                marks=[
-                    pytest.mark.xfail(reason='New format not validated yet.')
-                ],
+                marks=[],
             ),
         ],
     )
@@ -427,9 +425,11 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                MainEntrance(args='--nonexequi'),
+                MainEntrance(args=['--nonexequi']),
                 Expected(SUCCESS, ''),
-                marks=[pytest.mark.skip],
+                marks=[
+                    # pytest.mark.skip
+                ],
             ),
         ],
     )
@@ -451,7 +451,7 @@ class TestCaseAllCLI:
             test_file.as_posix(),
             entrance.commit_source,
             entrance.commit_hash,
-            entrance.args,
+            *entrance.args,
         ]
 
         assert cli.insert_diff_cli(entries) == expected.code
