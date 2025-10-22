@@ -17,6 +17,9 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
 
 
+ic.disable()
+
+
 class AutoName(Enum):
     """Rule for next value."""
 
