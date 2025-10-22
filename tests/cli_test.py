@@ -197,7 +197,31 @@ class TestCaseAllCLI:
                 ],
             ),
             pytest.param(
-                '80-açaí itú água é ação de sertões',
+                '80-açaí-itú-água-é-ação-de-sertões',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'main',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'tags',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'master',
+                0,
+                'Branching name rules. [OK]',
+                marks=[],
+            ),
+            pytest.param(
+                'dev',
                 0,
                 'Branching name rules. [OK]',
                 marks=[],
