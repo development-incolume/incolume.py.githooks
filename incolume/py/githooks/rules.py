@@ -31,6 +31,16 @@ class AutoName(Enum):
         ic(name, start, count, last_values)
         return name.casefold()
 
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            ic(value, key, member.name, member.value)
+            if value == key:
+                return member
+        return None
+
 
 class TypeCommit(AutoName):
     """Enum para Type commiting."""
@@ -52,16 +62,6 @@ class TypeCommit(AutoName):
     DOC = 'docs'
     FEATURE = 'feat'
     TESTS = 'test'
-
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
-            if value == key:
-                return member
-        return None
 
 
 class ProtectedBranchName(AutoName):
