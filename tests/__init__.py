@@ -1,6 +1,6 @@
 """Module tests."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from os import getenv
 
 from icecream import ic
@@ -29,4 +29,5 @@ class MainEntrance:
     commit_msg_file: str = ''
     commit_source: str = ''
     commit_hash: str = ''
+    args: list[str] = field(default_factory=list)
     diff_output: str = ''
