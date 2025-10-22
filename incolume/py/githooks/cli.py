@@ -51,18 +51,6 @@ def check_len_first_line_commit_msg_cli(
     result_code: Status = Status.SUCCESS
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        'msg-commit',
-        default='',
-        type=str,
-        help='Message for commit.',
-    )
-    parser.add_argument(
-        'obj-commit',
-        default='',
-        type=str,
-        help='Commit object.',
-    )
     args = parser.parse_args(argv)
     for filename in args.filenames:
         ic(filename)
