@@ -23,7 +23,7 @@ class TestCasePackage:
             ),
             pytest.param(
                 RULE_BRANCHNAME,
-                '^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\\-[a-z0-9áàãâéèêíìóòõôúùç\\-]+))$',
+                '^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\\-[a-z0-9áàãâéèêíìóòõôúùüç\\-]+))$',
                 marks=[],
             ),
             pytest.param(
