@@ -113,14 +113,12 @@ class TestCaseAllCLI:
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat',
-                    params=['--min-first-line=4', '--max-first-line=5'],
+                    params=[],
                     expected=Result(
                         SUCCESS,
                         [
@@ -129,9 +127,7 @@ class TestCaseAllCLI:
                         ],
                     ),
                 ),
-                marks=[
-                    # pytest.mark.skip
-                ],
+                marks=[],
             ),
         ],
     )

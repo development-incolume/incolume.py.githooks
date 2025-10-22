@@ -53,11 +53,13 @@ def check_len_first_line_commit_msg_cli(
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     parser.add_argument(
         'msg-commit',
+        default='',
         type=str,
         help='Message for commit.',
     )
     parser.add_argument(
         'obj-commit',
+        default='',
         type=str,
         help='Commit object.',
     )
