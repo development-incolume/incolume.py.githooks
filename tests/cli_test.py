@@ -118,7 +118,7 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='feat',
-                    params=[],
+                    params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
                         SUCCESS,
                         [
