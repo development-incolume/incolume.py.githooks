@@ -418,9 +418,16 @@ class TestCaseAllCLI:
             result = cli.pre_commit_installed_cli()
         assert Status(result) == Status(expected)
 
-    def test_get_msg_cli(self, capsys) -> None:
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param([], marks=[]),
+            pytest.param(['--nonexequi'], marks=[pytest.mark.skip]),
+        ],
+    )
+    def test_get_msg_cli(self, capsys, entrance) -> None:
         """Test get_msg function."""
-        cli.get_msg_cli()
+        cli.get_msg_cli(entrance)
         captured = capsys.readouterr()
         assert captured.out.strip() in MESSAGES
 
