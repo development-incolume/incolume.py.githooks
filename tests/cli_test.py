@@ -422,6 +422,7 @@ class TestCaseAllCLI:
         'entrance',
         [
             pytest.param([], marks=[]),
+            pytest.param(['--fixed'], marks=[]),
             pytest.param(['--nonexequi'], marks=[pytest.mark.skip]),
         ],
     )
