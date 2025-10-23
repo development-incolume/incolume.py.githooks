@@ -351,9 +351,33 @@ def pre_commit_installed_cli() -> int:
     return result.value
 
 
-def get_msg_cli() -> None:
+def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     """Run it."""
-    rich.print(get_msg())
+    parser = argparse.ArgumentParser(
+        description='Exibe mensagens de sucesso após exito do commit.'
+    )
+    parser.add_argument(
+        '--fixed',
+        default=False,
+        dest='fixed',
+        action='store_true',
+        help='Fixar messagem de hook.',
+    )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
+
+    args = parser.parse_args(argv)
+    ic(args)
+
+    if not args.nonexequi:
+        rich.print(get_msg(fixed=args.fixed))
+
+    return SUCCESS.value
 
 
 def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
