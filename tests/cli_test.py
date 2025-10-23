@@ -205,9 +205,7 @@ class TestCaseAllCLI:
                 'enhancement-1234567890',
                 0,
                 'Branching name rules. [OK]',
-                marks=[
-                    pytest.mark.xfail(reason='New format not validated yet.')
-                ],
+                marks=[],
             ),
             pytest.param(
                 '80-açaí-itú-água-é-ação-de-sertões',
