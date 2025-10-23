@@ -206,7 +206,7 @@ class TestCaseAllCLI:
                 0,
                 'Branching name rules. [OK]',
                 marks=[
-                    pytest.mark.xfail(reason='New format not validated yet.')
+                    # pytest.mark.xfail(reason='New format not validated yet.')
                 ],
             ),
             pytest.param(
