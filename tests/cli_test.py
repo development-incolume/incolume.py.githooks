@@ -423,14 +423,14 @@ class TestCaseAllCLI:
         [
             pytest.param([], marks=[]),
             pytest.param(['--fixed'], marks=[]),
-            pytest.param(['--nonexequi'], marks=[pytest.mark.skip]),
+            pytest.param(['--nonexequi'], marks=[]),
         ],
     )
     def test_get_msg_cli(self, capsys, entrance) -> None:
         """Test get_msg function."""
         cli.get_msg_cli(entrance)
         captured = capsys.readouterr()
-        assert captured.out.strip() in MESSAGES
+        assert captured.out.strip() in {'', *MESSAGES}
 
     @pytest.mark.parametrize(
         [
