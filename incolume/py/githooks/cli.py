@@ -357,6 +357,13 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> int:
         description='Exibe mensagens de sucesso após exito do commit.'
     )
     parser.add_argument(
+        '--fixed',
+        default=False,
+        dest='fixed',
+        action='store_true',
+        help='Fixar messagem de hook.',
+    )
+    parser.add_argument(
         '--nonexequi',
         default=False,
         dest='nonexequi',
@@ -368,7 +375,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
 
     if not args.nonexequi:
-        rich.print(get_msg())
+        rich.print(get_msg(fixed=args.fixed))
 
     return SUCCESS.value
 
