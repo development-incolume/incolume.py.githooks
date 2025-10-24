@@ -53,6 +53,12 @@ def check_len_first_line_commit_msg_cli(
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     parser.add_argument(
+        'commit_source', default='', help='Origem do commit (ex.: template)'
+    )
+    parser.add_argument(
+        'commit_hash', default='', help='Hash do commit ou vazio'
+    )
+    parser.add_argument(
         '--min-first-line',
         default=10,
         type=int,

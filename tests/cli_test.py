@@ -155,6 +155,8 @@ class TestCaseAllCLI:
         test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
         result = cli.check_len_first_line_commit_msg_cli([
             test_file.as_posix(),
+            '',
+            '',
             *entrance.params,
         ])
         captured = capsys.readouterr()
