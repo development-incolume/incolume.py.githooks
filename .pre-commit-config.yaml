@@ -1,5 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
+default_install_hook_types: [pre-commit, prepare-commit-msg]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
@@ -34,7 +37,6 @@ repos:
     # Run the formatter.
     - id: ruff-format
       args: [--config, ruff.toml]
-
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
   rev: 1.8.0
