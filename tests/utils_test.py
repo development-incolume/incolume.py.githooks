@@ -98,7 +98,7 @@ class TestCaseUtilsModule:
             pytest.param('BugFix ', 'fix', marks=[]),
             pytest.param(' BugFix', 'fix', marks=[]),
             pytest.param(
-                'bug',
+                'buggy',
                 {'expected_exception': ValueError, 'match': None},
                 marks=[],
             ),

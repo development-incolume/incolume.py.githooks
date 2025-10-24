@@ -68,8 +68,8 @@ class TypeCommit(AutoName):
     TEST = auto()
     BUG = 'fix'
     BUGFIX = 'fix'
-    CICD = 'ci'
     CD = 'ci'
+    CICD = 'ci'
     DOC = 'docs'
     FEATURE = 'feat'
     TESTS = 'test'
