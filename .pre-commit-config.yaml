@@ -129,7 +129,7 @@ repos:
       entry: insert-diff-commit
       language: python  # script requires the Python interpreter
       additional_dependencies: []  # Python dependency for the script
-      # stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
       verbose: false
 
     - id: validate-message-commit
