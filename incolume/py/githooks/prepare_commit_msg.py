@@ -13,6 +13,7 @@ from incolume.py.githooks.rules import (
     FAILURE,
     RULE_COMMITFORMAT,
     SUCCESS,
+    TypeCommit,
 )
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
@@ -47,12 +48,16 @@ MESSAGERROR = """[red]
     [/red]"""
 
 
-def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
-    """Prepend the commit message with `text`."""
+def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
+    """Validate the text of commit message according to current rules.
+
+    Stages:
+      - prepare_commit_msg
+    """
     msgfile = Path(msgfile)
     result = Result(SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
-    logging.debug('%s', str(regex.pattern))
+    logging.debug('%s', regex.pattern)
 
     try:
         with msgfile.open('rb') as f:
@@ -69,9 +74,7 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
-    regex = re.compile(
-        r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):'
-    )
+    regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:

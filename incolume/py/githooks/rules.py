@@ -41,6 +41,16 @@ class AutoName(Enum):
                 return member
         return None
 
+    @classmethod
+    def to_set(cls) -> set[str]:
+        """Enum to set."""
+        return set(cls._value2member_map_)
+
+    @classmethod
+    def to_list(cls) -> list[str]:
+        """Enum to list."""
+        return list(cls.to_set())
+
 
 class TypeCommit(AutoName):
     """Enum para Type commiting."""
@@ -56,9 +66,10 @@ class TypeCommit(AutoName):
     REVERT = auto()
     STYLE = auto()
     TEST = auto()
+    BUG = 'fix'
     BUGFIX = 'fix'
-    CICD = 'ci'
     CD = 'ci'
+    CICD = 'ci'
     DOC = 'docs'
     FEATURE = 'feat'
     TESTS = 'test'
@@ -71,16 +82,6 @@ class ProtectedBranchName(AutoName):
     MAIN: str = auto()
     MASTER: str = auto()
     TAGS: str = auto()
-
-    @classmethod
-    def to_set(cls) -> set[str]:
-        """Enum to set."""
-        return set(cls._value2member_map_)
-
-    @classmethod
-    def to_list(cls) -> list[str]:
-        """Enum to list."""
-        return list(cls.to_set())
 
 
 class Status(Enum):

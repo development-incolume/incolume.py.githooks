@@ -121,7 +121,7 @@ class TestCasePrepareCommitMsg:
     def test_prepare_commit_msg(self, entrance) -> NoReturn:
         """Test prepend commit message."""
         entrance.msg_file.write_text(entrance.msg_commit)
-        result = pkg.prepare_commit_msg(entrance.msg_file)
+        result = pkg.validate_format_commit_msg(entrance.msg_file)
         ic(result)
         assert result == entrance.expected
 
