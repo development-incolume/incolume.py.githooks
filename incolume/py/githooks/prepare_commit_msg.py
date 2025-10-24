@@ -13,6 +13,7 @@ from incolume.py.githooks.rules import (
     FAILURE,
     RULE_COMMITFORMAT,
     SUCCESS,
+    TypeCommit,
 )
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
@@ -69,9 +70,7 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
-    regex = re.compile(
-        r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):'
-    )
+    regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:
