@@ -26,7 +26,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg,
     check_min_len_first_line_commit_msg,
     check_type_commit_msg,
-    prepare_commit_msg,
+    validate_format_commit_msg,
 )
 from incolume.py.githooks.rules import (
     FAILURE,
@@ -320,7 +320,7 @@ def clean_commit_msg_cli(
     return SUCCESS
 
 
-def prepare_commit_msg_cli(
+def validate_format_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> sys.exit:
     """Run CLI for prepare-commit-msg hook.
@@ -334,7 +334,7 @@ def prepare_commit_msg_cli(
     ic(fl.is_file())
     logging.debug('msgfile: %s', args)
 
-    result = prepare_commit_msg(*args.filenames)
+    result = validate_format_commit_msg(*args.filenames)
 
     rich.print(result.message)
     sys.exit(result.code)

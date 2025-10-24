@@ -48,12 +48,16 @@ MESSAGERROR = """[red]
     [/red]"""
 
 
-def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
-    """Prepend the commit message with `text`."""
+def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
+    """Validate the text of commit message according to current rules.
+
+    Stages:
+      - prepare_commit_msg
+    """
     msgfile = Path(msgfile)
     result = Result(SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
-    logging.debug('%s', str(regex.pattern))
+    logging.debug('%s', regex.pattern)
 
     try:
         with msgfile.open('rb') as f:

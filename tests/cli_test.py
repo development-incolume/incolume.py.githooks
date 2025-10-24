@@ -391,7 +391,7 @@ class TestCaseAllCLI:
             test_file = Path(fl.name)
         test_file.write_bytes(b'xpto: abc')
         with pytest.raises(SystemExit):
-            assert cli.prepare_commit_msg_cli([test_file.as_posix()])
+            assert cli.validate_format_commit_msg_cli([test_file.as_posix()])
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
