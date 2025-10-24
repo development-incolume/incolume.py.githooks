@@ -58,8 +58,8 @@ def get_git_diff() -> str:
     """Retorna a saída de `git diff --cached --name-status -r`."""
     try:
         return subprocess.check_output(
-            ['git', 'diff', '--cached', '--name-status', '-r'],
-            text=True,  # noqa: S607
+            ['git', 'diff', '--cached', '--name-status', '-r'],  # noqa: S607
+            text=True,
         ).strip()
     except subprocess.CalledProcessError as e:  # pragma: no cover
         msg = 'Falha ao executar git diff'

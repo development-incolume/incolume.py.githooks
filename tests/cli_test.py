@@ -499,5 +499,5 @@ class TestCaseAllCLI:
             *entrance.args,
         ]
 
-        assert cli.insert_diff_cli(entries) == expected.code
+        assert cli.insert_diff_cli(entries) == expected.code.value
         assert test_file.read_text(encoding='utf-8') == expected.message
