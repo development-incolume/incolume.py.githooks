@@ -256,7 +256,7 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     if args.signed:
         add_signed_off_by(args.commit_msg_file)
     add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
-    return SUCCESS
+    return SUCCESS.value
 
 
 def effort_msg_cli() -> int:
