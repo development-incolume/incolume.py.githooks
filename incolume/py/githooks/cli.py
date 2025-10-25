@@ -417,7 +417,7 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     ic(args)
 
-    if args.nonexequi:
+    if not args.nonexequi:
         return SUCCESS.value
 
     diff_output = get_git_diff()
