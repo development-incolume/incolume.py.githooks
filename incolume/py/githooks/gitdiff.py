@@ -1,10 +1,7 @@
 """Module prepare_commit_msg."""
 
-# ruff: noqa: S404 S607
-
 from __future__ import annotations
 
-import subprocess
 from typing import TYPE_CHECKING
 
 from incolume.py.githooks.utils import debug_enable
@@ -13,17 +10,6 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 debug_enable()
-
-
-def get_git_diff() -> str:
-    """Retorna a saída de `git diff --cached --name-status -r`."""
-    try:
-        return subprocess.check_output(
-            ['git', 'diff', '--cached', '--name-status', '-r'], text=True
-        ).strip()
-    except subprocess.CalledProcessError as e:  # pragma: no cover
-        msg = 'Falha ao executar git diff'
-        raise RuntimeError(msg) from e
 
 
 def insert_git_diff(commit_msg_file: Path, diff_output: str) -> None:
