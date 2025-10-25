@@ -315,7 +315,7 @@ class TestCaseAllCLI:
             pytest.param(['--help'], '', marks=[pytest.mark.skip]),
             pytest.param(['message fake for commit', '', ''], 0, marks=[]),
             pytest.param(
-                ['style: message fake for commit', '', '', '--signoff'],
+                ['style: message fake for commit', '', '', '--nonexequi'],
                 0,
                 marks=[],
             ),
