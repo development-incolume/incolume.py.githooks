@@ -401,16 +401,10 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
         'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
     )
     parser.add_argument(
-        'commit_source',
-        default='',
-        required=False,
-        help='Origem do commit (ex.: template)',
+        'commit_source', default='', help='Origem do commit (ex.: template)'
     )
     parser.add_argument(
-        'commit_hash',
-        default='',
-        required=False,
-        help='Hash do commit ou vazio',
+        'commit_hash', default='', help='Hash do commit ou vazio'
     )
     parser.add_argument(
         '--nonexequi',
@@ -427,8 +421,6 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
         return SUCCESS.value
 
     diff_output = get_git_diff()
-    insert_git_diff(
-        commit_msg_file=args.commit_msg_file, diff_output=diff_output
-    )
+    insert_git_diff(args.commit_msg_file, diff_output)
 
     return SUCCESS.value
