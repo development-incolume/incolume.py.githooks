@@ -243,17 +243,17 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
         'commit_hash', default='', help='SHA1 do commit (pode ser vazio)'
     )
     parser.add_argument(
-        '--signoff',
-        default=True,
-        dest='signed',
-        action='store_false',
-        help='Não adicionar Signed-off-by',
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook, adicionar Signed-off-by',
     )
 
     args = parser.parse_args(argv)
 
     clean_commit_msg(args.commit_msg_file)
-    if args.signed:
+    if not args.nonexequi:
         add_signed_off_by(args.commit_msg_file)
     add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
     return SUCCESS.value
