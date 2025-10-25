@@ -1,6 +1,7 @@
 """Test Module for gitdiff."""
 
 import incolume.py.githooks.gitdiff as pkg
+
 import pytest
 import tempfile
 from pathlib import Path
@@ -8,15 +9,6 @@ from pathlib import Path
 
 class TestCaseGitDiff:
     """Test Case for gitdiff."""
-
-    @pytest.mark.parametrize(
-        'entrance',
-        [pytest.param('A\tincolume/py/githooks/module_xpto.py', marks=[])],
-    )
-    def test_get_diff(self, entrance, mocker) -> None:
-        """Test get_diff_files function."""
-        mocker.patch('subprocess.check_output', return_value=entrance)
-        assert pkg.get_git_diff() == entrance
 
     @pytest.mark.parametrize(
         ['commit_msg_file', 'diff_output', 'expected'],

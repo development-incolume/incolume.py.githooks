@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import logging
+import subprocess  # noqa: S404
 from dataclasses import dataclass
 from os import getenv
-from subprocess import check_output  # noqa: S404
 
 from icecream import ic
 
@@ -44,7 +44,7 @@ class Result:
 def get_branchname() -> str:
     """Get current branch name."""
     branch = (
-        check_output(
+        subprocess.check_output(
             ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],  # noqa: S607
         )
         .strip()
@@ -52,3 +52,15 @@ def get_branchname() -> str:
     )
     logging.debug(ic(branch))
     return branch
+
+
+def get_git_diff() -> str:
+    """Retorna a saída de `git diff --cached --name-status -r`."""
+    try:
+        return subprocess.check_output(
+            ['git', 'diff', '--cached', '--name-status', '-r'],  # noqa: S607
+            text=True,
+        ).strip()
+    except subprocess.CalledProcessError as e:  # pragma: no cover
+        msg = 'Falha ao executar git diff'
+        raise RuntimeError(msg) from e

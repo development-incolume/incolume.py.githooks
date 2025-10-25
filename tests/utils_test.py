@@ -62,6 +62,15 @@ class TestCaseUtilsModule:
     """Testcase for utils module."""
 
     @pytest.mark.parametrize(
+        'entrance',
+        [pytest.param('A\tincolume/py/githooks/module_xpto.py', marks=[])],
+    )
+    def test_get_diff(self, entrance, mocker) -> None:
+        """Test get_diff_files function."""
+        mocker.patch('subprocess.check_output', return_value=entrance)
+        assert utils.get_git_diff() == entrance
+
+    @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
             pytest.param('build', 'build', marks=[]),
@@ -122,6 +131,6 @@ class TestCaseUtilsModule:
     def test_get_branchname(self, entrance: str) -> None:
         """Test for get branch names."""
         with patch.object(
-            utils, 'check_output', return_value=entrance.encode()
+            utils.subprocess, 'check_output', return_value=entrance.encode()
         ):
             assert utils.get_branchname() == entrance.strip()

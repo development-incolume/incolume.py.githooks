@@ -21,7 +21,7 @@ from incolume.py.githooks.footer_signedoffby import (
     add_signed_off_by,
     clean_commit_msg,
 )
-from incolume.py.githooks.gitdiff import get_git_diff, insert_git_diff
+from incolume.py.githooks.gitdiff import insert_git_diff
 from incolume.py.githooks.prepare_commit_msg import (
     check_max_len_first_line_commit_msg,
     check_min_len_first_line_commit_msg,
@@ -35,7 +35,12 @@ from incolume.py.githooks.rules import (
     ProtectedBranchName,
     Status,
 )
-from incolume.py.githooks.utils import Result, debug_enable, get_branchname
+from incolume.py.githooks.utils import (
+    Result,
+    debug_enable,
+    get_branchname,
+    get_git_diff,
+)
 from incolume.py.githooks.valid_filename import ValidateFilename
 
 debug_enable()
@@ -413,9 +418,9 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
 
     if args.nonexequi:
-        return SUCCESS
+        return SUCCESS.value
 
     diff_output = get_git_diff()
     insert_git_diff(args.commit_msg_file, diff_output)
 
-    return SUCCESS
+    return SUCCESS.value
