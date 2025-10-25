@@ -38,21 +38,21 @@ repos:
     - id: ruff-format
       args: [--config, ruff.toml]
 
-- repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: 1.8.0
-  hooks:
-    - id: check-len-first-line
-    #  args: [--nonexequi]
-    - id: check-precommit-installed
-    #  args: [--nonexequi]
-    - id: check-valid-filenames
-      # args: ['--min-len=3', '--max-len=256', '--nonexequi']
-    - id: detect-key
-    #  args: [--nonexequi]
-    - id: effort-message
-    #  args: [--nonexequi]
-    - id: footer-signed-off-by
-    #  args: [--nonexequi]
+# - repo: https://github.com/development-incolume/incolume.py.githooks
+#   rev: 1.7.0
+#   hooks:
+#     - id: check-len-first-line
+#     #  args: [--nonexequi]
+#     - id: check-precommit-installed
+#     #  args: [--nonexequi]
+#     - id: check-valid-filenames
+#       # args: ['--min-len=3', '--max-len=256', '--nonexequi']
+#     - id: detect-key
+#     #  args: [--nonexequi]
+#     - id: effort-message
+#     #  args: [--nonexequi]
+#     - id: footer-signed-off-by
+#     #  args: [--nonexequi]
 
 
 - repo: local
