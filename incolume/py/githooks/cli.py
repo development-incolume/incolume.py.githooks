@@ -400,12 +400,12 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
     )
-    # parser.add_argument(
-    #     'commit_source', default='', help='Origem do commit (ex.: template)'
-    # )
-    # parser.add_argument(
-    #     'commit_hash', default='', help='SHA1 do commit ou vazio'
-    # )
+    parser.add_argument(
+        'commit_source', default='', help='Origem do commit (ex.: template)'
+    )
+    parser.add_argument(
+        'commit_hash', default='', help='Hash do commit ou vazio'
+    )
     parser.add_argument(
         '--nonexequi',
         default=False,
