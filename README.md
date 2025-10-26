@@ -21,6 +21,9 @@ Model for .pre-commit-config.yaml, bellow:
 ```yaml
 # File .pre-commit-config.yaml
 
+default_install_hook_types: [pre-commit, prepare-commit-msg]
+repos:
+
 - repo: https://github.com/pre-commit/pre-commit-hooks
   # See https://pre-commit.com for more information
   # See https://pre-commit.com/hooks.html for more hooks  rev: v6.0.0

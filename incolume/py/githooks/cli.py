@@ -404,20 +404,19 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
         'commit_source', default='', help='Origem do commit (ex.: template)'
     )
     parser.add_argument(
-        'commit_hash', default='', help='SHA1 do commit ou vazio'
+        'commit_hash', default='', help='Hash do commit ou vazio'
     )
     parser.add_argument(
         '--nonexequi',
-        default=False,
         dest='nonexequi',
-        action='store_true',
+        action='store_false',
         help='Não executar hook.',
     )
 
     args = parser.parse_args(argv)
     ic(args)
 
-    if args.nonexequi:
+    if not args.nonexequi:
         return SUCCESS.value
 
     diff_output = get_git_diff()

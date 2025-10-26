@@ -1,5 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
+default_install_hook_types: [pre-commit, prepare-commit-msg, commit-msg, pre-push]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
@@ -35,18 +38,21 @@ repos:
     - id: ruff-format
       args: [--config, ruff.toml]
 
-
-- repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: 1.6.0
-  hooks:
-    - id: check-len-first-line
-    - id: check-precommit-installed
-    - id: check-valid-filenames
-      args: ['--min-len=3', '--max-len=256']
-    - id: detect-key
-    - id: effort-message
-    - id: footer-signed-off-by
-    #  args: [--signoff]
+# - repo: https://github.com/development-incolume/incolume.py.githooks
+#   rev: 1.7.0
+#   hooks:
+#     - id: check-len-first-line
+#     #  args: [--nonexequi]
+#     - id: check-precommit-installed
+#     #  args: [--nonexequi]
+#     - id: check-valid-filenames
+#       # args: ['--min-len=3', '--max-len=256', '--nonexequi']
+#     - id: detect-key
+#     #  args: [--nonexequi]
+#     - id: effort-message
+#     #  args: [--nonexequi]
+#     - id: footer-signed-off-by
+#     #  args: [--nonexequi]
 
 
 - repo: local
@@ -125,7 +131,7 @@ repos:
       entry: insert-diff-commit
       language: python  # script requires the Python interpreter
       additional_dependencies: []  # Python dependency for the script
-      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      stages: [commit-msg, manual]  # this hook is run at commit time
       verbose: false
 
     - id: validate-message-commit
