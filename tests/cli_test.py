@@ -476,6 +476,15 @@ class TestCaseAllCLI:
                     # pytest.mark.skip
                 ],
             ),
+            pytest.param(
+                MainEntrance(
+                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                    diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                    args=['--nonexequi'],
+                ),
+                Expected(code=SUCCESS, message='ci: #123 added ci/cd\n\n#'),
+                marks=[],
+            ),
         ],
     )
     def test_insert_diff_cli(

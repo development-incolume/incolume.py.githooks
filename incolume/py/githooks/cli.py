@@ -408,9 +408,8 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument(
         '--nonexequi',
-        default=False,
         dest='nonexequi',
-        action='store_true',
+        action='store_false',
         help='Não executar hook.',
     )
 
