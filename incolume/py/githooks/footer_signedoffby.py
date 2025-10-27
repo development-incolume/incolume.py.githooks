@@ -8,6 +8,8 @@ import shutil
 import subprocess
 from typing import TYPE_CHECKING
 
+from incolume.py.githooks.utils import get_signed_off_by
+
 if TYPE_CHECKING:
     from pathlib import Path
 
@@ -52,32 +54,6 @@ def clean_commit_msg(path: Path) -> bool:
     if changed:
         path.write_text(''.join(result), encoding='utf-8')
     return changed
-
-
-def get_signed_off_by() -> str:
-    """Obtém a linha de assinatura 'Signed-off-by' do committer atual.
-
-    Usa `git var GIT_COMMITTER_IDENT` para extrair o nome e email do committer.
-
-    Returns:
-        str: Linha formatada no padrão:
-             "Signed-off-by: Nome <email>"
-
-    Raises:
-        RuntimeError: Se a execução do comando git falhar.
-
-    """
-    try:
-        ident: str = subprocess.check_output(
-            ['git', 'var', 'GIT_COMMITTER_IDENT'], text=True
-        ).strip()
-    except (
-        subprocess.CalledProcessError
-    ) as e:  # pragma: no cover; noqa: S110 TODO cover in future
-        msg = 'Falha ao obter GIT_COMMITTER_IDENT'
-        raise RuntimeError(msg) from e
-
-    return f'Signed-off-by: {ident.split(">", maxsplit=1)[0]}>'
 
 
 def add_signed_off_by(path: Path, sob: str | None = None) -> None:
