@@ -294,14 +294,14 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
         )
     )
     parser.add_argument(
-        'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
+        'commit_msg_filename', type=Path, help='Arquivo de mensagem de commit'
     )
-    #parser.add_argument(
-    #    'commit_source', default='', help='Origem do commit (pode ser vazio)'
-    #)
-    #parser.add_argument(
-    #    'commit_hash', default='', help='Hash do commit (pode ser vazio)'
-    #)
+    parser.add_argument(
+        'commit_source', default='', help='Origem do commit (pode ser vazio)'
+    )
+    parser.add_argument(
+        'commit_hash', default='', help='Hash do commit (pode ser vazio)'
+    )
     parser.add_argument(
         '--nonexequi',
         default=False,
