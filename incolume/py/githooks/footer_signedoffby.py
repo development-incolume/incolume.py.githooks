@@ -98,7 +98,7 @@ def add_blank_line_if_needed(path: Path, commit_source: str = '') -> None:
         None
 
     """
-    if commit_source:
+    if commit_source is not None:
         return
 
     content: str = path.read_text(encoding='utf-8')
