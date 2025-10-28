@@ -311,11 +311,14 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    commit_source = '' or args.commit_source
 
-    clean_commit_msg(args.commit_msg_file)
+    ic(args)
+
+    clean_commit_msg(args.commit_msg_filename)
     if not args.nonexequi:
-        add_signed_off_by(args.commit_msg_file)
-    add_blank_line_if_needed(args.commit_msg_file, args.commit_source)
+        add_signed_off_by(args.commit_msg_filename)
+    add_blank_line_if_needed(args.commit_msg_filename, commit_source)
     return SUCCESS.value
 
 
