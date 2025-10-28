@@ -134,6 +134,7 @@ repos:
       # types: []  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
       args: []
+      always_run: true
       verbose: true
 
     - id: insert-diff-commit
