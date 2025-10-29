@@ -17,12 +17,10 @@ ic.disable()
 
 def debug_enable() -> bool:
     """Enable debug mode."""
-    valid: list = ['1', 'True', 'true', 'on']
-    debug: bool = (
-        False
-        or getenv('INCOLUME_DEBUG_MODE') in valid
-        or getenv('DEBUG_MODE') in valid
-        or getenv('DEBUG') in valid
+    valid: list = ['1', 'true', 'on']
+    debug: bool = any(
+        getenv(x, '').casefold() in valid
+        for x in ('INCOLUME_DEBUG_MODE', 'DEBUG_MODE', 'DEBUG')
     )
 
     ic.disable()  # Disable by default
