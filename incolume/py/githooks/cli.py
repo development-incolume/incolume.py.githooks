@@ -240,14 +240,14 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
         'commit_source', default='', help='Origem do commit (pode ser vazio)'
     )
     parser.add_argument(
-        'commit_hash', default='', help='SHA1 do commit (pode ser vazio)'
+        'commit_hash', default='', help='Hash do commit (pode ser vazio)'
     )
     parser.add_argument(
         '--nonexequi',
         default=False,
         dest='nonexequi',
         action='store_true',
-        help='Não executar hook, adicionar Signed-off-by',
+        help='Not run hook, ignore adding Signed-off-by',
     )
 
     args = parser.parse_args(argv)
