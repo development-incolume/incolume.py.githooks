@@ -181,9 +181,27 @@ class TestCaseAllCLI:
         ['entrance', 'exit_code', 'message'],
         [
             pytest.param(
+                'Wip',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'wip',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
                 'WIP',
                 1,
-                'Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with',
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'jesus-loves-you',
+                1,
+                "Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with:\n- syntaxe 1: 'enhancement-<epoch-timestamp>'\n- syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
                 marks=[],
             ),
             pytest.param(

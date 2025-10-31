@@ -33,6 +33,7 @@ from incolume.py.githooks.rules import (
     RULE_BRANCHNAME,
     SUCCESS,
     ProtectedBranchName,
+    RefusedBranchName,
     Status,
 )
 from incolume.py.githooks.utils import (
@@ -135,6 +136,15 @@ def check_valid_branchname_cli() -> int:
     if branchname in ProtectedBranchName.to_list():
         rich.print(result)
         return status.value
+
+    if branchname.casefold() in RefusedBranchName.to_list():
+        rich.print(
+            '[red]Your commit was rejected due to branching name '
+            'incompatible with rules.'
+            '\n - Can be not WIP(Work in Progress)'
+            '[/red]'
+        )
+        return FAILURE
 
     if not re.match(RULE_BRANCHNAME, branchname):
         result = (
