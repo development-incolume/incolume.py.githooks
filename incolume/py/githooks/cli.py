@@ -31,7 +31,7 @@ from incolume.py.githooks.prepare_commit_msg import (
 from incolume.py.githooks.rules import (
     FAILURE,
     RULE_BRANCHNAME,
-    RULE_BRANCHNAME_NOT_WIP,
+    RULE_BRANCHNAME_NOT_REFUSED,
     SUCCESS,
     ProtectedBranchName,
     Status,
@@ -138,7 +138,7 @@ def check_valid_branchname_cli() -> int:
         return status.value
 
     if (
-        re.match(RULE_BRANCHNAME_NOT_WIP, branchname, flags=re.IGNORECASE)
+        re.match(RULE_BRANCHNAME_NOT_REFUSED, branchname, flags=re.IGNORECASE)
         is None
     ):
         rich.print(
