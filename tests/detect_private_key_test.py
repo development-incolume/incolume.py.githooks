@@ -3,8 +3,7 @@
 from __future__ import annotations
 from pathlib import Path
 import shutil
-from typing import NoReturn
-from collections.abc import Callable
+from typing import NoReturn, TYPE_CHECKING
 from incolume.py.githooks.detect_private_key import (
     has_private_key,
     BLACKLIST,
@@ -14,6 +13,9 @@ from tempfile import gettempdir
 import pytest
 
 from incolume.py.githooks.rules import Status, SUCCESS, FAILURE
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class TestCaseDetectPrivateKey:
