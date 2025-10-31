@@ -131,13 +131,14 @@ def check_valid_branchname_cli() -> int:
     result = '[green]Branching name rules. [OK][/green]'
     status = SUCCESS
     branchname = get_branchname()
-
-    if branchname in ProtectedBranchName.to_list():
+    
+    match branchname:
+      case branchname in ProtectedBranchName.to_list():
         rich.print(result)
         return status.value
 
-    if not re.match(RULE_BRANCHNAME, branchname):
-        result = (
+      case not re.match(RULE_BRANCHNAME, branchname):
+       rich.print(
             '[red]Your commit was rejected due to branching name '
             'incompatible with rules.\n'
             'Please rename your branch with:'
@@ -147,7 +148,13 @@ def check_valid_branchname_cli() -> int:
             "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
             '[/red]'
         )
-        status |= FAILURE
+        return FAILURE
+      case branchname in RejectBranchName.to_list():
+        rich.print('[red]Your commit was rejected due to branching name '
+            'incompatible with rules.'
+'\n - Can be not WIP(Work in Progress)'
+'[/red]')
+        return FAILURE      
     rich.print(result)
     return status.value
 
