@@ -192,7 +192,7 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                'refactor/issue#123',
+                'refactor/epoch#1234567890',
                 0,
                 'Branching name rules. [OK]',
                 marks=[],
