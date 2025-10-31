@@ -10,11 +10,13 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-10-22:
+## [Unreleased]	 &#8212; 	2025-10-30:
 ### Added
   - Rules.Status(Enum);
   - Rules.ProtectedBranchName(Enum);
   - Parametro `--nonexequi` para inativar qualquer hook do projeto;
+### Changed
+  - Melhoria no help CLI;
 
 ## [1.8.0]	 &#8212; 	2025-10-20:
 ### Added
