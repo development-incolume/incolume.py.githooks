@@ -9,7 +9,6 @@ from pathlib import Path
 import shutil
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import NoReturn, TYPE_CHECKING
-from collections.abc import Callable
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
@@ -26,6 +25,7 @@ from . import Expected, MainEntrance
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from collections.abc import Generator
 
 
@@ -194,6 +194,18 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 'WIP',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'template-Wip',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'Wip-test-for-branch',
                 1,
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[],
