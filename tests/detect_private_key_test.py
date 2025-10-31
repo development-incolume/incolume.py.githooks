@@ -3,7 +3,8 @@
 from __future__ import annotations
 from pathlib import Path
 import shutil
-from typing import NoReturn, Callable
+from typing import NoReturn
+from collections.abc import Callable
 from incolume.py.githooks.detect_private_key import (
     has_private_key,
     BLACKLIST,

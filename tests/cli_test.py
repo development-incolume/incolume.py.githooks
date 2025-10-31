@@ -8,7 +8,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import Callable, NoReturn, TYPE_CHECKING
+from typing import NoReturn, TYPE_CHECKING
+from collections.abc import Callable
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
