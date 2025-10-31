@@ -84,6 +84,12 @@ class ProtectedBranchName(AutoName):
     TAGS: str = auto()
 
 
+class RefusedBranchName(AutoName):
+    """Refused Branchname for project."""
+
+    WIP: str = auto()
+
+
 class Status(Enum):
     """Status result for CLI."""
 
