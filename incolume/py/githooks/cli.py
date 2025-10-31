@@ -140,8 +140,12 @@ def check_valid_branchname_cli() -> int:
         result = (
             '[red]Your commit was rejected due to branching name '
             'incompatible with rules.\n'
-            "Please rename your branch with '<(enhancement|feature|feat"
-            "|bug|bugfix|fix)>/epoch#<timestamp>' syntax[/red]"
+            'Please rename your branch with:'
+            "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
+            "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
+            "\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'"
+            "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
+            '[/red]'
         )
         status |= FAILURE
     rich.print(result)
