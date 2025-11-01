@@ -131,9 +131,9 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=('Hook Git em Python para validar branchname.')
     )
-    # parser.add_argument(
-    #     'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
-    # )
+    parser.add_argument(
+        'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
+    )
     # parser.add_argument(
     #     'commit_source', default='', help='Origem do commit (pode ser vazio)'
     # )
