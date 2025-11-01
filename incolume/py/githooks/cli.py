@@ -119,7 +119,7 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
-def check_valid_branchname_cli() -> int:
+def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     """Check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -128,6 +128,27 @@ def check_valid_branchname_cli() -> int:
         int: 0 to SUCCESS or 1 to FAILURE
 
     """
+    parser = argparse.ArgumentParser(
+        description=('Hook Git em Python para validar branchname.')
+    )
+    # parser.add_argument(
+    #     'commit_msg_file', type=Path, help='Arquivo de mensagem de commit'
+    # )
+    # parser.add_argument(
+    #     'commit_source', default='', help='Origem do commit (pode ser vazio)'
+    # )
+    # parser.add_argument(
+    #     'commit_hash', default='', help='Hash do commit (pode ser vazio)'
+    # )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Not run hook, ignore adding Signed-off-by',
+    )
+
+    args = parser.parse_args(argv)
     logging.debug(platform.python_version_tuple())
     result = '[green]Branching name rules. [OK][/green]'
     status = SUCCESS
@@ -135,6 +156,9 @@ def check_valid_branchname_cli() -> int:
 
     if branchname in ProtectedBranchName.to_list():
         rich.print(result)
+        return status.value
+
+    if args.nonexequi:
         return status.value
 
     if (
