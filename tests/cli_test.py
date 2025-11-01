@@ -178,114 +178,130 @@ class TestCaseAllCLI:
             assert cli.check_type_commit_msg_cli([test_file.as_posix()])
 
     @pytest.mark.parametrize(
-        ['entrance', 'exit_code', 'message'],
+        ['entrance', 'exit_code', 'params', 'message'],
         [
             pytest.param(
                 'Wip',
                 1,
+                [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[],
             ),
             pytest.param(
                 'wip',
                 1,
+                [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[],
             ),
             pytest.param(
                 'WIP',
                 1,
+                [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[],
             ),
             pytest.param(
                 'template-Wip',
                 1,
+                [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[],
             ),
             pytest.param(
                 'Wip-test-for-branch',
                 1,
+                [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[],
             ),
             pytest.param(
                 'todo-test-for-branch',
                 1,
+                [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
                 marks=[pytest.mark.skip(reason='Not implemented yet')],
             ),
             pytest.param(
                 'jesus-loves-you',
                 1,
+                [''],
                 "Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with:\n- syntaxe 1: 'enhancement-<epoch-timestamp>'\n- syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
                 marks=[],
             ),
             pytest.param(
                 '123-jesus-loves-you',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 'refactor/epoch#1234567890',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 'feat/issue#123',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 'enhancement-1234567890',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 '80-açaí-itú-água-é-ação-de-sertões',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 'main',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 'tags',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
                 'master',
                 0,
+                [''],
                 'Branching name rules. [OK]',
                 marks=[],
             ),
             pytest.param(
-                'dev',
+                'xpto-wip',
                 0,
-                'Branching name rules. [OK]',
+                ['', '--nonexequi'],
+                '',
                 marks=[],
             ),
         ],
     )
     def test_check_valid_branchname(
-        self, capsys, entrance, exit_code, message
+        self, capsys, entrance, exit_code, params, message
     ) -> None:
         """Test check_valid_branchname function."""
         ic(entrance, exit_code, message)
 
         with patch.object(cli, 'get_branchname', return_value=entrance):
-            result = cli.check_valid_branchname_cli()
+            result = cli.check_valid_branchname_cli(params)
             ic(result)
             captured = capsys.readouterr()
             assert message in captured.out
