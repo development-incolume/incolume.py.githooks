@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import Callable, NoReturn, TYPE_CHECKING
+from typing import NoReturn, TYPE_CHECKING
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
@@ -25,6 +25,7 @@ from . import Expected, MainEntrance
 
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from collections.abc import Generator
 
 
@@ -180,9 +181,45 @@ class TestCaseAllCLI:
         ['entrance', 'exit_code', 'message'],
         [
             pytest.param(
+                'Wip',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'wip',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
                 'WIP',
                 1,
-                'Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with',
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'template-Wip',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'Wip-test-for-branch',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[],
+            ),
+            pytest.param(
+                'todo-test-for-branch',
+                1,
+                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
+                marks=[pytest.mark.skip(reason='Not implemented yet')],
+            ),
+            pytest.param(
+                'jesus-loves-you',
+                1,
+                "Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with:\n- syntaxe 1: 'enhancement-<epoch-timestamp>'\n- syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
                 marks=[],
             ),
             pytest.param(
