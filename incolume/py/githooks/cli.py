@@ -147,7 +147,7 @@ def check_valid_branchname_cli() -> int:
             '\n - Can be not WIP(Work in Progress)'
             '[/red]'
         )
-        return FAILURE
+        return FAILURE.value
 
     if not re.match(RULE_BRANCHNAME, branchname):
         result = (
