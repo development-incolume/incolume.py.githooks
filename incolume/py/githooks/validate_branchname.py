@@ -24,9 +24,10 @@ class ValidateBranchname:
     msg_refused = (
         '[red]Your commit was rejected due to branching name '
         'incompatible with rules.'
-        '\n - Can be not WIP(Work in Progress)'
-        '[/red]'
+        '{}[/red]'
     )
+    violation_text = ''
+
     status = SUCCESS
     branchname = get_branchname()
 
@@ -42,25 +43,32 @@ class ValidateBranchname:
         if re.match(
             RULE_BRANCHNAME_NOT_REFUSED, branchname, flags=re.IGNORECASE
         ):
-            rich.print(self.msg_refused)
+            rich.print(
+                self.msg_refused.format(
+                    '\n - Can be not WIP(Work in Progress)'
+                )
+            )
             return True
         return False
 
-    if not re.match(RULE_BRANCHNAME, branchname):
-        result = (
-            '[red]Your commit was rejected due to branching name '
-            'incompatible with rules.\n'
-            'Please rename your branch with:'
-            "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
-            "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
-            "\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'"
-            "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
-            '[/red]'
-        )
-        status |= FAILURE
+    def matches_rule(self, branchname: str = '') -> int:
+        """Check if the branch name matches the rule."""
+        branchname = branchname or self.branchname
+        if not re.match(RULE_BRANCHNAME, branchname):
+            result = (
+                '[red]Your commit was rejected due to branching name '
+                'incompatible with rules.\n'
+                'Please rename your branch with:'
+                "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
+                "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
+                "\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'"
+                "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
+                '[/red]'
+            )
+            status |= FAILURE
 
-    def is_valide(self, branchname: str) -> int:
+    def is_valid(self) -> int:
         """Validate branch name."""
-        ic(branchname)
+        ic(self.branchname)
         rich.print(self.msg_ok)
         return SUCCESS.value
