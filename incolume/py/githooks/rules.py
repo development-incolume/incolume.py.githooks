@@ -121,6 +121,9 @@ SUCCESS: Final[Status] = Status.SUCCESS
 FAILURE: Final[Status] = Status.FAILURE
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
+RULE_BRANCHNAME_REFUSED: Final[str] = (
+    rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'
+)
 RULE_BRANCHNAME_NOT_REFUSED: Final[str] = (
     rf'^(?!.*({"|".join(RefusedBranchName.to_set())})).*$'
 )
