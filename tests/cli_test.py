@@ -10,7 +10,7 @@ import shutil
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import NoReturn, TYPE_CHECKING
 import pytest
-from incolume.py.githooks import cli
+from incolume.py.githooks import cli, utils
 from icecream import ic
 
 from incolume.py.githooks.detect_private_key import BLACKLIST
@@ -300,7 +300,7 @@ class TestCaseAllCLI:
         """Test check_valid_branchname function."""
         ic(entrance, exit_code, message)
 
-        with patch.object(cli, 'get_branchname', return_value=entrance):
+        with patch.object(utils, 'get_branchname', return_value=entrance):
             result = cli.check_valid_branchname_cli(params)
             ic(result)
             captured = capsys.readouterr()
