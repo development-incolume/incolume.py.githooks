@@ -67,10 +67,10 @@ class ValidateBranchname:
     def __is_github_branch(self, branchname: str = '') -> bool:
         """Check if the branchname is a GitHub rule."""
 
-    def __is_matches_rule(self, branchname: str = '') -> bool:
+    def __is_not_matches_rule(self, branchname: str = '') -> bool:
         """Check if the branch name matches the rule."""
         branchname = branchname or self.branchname
-        if bool(re.match(RULE_BRANCHNAME, branchname)):
+        if not bool(re.match(RULE_BRANCHNAME, branchname)):
             self.violation_text = (
                 "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
                 "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
@@ -92,12 +92,15 @@ class ValidateBranchname:
             self.result.message += self.violation_text
             # self.result.code = FAILURE
 
-        # if self.matches_rule(self.branchname) is False:
-        #     self.result.message += self.violation_text
-        #     self.result.code = FAILURE
+        if self.__is_not_matches_rule(branchname):
+            self.result.code = FAILURE
+            self.result.message += self.violation_text
 
-        rich.print(self.msg_refused.format(self.violation_text))
-        return 1
+        if self.result.code == FAILURE:
+            rich.print(self.msg_refused.format(self.violation_text))
+        else:
+            rich.print(self.msg_ok)
+        return self.result.code.value
 
 
 if __name__ == '__main__':

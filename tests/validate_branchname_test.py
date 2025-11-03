@@ -54,32 +54,32 @@ class TestCaseValidateBranchname:
             pytest.param('develop', False, marks=[]),
         ],
     )
-    def test_is_branch_main_or_tags(self, branchname, expected) -> None:
+    def test_is_branch_main(self, branchname, expected) -> None:
         """Test is_branch_main method."""
         v = ValidateBranchname()
         assert (
-            v._ValidateBranchname__is_branch_main_or_tags(branchname)
+            v._ValidateBranchname__is_branch_main(branchname)
             is expected
         )
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
         [
-            ('feature/issue#123', True),
-            ('feat/epoch#1627890123', True),
-            ('bugfix/issue#456', True),
-            ('fix/epoch#1627890123', True),
-            ('refactor/epoch#1627890123', True),
-            ('enhancement-1627890123', True),
-            ('789-new-feature', True),
-            ('main', False),
-            ('WIP', False),
-            ('random-branch-name', False),
-            ('feature/invalid#name', False),
-            ('123', False),
+            ('feature/issue#123', False),
+            ('feat/epoch#1627890123', False),
+            ('bugfix/issue#456', False),
+            ('fix/epoch#1627890123', False),
+            ('refactor/epoch#1627890123', False),
+            ('enhancement-1627890123', False),
+            ('789-new-feature', False),
+            ('main', True),
+            ('WIP', True),
+            ('random-branch-name', True),
+            ('feature/invalid#name', True),
+            ('123', True),
         ],
     )
-    def test_is_matches_rule(self, *, branchname: str, expected: bool) -> None:
+    def test_is_not_matches_rule(self, *, branchname: str, expected: bool) -> None:
         """Test matches_rule method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_matches_rule(branchname) == expected
+        assert v._ValidateBranchname__is_not_matches_rule(branchname) == expected
