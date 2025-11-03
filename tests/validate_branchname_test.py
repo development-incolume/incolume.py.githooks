@@ -1,4 +1,7 @@
-"""Test for module validate_branchname"""
+"""Test for module validate_branchname."""
+
+# ruff: noqa: SLF001
+
 import pytest
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 
@@ -18,10 +21,14 @@ class TestCaseValidateBranchname:
             ('tags', True),
         ],
     )
-    def test_is_protected_branch(self, *, branchname: str, expected: bool) -> None:
+    def test_is_protected_branch(
+        self, *, branchname: str, expected: bool
+    ) -> None:
         """Test is_default_branch method."""
         v = ValidateBranchname()
-        assert v.is_protected_branch(branchname) == expected
+        assert (
+            v._ValidateBranchname__is_protected_branch(branchname) == expected
+        )
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -37,7 +44,7 @@ class TestCaseValidateBranchname:
     def test_is_refused(self, *, branchname: str, expected: bool) -> None:
         """Test is_refused method."""
         v = ValidateBranchname()
-        assert v.is_refused(branchname) == expected
+        assert v._ValidateBranchname__is_refused(branchname) == expected
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -50,7 +57,10 @@ class TestCaseValidateBranchname:
     def test_is_branch_main_or_tags(self, branchname, expected) -> None:
         """Test is_branch_main method."""
         v = ValidateBranchname()
-        assert v.is_branch_main_or_tags(branchname) is expected
+        assert (
+            v._ValidateBranchname__is_branch_main_or_tags(branchname)
+            is expected
+        )
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -72,4 +82,4 @@ class TestCaseValidateBranchname:
     def test_is_matches_rule(self, *, branchname: str, expected: bool) -> None:
         """Test matches_rule method."""
         v = ValidateBranchname()
-        assert v.is_matches_rule(branchname) == expected
+        assert v._ValidateBranchname__is_matches_rule(branchname) == expected

@@ -32,26 +32,45 @@ class ValidateBranchname:
         self.result: Result = Result()
         self.branchname = get_branchname()
 
-    def is_default_branch(self, branchname: str = '') -> bool:
+    def __is_protected_branch(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
         branchname = branchname or self.branchname
-        return branchname in ProtectedBranchName.to_list()
+        result = branchname in ProtectedBranchName.to_list()
+        if result:
+            self.violation_text = (
+                f'\n - Branch name "{branchname}" is protected.'
+            )
+        return result
 
-    def is_refused(self, branchname: str) -> bool:
+    def __is_branch_main_or_tags(self, branchname: str = '') -> bool:
+        """Check if the branch name is main branch."""
+        branchname = branchname or self.branchname
+        result = branchname in {
+            ProtectedBranchName.MAIN.value,
+            ProtectedBranchName.MASTER.value,
+            ProtectedBranchName.TAGS.value,
+        }
+        if result:
+            self.violation_text = (
+                f'\n - Branch name "{branchname}" is protected.'
+            )
+        return result
+
+    def __is_refused(self, branchname: str = '') -> bool:
         """Check if the branch name is refused."""
+        branchname = branchname or self.branchname
         r = re.match(RULE_BRANCHNAME_REFUSED, branchname, flags=re.IGNORECASE)
-        if bool(r):
+        if result := bool(r):
             self.violation_text = '\n - Can be not WIP(Work in Progress)'
-            return True
-        return False
+        return result
 
-    def is_github_branch(self, branchname: str = '') -> bool:
+    def __is_github_branch(self, branchname: str = '') -> bool:
         """Check if the branchname is a GitHub rule."""
 
-    def matches_rule(self, branchname: str = '') -> bool:
+    def __is_matches_rule(self, branchname: str = '') -> bool:
         """Check if the branch name matches the rule."""
         branchname = branchname or self.branchname
-        if not bool(re.match(RULE_BRANCHNAME, branchname)):
+        if bool(re.match(RULE_BRANCHNAME, branchname)):
             self.violation_text = (
                 "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
                 "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
@@ -79,3 +98,9 @@ class ValidateBranchname:
 
         rich.print(self.msg_refused.format(self.violation_text))
         return 1
+
+
+if __name__ == '__main__':
+    v = ValidateBranchname()
+    v.violation_text = '\n - abc'
+    rich.print(v.msg_refused.format(v.violation_text))
