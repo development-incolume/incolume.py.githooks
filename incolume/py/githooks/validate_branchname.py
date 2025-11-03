@@ -8,67 +8,74 @@ import rich
 from icecream import ic
 
 from incolume.py.githooks.rules import (
-    FAILURE,
     RULE_BRANCHNAME,
-    RULE_BRANCHNAME_NOT_REFUSED,
-    SUCCESS,
+    RULE_BRANCHNAME_REFUSED,
     ProtectedBranchName,
 )
-from incolume.py.githooks.utils import get_branchname
+from incolume.py.githooks.utils import Result, debug_enable, get_branchname
+
+debug_enable()
 
 
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    msg_ok = '[green]Branching name rules. [OK][/green]'
-    msg_refused = (
-        '[red]Your commit was rejected due to branching name '
-        'incompatible with rules.'
-        '{}[/red]'
-    )
-    violation_text = ''
+    def __init__(self) -> None:
+        """Init."""
+        self.msg_ok = '[green]Branching name rules. [OK][/green]'
+        self.msg_refused = (
+            '[red]Your commit was rejected due to branching name '
+            'incompatible with rules.'
+            '{}[/red]'
+        )
+        self.violation_text = ''
+        self.result: Result = Result()
+        self.branchname = get_branchname()
 
-    status = SUCCESS
-    branchname = get_branchname()
-
-    def is_default_branch(self, branchname: str) -> bool:
+    def is_default_branch(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
-        if branchname in ProtectedBranchName.to_list():
-            rich.print(self.msg_ok)
-            return True
-        return False
+        branchname = branchname or self.branchname
+        return branchname in ProtectedBranchName.to_list()
 
     def is_refused(self, branchname: str) -> bool:
         """Check if the branch name is refused."""
-        if re.match(
-            RULE_BRANCHNAME_NOT_REFUSED, branchname, flags=re.IGNORECASE
-        ):
-            rich.print(
-                self.msg_refused.format(
-                    '\n - Can be not WIP(Work in Progress)'
-                )
-            )
+        r = re.match(RULE_BRANCHNAME_REFUSED, branchname, flags=re.IGNORECASE)
+        if bool(r):
+            self.violation_text = '\n - Can be not WIP(Work in Progress)'
             return True
         return False
 
-    def matches_rule(self, branchname: str = '') -> int:
+    def is_github_branch(self, branchname: str = '') -> bool:
+        """Check if the branchname is a GitHub rule."""
+
+    def matches_rule(self, branchname: str = '') -> bool:
         """Check if the branch name matches the rule."""
         branchname = branchname or self.branchname
-        if not re.match(RULE_BRANCHNAME, branchname):
-            result = (
-                '[red]Your commit was rejected due to branching name '
-                'incompatible with rules.\n'
-                'Please rename your branch with:'
+        if not bool(re.match(RULE_BRANCHNAME, branchname)):
+            self.violation_text = (
                 "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
                 "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
                 "\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'"
                 "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
-                '[/red]'
             )
-            status |= FAILURE
+            return True
+        return False
 
     def is_valid(self) -> int:
         """Validate branch name."""
         ic(self.branchname)
-        rich.print(self.msg_ok)
-        return SUCCESS.value
+        ic(self.result)
+
+        # if self.is_default_branch(self.branchname):
+        #     self.result.code = FAILURE
+
+        if self.is_refused(self.branchname):
+            self.result.message += self.violation_text
+            # self.result.code = FAILURE
+
+        # if self.matches_rule(self.branchname) is False:
+        #     self.result.message += self.violation_text
+        #     self.result.code = FAILURE
+
+        rich.print(self.msg_refused.format(self.violation_text))
+        return 1

@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import logging
 import platform
-import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -30,19 +29,16 @@ from incolume.py.githooks.prepare_commit_msg import (
 )
 from incolume.py.githooks.rules import (
     FAILURE,
-    RULE_BRANCHNAME,
-    RULE_BRANCHNAME_NOT_REFUSED,
     SUCCESS,
-    ProtectedBranchName,
     Status,
 )
 from incolume.py.githooks.utils import (
     Result,
     debug_enable,
-    get_branchname,
     get_git_diff,
 )
 from incolume.py.githooks.valid_filename import ValidateFilename
+from incolume.py.githooks.validate_branchname import ValidateBranchname
 
 debug_enable()
 
@@ -153,43 +149,11 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     logging.debug(platform.python_version_tuple())
-    result = '[green]Branching name rules. [OK][/green]'
-    status = SUCCESS
-    branchname = get_branchname()
-
-    if branchname in ProtectedBranchName.to_list():
-        rich.print(result)
-        return status.value
 
     if args.nonexequi:
-        return status.value
+        return SUCCESS.value
 
-    if (
-        re.match(RULE_BRANCHNAME_NOT_REFUSED, branchname, flags=re.IGNORECASE)
-        is None
-    ):
-        rich.print(
-            '[red]Your commit was rejected due to branching name '
-            'incompatible with rules.'
-            '\n - Can be not WIP(Work in Progress)'
-            '[/red]'
-        )
-        return FAILURE.value
-
-    if not re.match(RULE_BRANCHNAME, branchname):
-        result = (
-            '[red]Your commit was rejected due to branching name '
-            'incompatible with rules.\n'
-            'Please rename your branch with:'
-            "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
-            "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
-            "\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'"
-            "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
-            '[/red]'
-        )
-        status |= FAILURE
-    rich.print(result)
-    return status.value
+    return ValidateBranchname().is_valid()
 
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:

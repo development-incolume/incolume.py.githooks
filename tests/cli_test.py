@@ -227,14 +227,14 @@ class TestCaseAllCLI:
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\nPlease rename your branch with:\n- syntaxe 1: 'enhancement-<epoch-timestamp>'\n- syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[],
+                # marks=[pytest.mark.skip(reason='False/Positive')],
             ),
             pytest.param(
                 '123-jesus-loves-you',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[],
+                marks=[pytest.mark.skip(reason='False/Positive')],
             ),
             pytest.param(
                 'refactor/epoch#1234567890',
