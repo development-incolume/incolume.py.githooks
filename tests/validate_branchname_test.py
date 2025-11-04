@@ -115,3 +115,20 @@ class TestCaseValidateBranchname:
         assert (
             v._ValidateBranchname__is_not_matches_rule(branchname) == expected
         )
+
+    @pytest.mark.parametrize(
+        ['branchname', 'expected'],
+        [
+            pytest.param('123-abc', True, marks=[]),
+            pytest.param('1-jesus-te-ama', True, marks=[]),
+            pytest.param('WIP', False, marks=[]),
+            pytest.param('123abcd', False, marks=[]),
+            pytest.param('1-ab', False, marks=[]),
+            pytest.param('feature/issue#123', False, marks=[]),
+            pytest.param('enhancement-1627890123', False, marks=[]),
+        ],
+    )
+    def test_is_github_branch(self, branchname, expected) -> None:
+        """Test is_github_branch method."""
+        v = ValidateBranchname()
+        assert v._ValidateBranchname__is_github_branch(branchname) is expected

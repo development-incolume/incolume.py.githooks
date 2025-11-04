@@ -78,6 +78,9 @@ class ValidateBranchname:
     def __is_github_branch(self, branchname: str = '') -> bool:
         """Check if the branchname is a GitHub rule."""
         branchname = branchname or self.branchname
+        regex_github = r'^\d+(-[\w_]{3,})+'
+
+        return bool(re.match(regex_github, branchname))
 
     def __is_not_matches_rule(self, branchname: str = '') -> bool:
         """Check if the branch name matches the rule."""
