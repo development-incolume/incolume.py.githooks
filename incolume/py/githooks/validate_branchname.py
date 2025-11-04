@@ -13,6 +13,7 @@ from incolume.py.githooks.rules import (
     RULE_BRANCHNAME,
     RULE_BRANCHNAME_REFUSED,
     ProtectedBranchName,
+    TypeCommit,
 )
 from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
@@ -81,6 +82,15 @@ class ValidateBranchname:
         regex_github = r'^\d+(-[\w_]{3,})+'
 
         return bool(re.match(regex_github, branchname))
+
+    def __is_incolume_branch_rule(self, branchname: str = '') -> bool:
+        """Check if the branchname is incolume rule."""
+        branchname = branchname or self.branchname
+        regex_incolume = (
+            rf'^({"|".join(TypeCommit.to_set())})/(epoch|issue)#([0-9]+)$'
+        )
+
+        return bool(re.match(regex_incolume, branchname))
 
     def __is_not_matches_rule(self, branchname: str = '') -> bool:
         """Check if the branch name matches the rule."""
