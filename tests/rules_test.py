@@ -99,3 +99,35 @@ class TestCaseRules:
     def test_status_value_int(self, entrance) -> None:
         """Casting Status."""
         assert isinstance(pkg.Status(entrance).value, int)
+
+    def test_type_commit_tolist(self) -> None:
+        """Test TypeCommit enum."""
+        assert sorted(pkg.TypeCommit.to_list()) == [
+            'build',
+            'chore',
+            'ci',
+            'docs',
+            'feat',
+            'fix',
+            'perf',
+            'refactor',
+            'revert',
+            'style',
+            'test',
+        ]
+
+    def test_type_commit_toset(self) -> None:
+        """Test TypeCommit enum."""
+        assert pkg.TypeCommit.to_set() == {
+            'docs',
+            'build',
+            'feat',
+            'chore',
+            'perf',
+            'refactor',
+            'revert',
+            'style',
+            'test',
+            'ci',
+            'fix',
+        }
