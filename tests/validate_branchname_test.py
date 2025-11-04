@@ -141,6 +141,25 @@ class TestCaseValidateBranchname:
             pytest.param('WIP', False, marks=[]),
             pytest.param('123abcd', False, marks=[]),
             pytest.param('1-ab', False, marks=[]),
+            pytest.param('feature/issue#123', False, marks=[]),
+            pytest.param('enhancement-1627890123', True, marks=[]),
+        ],
+    )
+    def test_is_enhancement_epoch(self, branchname, expected) -> None:
+        """Test is_github_branch method."""
+        v = ValidateBranchname()
+        assert (
+            v._ValidateBranchname__is_enhancement_epoch(branchname) is expected
+        )
+
+    @pytest.mark.parametrize(
+        ['branchname', 'expected'],
+        [
+            pytest.param('123-abc', False, marks=[]),
+            pytest.param('1-jesus-te-ama', False, marks=[]),
+            pytest.param('WIP', False, marks=[]),
+            pytest.param('123abcd', False, marks=[]),
+            pytest.param('1-ab', False, marks=[]),
             pytest.param('feat/issue#123', True, marks=[]),
             pytest.param('fix/epoch#123', True, marks=[]),
             pytest.param('enhancement-1627890123', False, marks=[]),

@@ -83,6 +83,13 @@ class ValidateBranchname:
 
         return bool(re.match(regex_github, branchname))
 
+    def __is_enhancement_epoch(self, branchname: str = '') -> bool:
+        """Check if the branchname is enhancement-<epoch-timestamp>."""
+        branchname = branchname or self.branchname
+        regex_enhancement = r'^enhancement-\d{1,11}$'
+
+        return bool(re.match(regex_enhancement, branchname))
+
     def __is_incolume_branch_rule(self, branchname: str = '') -> bool:
         """Check if the branchname is incolume rule."""
         branchname = branchname or self.branchname
