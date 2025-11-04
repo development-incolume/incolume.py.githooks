@@ -8,6 +8,7 @@ import rich
 from icecream import ic
 
 from incolume.py.githooks.rules import (
+    FAILURE,
     RULE_BRANCHNAME,
     RULE_BRANCHNAME_REFUSED,
     ProtectedBranchName,
@@ -32,23 +33,32 @@ class ValidateBranchname:
         self.result: Result = Result()
         self.branchname = get_branchname()
 
-    def __is_protected_branch(self, branchname: str = '') -> bool:
+    def __is_branch_dev(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
         branchname = branchname or self.branchname
-        result = branchname in ProtectedBranchName.to_list()
+        result = branchname == ProtectedBranchName.DEV.value
         if result:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
             )
         return result
 
-    def __is_branch_main_or_tags(self, branchname: str = '') -> bool:
+    def __is_branch_tags(self, branchname: str = '') -> bool:
+        """Check if the branch name is a default branch."""
+        branchname = branchname or self.branchname
+        result = branchname == ProtectedBranchName.TAGS.value
+        if result:
+            self.violation_text = (
+                f'\n - Branch name "{branchname}" is protected.'
+            )
+        return result
+
+    def __is_branch_main(self, branchname: str = '') -> bool:
         """Check if the branch name is main branch."""
         branchname = branchname or self.branchname
         result = branchname in {
             ProtectedBranchName.MAIN.value,
             ProtectedBranchName.MASTER.value,
-            ProtectedBranchName.TAGS.value,
         }
         if result:
             self.violation_text = (
@@ -61,43 +71,76 @@ class ValidateBranchname:
         branchname = branchname or self.branchname
         r = re.match(RULE_BRANCHNAME_REFUSED, branchname, flags=re.IGNORECASE)
         if result := bool(r):
-            self.violation_text = '\n - Can be not WIP(Work in Progress)'
+            self.violation_text = '\n - Can not be WIP (Work in Progress)'
         return result
 
     def __is_github_branch(self, branchname: str = '') -> bool:
         """Check if the branchname is a GitHub rule."""
+        branchname = branchname or self.branchname
 
     def __is_not_matches_rule(self, branchname: str = '') -> bool:
         """Check if the branch name matches the rule."""
         branchname = branchname or self.branchname
         if not bool(re.match(RULE_BRANCHNAME, branchname)):
             self.violation_text = (
-                "\n- syntaxe 1: 'enhancement-<epoch-timestamp>'"
-                "\n- syntaxe 2: '<issue-id>-descrição-da-issue'"
-                "\n- syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'"
-                "\n- syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
+                "\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or"
+                "\n - Syntaxe 2: '<issue-id>-descrição-da-issue'; or"
+                "\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
+                "\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
             )
             return True
         return False
 
-    def is_valid(self) -> int:
-        """Validate branch name."""
-        ic(self.branchname)
+    def is_valid(self, **kwargs: str) -> int:
+        """Validate branch name.
+
+        Args:
+          kwargs:
+            branchname (str, Active branch): Branch name to validate.
+            with_dev (bool, False): Consider dev as protected branch.
+            with_tags (bool, False): Consider tags as protected branch.
+            with_main (bool, True): Consider main/master as protected branch.
+
+        Returns:
+            int: Status code.
+
+        """
+        branchname = kwargs.get('branchname') or self.branchname
+        with_dev = kwargs.get('with_dev', False)
+        with_tags = kwargs.get('with_tags', False)
+        with_main = kwargs.get('with_main', True)
+
+        ic(branchname)
         ic(self.result)
+        msg: str = ''
 
-        # if self.is_default_branch(self.branchname):
-        #     self.result.code = FAILURE
+        if with_main and self.__is_branch_main(branchname):
+            ic('is main protected branches')
+            self.result.code = FAILURE
+            msg += self.violation_text
 
-        if self.is_refused(self.branchname):
-            self.result.message += self.violation_text
-            # self.result.code = FAILURE
+        if with_dev and self.__is_branch_dev(branchname):
+            ic('is dev protected branches')
+            self.result.code = FAILURE
+            msg += self.violation_text
+
+        if with_tags and self.__is_branch_tags(branchname):
+            ic('is tags protected branches')
+            self.result.code = FAILURE
+            msg += self.violation_text
+
+        if self.__is_refused(branchname):
+            ic('is refused branch')
+            self.result.code = FAILURE
+            msg += self.violation_text
 
         if self.__is_not_matches_rule(branchname):
+            ic('is not matches rule')
             self.result.code = FAILURE
-            self.result.message += self.violation_text
+            msg += self.violation_text
 
         if self.result.code == FAILURE:
-            rich.print(self.msg_refused.format(self.violation_text))
+            rich.print(self.msg_refused.format(msg))
         else:
             rich.print(self.msg_ok)
         return self.result.code.value
@@ -105,5 +148,4 @@ class ValidateBranchname:
 
 if __name__ == '__main__':
     v = ValidateBranchname()
-    v.violation_text = '\n - abc'
-    rich.print(v.msg_refused.format(v.violation_text))
+    v.is_valid()

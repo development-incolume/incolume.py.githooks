@@ -12,23 +12,54 @@ class TestCaseValidateBranchname:
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
         [
-            ('main', True),
-            ('develop', False),
-            ('feature/epoch#1234567890', False),
-            ('123-jesus-loves-you', False),
-            ('wip-fix-bug', False),
-            ('dev', True),
-            ('tags', True),
+            pytest.param('main', False, marks=[]),
+            pytest.param('develop', False, marks=[]),
+            pytest.param('feature/epoch#1234567890', False, marks=[]),
+            pytest.param('123-jesus-loves-you', False, marks=[]),
+            pytest.param('wip-fix-bug', False, marks=[]),
+            pytest.param('dev', True, marks=[]),
+            pytest.param('tags', False, marks=[]),
         ],
     )
-    def test_is_protected_branch(
-        self, *, branchname: str, expected: bool
-    ) -> None:
+    def test_is_dev_branch(self, *, branchname: str, expected: bool) -> None:
         """Test is_default_branch method."""
         v = ValidateBranchname()
-        assert (
-            v._ValidateBranchname__is_protected_branch(branchname) == expected
-        )
+        assert v._ValidateBranchname__is_branch_dev(branchname) == expected
+
+    @pytest.mark.parametrize(
+        ['branchname', 'expected'],
+        [
+            pytest.param('main', False, marks=[]),
+            pytest.param('develop', False, marks=[]),
+            pytest.param('feature/epoch#1234567890', False, marks=[]),
+            pytest.param('123-jesus-loves-you', False, marks=[]),
+            pytest.param('wip-fix-bug', False, marks=[]),
+            pytest.param('dev', False, marks=[]),
+            pytest.param('tags', True, marks=[]),
+        ],
+    )
+    def test_is_tags_branch(self, *, branchname: str, expected: bool) -> None:
+        """Test is_default_branch method."""
+        v = ValidateBranchname()
+        assert v._ValidateBranchname__is_branch_tags(branchname) == expected
+
+    @pytest.mark.parametrize(
+        ['branchname', 'expected'],
+        [
+            pytest.param('main', True, marks=[]),
+            pytest.param('master', True, marks=[]),
+            pytest.param('develop', False, marks=[]),
+            pytest.param('feature/epoch#1234567890', False, marks=[]),
+            pytest.param('123-jesus-loves-you', False, marks=[]),
+            pytest.param('wip-fix-bug', False, marks=[]),
+            pytest.param('dev', False, marks=[]),
+            pytest.param('tags', False, marks=[]),
+        ],
+    )
+    def test_is_main_branch(self, *, branchname: str, expected: bool) -> None:
+        """Test is_default_branch method."""
+        v = ValidateBranchname()
+        assert v._ValidateBranchname__is_branch_main(branchname) == expected
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -57,10 +88,7 @@ class TestCaseValidateBranchname:
     def test_is_branch_main(self, branchname, expected) -> None:
         """Test is_branch_main method."""
         v = ValidateBranchname()
-        assert (
-            v._ValidateBranchname__is_branch_main(branchname)
-            is expected
-        )
+        assert v._ValidateBranchname__is_branch_main(branchname) is expected
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -79,7 +107,11 @@ class TestCaseValidateBranchname:
             ('123', True),
         ],
     )
-    def test_is_not_matches_rule(self, *, branchname: str, expected: bool) -> None:
+    def test_is_not_matches_rule(
+        self, *, branchname: str, expected: bool
+    ) -> None:
         """Test matches_rule method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_not_matches_rule(branchname) == expected
+        assert (
+            v._ValidateBranchname__is_not_matches_rule(branchname) == expected
+        )

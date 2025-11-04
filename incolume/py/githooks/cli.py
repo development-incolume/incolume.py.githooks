@@ -133,12 +133,27 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
         type=Path,
         help='Arquivo de mensagem de commit',
     )
-    # parser.add_argument(
-    #     'commit_source', default='', help='Origem do commit (pode ser vazio)'
-    # )
-    # parser.add_argument(
-    #     'commit_hash', default='', help='Hash do commit (pode ser vazio)'
-    # )
+    parser.add_argument(
+        '--dev',
+        default=False,
+        dest='with_dev',
+        action='store_true',
+        help='Consider dev as protected branch.',
+    )
+    parser.add_argument(
+        '--tags',
+        default=False,
+        dest='with_tags',
+        action='store_true',
+        help='Consider tags as protected branch.',
+    )
+    parser.add_argument(
+        '--main',
+        default=False,
+        dest='with_main',
+        action='store_true',
+        help='Consider main as protected branch.',
+    )
     parser.add_argument(
         '--nonexequi',
         default=False,
@@ -153,7 +168,11 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return SUCCESS.value
 
-    return ValidateBranchname().is_valid()
+    return ValidateBranchname().is_valid(
+        with_dev=args.with_dev,
+        with_tags=args.with_tags,
+        with_main=args.with_main,
+    )
 
 
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
