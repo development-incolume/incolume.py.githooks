@@ -148,11 +148,11 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
         help='Consider tags as protected branch.',
     )
     parser.add_argument(
-        '--main',
-        default=False,
+        '--not-main',
+        default=True,
         dest='protected_main',
-        action='store_true',
-        help='Consider main as protected branch.',
+        action='store_false',
+        help='Desconsider main as protected branch.',
     )
     parser.add_argument(
         '--nonexequi',
