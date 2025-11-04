@@ -1,4 +1,5 @@
 """Module to validate branch name."""
+# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -86,7 +87,7 @@ class ValidateBranchname:
                 "\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or"
                 "\n - Syntaxe 2: '<issue-id>-descrição-da-issue'; or"
                 "\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
-                "\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"  # noqa: E501
+                "\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"
             )
             return True
         return False
@@ -97,34 +98,34 @@ class ValidateBranchname:
         Args:
           kwargs:
             branchname (str, Active branch): Branch name to validate.
-            with_dev (bool, False): Consider dev as protected branch.
-            with_tags (bool, False): Consider tags as protected branch.
-            with_main (bool, True): Consider main/master as protected branch.
+            protected_dev (bool, False): Consider dev as protected branch.
+            protected_tags (bool, False): Consider tags as protected branch.
+            protected_main (bool, True): Consider main/master as protected branch.
 
         Returns:
             int: Status code.
 
         """
         branchname = kwargs.get('branchname') or self.branchname
-        with_dev = kwargs.get('with_dev', False)
-        with_tags = kwargs.get('with_tags', False)
-        with_main = kwargs.get('with_main', True)
+        protected_dev = kwargs.get('protected_dev', False)
+        protected_tags = kwargs.get('protected_tags', False)
+        protected_main = kwargs.get('protected_main', True)
 
         ic(branchname)
         ic(self.result)
         msg: str = ''
 
-        if with_main and self.__is_branch_main(branchname):
+        if protected_main and self.__is_branch_main(branchname):
             ic('is main protected branches')
             self.result.code = FAILURE
             msg += self.violation_text
 
-        if with_dev and self.__is_branch_dev(branchname):
+        if protected_dev and self.__is_branch_dev(branchname):
             ic('is dev protected branches')
             self.result.code = FAILURE
             msg += self.violation_text
 
-        if with_tags and self.__is_branch_tags(branchname):
+        if protected_tags and self.__is_branch_tags(branchname):
             ic('is tags protected branches')
             self.result.code = FAILURE
             msg += self.violation_text

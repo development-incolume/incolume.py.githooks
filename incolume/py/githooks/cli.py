@@ -136,21 +136,21 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         '--dev',
         default=False,
-        dest='with_dev',
+        dest='protected_dev',
         action='store_true',
         help='Consider dev as protected branch.',
     )
     parser.add_argument(
         '--tags',
         default=False,
-        dest='with_tags',
+        dest='protected_tags',
         action='store_true',
         help='Consider tags as protected branch.',
     )
     parser.add_argument(
         '--main',
         default=False,
-        dest='with_main',
+        dest='protected_main',
         action='store_true',
         help='Consider main as protected branch.',
     )
@@ -169,9 +169,9 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
         return SUCCESS.value
 
     return ValidateBranchname().is_valid(
-        with_dev=args.with_dev,
-        with_tags=args.with_tags,
-        with_main=args.with_main,
+        protected_dev=args.protected_dev,
+        protected_tags=args.protected_tags,
+        protected_main=args.protected_main,
     )
 
 
