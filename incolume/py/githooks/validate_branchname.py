@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+from dataclasses import asdict, dataclass, field
 
 import rich
 from icecream import ic
@@ -19,21 +20,23 @@ from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
 debug_enable()
 
-
+@dataclass
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    def __init__(self) -> None:
-        """Init."""
-        self.msg_ok = '[green]Branching name rules. [OK][/green]'
-        self.msg_refused = (
-            '[red]Your commit was rejected due to branching name '
-            'incompatible with rules.'
-            '{}[/red]'
-        )
-        self.violation_text = ''
-        self.result: Result = Result()
-        self.branchname = get_branchname()
+    msg_ok: str = field('[green]Branching name rules. [OK][/green]')
+    msg_refused: str = field(
+        '[red]Your commit was rejected due to branching name '
+        'incompatible with rules.'
+        '{}[/red]'
+    )
+    violation_text: str = field(default='')
+    result: Result = field(default=Result)
+    branchname: str = field(default=get_branchname)
+
+    def asdict(self) -> dict:
+        """Self dict."""
+        return asdict(self)
 
     def __is_branch_dev(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
