@@ -76,6 +76,7 @@ class ValidateBranchname:
         """Check if the branch name is refused."""
         branchname = branchname or self.branchname
         r = re.match(RULE_BRANCHNAME_REFUSED, branchname, flags=re.IGNORECASE)
+        ic(r)
         if result := bool(r):
             self.violation_text = '\n - Can not be WIP (Work in Progress)'
         return result
