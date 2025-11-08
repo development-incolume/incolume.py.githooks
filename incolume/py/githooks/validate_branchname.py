@@ -20,19 +20,20 @@ from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
 debug_enable()
 
+
 @dataclass
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    msg_ok: str = field('[green]Branching name rules. [OK][/green]')
+    msg_ok: str = field(default='[green]Branching name rules. [OK][/green]')
     msg_refused: str = field(
-        '[red]Your commit was rejected due to branching name '
+        default='[red]Your commit was rejected due to branching name '
         'incompatible with rules.'
         '{}[/red]'
     )
     violation_text: str = field(default='')
     result: Result = field(default=Result)
-    branchname: str = field(default=get_branchname)
+    branchname: str = field(default_factory=get_branchname)
 
     def asdict(self) -> dict:
         """Self dict."""
