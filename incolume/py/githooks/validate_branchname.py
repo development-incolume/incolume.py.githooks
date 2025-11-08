@@ -39,6 +39,18 @@ class ValidateBranchname:
         """Self dict."""
         return asdict(self)
 
+    def __is_length_valid(self, branchname: str = '') -> bool:
+        """Check if the branch name length is valid."""
+        branchname = branchname or self.branchname
+        regex: str = r'^[\w\d_-]{3,255}$'
+
+        if result := not bool(re.match(regex, branchname)):
+            self.violation_text = (
+                f'\n - Branch name "{branchname}" length is invalid.'
+                ' Min 3 and Max 255 characters.'
+            )
+        return result
+
     def __is_branch_dev(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
         branchname = branchname or self.branchname
