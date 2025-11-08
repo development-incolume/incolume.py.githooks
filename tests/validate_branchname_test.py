@@ -9,6 +9,17 @@ from incolume.py.githooks.validate_branchname import ValidateBranchname
 class TestCaseValidateBranchname:
     """Test class for ValidateBranchname."""
 
+    def test_asdict(self) -> None:
+        """Test asdict method."""
+        v = ValidateBranchname()
+        result = v.asdict()
+        assert isinstance(result, dict)
+        assert 'msg_ok' in result
+        assert 'msg_refused' in result
+        assert 'violation_text' in result
+        assert 'result' in result
+        assert 'branchname' in result
+
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
         [
