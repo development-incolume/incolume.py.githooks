@@ -121,10 +121,11 @@ class ValidateBranchname:
         branchname = branchname or self.branchname
         if not bool(re.match(RULE_BRANCHNAME, branchname)):
             self.violation_text = (
-                "\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or"
-                "\n - Syntaxe 2: '<issue-id>-descrição-da-issue'; or"
-                "\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
-                "\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"
+                '\n\n:: Permitted syntaxes:'
+                "\n - #1: 'enhancement-<epoch-timestamp>'; or"
+                "\n - #2: '<issue-id>-descrição-da-issue'; or"
+                "\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
+                "\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"
             )
             return True
         return False
