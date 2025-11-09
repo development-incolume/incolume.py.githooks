@@ -1,8 +1,10 @@
 """Test for module validate_branchname."""
 
-# ruff: noqa: SLF001
+# ruff: noqa: E501 SLF001
 
 import pytest
+from incolume.py.githooks.rules import Status
+from incolume.py.githooks.utils import Result
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 
 
@@ -183,3 +185,31 @@ class TestCaseValidateBranchname:
             v._ValidateBranchname__is_incolume_branch_rule(branchname)
             is expected
         )
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                'wip',
+                Result(
+                    Status.FAILURE,
+                    """Your commit was rejected due to branching name incompatible with rules.
+ - Can not be WIP (Work in Progress)
+
+:: Permitted syntaxes:
+ - #1: 'enhancement-<epoch-timestamp>'; or
+ - #2: '<issue-id>-descrição-da-issue'; or
+ - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or
+ - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'""",
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_is_valid(self, entrance, expected, capsys) -> None:
+        """Test validate method."""
+        v = ValidateBranchname()
+        captured = capsys.readouterr()
+        result = v.is_valid(entrance)
+        assert expected.code.value == result
+        assert expected.message == captured.out.strip()
