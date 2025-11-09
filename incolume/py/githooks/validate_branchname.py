@@ -6,8 +6,8 @@ from __future__ import annotations
 import re
 from dataclasses import asdict, dataclass, field
 
-import rich
 from icecream import ic
+from rich.console import Console
 
 from incolume.py.githooks.rules import (
     FAILURE,
@@ -151,6 +151,7 @@ class ValidateBranchname:
         protected_tags = kwargs.get('protected_tags', False)
         protected_main = kwargs.get('protected_main', True)
 
+        console = Console()
         ic(branchname)
         ic(self.result)
         msg: str = ''
@@ -181,9 +182,9 @@ class ValidateBranchname:
             msg += self.violation_text
 
         if self.result.code == FAILURE:
-            rich.print(self.msg_refused.format(msg))
+            console.print(self.msg_refused.format(msg))
         else:
-            rich.print(self.msg_ok)
+            console.print(self.msg_ok)
         return self.result.code.value
 
 
