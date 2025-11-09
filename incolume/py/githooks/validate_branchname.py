@@ -54,7 +54,7 @@ class ValidateBranchname:
     def __is_branch_dev(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
         branchname = branchname or self.branchname
-        result = branchname == ProtectedBranchName.DEV.value
+        result = branchname in {ProtectedBranchName.DEV.value, 'development'}
         if result:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
