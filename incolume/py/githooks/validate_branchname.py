@@ -87,7 +87,8 @@ class ValidateBranchname:
     def __is_refused(self, branchname: str = '') -> bool:
         """Check if the branch name is refused."""
         branchname = branchname or self.branchname
-        r = re.match(RULE_BRANCHNAME_REFUSED, branchname, flags=re.IGNORECASE)
+        regex: str = RULE_BRANCHNAME_REFUSED
+        r = re.match(regex, branchname, flags=re.IGNORECASE)
         ic(r)
         if result := bool(r):
             self.violation_text = '\n - Can not be WIP (Work in Progress)'
@@ -130,12 +131,13 @@ class ValidateBranchname:
             return True
         return False
 
-    def is_valid(self, **kwargs: str) -> int:
+    def is_valid(self, branchname: str = '', **kwargs: str) -> int:
         """Validate branch name.
 
         Args:
+          branchname (str, Active branch): Branch name to validate.
+
           kwargs:
-            branchname (str, Active branch): Branch name to validate.
             protected_dev (bool, False): Consider dev as protected branch.
             protected_tags (bool, False): Consider tags as protected branch.
             protected_main (bool, True): Consider main/master as protected branch.
@@ -144,7 +146,7 @@ class ValidateBranchname:
             int: Status code.
 
         """
-        branchname = kwargs.get('branchname') or self.branchname
+        branchname = branchname or kwargs.get('branchname') or self.branchname
         protected_dev = kwargs.get('protected_dev', False)
         protected_tags = kwargs.get('protected_tags', False)
         protected_main = kwargs.get('protected_main', True)
