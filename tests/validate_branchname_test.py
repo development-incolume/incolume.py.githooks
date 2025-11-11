@@ -11,16 +11,22 @@ from incolume.py.githooks.validate_branchname import ValidateBranchname
 class TestCaseValidateBranchname:
     """Test class for ValidateBranchname."""
 
-    def test_asdict(self) -> None:
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param('msg_ok', marks=[]),
+            pytest.param('msg_refused', marks=[]),
+            pytest.param('violation_text', marks=[]),
+            pytest.param('result', marks=[]),
+            pytest.param('branchname', marks=[]),
+        ],
+    )
+    def test_asdict(self, entrance: str) -> None:
         """Test asdict method."""
         v = ValidateBranchname()
         result = v.asdict()
         assert isinstance(result, dict)
-        assert 'msg_ok' in result
-        assert 'msg_refused' in result
-        assert 'violation_text' in result
-        assert 'result' in result
-        assert 'branchname' in result
+        assert entrance in result
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
