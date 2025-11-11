@@ -92,7 +92,7 @@ class ValidateBranchname:
         result = re.match(regex, branchname, flags=re.IGNORECASE)
         ic(result)
         if result:
-            setattr('self.violation_text', '\n - Can not be WIP (Work in Progress)')
+            self.violation_text = '\n - Can not be WIP (Work in Progress)'
         return bool(result)
 
     def __is_github_branch(self, branchname: str = '') -> bool:

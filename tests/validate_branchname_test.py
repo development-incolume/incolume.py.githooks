@@ -77,10 +77,10 @@ class TestCaseValidateBranchname:
     @pytest.mark.parametrize(
         ['branchname', 'violation_txt', 'expected'],
         [
-            ('WIP', 'aa', True),
-            ('Wip', '', True),
-            ('wip', '', True),
-            ('wip-fix-bug', '', True),
+            ('WIP', '\n - Can not be WIP (Work in Progress)', True),
+            ('Wip', '\n - Can not be WIP (Work in Progress)', True),
+            ('wip', '\n - Can not be WIP (Work in Progress)', True),
+            ('wip-fix-bug', '\n - Can not be WIP (Work in Progress)', True),
             ('fix/issue#123', '', False),
             ('enhancement-1627890123', '', False),
         ],
@@ -90,8 +90,8 @@ class TestCaseValidateBranchname:
     ) -> None:
         """Test is_refused method."""
         v = ValidateBranchname()
-        assert v.violation_text == violation_txt
         assert v._ValidateBranchname__is_refused(branchname) == expected
+        assert v.violation_text == violation_txt
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
