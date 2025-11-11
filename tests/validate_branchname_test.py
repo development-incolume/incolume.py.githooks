@@ -113,30 +113,51 @@ class TestCaseValidateBranchname:
         assert v._ValidateBranchname__is_branch_main(branchname) is expected
 
     @pytest.mark.parametrize(
-        ['branchname', 'expected'],
+        ['branchname', 'violation_txt', 'expected'],
         [
-            ('feature/issue#123', False),
-            ('feat/epoch#1627890123', False),
-            ('bugfix/issue#456', False),
-            ('fix/epoch#1627890123', False),
-            ('refactor/epoch#1627890123', False),
-            ('enhancement-1627890123', False),
-            ('789-new-feature', False),
-            ('main', True),
-            ('WIP', True),
-            ('random-branch-name', True),
-            ('feature/invalid#name', True),
-            ('123', True),
+            ('feature/issue#123', '', False),
+            ('feat/epoch#1627890123', '', False),
+            ('bugfix/issue#456', '', False),
+            ('fix/epoch#1627890123', '', False),
+            ('refactor/epoch#1627890123', '', False),
+            ('enhancement-1627890123', '', False),
+            ('789-new-feature', '', False),
+            (
+                'main',
+                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                True,
+            ),
+            (
+                'WIP',
+                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                True,
+            ),
+            (
+                'random-branch-name',
+                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                True,
+            ),
+            (
+                'feature/invalid#name',
+                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                True,
+            ),
+            (
+                '123',
+                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                True,
+            ),
         ],
     )
     def test_is_not_matches_rule(
-        self, *, branchname: str, expected: bool
+        self, *, branchname: str, violation_txt: str, expected: bool
     ) -> None:
         """Test matches_rule method."""
         v = ValidateBranchname()
         assert (
             v._ValidateBranchname__is_not_matches_rule(branchname) == expected
         )
+        assert v.violation_text == violation_txt
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
