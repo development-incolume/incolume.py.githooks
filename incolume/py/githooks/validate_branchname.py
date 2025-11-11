@@ -89,11 +89,11 @@ class ValidateBranchname:
         """Check if the branch name is refused."""
         branchname = branchname or self.branchname
         regex: str = RULE_BRANCHNAME_REFUSED
-        r = re.match(regex, branchname, flags=re.IGNORECASE)
-        ic(r)
-        if result := bool(r):
-            self.violation_text = '\n - Can not be WIP (Work in Progress)'
-        return result
+        result = re.match(regex, branchname, flags=re.IGNORECASE)
+        ic(result)
+        if result:
+            setattr('self.violation_text', '\n - Can not be WIP (Work in Progress)')
+        return bool(result)
 
     def __is_github_branch(self, branchname: str = '') -> bool:
         """Check if the branchname is a GitHub rule."""
