@@ -29,6 +29,20 @@ class TestCaseValidateBranchname:
         assert entrance in result
 
     @pytest.mark.parametrize(
+        ['branchname', 'violation_txt', 'expected'],
+        [
+            pytest.param('main', '', True, marks=[]),
+        ],
+    )
+    def test_is_lenght_valid(
+        self, branchname: str, violation_txt: str, expected: bool
+    ) -> None:
+        """Test if lenght branchname is valid."""
+        v = ValidateBranchname()
+        assert v._ValidateBranchname__is_length_valid(branchname) == expected
+        assert v.violation_text == violation_txt
+
+    @pytest.mark.parametrize(
         ['branchname', 'expected'],
         [
             pytest.param('main', False, marks=[]),
@@ -232,7 +246,7 @@ class TestCaseValidateBranchname:
  - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or
  - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'""",
                 ),
-                marks=[],
+                marks=[pytest.mark.skip],
             ),
         ],
     )
