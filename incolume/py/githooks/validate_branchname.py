@@ -44,14 +44,14 @@ class ValidateBranchname:
         branchname = branchname or self.branchname
         regex: str = r'^[\w\d_-]{3,255}$'
         result = re.match(regex, branchname)
-        
+
         if result:
             return True
-        
+
         self.violation_text = (
-                f'\n - Branch name "{branchname}" length is invalid.'
-                ' Min 3 and Max 255 characters.'
-            )
+            f'\n - Branch name "{branchname}" length is invalid.'
+            ' Min 3 and Max 255 characters.'
+        )
         return bool(result)
 
     def __is_branch_dev(self, branchname: str = '') -> bool:

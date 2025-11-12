@@ -32,6 +32,18 @@ class TestCaseValidateBranchname:
         ['branchname', 'violation_txt', 'expected'],
         [
             pytest.param('main', '', True, marks=[]),
+            pytest.param(
+                'ma',
+                '\n - Branch name "ma" length is invalid. Min 3 and Max 255 characters.',
+                False,
+                marks=[],
+            ),
+            pytest.param(
+                'm' * 256,
+                '\n - Branch name "mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm" length is invalid. Min 3 and Max 255 characters.',
+                False,
+                marks=[],
+            ),
         ],
     )
     def test_is_lenght_valid(
