@@ -161,6 +161,11 @@ class TestCaseValidateBranchname:
                 "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
+            (
+                'abc',
+                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                True,
+            ),
         ],
     )
     def test_is_not_matches_rule(
