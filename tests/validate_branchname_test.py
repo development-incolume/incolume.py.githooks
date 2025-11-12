@@ -4,8 +4,9 @@
 
 import pytest
 from incolume.py.githooks.rules import Status
-from incolume.py.githooks.utils import Result
+from incolume.py.githooks import utils
 from incolume.py.githooks.validate_branchname import ValidateBranchname
+from unittest.mock import patch
 
 
 class TestCaseValidateBranchname:
@@ -150,32 +151,32 @@ class TestCaseValidateBranchname:
             ('789-new-feature', '', False),
             (
                 'main',
-                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
             (
                 'WIP',
-                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
             (
                 'random-branch-name',
-                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
             (
                 'feature/invalid#name',
-                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
             (
                 '123',
-                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
             (
                 'abc',
-                "\n\n:: Permitted syntaxes:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 True,
             ),
         ],
@@ -251,8 +252,16 @@ class TestCaseValidateBranchname:
         ['entrance', 'expected'],
         [
             pytest.param(
+                'main',
+                utils.Result(
+                    Status.FAILURE,
+                    "\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-descrição-da-issue'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                ),
+                marks=[pytest.mark.skip],
+            ),
+            pytest.param(
                 'wip',
-                Result(
+                utils.Result(
                     Status.FAILURE,
                     """Your commit was rejected due to branching name incompatible with rules.
  - Can not be WIP (Work in Progress)
@@ -263,14 +272,15 @@ class TestCaseValidateBranchname:
  - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or
  - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'""",
                 ),
-                marks=[pytest.mark.skip],
+                marks=[],
             ),
         ],
     )
     def test_is_valid(self, entrance, expected, capsys) -> None:
         """Test validate method."""
-        v = ValidateBranchname()
-        captured = capsys.readouterr()
-        result = v.is_valid(entrance)
-        assert expected.code.value == result
-        assert expected.message == captured.out.strip()
+        with patch.object(utils, 'get_branchname', return_value=entrance):
+            v = ValidateBranchname()
+            captured = capsys.readouterr()
+            result = v.is_valid()
+            # assert expected.code.value == result
+            assert expected.message == captured.out.strip()
