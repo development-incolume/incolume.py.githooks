@@ -35,7 +35,7 @@ class TestCaseValidateBranchname:
         ],
     )
     def test_is_lenght_valid(
-        self, branchname: str, violation_txt: str, expected: bool
+        self, *, branchname: str, violation_txt: str, expected: bool
     ) -> None:
         """Test if lenght branchname is valid."""
         v = ValidateBranchname()
