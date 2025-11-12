@@ -20,7 +20,7 @@ from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS, Status
 from incolume.py.githooks import utils
 from unittest.mock import patch
-from . import Expected, MainEntrance
+from tests import Expected, MainEntrance
 
 
 if TYPE_CHECKING:
