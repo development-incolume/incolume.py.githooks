@@ -128,7 +128,7 @@ class ValidateBranchname:
             self.violation_text = (
                 '\n\n:: These syntaxes are allowed for branchname:'
                 "\n - #1: 'enhancement-<epoch-timestamp>'; or"
-                "\n - #2: '<issue-id>-descrição-da-issue'; or"
+                "\n - #2: '<issue-id>-issue-description'; or"
                 "\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
                 "\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"
             )
