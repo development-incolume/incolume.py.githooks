@@ -26,9 +26,9 @@ debug_enable()
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    msg_ok: str = '[green]Branching name rules. [OK][/green]'
+    msg_ok: str = '\n[green]Branching name rules. [OK][/green]'
     msg_refused: str = (
-        '[red]Your commit was rejected due to branching name '
+        '\n[red]Your commit was rejected due to branching name '
         'incompatible with rules.'
         '{}[/red]'
     )
