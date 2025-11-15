@@ -4,9 +4,11 @@
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass, field
 
 import rich
 from icecream import ic
+from rich.console import Console
 
 from incolume.py.githooks.rules import (
     FAILURE,
@@ -20,25 +22,43 @@ from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 debug_enable()
 
 
+@dataclass
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    def __init__(self) -> None:
-        """Init."""
-        self.msg_ok = '[green]Branching name rules. [OK][/green]'
-        self.msg_refused = (
-            '[red]Your commit was rejected due to branching name '
-            'incompatible with rules.'
-            '{}[/red]'
+    msg_ok: str = '\n[green]Branching name rules. [OK][/green]'
+    msg_refused: str = (
+        '\n[red]Your commit was rejected due to branching name '
+        'incompatible with rules.'
+        '{}[/red]'
+    )
+    violation_text: str = ''
+    result: Result = field(default_factory=Result)
+    branchname: str = field(default_factory=get_branchname)
+
+    def asdict(self) -> dict:
+        """Self dict."""
+        return self.__dict__
+
+    def __is_length_valid(self, branchname: str = '') -> bool:
+        """Check if the branch name length is valid."""
+        branchname = branchname or self.branchname
+        regex: str = r'^[\w\d_-]{3,255}$'
+        result = re.match(regex, branchname)
+
+        if result:
+            return True
+
+        self.violation_text = (
+            f'\n - Branch name "{branchname}" length is invalid.'
+            ' Min 3 and Max 255 characters.'
         )
-        self.violation_text = ''
-        self.result: Result = Result()
-        self.branchname = get_branchname()
+        return bool(result)
 
     def __is_branch_dev(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
         branchname = branchname or self.branchname
-        result = branchname == ProtectedBranchName.DEV.value
+        result = branchname in {ProtectedBranchName.DEV.value, 'development'}
         if result:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
@@ -71,10 +91,12 @@ class ValidateBranchname:
     def __is_refused(self, branchname: str = '') -> bool:
         """Check if the branch name is refused."""
         branchname = branchname or self.branchname
-        r = re.match(RULE_BRANCHNAME_REFUSED, branchname, flags=re.IGNORECASE)
-        if result := bool(r):
+        regex: str = RULE_BRANCHNAME_REFUSED
+        result = re.match(regex, branchname, flags=re.IGNORECASE)
+        ic(result)
+        if result:
             self.violation_text = '\n - Can not be WIP (Work in Progress)'
-        return result
+        return bool(result)
 
     def __is_github_branch(self, branchname: str = '') -> bool:
         """Check if the branchname is a GitHub rule."""
@@ -104,20 +126,22 @@ class ValidateBranchname:
         branchname = branchname or self.branchname
         if not bool(re.match(RULE_BRANCHNAME, branchname)):
             self.violation_text = (
-                "\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or"
-                "\n - Syntaxe 2: '<issue-id>-descrição-da-issue'; or"
-                "\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
-                "\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"
+                '\n\n:: These syntaxes are allowed for branchname:'
+                "\n - #1: 'enhancement-<epoch-timestamp>'; or"
+                "\n - #2: '<issue-id>-issue-description'; or"
+                "\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or"
+                "\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'"
             )
             return True
         return False
 
-    def is_valid(self, **kwargs: str) -> int:
+    def is_valid(self, branchname: str = '', **kwargs: str) -> int:
         """Validate branch name.
 
         Args:
+          branchname (str, Active branch): Branch name to validate.
+
           kwargs:
-            branchname (str, Active branch): Branch name to validate.
             protected_dev (bool, False): Consider dev as protected branch.
             protected_tags (bool, False): Consider tags as protected branch.
             protected_main (bool, True): Consider main/master as protected branch.
@@ -126,11 +150,12 @@ class ValidateBranchname:
             int: Status code.
 
         """
-        branchname = kwargs.get('branchname') or self.branchname
+        branchname = branchname or kwargs.get('branchname') or self.branchname
         protected_dev = kwargs.get('protected_dev', False)
         protected_tags = kwargs.get('protected_tags', False)
         protected_main = kwargs.get('protected_main', True)
 
+        console = Console()
         ic(branchname)
         ic(self.result)
         msg: str = ''
@@ -163,7 +188,7 @@ class ValidateBranchname:
         if self.result.code == FAILURE:
             rich.print(self.msg_refused.format(msg))
         else:
-            rich.print(self.msg_ok)
+            console.print(self.msg_ok)
         return self.result.code.value
 
 

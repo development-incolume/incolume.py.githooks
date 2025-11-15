@@ -10,7 +10,7 @@ import pytest
 from incolume.py.githooks.rules import FAILURE, SUCCESS, Status
 from incolume.py.githooks.utils import Result
 from incolume.py.githooks.valid_filename import ValidateFilename
-from . import Expected
+from tests import Expected
 from inspect import stack
 
 
