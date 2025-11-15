@@ -180,6 +180,36 @@ class TestCaseAllCLI:
         ['entrance', 'exit_code', 'params', 'message'],
         [
             pytest.param(
+                'main',
+                0,
+                ['', '--not-main'],
+                '',
+                marks=[],
+            ),
+            pytest.param(
+                'master',
+                1,
+                [''],
+                """Your commit was rejected due to branching name incompatible with rules.
+ - Branch name "master" is protected.
+
+:: These syntaxes are allowed for branchname:
+ - #1: 'enhancement-<epoch-timestamp>'; or
+ - #2: '<issue-id>-issue-description'; or
+ - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or
+ - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'""",
+                marks=[
+                    # pytest.mark.xfail(reason='Fix in progress')
+                ],
+            ),
+            pytest.param(
+                'main',
+                1,
+                [''],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
+                marks=[pytest.mark.xfail(reason='Fix in progress')],
+            ),
+            pytest.param(
                 'Wip',
                 1,
                 [''],
@@ -278,27 +308,6 @@ class TestCaseAllCLI:
                 marks=[pytest.mark.xfail(reason='Fix in progress')],
             ),
             pytest.param(
-                'master',
-                1,
-                [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"master\" is protected.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
-            ),
-            pytest.param(
-                'main',
-                1,
-                [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
-            ),
-            pytest.param(
-                'main',
-                1,
-                ['', '--not-main'],
-                '',
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
-            ),
-            pytest.param(
                 'xpto-wip',
                 0,
                 ['', '--nonexequi'],
@@ -311,12 +320,14 @@ class TestCaseAllCLI:
         self, capsys, entrance, exit_code, params, message
     ) -> None:
         """Test check_valid_branchname function."""
-        ic(entrance, exit_code, message)
+        ic(f'{entrance=}, {exit_code=}, {message=}')
 
-        with patch.object(utils, 'get_branchname', return_value=entrance):
+        with patch(
+            'incolume.py.githooks.utils.get_branchname', return_value=entrance
+        ):
             result = cli.check_valid_branchname_cli(params)
-            ic(result)
             captured = capsys.readouterr()
+            ic(result)
             assert message in captured.out.strip()
             assert Status(result) == Status(exit_code)
 
