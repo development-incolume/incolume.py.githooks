@@ -16,12 +16,6 @@ if TYPE_CHECKING:
 
 debug_enable()
 
-logging.basicConfig(
-    level=logging.INFO,
-    filename=Path(__file__).parents[4] / 'logs' / 'githooks.log',
-    filemode='a',
-    encoding='utf-8',
-)
 
 
 def critical_log_call(func: Callable) -> Callable:
@@ -39,10 +33,9 @@ def critical_log_call(func: Callable) -> Callable:
 
         result = func(*args, **kwargs)
 
-        if debug:
-            logging.critical(
-                ic(f'Function {func.__name__} called with critial status.')
-            )
+        logging.critical(
+            ic(f'Function **{func.__name__}** called with critial status.')
+        )
 
         return result
 
