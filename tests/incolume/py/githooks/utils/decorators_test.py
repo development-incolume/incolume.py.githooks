@@ -10,11 +10,19 @@ class TestCaseDecorators:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param('value1', None),
-            pytest.param('data', None),
+            pytest.param(
+                'value1',
+                'Function **sample_function** called with critial status.',
+            ),
+            pytest.param(
+                'data',
+                'Function **sample_function** called with critial status.',
+            ),
         ],
     )
-    def test_critical_log_call(self, entrance: str, expected: None) -> None:
+    def test_critical_log_call(
+        self, caplog, entrance: str, expected: None
+    ) -> None:
         """Test critical_log_call decorator."""
 
         @decorators.critical_log_call
@@ -23,4 +31,5 @@ class TestCaseDecorators:
             return a
 
         result = sample_function(entrance)
-        assert result == expected
+        assert result == entrance
+        assert expected == caplog.records[0].getMessage()
