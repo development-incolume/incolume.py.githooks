@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from icecream import ic
@@ -15,27 +16,6 @@ if TYPE_CHECKING:
 
 debug_enable()
 
-
-def record_log_call(func: Callable) -> Callable:
-    """Decorate log function calls."""
-
-    @wraps(func)
-    def wrapper(*args: str, **kwargs: dict) -> None:
-        """Wrap function to add logging."""
-        debug: bool = debug_var_active()
-
-        if debug:
-            ic.enable()
-            ic(f'Calling function: {func.__name__}')
-            ic(f'Arguments: {args}, {kwargs}')
-
-        result = func(*args, **kwargs)
-
-        logging.info(ic(f'Function {func.__name__} called successfully.'))
-
-        return result
-
-    return wrapper
 
 
 def critical_log_call(func: Callable) -> Callable:
