@@ -1,17 +1,11 @@
 """Module tests."""
 
 from dataclasses import dataclass, field
-from os import getenv
-
-from icecream import ic
 
 from incolume.py.githooks.rules import SUCCESS
+from incolume.py.githooks.utils import debug_enable
 
-DEBUG_MODE = getenv('DEBUG_MODE') or getenv('INCOLUME_DEBUG_MODE') or False
-ic.disable()  # Disable by default
-
-if DEBUG_MODE:
-    ic.enable()
+debug_enable()
 
 
 @dataclass
