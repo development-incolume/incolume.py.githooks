@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from icecream import ic
@@ -15,7 +14,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 debug_enable()
-
 
 
 def critical_log_call(func: Callable) -> Callable:
