@@ -15,16 +15,22 @@ from incolume.py.githooks.rules import Status
 ic.disable()
 
 
-def debug_enable() -> bool:
-    """Enable debug mode."""
-    valid: list = ['1', 'true', 'on']
+def debug_var_active() -> bool:
+    """Check environment variables for debug mode."""
     debug: bool = any(
-        getenv(x, '').casefold() in valid
+        getenv(x, '').casefold() in {'1', 'true', 'on'}
         for x in ('INCOLUME_DEBUG_MODE', 'DEBUG_MODE', 'DEBUG')
     )
 
+    logging.debug(ic(f'Var Debug Mode: {debug}'))
+
+    return debug
+
+
+def debug_enable() -> bool:
+    """Enable debug mode."""
+    debug: bool = debug_var_active()
     ic.disable()  # Disable by default
-    logging.debug(ic(f'{debug=}'))
 
     if debug:
         ic.enable()
