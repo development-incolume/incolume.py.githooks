@@ -244,7 +244,18 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
     args = parser.parse_args(argv)
+
+    if args.nonexequi:
+        return 0
+
     ic(args)
     result = has_private_key(*args.filenames)
     rich.print(result.message)
