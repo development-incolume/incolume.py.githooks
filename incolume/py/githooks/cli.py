@@ -215,8 +215,18 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
         required=False,
         help='Maximum length for a filename.',
     )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
 
     args = parser.parse_args(argv)
+
+    if args.nonexequi:
+        return 0
 
     results: list[Result] = [
         ValidateFilename.is_valid(

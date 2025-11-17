@@ -347,6 +347,7 @@ class TestCaseAllCLI:
             ),
             pytest.param({'x' * 257}, FAILURE, 'Name too long', marks=[]),
             pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
+            pytest.param({'x.py', '--nonexequi'}, 0, '', marks=[]),
             pytest.param(
                 {'xVar.toml'},
                 FAILURE,
