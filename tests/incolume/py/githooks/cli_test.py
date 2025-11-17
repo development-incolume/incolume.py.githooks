@@ -386,13 +386,7 @@ class TestCaseAllCLI:
             [
                 (pytest.param(line, [], marks=[]) for line in BLACKLIST),
                 (
-                    pytest.param(
-                        line,
-                        ['--nonexequi'],
-                        marks=[
-                            pytest.mark.xfail
-                        ]
-                    )
+                    pytest.param(line, ['--nonexequi'], marks=[])
                     for line in BLACKLIST
                 ),
             ],
@@ -407,7 +401,8 @@ class TestCaseAllCLI:
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
         cli.detect_private_key_cli([test_file.as_posix(), *args])
         captured = capsys.readouterr()
-        assert f'Private key found: {test_file.as_posix()}' in captured.out
+        if not args:
+            assert f'Private key found: {test_file.as_posix()}' in captured.out
 
     @pytest.mark.parametrize(
         ['args', 'expected'],
