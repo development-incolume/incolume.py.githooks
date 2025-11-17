@@ -319,11 +319,27 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     return SUCCESS.value
 
 
-def effort_msg_cli() -> int:
+def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     """Run it.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
+    parser = argparse.ArgumentParser(
+        description='Exibe mensagem de esforço após exito do commit.'
+    )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
+
+    args = parser.parse_args(argv)
+
+    if args.nonexequi:
+        return 0
+
     rich.print(effort_msg())
     return 0
 
