@@ -10,8 +10,9 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-10-30:
+## [Unreleased]	 &#8212; 	2025-11-17:
 ### Added
+  - Adicionado ativos de logo, em formato PNG, XCF e AF;
   - Rules.Status(Enum);
   - Rules.ProtectedBranchName(Enum);
   - Parametro `--nonexequi` para inativar qualquer hook do projeto;
