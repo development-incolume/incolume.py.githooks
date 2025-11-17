@@ -168,13 +168,23 @@ class TestCaseAllCLI:
             for n in captured.out.split('\n')
         ) == len(entrance.expected.message)
 
-    def test_check_type_commit_msg_cli(self) -> NoReturn:
+    @pytest.mark.parametrize(
+        'args',
+        [
+            pytest.param([]),
+            pytest.param(['--nonexequi'], marks=[]),
+        ],
+    )
+    def test_check_type_commit_msg_cli(self, args) -> NoReturn:
         """Test CLI for check type commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(b'')
         with pytest.raises(SystemExit):
-            assert cli.check_type_commit_msg_cli([test_file.as_posix()])
+            assert cli.check_type_commit_msg_cli([
+                test_file.as_posix(),
+                *args,
+            ])
 
     @pytest.mark.parametrize(
         ['entrance', 'exit_code', 'params', 'message'],
