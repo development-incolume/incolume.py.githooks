@@ -21,7 +21,7 @@ from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS, Status
 from incolume.py.githooks import utils
 from unittest.mock import patch
 from tests import Expected, MainEntrance
-
+from itertools import chain
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -168,13 +168,23 @@ class TestCaseAllCLI:
             for n in captured.out.split('\n')
         ) == len(entrance.expected.message)
 
-    def test_check_type_commit_msg_cli(self) -> NoReturn:
+    @pytest.mark.parametrize(
+        'args',
+        [
+            pytest.param([]),
+            pytest.param(['--nonexequi'], marks=[]),
+        ],
+    )
+    def test_check_type_commit_msg_cli(self, args) -> NoReturn:
         """Test CLI for check type commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(b'')
         with pytest.raises(SystemExit):
-            assert cli.check_type_commit_msg_cli([test_file.as_posix()])
+            assert cli.check_type_commit_msg_cli([
+                test_file.as_posix(),
+                *args,
+            ])
 
     @pytest.mark.parametrize(
         ['entrance', 'exit_code', 'params', 'message'],
@@ -371,18 +381,28 @@ class TestCaseAllCLI:
         assert expected in captured.out
 
     @pytest.mark.parametrize(
-        'entrance', [pytest.param(line, marks=[]) for line in BLACKLIST]
+        ['entrance', 'args'],
+        chain.from_iterable(
+            [
+                (pytest.param(line, [], marks=[]) for line in BLACKLIST),
+                (
+                    pytest.param(line, ['--nonexequi'], marks=[])
+                    for line in BLACKLIST
+                ),
+            ],
+        ),
     )
-    def test_detect_private_key_cli(self, capsys, entrance) -> NoReturn:
+    def test_detect_private_key_cli(self, capsys, entrance, args) -> NoReturn:
         """Test CLI."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
-        cli.detect_private_key_cli([test_file.as_posix()])
+        cli.detect_private_key_cli([test_file.as_posix(), *args])
         captured = capsys.readouterr()
-        assert f'Private key found: {test_file.as_posix()}' in captured.out
+        if not args:
+            assert f'Private key found: {test_file.as_posix()}' in captured.out
 
     @pytest.mark.parametrize(
         ['args', 'expected'],
