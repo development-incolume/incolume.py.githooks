@@ -347,6 +347,7 @@ class TestCaseAllCLI:
             ),
             pytest.param({'x' * 257}, FAILURE, 'Name too long', marks=[]),
             pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
+            pytest.param({'x.py', '--nonexequi'}, 0, '', marks=[]),
             pytest.param(
                 {'xVar.toml'},
                 FAILURE,
@@ -427,13 +428,23 @@ class TestCaseAllCLI:
         assert Status(result) == Status(expected)
         assert not captured.out
 
-    def test_effort_msg_cli(self, capsys: pytest.CaptureFixture[str]) -> None:
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param({}, 'Boa! Continue trabalhando com', marks=[]),
+            pytest.param({'--nonexequi'}, '', marks=[]),
+        ],
+    )
+    def test_effort_msg_cli(
+        self, capsys: pytest.CaptureFixture[str], entrance: str, expected: str
+    ) -> None:
         """Teste CLI."""
-        result = cli.effort_msg_cli()
+        result = cli.effort_msg_cli(entrance)
         captured = capsys.readouterr()
         assert result == 0
-        assert 'Boa! Continue trabalhando com' in captured.out
-        assert '\033[32m' in captured.out  # Fore.GREEN
+        assert expected in captured.out
+        if not entrance:
+            assert '\033[32m' in captured.out  # Fore.GREEN
 
     @pytest.mark.parametrize(
         'entrance',
