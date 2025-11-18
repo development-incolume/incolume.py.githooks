@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import inspect
 import logging
 import platform
 import sys
@@ -83,6 +84,9 @@ def check_len_first_line_commit_msg_cli(
     )
     args = parser.parse_args(argv)
 
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
+
     if args.nonexequi:
         return result_code.value
 
@@ -117,6 +121,8 @@ def check_type_commit_msg_cli(
         help='Não executar hook.',
     )
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
 
     result = check_type_commit_msg(*args.filenames)
 
@@ -176,6 +182,8 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     logging.debug(platform.python_version_tuple())
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
         return SUCCESS.value
@@ -224,6 +232,8 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
         return 0
@@ -262,6 +272,8 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
         help='Não executar hook.',
     )
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
         return 0
@@ -311,6 +323,8 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
     commit_source = '' or args.commit_source
 
     ic(args)
@@ -339,6 +353,8 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
         return 0
@@ -371,6 +387,8 @@ def clean_commit_msg_cli(
     parser.add_argument('commit_source', help='Commit source')
     parser.add_argument('commit_hash', help='Commit hash')
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
     commit_msg_file = args.commit_msg_file
     commit_source = args.commit_source
     commit_hash = args.commit_hash
@@ -414,8 +432,13 @@ def validate_format_commit_msg_cli(
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
     args = parser.parse_args(argv)
+
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
+
     ic(fl := Path('.git/COMMIT_EDITMSG'))
     ic(fl.is_file())
+
     logging.debug('msgfile: %s', args)
 
     result = validate_format_commit_msg(*args.filenames)
@@ -462,6 +485,8 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
     ic(args)
 
     if not args.nonexequi:
@@ -493,6 +518,8 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
     ic(args)
 
     if not args.nonexequi:
