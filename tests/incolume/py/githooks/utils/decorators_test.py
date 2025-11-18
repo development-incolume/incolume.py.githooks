@@ -1,5 +1,6 @@
 """Test module for decorators."""
 
+import logging
 import pytest
 from incolume.py.githooks.utils import decorators
 
@@ -32,4 +33,9 @@ class TestCaseDecorators:
 
         result = sample_function(entrance)
         assert result == entrance
-        assert expected == caplog.records[0].getMessage()
+
+        with caplog.at_level(logging.CRITICAL, logger="root.baz"):
+            for record in caplog.records:
+                match record.levelname:
+                    case 'CRITICAL':
+                        assert expected == record.getMessage()
