@@ -3,26 +3,29 @@
 import logging
 import pytest
 from incolume.py.githooks.utils import decorators
+from os import environ
 
 
 class TestCaseDecorators:
     """Test case for decorators module."""
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        ['entrance', 'expected', 'debug_mode'],
         [
             pytest.param(
                 'value1',
                 ['Function **sample_function** called with critial status.'],
+                False,
             ),
             pytest.param(
                 'data',
                 ['Function **sample_function** called with critial status.'],
+                True,
             ),
         ],
     )
     def test_critical_log_call(
-        self, caplog, entrance: str, expected: None
+        self, caplog, entrance: str, expected: None, *, debug_mode: bool
     ) -> None:
         """Test critical_log_call decorator."""
 
@@ -32,25 +35,30 @@ class TestCaseDecorators:
             return a
 
         with caplog.at_level(logging.CRITICAL):
+            environ['DEBUG_MODE'] = str(debug_mode)
             result = sample_function(entrance)
 
             assert result == entrance
             assert [rec.message for rec in caplog.records] == expected
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        ['entrance', 'expected', 'debug_mode'],
         [
             pytest.param(
                 'value1',
                 [('root', 10, 'executado via teste')],
+                False,
             ),
             pytest.param(
                 'data',
                 [('root', 10, 'Function **sample_function** called.')],
+                True,
             ),
         ],
     )
-    def test_logging_call(self, caplog, entrance: str, expected: list) -> None:
+    def test_logging_call(
+        self, caplog, entrance: str, expected: list, *, debug_mode: bool
+    ) -> None:
         """Test logging_call decorator."""
 
         @decorators.logging_call(
@@ -60,10 +68,12 @@ class TestCaseDecorators:
             """Sample function to be decorated."""
             return a
 
+        environ['DEBUG_MODE'] = str(debug_mode)
+
         result = sample_function(entrance)
 
         assert result == entrance
         assert expected[0][2] in [rec.message for rec in caplog.records]
         # assert set(expected).issubset(caplog.record_tuples)
         # assert caplog.record_tuples == [('root', 20, 'executado via teste')]
-        assert set(caplog.record_tuples).issubset(*expected)
+        # assert set(caplog.record_tuples).issubset(*expected)

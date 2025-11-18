@@ -31,7 +31,9 @@ def critical_log_call(func: Callable) -> Callable:
 
         result = func(*args, **kwargs)
 
-        logging.critical('Function **%s** called with critial status.', func.__name__)
+        logging.critical(
+            'Function **%s** called with critial status.', func.__name__
+        )
 
         return result
 
