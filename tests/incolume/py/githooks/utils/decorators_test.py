@@ -54,7 +54,7 @@ class TestCaseDecorators:
         """Test logging_call decorator."""
 
         @decorators.logging_call(
-            logging.getLevelName(expected[0][1]), expected[0][2]
+            logging.getLevelNamesMapping().get(expected[0][1]), expected[0][2]
         )
         def sample_function(a: str = 'word') -> None:
             """Sample function to be decorated."""
