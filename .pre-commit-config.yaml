@@ -120,11 +120,13 @@ repos:
       language: python
       entry: effort-msg
       additional_dependencies: [colorama,rich]  # Python dependency for the script
+      always_run: true
+      stages: [post-commit, manual]  # this hook is run at commit time
       args: []
 
     - id: footer-signed-off-by
       name: Incolume - Seting footer with Signed-off-by
-      entry: set-footer-signet-off-by  # script is called from root directory
+      entry: set-footer-signed-off-by  # script is called from root directory
       language: python  # script requires the Python interpreter
     #   require_serial: true  # don't run in parallel because one call of the script parses all files
       additional_dependencies: []  # Python dependency for the script
@@ -132,6 +134,7 @@ repos:
       # types: []  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
       args: []
+      always_run: true
       verbose: true
 
     - id: insert-diff-commit

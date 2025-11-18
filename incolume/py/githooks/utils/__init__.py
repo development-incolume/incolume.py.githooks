@@ -1,9 +1,11 @@
 """Module utils for project."""
 
+# ruff: noqa: S404 S607
+
 from __future__ import annotations
 
 import logging
-import subprocess  # noqa: S404
+import subprocess
 from dataclasses import dataclass
 from os import getenv
 
@@ -46,11 +48,37 @@ class Result:
     message: str = ''
 
 
+def get_signed_off_by() -> str:
+    """Obtém a linha de assinatura 'Signed-off-by' do committer atual.
+
+    Usa `git var GIT_COMMITTER_IDENT` para extrair o nome e email do committer.
+
+    Returns:
+        str: Linha formatada no padrão:
+             "Signed-off-by: Nome <email>"
+
+    Raises:
+        RuntimeError: Se a execução do comando git falhar.
+
+    """
+    try:
+        ident: str = subprocess.check_output(
+            ['git', 'var', 'GIT_COMMITTER_IDENT'], text=True
+        ).strip()
+    except (
+        subprocess.CalledProcessError
+    ) as e:  # pragma: no cover; noqa: S110 TODO cover in future
+        msg = 'Falha ao obter GIT_COMMITTER_IDENT'
+        raise RuntimeError(msg) from e
+
+    return f'Signed-off-by: {ident.split(">", maxsplit=1)[0]}>'
+
+
 def get_branchname() -> str:
     """Get current branch name."""
     branch = (
         subprocess.check_output(
-            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],  # noqa: S607
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
         )
         .strip()
         .decode('utf-8')
@@ -63,7 +91,7 @@ def get_git_diff() -> str:
     """Retorna a saída de `git diff --cached --name-status -r`."""
     try:
         return subprocess.check_output(
-            ['git', 'diff', '--cached', '--name-status', '-r'],  # noqa: S607
+            ['git', 'diff', '--cached', '--name-status', '-r'],
             text=True,
         ).strip()
     except subprocess.CalledProcessError as e:  # pragma: no cover
