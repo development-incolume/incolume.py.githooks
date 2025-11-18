@@ -36,3 +36,30 @@ class TestCaseDecorators:
 
             assert result == entrance
             assert [rec.message for rec in caplog.records] == expected
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                'value1',
+                {('root', 10, 'executado via teste')},
+            ),
+            pytest.param(
+                'data',
+                {('root', 10, 'Function **sample_function** called.')},
+            ),
+        ],
+    )
+    def test_logging_call(self, caplog, entrance: str, expected: None) -> None:
+        """Test logging_call decorator."""
+
+        @decorators.logging_call('info', expected[0][3])
+        def sample_function(a: str = 'word') -> None:
+            """Sample function to be decorated."""
+            return a
+
+        result = sample_function(entrance)
+
+        assert result == entrance
+        # assert [rec.message for rec in caplog.records] == expected
+        assert expected.issubset(caplog.record_tuples)
