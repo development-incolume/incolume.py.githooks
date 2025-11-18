@@ -36,7 +36,7 @@ def debug_enable() -> bool:
 
     if debug:
         ic.enable()
-
+    logging.debug(ic(f'Debug mode {"enabled" if debug else "disabled"}.'))
     return debug
 
 
