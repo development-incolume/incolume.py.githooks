@@ -74,6 +74,3 @@ class TestCaseDecorators:
 
         assert result == entrance
         assert expected[0][2] in [rec.message for rec in caplog.records]
-        # assert set(expected).issubset(caplog.record_tuples)
-        # assert caplog.record_tuples == [('root', 20, 'executado via teste')]
-        # assert set(caplog.record_tuples).issubset(*expected)
