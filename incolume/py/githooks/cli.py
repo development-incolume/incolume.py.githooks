@@ -386,9 +386,20 @@ def clean_commit_msg_cli(
     parser.add_argument('commit_msg_file', help='Filename for commit message')
     parser.add_argument('commit_source', help='Commit source')
     parser.add_argument('commit_hash', help='Commit hash')
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Do not run this hook.',
+    )
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+
+    if args.nonexequi:
+        return SUCCESS
+
     commit_msg_file = args.commit_msg_file
     commit_source = args.commit_source
     commit_hash = args.commit_hash

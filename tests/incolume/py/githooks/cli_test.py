@@ -478,6 +478,15 @@ class TestCaseAllCLI:
                     ),
                 )
             ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: #61 Please enter the commit message',
+                    expected=utils.Result(
+                        SUCCESS, 'feat: #61 Please enter the commit message'
+                    ),
+                    params=['--nonexequi'],
+                ),
+            ),
         ],
     )
     def test_clean_commit_msg_cli(self, entrance) -> NoReturn:
@@ -485,7 +494,12 @@ class TestCaseAllCLI:
         with NamedTemporaryFile() as fl:
             filename = Path(fl.name)
         filename.write_text(entrance.msg_commit, encoding='utf-8')
-        result = cli.clean_commit_msg_cli([filename.as_posix(), '', ''])
+        result = cli.clean_commit_msg_cli([
+            filename.as_posix(),
+            '',
+            '',
+            *entrance.params,
+        ])
         assert result == entrance.expected.code
         assert (
             filename.read_text(encoding='utf-8') == entrance.expected.message
