@@ -447,11 +447,28 @@ def validate_format_commit_msg_cli(
     sys.exit(result.code)
 
 
-def pre_commit_installed_cli() -> int:
+def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     """Run pre-commit-installed hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
+    parser = argparse.ArgumentParser(
+        description='Validade pre-commit binary instalation.'
+    )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
+    args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
+
+    if args.nonexequi:
+        return 0
+
     result = SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)

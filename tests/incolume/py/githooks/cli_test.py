@@ -500,28 +500,36 @@ class TestCaseAllCLI:
             assert cli.validate_format_commit_msg_cli([test_file.as_posix()])
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        ['entrance', 'args', 'expected'],
         [
             pytest.param(
                 '.pre-commit-config.yaml',
+                [],
                 SUCCESS,
                 marks=[],
             ),
             pytest.param(
                 '',
+                [],
                 FAILURE,
+                marks=[],
+            ),
+            pytest.param(
+                '',
+                ['--nonexequi'],
+                SUCCESS,
                 marks=[],
             ),
         ],
     )
-    def test_precommit_installed(self, entrance, expected) -> NoReturn:
+    def test_precommit_installed(self, entrance, args, expected) -> NoReturn:
         """Test for pre-commit installed."""
         result = FAILURE
         with patch.object(Path, 'cwd') as m:
             m.return_value.glob.return_value = (
                 [Path(entrance)] if entrance else []
             )
-            result = cli.pre_commit_installed_cli()
+            result = cli.pre_commit_installed_cli([*args])
         assert Status(result) == Status(expected)
 
     @pytest.mark.parametrize(
