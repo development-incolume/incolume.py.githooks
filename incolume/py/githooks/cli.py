@@ -435,17 +435,26 @@ def clean_commit_msg_cli(
 
 def validate_format_commit_msg_cli(
     argv: Sequence[str] | None = None,
-) -> sys.exit:
+) -> int:
     """Run CLI for prepare-commit-msg hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Do not run this hook.',
+    )
     args = parser.parse_args(argv)
-
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+
+    if args.nonexequi:
+        return 0
 
     ic(fl := Path('.git/COMMIT_EDITMSG'))
     ic(fl.is_file())
@@ -455,7 +464,7 @@ def validate_format_commit_msg_cli(
     result = validate_format_commit_msg(*args.filenames)
 
     rich.print(result.message)
-    sys.exit(result.code)
+    return result.code.value
 
 
 def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:

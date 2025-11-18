@@ -505,13 +505,23 @@ class TestCaseAllCLI:
             filename.read_text(encoding='utf-8') == entrance.expected.message
         )
 
-    def test_prepare_commit_msg_cli(self) -> NoReturn:
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param([], 1, marks=[]),
+            pytest.param(['--nonexequi'], 0, marks=[]),
+        ],
+    )
+    def test_validate_format_commit_msg_cli(
+        self, entrance, expected
+    ) -> NoReturn:
         """Test CLI prepend commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(b'xpto: abc')
-        with pytest.raises(SystemExit):
-            assert cli.validate_format_commit_msg_cli([test_file.as_posix()])
+        entrance.insert(0, test_file.as_posix())
+
+        assert cli.validate_format_commit_msg_cli(entrance) == expected
 
     @pytest.mark.parametrize(
         ['entrance', 'args', 'expected'],
