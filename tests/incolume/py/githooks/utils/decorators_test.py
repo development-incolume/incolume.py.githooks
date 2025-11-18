@@ -46,12 +46,16 @@ class TestCaseDecorators:
         [
             pytest.param(
                 'value1',
-                [('root', 10, 'executado via teste')],
+                ('root', 10, 'executado via teste'),
                 False,
             ),
             pytest.param(
                 'data',
-                [('root', 10, 'Function **sample_function** called.')],
+                (
+                    'root',
+                    10,
+                    'Function **sample_function** called into tests.',
+                ),
                 True,
             ),
         ],
@@ -62,7 +66,7 @@ class TestCaseDecorators:
         """Test logging_call decorator."""
 
         @decorators.logging_call(
-            logging.getLevelName(expected[0][1]), expected[0][2]
+            logging.getLevelName(expected[1]), expected[2]
         )
         def sample_function(a: str = 'word') -> None:
             """Sample function to be decorated."""
@@ -73,4 +77,5 @@ class TestCaseDecorators:
         result = sample_function(entrance)
 
         assert result == entrance
-        assert expected[0][2] in [rec.message for rec in caplog.records]
+        assert expected[2] in [rec.message for rec in caplog.records]
+        assert set(caplog.record_tuples).issuperset({expected})
