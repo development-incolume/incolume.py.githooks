@@ -9,12 +9,13 @@ from pathlib import Path
 
 from icecream import ic
 
+from incolume.py.githooks.core import Result, debug_enable, get_branchname
 from incolume.py.githooks.rules import (
     FAILURE,
     RULE_COMMITFORMAT,
     SUCCESS,
+    TypeCommit,
 )
-from incolume.py.githooks.utils import Result, debug_enable
 
 debug_enable()
 
@@ -47,12 +48,16 @@ MESSAGERROR = """[red]
     [/red]"""
 
 
-def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
-    """Prepend the commit message with `text`."""
+def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
+    """Validate the text of commit message according to current rules.
+
+    Stages:
+      - prepare_commit_msg
+    """
     msgfile = Path(msgfile)
     result = Result(SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
-    logging.debug('%s', str(regex.pattern))
+    logging.debug('%s', regex.pattern)
 
     try:
         with msgfile.open('rb') as f:
@@ -69,9 +74,7 @@ def prepare_commit_msg(msgfile: Path | str | None = None) -> Result:
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
-    regex = re.compile(
-        r'^(feat|fix|chore|docs|style|refactor|test|perf|ci|build):'
-    )
+    regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:
@@ -135,4 +138,30 @@ def check_max_len_first_line_commit_msg(
     if len(first_line) > len_line:
         result.code = FAILURE
         result.message = f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).'
+    return result
+
+
+def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
+    """Automatically prefixing git commit messages.
+
+    Explanation:
+      This will match branch names like, this `feature/ISSUE-123` or `hotfix/ISSUE-1234`
+      and prefixing `[ISSUE-123]` on message git commit, except in master, main, dev or tags.
+
+    """
+    commit_msg_filepath = Path(commit_msg_filepath)
+    result = Result()
+
+    branch = get_branchname()
+
+    regex = r'(feature|hotfix)\/(\w+-\d+)'
+    if re.match(regex, branch):
+        issue = re.match(regex, branch).group(2)
+        with commit_msg_filepath.open('r+', encoding='utf-8') as fh:
+            commit_msg = fh.read()
+            fh.seek(0, 0)
+            fh.write(f'[{issue}] {commit_msg}')
+    elif branch not in {'master', 'dev', 'main', 'tags'}:
+        result.message += '\nIncorrect branch name'
+        result.code |= FAILURE
     return result

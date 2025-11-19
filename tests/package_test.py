@@ -8,6 +8,8 @@ from incolume.py.githooks.rules import (
 )
 import pytest
 from typing import NoReturn
+import rich
+from rich.console import Console
 
 
 class TestCasePackage:
@@ -23,7 +25,7 @@ class TestCasePackage:
             ),
             pytest.param(
                 RULE_BRANCHNAME,
-                '^((enhancement|feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\\-[a-z0-9\\-]+))$',
+                r'^((enhancement-\d{,11})|(feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùüç\-_]+))$',
                 marks=[],
             ),
             pytest.param(
@@ -36,3 +38,17 @@ class TestCasePackage:
     def test_package(self, entrance, expected) -> NoReturn:
         """Test package."""
         assert entrance == expected
+
+    def test_rich_output(self, capsys) -> NoReturn:
+        """Test rich output."""
+        console = Console()
+        console.print('Hello from Rich!')
+        rich.print('[red]Error message[/red]')
+
+        captured = capsys.readouterr()
+
+        assert 'Hello from Rich!' in captured.out
+        assert 'Error message' in captured.out
+        # Note: Rich typically renders ANSI escape codes for styling,
+        # so direct string comparison might need to account for them.
+        # You might need to strip ANSI codes or use a library to parse Rich's output.

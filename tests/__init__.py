@@ -1,17 +1,11 @@
 """Module tests."""
 
-from dataclasses import dataclass
-from os import getenv
+from dataclasses import dataclass, field
 
-from icecream import ic
-
+from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.rules import SUCCESS
 
-DEBUG_MODE = getenv('DEBUG_MODE') or getenv('INCOLUME_DEBUG_MODE') or False
-ic.disable()  # Disable by default
-
-if DEBUG_MODE:
-    ic.enable()
+debug_enable()
 
 
 @dataclass
@@ -29,4 +23,5 @@ class MainEntrance:
     commit_msg_file: str = ''
     commit_source: str = ''
     commit_hash: str = ''
+    args: list[str] = field(default_factory=list)
     diff_output: str = ''

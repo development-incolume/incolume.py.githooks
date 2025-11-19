@@ -5,7 +5,7 @@ from __future__ import annotations
 from contextlib import suppress
 from pathlib import Path
 
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.core import debug_enable
 
 with suppress(ImportError, ModuleNotFoundError):
     import tomllib as tomli  # type: ignore[import]

@@ -1,7 +1,7 @@
 """Tests for util."""
 
 import pytest
-from incolume.py.githooks import utils
+from incolume.py.githooks import core
 from incolume.py.githooks.rules import TypeCommit
 from unittest import mock
 import os
@@ -55,11 +55,20 @@ class TestCaseUtilsEnviron:
         """Test debug enable."""
         with mock.patch.dict(os.environ, clear=True):
             os.environ[envname] = str(entrance)
-            assert utils.debug_enable() is expected
+            assert core.debug_enable() is expected
 
 
 class TestCaseUtilsModule:
     """Testcase for utils module."""
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [pytest.param('A\tincolume/py/githooks/module_xpto.py', marks=[])],
+    )
+    def test_get_diff(self, entrance, mocker) -> None:
+        """Test get_diff_files function."""
+        mocker.patch('subprocess.check_output', return_value=entrance)
+        assert core.get_git_diff() == entrance
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
@@ -98,7 +107,7 @@ class TestCaseUtilsModule:
             pytest.param('BugFix ', 'fix', marks=[]),
             pytest.param(' BugFix', 'fix', marks=[]),
             pytest.param(
-                'bug',
+                'buggy',
                 {'expected_exception': ValueError, 'match': None},
                 marks=[],
             ),
@@ -122,6 +131,6 @@ class TestCaseUtilsModule:
     def test_get_branchname(self, entrance: str) -> None:
         """Test for get branch names."""
         with patch.object(
-            utils, 'check_output', return_value=entrance.encode()
+            core.subprocess, 'check_output', return_value=entrance.encode()
         ):
-            assert utils.get_branchname() == entrance.strip()
+            assert core.get_branchname() == entrance.strip()
