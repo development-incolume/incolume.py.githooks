@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 
 from incolume.py.githooks.core import debug_enable
-from incolume.py.githooks.rules import SUCCESS
+from incolume.py.githooks.core.rules import SUCCESS
 
 debug_enable()
 

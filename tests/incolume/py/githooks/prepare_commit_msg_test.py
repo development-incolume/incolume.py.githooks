@@ -11,7 +11,7 @@ from unittest.mock import patch
 from icecream import ic
 import pytest
 from incolume.py.githooks.core import Result
-from incolume.py.githooks.rules import SUCCESS, FAILURE
+from incolume.py.githooks.core.rules import SUCCESS, FAILURE
 import incolume.py.githooks.prepare_commit_msg as pkg
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path

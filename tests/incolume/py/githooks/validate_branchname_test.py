@@ -3,7 +3,7 @@
 # ruff: noqa: E501 SLF001
 
 import pytest
-from incolume.py.githooks.rules import Status
+from incolume.py.githooks.core.rules import Status
 from incolume.py.githooks import core
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from icecream import ic

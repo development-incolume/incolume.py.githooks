@@ -1,7 +1,7 @@
 """Test for rules module."""
 
 import pytest
-import incolume.py.githooks.rules as pkg
+import incolume.py.githooks.core.rules as pkg
 
 
 class TestCaseRules:

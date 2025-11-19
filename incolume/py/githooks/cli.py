@@ -19,6 +19,11 @@ from incolume.py.githooks.core import (
     debug_enable,
     get_git_diff,
 )
+from incolume.py.githooks.core.rules import (
+    FAILURE,
+    SUCCESS,
+    Status,
+)
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg
 from incolume.py.githooks.footer_signedoffby import (
@@ -32,11 +37,6 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_min_len_first_line_commit_msg,
     check_type_commit_msg,
     validate_format_commit_msg,
-)
-from incolume.py.githooks.rules import (
-    FAILURE,
-    SUCCESS,
-    Status,
 )
 from incolume.py.githooks.valid_filename import ValidateFilename
 from incolume.py.githooks.validate_branchname import ValidateBranchname

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import secrets
 
-from incolume.py.githooks.rules import MESSAGES
+from incolume.py.githooks.core.rules import MESSAGES
 
 
 def get_msg(*, fixed: bool = False, messages: list[str] | None = None) -> str:

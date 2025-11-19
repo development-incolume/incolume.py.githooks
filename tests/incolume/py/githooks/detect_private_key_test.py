@@ -12,7 +12,7 @@ from icecream import ic
 from tempfile import gettempdir
 import pytest
 
-from incolume.py.githooks.rules import Status, SUCCESS, FAILURE
+from incolume.py.githooks.core.rules import Status, SUCCESS, FAILURE
 
 if TYPE_CHECKING:
     from collections.abc import Callable

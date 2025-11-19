@@ -6,7 +6,7 @@ import pytest
 from icecream import ic
 
 from incolume.py.githooks import __version__
-from incolume.py.githooks.rules import REGEX_SEMVER
+from incolume.py.githooks.core.rules import REGEX_SEMVER
 
 
 @pytest.mark.fasttest

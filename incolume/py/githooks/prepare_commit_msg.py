@@ -10,7 +10,7 @@ from pathlib import Path
 from icecream import ic
 
 from incolume.py.githooks.core import Result, debug_enable, get_branchname
-from incolume.py.githooks.rules import (
+from incolume.py.githooks.core.rules import (
     FAILURE,
     RULE_COMMITFORMAT,
     SUCCESS,

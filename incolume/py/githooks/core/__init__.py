@@ -11,8 +11,8 @@ from os import getenv
 
 from icecream import ic
 
-from incolume.py.githooks.rules import SUCCESS as SUCCESS
-from incolume.py.githooks.rules import Status
+from incolume.py.githooks.core.rules import SUCCESS as SUCCESS
+from incolume.py.githooks.core.rules import Status
 
 ic.disable()
 

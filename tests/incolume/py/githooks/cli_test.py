@@ -17,7 +17,7 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
-from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS, Status
+from incolume.py.githooks.core.rules import FAILURE, MESSAGES, SUCCESS, Status
 from incolume.py.githooks import core
 from unittest.mock import patch
 from tests import Expected, MainEntrance
