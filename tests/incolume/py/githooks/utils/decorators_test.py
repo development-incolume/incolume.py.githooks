@@ -58,6 +58,11 @@ class TestCaseDecorators:
                 ),
                 True,
             ),
+            pytest.param(
+                'NOSET',
+                ('root', 0, 'executado via teste por decorador'),
+                False,
+            ),
         ],
     )
     def test_logging_call(
