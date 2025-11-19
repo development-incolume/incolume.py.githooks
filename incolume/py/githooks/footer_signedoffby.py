@@ -8,7 +8,7 @@ import shutil
 import subprocess
 from typing import TYPE_CHECKING
 
-from incolume.py.githooks.utils import get_signed_off_by
+from incolume.py.githooks.core import get_signed_off_by
 
 if TYPE_CHECKING:
     from pathlib import Path

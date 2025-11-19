@@ -10,7 +10,7 @@ from typing import NoReturn
 from unittest.mock import patch
 from icecream import ic
 import pytest
-from incolume.py.githooks.utils import Result
+from incolume.py.githooks.core import Result
 from incolume.py.githooks.rules import SUCCESS, FAILURE
 import incolume.py.githooks.prepare_commit_msg as pkg
 from tempfile import NamedTemporaryFile, gettempdir

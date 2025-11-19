@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass, field
 
+from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.rules import SUCCESS
-from incolume.py.githooks.utils import debug_enable
 
 debug_enable()
 
