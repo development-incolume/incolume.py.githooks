@@ -10,14 +10,20 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-11-17:
+## [Unreleased]	 &#8212; 	2025-11-19:
 ### Added
   - Adicionado ativos de logo, em formato PNG, XCF e AF;
+  - Registro rápido de logging via decoradores;
+  - Logging de eventos detalhados com variáveis de ambiente do Sistema Operacional;
+  - Modo verboso ativado com variáveis do sistema operacional;
+  - Criado modulo `core` com as funcionalidades centrais do pacote;
   - Rules.Status(Enum);
   - Rules.ProtectedBranchName(Enum);
   - Parametro `--nonexequi` para inativar qualquer hook do projeto;
 ### Changed
   - Melhoria no help CLI;
+### Removed
+  - Modulo `utils` substituído pelo modulo `core`;
 
 ## [1.8.0]	 &#8212; 	2025-10-20:
 ### Added
