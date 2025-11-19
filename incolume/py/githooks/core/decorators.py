@@ -65,11 +65,8 @@ def logging_call(level: str = '', message: str = '') -> Callable:
                 ic(f'Arguments: {args}, {kwargs}')
 
             result = func(*args, **kwargs)
-            try:
-                getattr(logging, level)(ic(message.format(func.__name__)))
-            except AttributeError:
-                logging.debug(message.format(func.__name__))
 
+            getattr(logging, level)(ic(message.format(func.__name__)))
             return result
 
         return wrapper
