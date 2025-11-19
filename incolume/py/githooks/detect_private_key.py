@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 
 from icecream import ic
 
-from incolume.py.githooks.core import Result, debug_enable
-from incolume.py.githooks.core.rules import Status
+from incolume.py.githooks.core import debug_enable
+from incolume.py.githooks.core.rules import Result, Status
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

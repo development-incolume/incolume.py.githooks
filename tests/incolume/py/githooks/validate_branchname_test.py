@@ -3,13 +3,12 @@
 # ruff: noqa: E501 SLF001
 
 import pytest
-from incolume.py.githooks.core.rules import Status
-from incolume.py.githooks import core
+from incolume.py.githooks.core.rules import Status, Result
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from icecream import ic
+from incolume.py.githooks.core import debug_enable
 
-
-ic(core.debug_enable())
+ic(debug_enable())
 
 
 class TestCaseValidateBranchname:
@@ -257,7 +256,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'main',
                 {},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -266,7 +265,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'dev',
                 {'protected_dev': True},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"dev\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -275,7 +274,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'tags',
                 {'protected_tags': True},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"tags\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -284,7 +283,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'wip',
                 {},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     """Your commit was rejected due to branching name incompatible with rules.
  - Can not be WIP (Work in Progress)
@@ -300,7 +299,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'enhancement-1234567890',
                 {},
-                core.Result(
+                Result(
                     Status.SUCCESS,
                     'Branching name rules. [OK]',
                 ),
@@ -309,7 +308,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 '123-abc-7890',
                 {},
-                core.Result(
+                Result(
                     Status.SUCCESS,
                     'Branching name rules. [OK]',
                 ),
@@ -318,7 +317,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'feature/issue#123',
                 {},
-                core.Result(
+                Result(
                     Status.SUCCESS,
                     'Branching name rules. [OK]',
                 ),
@@ -327,7 +326,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'random-branch-name',
                 {},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),

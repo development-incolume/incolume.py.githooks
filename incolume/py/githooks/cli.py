@@ -15,13 +15,13 @@ from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
-    Result,
     debug_enable,
     get_git_diff,
 )
 from incolume.py.githooks.core.rules import (
     FAILURE,
     SUCCESS,
+    Result,
     Status,
 )
 from incolume.py.githooks.detect_private_key import has_private_key

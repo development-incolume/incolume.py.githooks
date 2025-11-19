@@ -6,13 +6,12 @@ from __future__ import annotations
 
 import logging
 import subprocess
-from dataclasses import dataclass
 from os import getenv
 
 from icecream import ic
 
 from incolume.py.githooks.core.rules import SUCCESS as SUCCESS
-from incolume.py.githooks.core.rules import Status
+from incolume.py.githooks.core.rules import Status as Status
 
 ic.disable()
 
@@ -38,14 +37,6 @@ def debug_enable() -> bool:
         ic.enable()
     logging.debug(ic(f'Debug mode {"enabled" if debug else "disabled"}.'))
     return debug
-
-
-@dataclass
-class Result:
-    """Result dataclass for hooks this project."""
-
-    code: Status = Status.SUCCESS
-    message: str = ''
 
 
 def get_signed_off_by() -> str:
