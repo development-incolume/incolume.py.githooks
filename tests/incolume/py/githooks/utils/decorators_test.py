@@ -2,7 +2,7 @@
 
 import logging
 import pytest
-from incolume.py.githooks.utils import decorators
+from incolume.py.githooks.core import decorators
 from os import environ
 
 

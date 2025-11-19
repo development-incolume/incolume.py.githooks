@@ -9,13 +9,13 @@ from pathlib import Path
 
 from icecream import ic
 
+from incolume.py.githooks.core import Result, debug_enable, get_branchname
 from incolume.py.githooks.rules import (
     FAILURE,
     RULE_COMMITFORMAT,
     SUCCESS,
     TypeCommit,
 )
-from incolume.py.githooks.utils import Result, debug_enable, get_branchname
 
 debug_enable()
 

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from incolume.py.githooks.utils import debug_enable
+from incolume.py.githooks.core import debug_enable
 
 if TYPE_CHECKING:
     from pathlib import Path
