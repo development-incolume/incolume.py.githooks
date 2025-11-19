@@ -58,6 +58,31 @@ class TestCaseDecorators:
                 ),
                 True,
             ),
+            pytest.param(
+                'CRITICAL',
+                ('root', 50, 'critical executado via teste por decorador'),
+                False,
+            ),
+            pytest.param(
+                'WARN',
+                ('root', 30, 'warning executado via teste por decorador'),
+                False,
+            ),
+            pytest.param(
+                'ERROR',
+                ('root', 40, 'error executado via teste por decorador'),
+                False,
+            ),
+            pytest.param(
+                'INFO',
+                ('root', 20, 'info executado via teste por decorador'),
+                False,
+            ),
+            pytest.param(
+                'DEBUG',
+                ('root', 10, 'debug executado via teste por decorador'),
+                False,
+            ),
         ],
     )
     def test_logging_call(
