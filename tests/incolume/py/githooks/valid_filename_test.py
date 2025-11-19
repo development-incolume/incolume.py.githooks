@@ -7,10 +7,14 @@ from tempfile import NamedTemporaryFile, gettempdir
 
 from icecream import ic
 import pytest
-from incolume.py.githooks.rules import FAILURE, SUCCESS, Status
-from incolume.py.githooks.core import Result
+from incolume.py.githooks.core.rules import (
+    Expected,
+    Result,
+    FAILURE,
+    SUCCESS,
+    Status,
+)
 from incolume.py.githooks.valid_filename import ValidateFilename
-from tests import Expected
 from inspect import stack
 
 

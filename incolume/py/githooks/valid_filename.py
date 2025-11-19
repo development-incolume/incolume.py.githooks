@@ -10,8 +10,13 @@ from string import ascii_lowercase, digits
 
 from icecream import ic
 
-from incolume.py.githooks.core import Result, debug_enable
-from incolume.py.githooks.rules import FAILURE, SNAKE_CASE, SUCCESS
+from incolume.py.githooks.core import debug_enable
+from incolume.py.githooks.core.rules import (
+    FAILURE,
+    SNAKE_CASE,
+    SUCCESS,
+    Result,
+)
 
 with suppress(ImportError, ModuleNotFoundError):
     from typing import Self  # type: ignore[import]

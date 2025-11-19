@@ -2,7 +2,7 @@
 
 import pytest
 from incolume.py.githooks import core
-from incolume.py.githooks.rules import TypeCommit
+from incolume.py.githooks.core.rules import TypeCommit
 from unittest import mock
 import os
 from icecream import ic

@@ -17,10 +17,16 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
-from incolume.py.githooks.rules import FAILURE, MESSAGES, SUCCESS, Status
-from incolume.py.githooks import core
+from incolume.py.githooks.core.rules import (
+    Expected,
+    MainEntrance,
+    FAILURE,
+    MESSAGES,
+    SUCCESS,
+    Status,
+    Result,
+)
 from unittest.mock import patch
-from tests import Expected, MainEntrance
 from itertools import chain
 
 if TYPE_CHECKING:
@@ -35,8 +41,8 @@ class Entrance:
     msg_file: str | Path = None
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
-    expected: core.Result = field(
-        default_factory=lambda: core.Result(FAILURE, MESSAGERROR)
+    expected: Result = field(
+        default_factory=lambda: Result(FAILURE, MESSAGERROR)
     )
 
 
@@ -68,7 +74,7 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='docs: #85 Atualizado README.md\nacrescentado os hooks padrões para pre-commit pertinentes ao ecossistema incolume',
-                    expected=core.Result(
+                    expected=Result(
                         message=[
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
@@ -80,7 +86,7 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
-                    expected=core.Result(
+                    expected=Result(
                         SUCCESS,
                         [
                             'Commit minimum length for message is validated',
@@ -93,7 +99,7 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='feat' * 15,
-                    expected=core.Result(
+                    expected=Result(
                         FAILURE,
                         [
                             'Error: Commit subject line exceeds',
@@ -105,7 +111,7 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='feat',
-                    expected=core.Result(
+                    expected=Result(
                         FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of',
@@ -119,7 +125,7 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
-                    expected=core.Result(
+                    expected=Result(
                         SUCCESS,
                         [
                             'Commit minimum length for message is validated',
@@ -133,7 +139,7 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='feat',
                     params=['--nonexequi'],
-                    expected=core.Result(
+                    expected=Result(
                         SUCCESS,
                         [
                             '',
@@ -452,13 +458,13 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='Please enter the commit message\n\n#',
-                    expected=core.Result(SUCCESS, ''),
+                    expected=Result(SUCCESS, ''),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat: #61 Please enter the commit message',
-                    expected=core.Result(
+                    expected=Result(
                         SUCCESS, 'feat: #61 Please enter the commit message'
                     ),
                 )
@@ -472,7 +478,7 @@ class TestCaseAllCLI:
                         '\nB\tfile2.txt'
                         '\n#\n# On branch main\n'
                     ),
-                    expected=core.Result(
+                    expected=Result(
                         SUCCESS,
                         'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
                     ),
@@ -481,7 +487,7 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='feat: #61 Please enter the commit message',
-                    expected=core.Result(
+                    expected=Result(
                         SUCCESS, 'feat: #61 Please enter the commit message'
                     ),
                     params=['--nonexequi'],

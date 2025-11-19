@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import contextlib
+from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Final
 
@@ -115,6 +116,33 @@ class Status(Enum):
     def __ror__(self, value: Self | int) -> Status:
         """Override the | operator to combine Status values."""
         return self.__or__(value)
+
+
+@dataclass
+class Result:
+    """Result dataclass for hooks this project."""
+
+    code: Status = Status.SUCCESS
+    message: str = ''
+
+
+@dataclass
+class Expected:
+    """Expected values."""
+
+    code: Status = Status.SUCCESS
+    message: str = ''
+
+
+@dataclass
+class MainEntrance:
+    """Entrance values."""
+
+    commit_msg_file: str = ''
+    commit_source: str = ''
+    commit_hash: str = ''
+    args: list[str] = field(default_factory=list)
+    diff_output: str = ''
 
 
 SUCCESS: Final[Status] = Status.SUCCESS

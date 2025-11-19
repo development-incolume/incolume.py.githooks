@@ -10,12 +10,13 @@ import rich
 from icecream import ic
 from rich.console import Console
 
-from incolume.py.githooks.core import Result, debug_enable, get_branchname
-from incolume.py.githooks.rules import (
+from incolume.py.githooks.core import debug_enable, get_branchname
+from incolume.py.githooks.core.rules import (
     FAILURE,
     RULE_BRANCHNAME,
     RULE_BRANCHNAME_REFUSED,
     ProtectedBranchName,
+    Result,
     TypeCommit,
 )
 
