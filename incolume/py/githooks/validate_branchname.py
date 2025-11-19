@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass, field
 
@@ -157,7 +158,8 @@ class ValidateBranchname:
         protected_main = kwargs.get('protected_main', True)
 
         console = Console()
-        ic(branchname)
+        logging.debug('detected: %s', ic(branchname))
+
         ic(self.result)
         msg: str = ''
 
