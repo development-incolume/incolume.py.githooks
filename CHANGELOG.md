@@ -10,7 +10,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2025-11-19:
+## [1.9.0]	 &#8212; 	2025-11-19:
 ### Added
   - Adicionado ativos de logo, em formato PNG, XCF e AF;
   - Registro rápido de logging via decoradores;
@@ -161,4 +161,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.6.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.5.0...1.6.0
 [1.7.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...1.7.0
 [1.8.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.7.0...1.8.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...Unreleased
+[1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.9.0
