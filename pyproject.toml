@@ -67,7 +67,7 @@ insert-diff-commit = "incolume.py.githooks.cli:insert_diff_cli"
 is-precommit-installed = "incolume.py.githooks.cli:pre_commit_installed_cli"
 is-valid-branchname = "incolume.py.githooks.cli:check_valid_branchname_cli"
 is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
-is-valid-msg-commit = "incolume.py.githooks.cli:prepare_commit_msg_cli"
+is-valid-msg-commit = "incolume.py.githooks.cli:validate_format_commit_msg_cli"
 set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signedoffby_cli"
 
 [tool.uv]

@@ -478,6 +478,15 @@ class TestCaseAllCLI:
                     ),
                 )
             ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: #61 Please enter the commit message',
+                    expected=utils.Result(
+                        SUCCESS, 'feat: #61 Please enter the commit message'
+                    ),
+                    params=['--nonexequi'],
+                ),
+            ),
         ],
     )
     def test_clean_commit_msg_cli(self, entrance) -> NoReturn:
@@ -485,43 +494,66 @@ class TestCaseAllCLI:
         with NamedTemporaryFile() as fl:
             filename = Path(fl.name)
         filename.write_text(entrance.msg_commit, encoding='utf-8')
-        result = cli.clean_commit_msg_cli([filename.as_posix(), '', ''])
+        result = cli.clean_commit_msg_cli([
+            filename.as_posix(),
+            '',
+            '',
+            *entrance.params,
+        ])
         assert result == entrance.expected.code
         assert (
             filename.read_text(encoding='utf-8') == entrance.expected.message
         )
 
-    def test_prepare_commit_msg_cli(self) -> NoReturn:
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param([], 1, marks=[]),
+            pytest.param(['--nonexequi'], 0, marks=[]),
+        ],
+    )
+    def test_validate_format_commit_msg_cli(
+        self, entrance, expected
+    ) -> NoReturn:
         """Test CLI prepend commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(b'xpto: abc')
-        with pytest.raises(SystemExit):
-            assert cli.validate_format_commit_msg_cli([test_file.as_posix()])
+        entrance.insert(0, test_file.as_posix())
+
+        assert cli.validate_format_commit_msg_cli(entrance) == expected
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        ['entrance', 'args', 'expected'],
         [
             pytest.param(
                 '.pre-commit-config.yaml',
+                [],
                 SUCCESS,
                 marks=[],
             ),
             pytest.param(
                 '',
+                [],
                 FAILURE,
+                marks=[],
+            ),
+            pytest.param(
+                '',
+                ['--nonexequi'],
+                SUCCESS,
                 marks=[],
             ),
         ],
     )
-    def test_precommit_installed(self, entrance, expected) -> NoReturn:
+    def test_precommit_installed(self, entrance, args, expected) -> NoReturn:
         """Test for pre-commit installed."""
         result = FAILURE
         with patch.object(Path, 'cwd') as m:
             m.return_value.glob.return_value = (
                 [Path(entrance)] if entrance else []
             )
-            result = cli.pre_commit_installed_cli()
+            result = cli.pre_commit_installed_cli([*args])
         assert Status(result) == Status(expected)
 
     @pytest.mark.parametrize(

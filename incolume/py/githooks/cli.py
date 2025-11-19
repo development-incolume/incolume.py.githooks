@@ -386,9 +386,20 @@ def clean_commit_msg_cli(
     parser.add_argument('commit_msg_file', help='Filename for commit message')
     parser.add_argument('commit_source', help='Commit source')
     parser.add_argument('commit_hash', help='Commit hash')
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Do not run this hook.',
+    )
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+
+    if args.nonexequi:
+        return SUCCESS
+
     commit_msg_file = args.commit_msg_file
     commit_source = args.commit_source
     commit_hash = args.commit_hash
@@ -424,17 +435,26 @@ def clean_commit_msg_cli(
 
 def validate_format_commit_msg_cli(
     argv: Sequence[str] | None = None,
-) -> sys.exit:
+) -> int:
     """Run CLI for prepare-commit-msg hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Do not run this hook.',
+    )
     args = parser.parse_args(argv)
-
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+
+    if args.nonexequi:
+        return 0
 
     ic(fl := Path('.git/COMMIT_EDITMSG'))
     ic(fl.is_file())
@@ -444,14 +464,31 @@ def validate_format_commit_msg_cli(
     result = validate_format_commit_msg(*args.filenames)
 
     rich.print(result.message)
-    sys.exit(result.code)
+    return result.code.value
 
 
-def pre_commit_installed_cli() -> int:
+def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     """Run pre-commit-installed hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
+    parser = argparse.ArgumentParser(
+        description='Validade pre-commit binary instalation.'
+    )
+    parser.add_argument(
+        '--nonexequi',
+        default=False,
+        dest='nonexequi',
+        action='store_true',
+        help='Não executar hook.',
+    )
+    args = parser.parse_args(argv)
+    logging.info(inspect.stack()[0][3])
+    logging.debug('msgfile: %s', args)
+
+    if args.nonexequi:
+        return 0
+
     result = SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
