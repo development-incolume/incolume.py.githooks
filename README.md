@@ -60,19 +60,25 @@ repos:
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
   # https://github.com/development-incolume/incolume.py.githooks/blob/dev/README.md
-  rev: 1.8.0
+  rev: 1.9.0
   hooks:
     - id: check-len-first-line
+    #   args: [--nonexequi]
     - id: check-precommit-installed
+    #   args: [--nonexequi]
     - id: check-valid-branchnames
+    #   args: [--nonexequi]
     - id: check-valid-filenames
-    #   args: ['--min-len=3', '--max-len=256']
+    #   args: ['--min-len=3', '--max-len=256', '--nonexequi']
     - id: detect-key
+    #   args: [--nonexequi]
     - id: effort-message
+    #   args: [--nonexequi]
     - id: footer-signed-off-by
-    #   args: [--signoff]
+    #   args: [--nonexequi]
     - id: insert-diff-commit
+    #   args: [--nonexequi]
     - id: validate-message-commit
-
+    #   args: [--nonexequi]
 
 ```
