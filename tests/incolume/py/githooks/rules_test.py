@@ -77,3 +77,57 @@ class TestCaseRules:
                 assert pkg.Status(entrance)
         except ValueError:
             assert pkg.Status(entrance)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(0, 0),
+            pytest.param(1, 1),
+        ],
+    )
+    def test_status_casting(self, entrance, expected) -> None:
+        """Casting Status."""
+        assert pkg.Status(entrance).value == expected
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param(0),
+            pytest.param(1),
+        ],
+    )
+    def test_status_value_int(self, entrance) -> None:
+        """Casting Status."""
+        assert isinstance(pkg.Status(entrance).value, int)
+
+    def test_type_commit_tolist(self) -> None:
+        """Test TypeCommit enum."""
+        assert sorted(pkg.TypeCommit.to_list()) == [
+            'build',
+            'chore',
+            'ci',
+            'docs',
+            'feat',
+            'fix',
+            'perf',
+            'refactor',
+            'revert',
+            'style',
+            'test',
+        ]
+
+    def test_type_commit_toset(self) -> None:
+        """Test TypeCommit enum."""
+        assert pkg.TypeCommit.to_set() == {
+            'docs',
+            'build',
+            'feat',
+            'chore',
+            'perf',
+            'refactor',
+            'revert',
+            'style',
+            'test',
+            'ci',
+            'fix',
+        }

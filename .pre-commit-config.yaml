@@ -1,5 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
+
+default_install_hook_types: [pre-commit, pre-push]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
@@ -35,18 +38,21 @@ repos:
     - id: ruff-format
       args: [--config, ruff.toml]
 
-
-- repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: 1.6.0
-  hooks:
-    - id: check-len-first-line
-    - id: check-precommit-installed
-    - id: check-valid-filenames
-      args: ['--min-len=3', '--max-len=256']
-    - id: detect-key
-    - id: effort-message
-    - id: footer-signed-off-by
-    #  args: [--signoff]
+# - repo: https://github.com/development-incolume/incolume.py.githooks
+#   rev: 1.7.0
+#   hooks:
+#     - id: check-len-first-line
+#     #  args: [--nonexequi]
+#     - id: check-precommit-installed
+#     #  args: [--nonexequi]
+#     - id: check-valid-filenames
+#       # args: ['--min-len=3', '--max-len=256', '--nonexequi']
+#     - id: detect-key
+#     #  args: [--nonexequi]
+#     - id: effort-message
+#     #  args: [--nonexequi]
+#     - id: footer-signed-off-by
+#     #  args: [--nonexequi]
 
 
 - repo: local
@@ -57,6 +63,7 @@ repos:
       entry: check-len-first-line
       language: python
       stages: [prepare-commit-msg, manual]
+      args: []
 
     - id: check-precommit-installed
       name: Incolume - check if pre-commit is installed
@@ -65,6 +72,7 @@ repos:
       language: python
       types: [python]
       stages: [pre-commit, pre-push, manual]
+      args: []
 
     - id: check-valid-branchname
       name: Incolume - check if is valid branchnames
@@ -72,6 +80,7 @@ repos:
       entry: is-valid-branchname
       language: python
       stages: [pre-commit, pre-push, manual]
+      args: []
 
     - id: check-valid-filenames
       name: Incolume - check if is valid filenames
@@ -81,6 +90,7 @@ repos:
       additional_dependencies: [icecream,rich]  # Python dependency for the script
       types: [python]
       stages: [pre-commit, pre-push, manual]
+      args: []
 
     - id: clean-commit-message
       name: Incolume - Clean Commit message
@@ -91,6 +101,7 @@ repos:
     #   # files: ^*$  # this catches all .ipynb under examples/
     #   types: [python]  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      args: []
       verbose: false
 
     - id: detect-key
@@ -102,22 +113,28 @@ repos:
       types: [text]
       files: ''  # The pattern of files to run on.
       exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
+      args: []
 
     - id: effort-message
       name: Incolume - Commit Message Effort Hook
       language: python
       entry: effort-msg
       additional_dependencies: [colorama,rich]  # Python dependency for the script
+      always_run: true
+      stages: [post-commit, manual]  # this hook is run at commit time
+      args: []
 
     - id: footer-signed-off-by
       name: Incolume - Seting footer with Signed-off-by
-      entry: set-footer-signet-off-by  # script is called from root directory
+      entry: set-footer-signed-off-by  # script is called from root directory
       language: python  # script requires the Python interpreter
     #   require_serial: true  # don't run in parallel because one call of the script parses all files
       additional_dependencies: []  # Python dependency for the script
     #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
       # types: []  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      args: []
+      always_run: true
       verbose: true
 
     - id: insert-diff-commit
@@ -125,7 +142,8 @@ repos:
       entry: insert-diff-commit
       language: python  # script requires the Python interpreter
       additional_dependencies: []  # Python dependency for the script
-      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      stages: [commit-msg, manual]  # this hook is run at commit time
+      args: []
       verbose: false
 
     - id: validate-message-commit
@@ -137,3 +155,4 @@ repos:
       # files: ^*$  # this catches all .ipynb under examples/
       types_or: [system-verilog]  #
       stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
+      args: []

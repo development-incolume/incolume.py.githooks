@@ -11,4 +11,4 @@ def get_msg(*, fixed: bool = False, messages: list[str] | None = None) -> str:
     """Get message."""
     messages = messages or MESSAGES
     msg = messages[0] if fixed else secrets.choice(messages)
-    return f'\n[green]{msg}[/]\n'
+    return f'\n[green]{msg}[/green]\n'

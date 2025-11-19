@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.8.0"
+version = "1.9.0"
 description = "Hooks git for incolume projects"
 readme = "README.md"
 requires-python = ">=3.10, <4"
@@ -46,6 +46,7 @@ dev = [
     "nbformat>=5.10.4",
     "pre-commit>=4.3.0",
     "pytest-cov>=7.0.0",
+    "pytest-env>=1.2.0",
     "pytest-mock>=3.15.0",
     "ruff>=0.13.0",
 ]
@@ -64,10 +65,10 @@ detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.cli:effort_msg_cli"
 insert-diff-commit = "incolume.py.githooks.cli:insert_diff_cli"
 is-precommit-installed = "incolume.py.githooks.cli:pre_commit_installed_cli"
-is-valid-branchname = "incolume.py.githooks.cli:check_valid_branchname"
+is-valid-branchname = "incolume.py.githooks.cli:check_valid_branchname_cli"
 is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
-is-valid-msg-commit = "incolume.py.githooks.cli:prepare_commit_msg_cli"
-set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signeoffby_cli"
+is-valid-msg-commit = "incolume.py.githooks.cli:validate_format_commit_msg_cli"
+set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signedoffby_cli"
 
 [tool.uv]
 
