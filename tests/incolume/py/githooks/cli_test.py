@@ -200,7 +200,7 @@ class TestCaseAllCLI:
                 0,
                 ['', '--not-main'],
                 '',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[pytest.mark.xfail(reason='False/Positive')],
             ),
             pytest.param(
                 'master',
@@ -263,7 +263,7 @@ class TestCaseAllCLI:
                 1,
                 [''],
                 'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
-                marks=[pytest.mark.skip(reason='Not implemented yet')],
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
             ),
             pytest.param(
                 'jesus-loves-you',
@@ -277,35 +277,35 @@ class TestCaseAllCLI:
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[pytest.mark.xfail(reason='False/Positive')],
             ),
             pytest.param(
                 'refactor/epoch#1234567890',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[pytest.mark.xfail(reason='False/Positive')],
             ),
             pytest.param(
                 'feat/issue#123',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[pytest.mark.xfail(reason='False/Positive')],
             ),
             pytest.param(
                 'enhancement-1234567890',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[pytest.mark.xfail(reason='False/Positive')],
             ),
             pytest.param(
                 '80-açaí-itú-água-é-ação-de-sertões',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[pytest.mark.xfail(reason='False/Positive')],
             ),
             pytest.param(
                 'tags',
@@ -414,7 +414,7 @@ class TestCaseAllCLI:
     @pytest.mark.parametrize(
         ['args', 'expected'],
         [
-            pytest.param(['--help'], '', marks=[pytest.mark.skip]),
+            pytest.param(['--help'], '', marks=[pytest.mark.xfail]),
             pytest.param(['message fake for commit', '', ''], 0, marks=[]),
             pytest.param(
                 ['style: message fake for commit', '', '', '--nonexequi'],
@@ -617,7 +617,7 @@ class TestCaseAllCLI:
                 MainEntrance(args=['--nonexequi']),
                 Expected(SUCCESS, ''),
                 marks=[
-                    # pytest.mark.skip
+                    # pytest.mark.xfail
                 ],
             ),
             pytest.param(
