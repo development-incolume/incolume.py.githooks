@@ -147,7 +147,6 @@ class ValidateFilename:
         )
         logging.debug(msg)
 
-
         if len(refname) < min_len:
             msg_return += f'\n[red]Name too short ({min_len=}): {filename}[/]'
             code_return |= Status.FAILURE

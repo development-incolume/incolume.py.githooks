@@ -37,8 +37,8 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_type_commit_msg,
     validate_format_commit_msg,
 )
-from incolume.py.githooks.valid_filename import ValidateFilename
 from incolume.py.githooks.validate_branchname import ValidateBranchname
+from incolume.py.githooks.validate_filename import ValidateFilename
 
 debug_enable()
 

@@ -14,7 +14,7 @@ from incolume.py.githooks.core.rules import (
     SUCCESS,
     Status,
 )
-from incolume.py.githooks.valid_filename import ValidateFilename
+from incolume.py.githooks.validate_filename import ValidateFilename
 from inspect import stack
 
 
