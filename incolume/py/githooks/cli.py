@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import inspect
 import logging
-import platform
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -181,7 +180,7 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
-    logging.debug(platform.python_version_tuple())
+    # logging.debug(platform.python_version_tuple())
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
 

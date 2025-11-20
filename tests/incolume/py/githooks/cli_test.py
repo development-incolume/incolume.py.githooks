@@ -7,6 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
+import subprocess
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import NoReturn, TYPE_CHECKING
 import pytest
@@ -197,10 +198,10 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 'main',
-                0,
+                1,
                 ['', '--not-main'],
                 '',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[],
             ),
             pytest.param(
                 'master',
@@ -214,112 +215,114 @@ class TestCaseAllCLI:
  - #2: '<issue-id>-issue-description'; or
  - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or
  - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'""",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                marks=[],
             ),
             pytest.param(
                 'main',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'Wip',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'wip',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'WIP',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'template-Wip',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'Wip-test-for-branch',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'todo-test-for-branch',
                 1,
                 [''],
-                'Your commit was rejected due to branching name incompatible with rules.\n - Can be not WIP(Work in Progress)\n',
-                marks=[pytest.mark.skip(reason='Not implemented yet')],
+                "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[
+                    # pytest.mark.xfail(reason='Not implemented yet')
+                ],
             ),
             pytest.param(
                 'jesus-loves-you',
                 1,
                 [''],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 '123-jesus-loves-you',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[],
             ),
             pytest.param(
                 'refactor/epoch#1234567890',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[],
             ),
             pytest.param(
                 'feat/issue#123',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[],
             ),
             pytest.param(
                 'enhancement-1234567890',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[],
             ),
             pytest.param(
                 '80-açaí-itú-água-é-ação-de-sertões',
                 0,
                 [''],
                 'Branching name rules. [OK]',
-                marks=[pytest.mark.skip(reason='False/Positive')],
+                marks=[],
             ),
             pytest.param(
                 'tags',
                 1,
                 ['', '--tags'],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"tags\" is protected.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"tags\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'dev',
                 1,
                 ['', '--dev'],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"dev\" is protected.\n - Syntaxe 1: 'enhancement-<epoch-timestamp>'; or\n - Syntaxe 2: '<issue-id>-descri\xe7\xe3o-da-issue'; or\n - Syntaxe 3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - Syntaxe 4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'\n",
-                marks=[pytest.mark.xfail(reason='Fix in progress')],
+                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"dev\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'xpto-wip',
@@ -336,8 +339,8 @@ class TestCaseAllCLI:
         """Test check_valid_branchname function."""
         ic(f'{entrance=}, {exit_code=}, {message=}')
 
-        with patch(
-            'incolume.py.githooks.core.get_branchname', return_value=entrance
+        with patch.object(
+            subprocess, 'check_output', return_value=bytes(entrance, 'utf-8')
         ):
             result = cli.check_valid_branchname_cli(params)
             captured = capsys.readouterr()
@@ -414,7 +417,7 @@ class TestCaseAllCLI:
     @pytest.mark.parametrize(
         ['args', 'expected'],
         [
-            pytest.param(['--help'], '', marks=[pytest.mark.skip]),
+            pytest.param(['--help'], '', marks=[pytest.mark.xfail]),
             pytest.param(['message fake for commit', '', ''], 0, marks=[]),
             pytest.param(
                 ['style: message fake for commit', '', '', '--nonexequi'],
@@ -617,7 +620,7 @@ class TestCaseAllCLI:
                 MainEntrance(args=['--nonexequi']),
                 Expected(SUCCESS, ''),
                 marks=[
-                    # pytest.mark.skip
+                    # pytest.mark.xfail
                 ],
             ),
             pytest.param(
