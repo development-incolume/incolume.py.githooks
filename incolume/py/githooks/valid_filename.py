@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from contextlib import suppress
 from dataclasses import dataclass, field
@@ -12,10 +13,9 @@ from icecream import ic
 
 from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.core.rules import (
-    FAILURE,
     SNAKE_CASE,
-    SUCCESS,
     Result,
+    Status,
 )
 
 with suppress(ImportError, ModuleNotFoundError):
@@ -39,7 +39,7 @@ class ValidateFilename:
     considers_underscore: bool = True
     min_len: int = 3
     max_len: int = 256
-    code: int = field(default=SUCCESS, init=False)
+    code: int = field(default=Status.SUCCESS, init=False)
     message: str = field(default='', init=False)
 
     def __post_init__(self) -> None:
@@ -65,7 +65,7 @@ class ValidateFilename:
             self.message += (
                 f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
             )
-            self.code |= FAILURE
+            self.code |= Status.FAILURE
         return self
 
     def is_too_long(self) -> Self:
@@ -74,7 +74,7 @@ class ValidateFilename:
             self.message += (
                 f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
             )
-            self.code |= FAILURE
+            self.code |= Status.FAILURE
         return self
 
     def is_snake_case(self) -> Self:
@@ -86,7 +86,7 @@ class ValidateFilename:
             self.message += (
                 f'\n[red]Filename is not in snake_case: {self.filename}[/]'
             )
-            self.code |= FAILURE
+            self.code |= Status.FAILURE
         return self
 
     def __has_test_in_pathname(self) -> Self:
@@ -134,28 +134,33 @@ class ValidateFilename:
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # noqa: E501
-        filename = Path(filename)
-        msg_return = ''
-        code_return = SUCCESS
-        path = filename.parent
-        name = filename.stem
+        filename: Path = Path(filename)
+        msg_return: str = ''
+        code_return: Status = Status.SUCCESS
+        path: Path = filename.parent
+        name: str = filename.stem
 
         refname = re.sub(r'[^a-z0-9]', '', name)
-        ic(name, len(name), refname, len(refname), min_len, max_len)
+        msg = (
+            f'{name=}, {len(name)=}, {refname=},'
+            f'{len(refname)=}, {min_len=}, {max_len=}'
+        )
+        logging.debug(msg)
+
 
         if len(refname) < min_len:
             msg_return += f'\n[red]Name too short ({min_len=}): {filename}[/]'
-            code_return |= FAILURE
+            code_return |= Status.FAILURE
 
         if len(refname) > max_len:
             msg_return += f'\n[red]Name too long ({max_len=}): {filename}[/]'
-            code_return |= FAILURE
+            code_return |= Status.FAILURE
 
         if SNAKE_CASE_REGEX.search(name) is None:
             msg_return += (
                 f'\n[red]Filename is not in snake_case: {filename}[/]'
             )
-            code_return |= FAILURE
+            code_return |= Status.FAILURE
 
         if re.match(r'^.*tests?.*$', path.stem) and not re.match(
             r'.*_test$', name
