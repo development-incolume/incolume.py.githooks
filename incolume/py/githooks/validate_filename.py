@@ -113,9 +113,8 @@ class ValidateFilename:
             )
         return self
 
-    @staticmethod
-    def is_valid(
-        filename: str | Path, min_len: int = 3, max_len: int = 256
+    def is_valid(self: Self,
+        filename: str | Path='', min_len: int = 3, max_len: int = 256
     ) -> Result:
         r"""Check if a filename is valid.
 
