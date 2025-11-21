@@ -2,7 +2,7 @@
 
 import pytest
 import incolume.py.githooks.core.rules as pkg
-import contextlib
+
 
 class TestCaseRules:
     """Test case rules."""
@@ -131,3 +131,32 @@ class TestCaseRules:
             'ci',
             'fix',
         }
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('WARNING', 30),
+            pytest.param('WARN', 30),
+            pytest.param('Warn', 30),
+            pytest.param('warn', 30),
+            pytest.param(pkg.logging.WARNING, 30),
+            pytest.param(pkg.logging.WARN, 30),
+            pytest.param(
+                'warnning',
+                {
+                    'expected_exception': ValueError,
+                    'match': r'.* is not a valid LoggingLevel',
+                },
+            ),
+        ],
+    )
+    def test_logging_level(self, entrance, expected) -> None:
+        """Test LoggingLevel."""
+        match expected:
+            case int():
+                assert pkg.LoggingLevel(entrance).value == expected
+            case dict():
+                with pytest.raises(**expected):
+                    pkg.LoggingLevel(entrance)
+            case _:
+                pytest.mark.xfail(reason='Not implemented yet.')

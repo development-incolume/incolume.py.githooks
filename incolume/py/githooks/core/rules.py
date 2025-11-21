@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Final
@@ -116,6 +117,29 @@ class Status(Enum):
     def __ror__(self, value: Self | int) -> Status:
         """Override the | operator to combine Status values."""
         return self.__or__(value)
+
+
+class LoggingLevel(Enum):
+    """The textual or numeric representation of logging level package."""
+
+    CRITICAL = 50
+    FATAL = CRITICAL
+    ERROR = 40
+    WARNING = 30
+    WARN = WARNING
+    INFO = 20
+    DEBUG = 10
+    NOTSET = 0
+
+    @classmethod
+    def _missing_(cls, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            if value == key:
+                logging.debug(ic(value, key, member.name, member.value))
+                return member
+        return None
 
 
 @dataclass
