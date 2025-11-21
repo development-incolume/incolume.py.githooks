@@ -113,8 +113,11 @@ class ValidateFilename:
             )
         return self
 
-    def is_valid(self: Self,
-        filename: str | Path='', min_len: int = 3, max_len: int = 256
+    def is_valid(
+        self: Self,
+        filename: str | Path = '',
+        min_len: int = 3,
+        max_len: int = 256,
     ) -> Result:
         r"""Check if a filename is valid.
 
@@ -148,6 +151,9 @@ class ValidateFilename:
             f'{len(refname)=}, {min_len=}, {max_len=}'
         )
         logging.debug(msg)
+
+        if not self.__is_python_file():
+            return Result(code=Status.SUCCESS, message='')
 
         if len(refname) < min_len:
             msg_return += f'\n[red]Name too short ({min_len=}): {filename}[/]'
