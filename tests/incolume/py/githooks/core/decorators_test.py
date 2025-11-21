@@ -142,15 +142,6 @@ class TestCaseDecorators:
         assert entrance[0]['message'] in [
             rec.message for rec in caplog.records
         ]
-        assert entrance[1]['message'] in [
-            rec.message for rec in caplog.records
-        ]
-        assert entrance[2]['message'] in [
-            rec.message for rec in caplog.records
-        ]
-        assert entrance[3]['message'] in [
-            rec.message for rec in caplog.records
-        ]
         assert set(caplog.record_tuples).issuperset(
             ('root', rec['level'].value, rec['message']) for rec in entrance
         )
