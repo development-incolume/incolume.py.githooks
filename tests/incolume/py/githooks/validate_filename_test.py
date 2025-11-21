@@ -306,9 +306,9 @@ class TestCaseValidFilename:
                 {'filename': '.hiddenfile'},
                 Result(Status.SUCCESS, ''),
                 marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
+                    # pytest.mark.xfail(
+                    #     raises=AssertionError, reason='Not implemented yet'
+                    # )
                 ],
             ),  # Hidden file, no name
             pytest.param(
@@ -420,7 +420,10 @@ class TestCaseValidFilename:
         self, entrance: dict, expected: Result
     ) -> NoReturn:
         """Test invalid filenames."""
-        result = ValidateFilename.is_valid(**entrance)
+        fout = self.test_dir / stack()[0][3] / entrance['filename']
+        fout.parent.mkdir(parents=True, exist_ok=True)
+        vf = ValidateFilename(filename=fout)
+        result = vf.is_valid()
         ic(result)
         assert Status(result.code) is Status(expected.code)  # Not snake_case
         assert expected.message in result.message
