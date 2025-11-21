@@ -3,6 +3,7 @@
 import logging
 import pytest
 from incolume.py.githooks.core import decorators
+from incolume.py.githooks.core.rules import LoggingLevel
 from os import environ
 
 
@@ -46,14 +47,14 @@ class TestCaseDecorators:
         [
             pytest.param(
                 'value1',
-                ('root', 10, 'executado via teste'),
+                ('root', 'warning', 'executado via teste'),
                 False,
             ),
             pytest.param(
                 'data',
                 (
                     'root',
-                    10,
+                    'warn',
                     'Function **sample_function** called into tests.',
                 ),
                 True,
@@ -90,14 +91,13 @@ class TestCaseDecorators:
     ) -> None:
         """Test logging_call decorator."""
 
-        @decorators.logging_call(
-            logging.getLevelName(expected[1]), expected[2]
-        )
+        @decorators.logging_call(LoggingLevel(expected[1]), expected[2])
         def sample_function(a: str = 'word') -> None:
             """Sample function to be decorated."""
             return a
 
         environ['DEBUG_MODE'] = str(debug_mode)
+        expected = (expected[0], LoggingLevel(expected[1]).value, expected[2])
 
         result = sample_function(entrance)
 
