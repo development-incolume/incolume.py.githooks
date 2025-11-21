@@ -7,7 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
-import subprocess
+import subprocess  # noqa: S404
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import NoReturn, TYPE_CHECKING
 import pytest
