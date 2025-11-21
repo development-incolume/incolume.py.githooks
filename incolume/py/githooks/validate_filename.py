@@ -57,7 +57,10 @@ class ValidateFilename:
 
     def __is_python_file(self) -> bool:
         """Check if the file is a Python file."""
-        return self.filename.suffix == '.py'
+        result = self.filename.suffix == '.py'
+        msg = f'{self.filename.as_posix()} {"Is" if result else "Not is"} Python file'
+        logging.debug(msg)
+        return result
 
     def is_too_short(self) -> Self:
         """Check if the filename is too short."""
