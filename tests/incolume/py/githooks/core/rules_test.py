@@ -156,7 +156,7 @@ class TestCaseRules:
             case int():
                 assert pkg.LoggingLevel(entrance).value == expected
             case dict():
-                with pytest.raises(**expected):
+                with pytest.raises(**expected):  # noqa: PT010
                     pkg.LoggingLevel(entrance)
             case _:
                 pytest.mark.xfail(reason='Not implemented yet.')
