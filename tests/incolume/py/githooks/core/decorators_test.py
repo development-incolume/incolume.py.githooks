@@ -104,3 +104,53 @@ class TestCaseDecorators:
         assert result == entrance
         assert expected[2] in [rec.message for rec in caplog.records]
         assert set(caplog.record_tuples).issuperset({expected})
+
+    def test_multiples_logging_call(
+        self,
+        caplog,
+    ) -> None:
+        """Test logging_call decorator."""
+        entrance = [
+            {
+                'level': LoggingLevel.DEBUG,
+                'message': 'debug executado via teste',
+            },
+            {
+                'level': LoggingLevel.WARNING,
+                'message': 'warning executado via teste',
+            },
+            {
+                'level': LoggingLevel.CRITICAL,
+                'message': 'critical executado via teste',
+            },
+            {
+                'level': LoggingLevel.ERROR,
+                'message': 'error executado via teste',
+            },
+        ]
+
+        @decorators.logging_call(**entrance[0])
+        @decorators.logging_call(**entrance[1])
+        @decorators.logging_call(**entrance[2])
+        @decorators.logging_call(**entrance[3])
+        def sample_function(a: str = 'word') -> None:
+            """Sample function to be decorated."""
+            return a
+
+        sample_function()
+
+        assert entrance[0]['message'] in [
+            rec.message for rec in caplog.records
+        ]
+        assert entrance[1]['message'] in [
+            rec.message for rec in caplog.records
+        ]
+        assert entrance[2]['message'] in [
+            rec.message for rec in caplog.records
+        ]
+        assert entrance[3]['message'] in [
+            rec.message for rec in caplog.records
+        ]
+        assert set(caplog.record_tuples).issuperset(
+            ('root', rec['level'].value, rec['message']) for rec in entrance
+        )
