@@ -2,7 +2,7 @@
 
 import pytest
 import incolume.py.githooks.core.rules as pkg
-
+import contextlib
 
 class TestCaseRules:
     """Test case rules."""
