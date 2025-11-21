@@ -10,6 +10,7 @@ from deprecated import deprecated
 from icecream import ic
 
 from . import debug_enable, debug_var_active
+from .rules import LoggingLevel
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -42,7 +43,9 @@ def critical_log_call(func: Callable) -> Callable:
     return wrapper
 
 
-def logging_call(level: str = '', message: str = '') -> Callable:
+def logging_call(
+    level: LoggingLevel = LoggingLevel.DEBUG, message: str = ''
+) -> Callable:
     """Decoratore to debug function calls.
 
     Args:
@@ -50,7 +53,6 @@ def logging_call(level: str = '', message: str = '') -> Callable:
       message::str: Message logging, default is ;
 
     """
-    level = level.casefold() or 'debug'
     message = message or 'Function **{}** called.'
 
     def inner(func: Callable) -> Callable:
@@ -68,7 +70,9 @@ def logging_call(level: str = '', message: str = '') -> Callable:
 
             result = func(*args, **kwargs)
 
-            getattr(logging, level)(ic(message.format(func.__name__)))
+            getattr(logging, level.name.casefold())(
+                ic(message.format(func.__name__))
+            )
             return result
 
         return wrapper
