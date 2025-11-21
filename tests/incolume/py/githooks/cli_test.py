@@ -7,7 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
-import subprocess
+import subprocess  # noqa: S404
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import NoReturn, TYPE_CHECKING
 import pytest
@@ -264,9 +264,7 @@ class TestCaseAllCLI:
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[
-                    # pytest.mark.xfail(reason='Not implemented yet')
-                ],
+                marks=[],
             ),
             pytest.param(
                 'jesus-loves-you',

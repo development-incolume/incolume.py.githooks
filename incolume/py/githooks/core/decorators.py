@@ -6,6 +6,7 @@ import logging
 from functools import wraps
 from typing import TYPE_CHECKING
 
+from deprecated import deprecated
 from icecream import ic
 
 from . import debug_enable, debug_var_active
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 debug_enable()
 
 
+@deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')
 def critical_log_call(func: Callable) -> Callable:
     """Decoratore to debug function calls."""
 
