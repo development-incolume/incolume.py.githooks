@@ -30,7 +30,7 @@ class AutoName(Enum):
         name: str, start: any, count: any, last_values: any
     ) -> str:
         """Gernerate next value."""
-        ic(name, start, count, last_values)
+        logging.debug(ic(name, start, count, last_values))
         return name.casefold()
 
     @classmethod
@@ -38,8 +38,8 @@ class AutoName(Enum):
         """Get self instance."""
         value = value.upper().strip()
         for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
             if value == key:
+                logging.debug(ic(value, key, member.name, member.value))
                 return member
         return None
 
@@ -103,8 +103,8 @@ class Status(Enum):
         """Get self instance."""
         value = value.upper().strip()
         for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
             if value == key:
+                logging.debug(ic(value, key, member.name, member.value))
                 return member
         return None
 
