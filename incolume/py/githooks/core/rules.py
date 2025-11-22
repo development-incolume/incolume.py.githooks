@@ -22,6 +22,16 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 ic.disable()
 
 
+def _missing_(cls: Self, value: str) -> Self | None:
+    """Get self instance."""
+    value = value.upper().strip()
+    for key, member in cls._member_map_.items():
+        if value == key:
+            logging.debug(ic(value, key, member.name, member.value))
+            return member
+    return None
+
+
 class AutoName(Enum):
     """Rule for next value."""
 
@@ -34,16 +44,6 @@ class AutoName(Enum):
         return name.casefold()
 
     @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            if value == key:
-                logging.debug(ic(value, key, member.name, member.value))
-                return member
-        return None
-
-    @classmethod
     def to_set(cls) -> set[str]:
         """Enum to set."""
         return set(cls._value2member_map_)
@@ -52,6 +52,9 @@ class AutoName(Enum):
     def to_list(cls) -> list[str]:
         """Enum to list."""
         return list(cls.to_set())
+
+
+AutoName._missing_ = classmethod(_missing_)
 
 
 class TypeCommit(AutoName):
@@ -98,16 +101,6 @@ class Status(Enum):
     SUCCESS: int = 0
     FAILURE: int = 1
 
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            if value == key:
-                logging.debug(ic(value, key, member.name, member.value))
-                return member
-        return None
-
     def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""
         if isinstance(obj, int):
@@ -117,6 +110,9 @@ class Status(Enum):
     def __ror__(self, value: Self | int) -> Status:
         """Override the | operator to combine Status values."""
         return self.__or__(value)
+
+
+setattr(Status, '_missing_', classmethod(_missing_))
 
 
 class LoggingLevel(Enum):
@@ -131,15 +127,8 @@ class LoggingLevel(Enum):
     DEBUG = 10
     NOTSET = 0
 
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            if value == key:
-                logging.debug(ic(value, key, member.name, member.value))
-                return member
-        return None
+
+LoggingLevel._missing_ = classmethod(_missing_)
 
 
 @dataclass
