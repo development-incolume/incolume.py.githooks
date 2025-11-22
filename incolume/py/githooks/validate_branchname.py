@@ -13,11 +13,11 @@ from rich.console import Console
 
 from incolume.py.githooks.core import debug_enable, get_branchname
 from incolume.py.githooks.core.rules import (
-    FAILURE,
     RULE_BRANCHNAME,
     RULE_BRANCHNAME_REFUSED,
     ProtectedBranchName,
     Result,
+    Status,
     TypeCommit,
 )
 
@@ -165,30 +165,30 @@ class ValidateBranchname:
 
         if protected_main and self.__is_branch_main(branchname):
             ic('is main protected branches')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if protected_dev and self.__is_branch_dev(branchname):
             ic('is dev protected branches')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if protected_tags and self.__is_branch_tags(branchname):
             ic('is tags protected branches')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if self.__is_refused(branchname):
             ic('is refused branch')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if self.__is_not_matches_rule(branchname):
             ic('is not matches rule')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
-        if self.result.code == FAILURE:
+        if self.result.code == Status.FAILURE:
             rich.print(self.msg_refused.format(msg))
         else:
             console.print(self.msg_ok)

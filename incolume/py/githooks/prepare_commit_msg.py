@@ -11,10 +11,9 @@ from icecream import ic
 
 from incolume.py.githooks.core import debug_enable, get_branchname
 from incolume.py.githooks.core.rules import (
-    FAILURE,
     RULE_COMMITFORMAT,
-    SUCCESS,
     Result,
+    Status,
     TypeCommit,
 )
 
@@ -56,7 +55,7 @@ def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
       - prepare_commit_msg
     """
     msgfile = Path(msgfile)
-    result = Result(SUCCESS, MESSAGESUCCESS)
+    result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
 
@@ -68,7 +67,7 @@ def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
         if not regex.match(content):
             raise AssertionError  # noqa: TRY301
     except (AssertionError, FileNotFoundError, FileExistsError):
-        result = Result(FAILURE, MESSAGERROR)
+        result = Result(Status.FAILURE, MESSAGERROR)
 
     return result
 
@@ -77,14 +76,14 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
     regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
     commit_msg_filepath = Path(commit_msg_filepath)
-    result = Result(SUCCESS, MESSAGESUCCESS)
+    result = Result(Status.SUCCESS, MESSAGESUCCESS)
     with Path(commit_msg_filepath).open('rb') as f:
         commit_message = f.read().decode().strip()
 
     # Example validation: Ensure message starts with a type (e.g., feat, fix, chore)
     if not regex.match(commit_message):
         result = Result(
-            code=FAILURE,
+            code=Status.FAILURE,
             message='Error: Commit message must start with a type (e.g., feat:, fix:).',
         )
     return result
@@ -102,7 +101,7 @@ def check_min_len_first_line_commit_msg(
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(10, len_line)
     result = Result(
-        SUCCESS,
+        Status.SUCCESS,
         '[green]Commit minimum length for message is validated [OK][/green]',
     )
 
@@ -111,7 +110,7 @@ def check_min_len_first_line_commit_msg(
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
     if len(first_line) < len_line:
-        result.code = FAILURE
+        result.code = Status.FAILURE
         result.message = f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)} - {commit_message}).'
     return result
 
@@ -128,7 +127,7 @@ def check_max_len_first_line_commit_msg(
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(50, len_line)
     result = Result(
-        SUCCESS,
+        Status.SUCCESS,
         '[green]Commit maximum length for message is validated [OK][/green]',
     )
 
@@ -137,7 +136,7 @@ def check_max_len_first_line_commit_msg(
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
     if len(first_line) > len_line:
-        result.code = FAILURE
+        result.code = Status.FAILURE
         result.message = f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).'
     return result
 
@@ -164,5 +163,5 @@ def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
             fh.write(f'[{issue}] {commit_msg}')
     elif branch not in {'master', 'dev', 'main', 'tags'}:
         result.message += '\nIncorrect branch name'
-        result.code |= FAILURE
+        result.code |= Status.FAILURE
     return result
