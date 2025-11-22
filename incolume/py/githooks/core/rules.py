@@ -22,16 +22,23 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 ic.disable()
 
 
-def _missing_(cls: Self, value: str) -> Self | None:
-    """Get self instance."""
-    value = value.upper().strip()
-    for key, member in cls._member_map_.items():
-        if value == key:
-            logging.debug(ic(value, key, member.name, member.value))
-            return member
-    return None
+def add_class_method_decorator(cls: Self) -> Self:
+    """Decorate dynamically add a class method into any class."""
+
+    def _missing_(cls: Self, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            if value == key:
+                logging.debug(ic(value, key, member.name, member.value))
+                return member
+        return None
+
+    cls._missing_ = classmethod(_missing_)
+    return cls
 
 
+@add_class_method_decorator
 class AutoName(Enum):
     """Rule for next value."""
 
@@ -52,9 +59,6 @@ class AutoName(Enum):
     def to_list(cls) -> list[str]:
         """Enum to list."""
         return list(cls.to_set())
-
-
-AutoName._missing_ = classmethod(_missing_)
 
 
 class TypeCommit(AutoName):
@@ -95,6 +99,7 @@ class RefusedBranchName(AutoName):
     WIP: str = auto()
 
 
+@add_class_method_decorator
 class Status(Enum):
     """Status result for CLI."""
 
@@ -112,9 +117,7 @@ class Status(Enum):
         return self.__or__(value)
 
 
-setattr(Status, '_missing_', classmethod(_missing_))
-
-
+@add_class_method_decorator
 class LoggingLevel(Enum):
     """The textual or numeric representation of logging level package."""
 
@@ -126,9 +129,6 @@ class LoggingLevel(Enum):
     INFO = 20
     DEBUG = 10
     NOTSET = 0
-
-
-LoggingLevel._missing_ = classmethod(_missing_)
 
 
 @dataclass
