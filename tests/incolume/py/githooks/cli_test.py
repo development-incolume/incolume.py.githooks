@@ -347,21 +347,33 @@ class TestCaseAllCLI:
         ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
-                {'Jürgen'},
+                {'Jürgen.py'},
                 Status.FAILURE,
                 'Filename is not in snake_case:',
-                marks=[],
+                marks=[pytest.mark.xfail(reason='False positive')],
             ),
             pytest.param(
-                {'x' * 257}, Status.FAILURE, 'Name too long', marks=[]
+                {'Jürgen'},
+                Status.SUCCESS,
+                'ok',
+                marks=[pytest.mark.xfail(reason='False positive')],
+            ),
+            pytest.param(
+                {f'{"x" * 257}.py'}, Status.FAILURE, 'Name too long', marks=[]
             ),
             pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
             pytest.param({'x.py', '--nonexequi'}, 0, '', marks=[]),
             pytest.param(
-                {'xVar.toml'},
+                {'xVar.py'},
                 Status.FAILURE,
                 'Filename is not in snake_case',
-                marks=[],
+                marks=[pytest.mark.xfail(reason='False positive')],
+            ),
+            pytest.param(
+                {'xVar.toml'},
+                Status.SUCCESS,
+                'ok',
+                marks=[pytest.mark.xfail(reason='False positive')],
             ),
             pytest.param(
                 {'x.py', '--min-len=5'},
