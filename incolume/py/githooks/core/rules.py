@@ -151,14 +151,6 @@ class Result:
 
 
 @dataclass
-class Expected:
-    """Expected values."""
-
-    code: Status = Status.SUCCESS
-    message: str = ''
-
-
-@dataclass
 class MainEntrance:
     """Entrance values."""
 

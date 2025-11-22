@@ -8,7 +8,6 @@ from tempfile import NamedTemporaryFile, gettempdir
 from icecream import ic
 import pytest
 from incolume.py.githooks.core.rules import (
-    Expected,
     Result,
     FAILURE,
     SUCCESS,
@@ -63,7 +62,7 @@ class TestCaseValidFilename:
             pytest.param(
                 'ab.py',
                 3,
-                Expected(
+                Result(
                     code=1,
                     message='[red]Name too short (self.min_len=3):',
                 ),
@@ -72,17 +71,17 @@ class TestCaseValidFilename:
             pytest.param(
                 'abcefghij.py',
                 10,
-                Expected(
+                Result(
                     code=1,
                     message='[red]Name too short (self.min_len=10):',
                 ),
                 marks=[],
             ),
-            pytest.param('abcd.py', 3, Expected(code=0, message=''), marks=[]),
+            pytest.param('abcd.py', 3, Result(code=0, message=''), marks=[]),
         ],
     )
     def test_is_too_short(
-        self, filefortest: Path, filename, min_len, expected: Expected
+        self, filefortest: Path, filename, min_len, expected: Result
     ) -> NoReturn:
         """Test the is_too_short method."""
         filename = filefortest.with_name(filename)
@@ -97,7 +96,7 @@ class TestCaseValidFilename:
             pytest.param(
                 'abcefghijk.py',
                 9,
-                Expected(
+                Result(
                     code=1,
                     message='\n[red]Name too long (self.max_len=9):',
                 ),
@@ -106,7 +105,7 @@ class TestCaseValidFilename:
             pytest.param(
                 'abcefghijk.py',
                 10,
-                Expected(
+                Result(
                     code=0,
                     message='',
                 ),
@@ -115,7 +114,7 @@ class TestCaseValidFilename:
         ],
     )
     def test_is_too_long(
-        self, filefortest: Path, filename, max_len, expected: Expected
+        self, filefortest: Path, filename, max_len, expected: Result
     ) -> NoReturn:
         """Test the is_too_long method."""
         filename = filefortest.with_name(filename)
@@ -128,11 +127,11 @@ class TestCaseValidFilename:
         ['filename', 'expected'],
         [
             pytest.param(
-                'valid_name.py', Expected(code=0, message=''), marks=[]
+                'valid_name.py', Result(code=0, message=''), marks=[]
             ),
             pytest.param(
                 'invalidName.py',
-                Expected(
+                Result(
                     code=1,
                     message='[red]Filename is not in snake_case:',
                 ),
@@ -141,7 +140,7 @@ class TestCaseValidFilename:
         ],
     )
     def test_is_snake_case(
-        self, filefortest: Path, filename: Path, expected: Expected
+        self, filefortest: Path, filename: Path, expected: Result
     ) -> NoReturn:
         """Test the is_snake_case method."""
         vf = ValidateFilename(filename=filefortest.with_name(filename))
@@ -181,7 +180,7 @@ class TestCaseValidFilename:
         ],
     )
     def test_has_testing_in_pathname(
-        self, filename, expected: Expected
+        self, filename, expected: Result
     ) -> NoReturn:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)

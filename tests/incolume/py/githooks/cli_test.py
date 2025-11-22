@@ -19,7 +19,6 @@ from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
-    Expected,
     MainEntrance,
     FAILURE,
     MESSAGES,
@@ -583,13 +582,13 @@ class TestCaseAllCLI:
             'expected',
         ],
         [
-            pytest.param(MainEntrance(), Expected(SUCCESS, ''), marks=[]),
+            pytest.param(MainEntrance(), Result(SUCCESS, ''), marks=[]),
             pytest.param(
                 MainEntrance(
                     commit_msg_file='feat: bla bla bla\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                 ),
-                Expected(
+                Result(
                     message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
                     'nothing.py\nM\tincolume/py/none.py\n#',
                 ),
@@ -597,7 +596,7 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 MainEntrance(commit_msg_file='ci: #123 added ci/cd\n\n#'),
-                Expected(SUCCESS, 'ci: #123 added ci/cd\n\n#'),
+                Result(SUCCESS, 'ci: #123 added ci/cd\n\n#'),
                 marks=[],
             ),
             pytest.param(
@@ -606,7 +605,7 @@ class TestCaseAllCLI:
                     commit_msg_file='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                 ),
-                Expected(
+                Result(
                     code=SUCCESS,
                     message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
                     'nothing.py'
@@ -616,7 +615,7 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 MainEntrance(args=['--nonexequi']),
-                Expected(SUCCESS, ''),
+                Result(SUCCESS, ''),
                 marks=[
                     # pytest.mark.xfail
                 ],
@@ -627,7 +626,7 @@ class TestCaseAllCLI:
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                     args=['--nonexequi'],
                 ),
-                Expected(code=SUCCESS, message='ci: #123 added ci/cd\n\n#'),
+                Result(code=SUCCESS, message='ci: #123 added ci/cd\n\n#'),
                 marks=[],
             ),
         ],
@@ -636,7 +635,7 @@ class TestCaseAllCLI:
         self,
         mocker,
         entrance: MainEntrance,
-        expected: Expected,
+        expected: Result,
     ) -> None:
         """Test CLI function."""
         mocker.patch(
