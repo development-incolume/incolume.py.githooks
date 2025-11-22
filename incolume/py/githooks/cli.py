@@ -19,8 +19,6 @@ from incolume.py.githooks.core import (
     get_git_diff,
 )
 from incolume.py.githooks.core.rules import (
-    FAILURE,
-    SUCCESS,
     Result,
     Status,
 )
@@ -188,7 +186,7 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return SUCCESS.value
+        return Status.SUCCESS.value
 
     return ValidateBranchname().is_valid(
         protected_dev=args.protected_dev,
@@ -202,7 +200,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    codes: Status = SUCCESS
+    codes: Status = Status.SUCCESS
     parser = argparse.ArgumentParser(
         prog='validate-filename',
     )
@@ -335,7 +333,7 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     if not args.nonexequi:
         add_signed_off_by(args.commit_msg_filename)
     add_blank_line_if_needed(args.commit_msg_filename, commit_source)
-    return SUCCESS.value
+    return Status.SUCCESS.value
 
 
 def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
@@ -400,7 +398,7 @@ def clean_commit_msg_cli(
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return SUCCESS
+        return Status.SUCCESS
 
     commit_msg_file = args.commit_msg_file
     commit_source = args.commit_source
@@ -432,7 +430,7 @@ def clean_commit_msg_cli(
 
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
 
-    return SUCCESS
+    return Status.SUCCESS
 
 
 def validate_format_commit_msg_cli(
@@ -491,7 +489,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    result = SUCCESS
+    result = Status.SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
     if not files:
@@ -499,7 +497,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
             '\n\n[red]`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.[/red]\n',
         )
-        result |= FAILURE
+        result |= Status.FAILURE
     return result.value
 
 
@@ -531,7 +529,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     if not args.nonexequi:
         rich.print(get_msg(fixed=args.fixed))
 
-    return SUCCESS.value
+    return Status.SUCCESS.value
 
 
 def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
@@ -562,9 +560,9 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
 
     if not args.nonexequi:
-        return SUCCESS.value
+        return Status.SUCCESS.value
 
     diff_output = get_git_diff()
     insert_git_diff(args.commit_msg_file, diff_output)
 
-    return SUCCESS.value
+    return Status.SUCCESS.value

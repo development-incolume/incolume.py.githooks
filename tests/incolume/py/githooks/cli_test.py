@@ -19,11 +19,8 @@ from inspect import stack
 
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
-    Expected,
     MainEntrance,
-    FAILURE,
     MESSAGES,
-    SUCCESS,
     Status,
     Result,
 )
@@ -43,7 +40,7 @@ class Entrance:
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
     expected: Result = field(
-        default_factory=lambda: Result(FAILURE, MESSAGERROR)
+        default_factory=lambda: Result(Status.FAILURE, MESSAGERROR)
     )
 
 
@@ -88,7 +85,7 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='bugfix(refactor)!: bla bla bla bla bla bla bla',
                     expected=Result(
-                        SUCCESS,
+                        Status.SUCCESS,
                         [
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
@@ -101,7 +98,7 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='feat' * 15,
                     expected=Result(
-                        FAILURE,
+                        Status.FAILURE,
                         [
                             'Error: Commit subject line exceeds',
                         ],
@@ -113,7 +110,7 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='feat',
                     expected=Result(
-                        FAILURE,
+                        Status.FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of',
                             'Commit maximum length for message is validated',
@@ -127,7 +124,7 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
-                        SUCCESS,
+                        Status.SUCCESS,
                         [
                             'Commit minimum length for message is validated',
                             'Commit maximum length for message is validated',
@@ -141,7 +138,7 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--nonexequi'],
                     expected=Result(
-                        SUCCESS,
+                        Status.SUCCESS,
                         [
                             '',
                         ],
@@ -350,33 +347,41 @@ class TestCaseAllCLI:
         ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
-                {'Jürgen'}, FAILURE, 'Filename is not in snake_case:', marks=[]
+                {'Jürgen'},
+                Status.FAILURE,
+                'Filename is not in snake_case:',
+                marks=[],
             ),
-            pytest.param({'x' * 257}, FAILURE, 'Name too long', marks=[]),
+            pytest.param(
+                {'x' * 257}, Status.FAILURE, 'Name too long', marks=[]
+            ),
             pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
             pytest.param({'x.py', '--nonexequi'}, 0, '', marks=[]),
             pytest.param(
                 {'xVar.toml'},
-                FAILURE,
+                Status.FAILURE,
                 'Filename is not in snake_case',
                 marks=[],
             ),
             pytest.param(
-                {'x.py', '--min-len=5'}, FAILURE, 'Name too short', marks=[]
+                {'x.py', '--min-len=5'},
+                Status.FAILURE,
+                'Name too short',
+                marks=[],
             ),
             pytest.param(
                 {'abc_defg.py', '--min-len=10'},
-                FAILURE,
+                Status.FAILURE,
                 'Name too short',
                 marks=[],
             ),
             pytest.param(
                 {'abcdefghijklm.py', '--max-len=10'},
-                FAILURE,
+                Status.FAILURE,
                 'Name too long',
                 marks=[],
             ),
-            pytest.param({'__main__.py'}, SUCCESS, '', marks=[]),
+            pytest.param({'__main__.py'}, Status.SUCCESS, '', marks=[]),
         ],
     )
     def test_check_valid_filenames_cli(
@@ -459,14 +464,15 @@ class TestCaseAllCLI:
             pytest.param(
                 Entrance(
                     msg_commit='Please enter the commit message\n\n#',
-                    expected=Result(SUCCESS, ''),
+                    expected=Result(Status.SUCCESS, ''),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat: #61 Please enter the commit message',
                     expected=Result(
-                        SUCCESS, 'feat: #61 Please enter the commit message'
+                        Status.SUCCESS,
+                        'feat: #61 Please enter the commit message',
                     ),
                 )
             ),
@@ -480,7 +486,7 @@ class TestCaseAllCLI:
                         '\n#\n# On branch main\n'
                     ),
                     expected=Result(
-                        SUCCESS,
+                        Status.SUCCESS,
                         'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
                     ),
                 )
@@ -489,7 +495,8 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='feat: #61 Please enter the commit message',
                     expected=Result(
-                        SUCCESS, 'feat: #61 Please enter the commit message'
+                        Status.SUCCESS,
+                        'feat: #61 Please enter the commit message',
                     ),
                     params=['--nonexequi'],
                 ),
@@ -536,26 +543,26 @@ class TestCaseAllCLI:
             pytest.param(
                 '.pre-commit-config.yaml',
                 [],
-                SUCCESS,
+                Status.SUCCESS,
                 marks=[],
             ),
             pytest.param(
                 '',
                 [],
-                FAILURE,
+                Status.FAILURE,
                 marks=[],
             ),
             pytest.param(
                 '',
                 ['--nonexequi'],
-                SUCCESS,
+                Status.SUCCESS,
                 marks=[],
             ),
         ],
     )
     def test_precommit_installed(self, entrance, args, expected) -> NoReturn:
         """Test for pre-commit installed."""
-        result = FAILURE
+        result = Status.FAILURE
         with patch.object(Path, 'cwd') as m:
             m.return_value.glob.return_value = (
                 [Path(entrance)] if entrance else []
@@ -583,13 +590,13 @@ class TestCaseAllCLI:
             'expected',
         ],
         [
-            pytest.param(MainEntrance(), Expected(SUCCESS, ''), marks=[]),
+            pytest.param(MainEntrance(), Result(Status.SUCCESS, ''), marks=[]),
             pytest.param(
                 MainEntrance(
                     commit_msg_file='feat: bla bla bla\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                 ),
-                Expected(
+                Result(
                     message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
                     'nothing.py\nM\tincolume/py/none.py\n#',
                 ),
@@ -597,7 +604,7 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 MainEntrance(commit_msg_file='ci: #123 added ci/cd\n\n#'),
-                Expected(SUCCESS, 'ci: #123 added ci/cd\n\n#'),
+                Result(Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'),
                 marks=[],
             ),
             pytest.param(
@@ -606,8 +613,8 @@ class TestCaseAllCLI:
                     commit_msg_file='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                 ),
-                Expected(
-                    code=SUCCESS,
+                Result(
+                    code=Status.SUCCESS,
                     message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
                     'nothing.py'
                     '\nM\tincolume/py/none.py\n#',
@@ -616,7 +623,7 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 MainEntrance(args=['--nonexequi']),
-                Expected(SUCCESS, ''),
+                Result(Status.SUCCESS, ''),
                 marks=[
                     # pytest.mark.xfail
                 ],
@@ -627,7 +634,9 @@ class TestCaseAllCLI:
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                     args=['--nonexequi'],
                 ),
-                Expected(code=SUCCESS, message='ci: #123 added ci/cd\n\n#'),
+                Result(
+                    code=Status.SUCCESS, message='ci: #123 added ci/cd\n\n#'
+                ),
                 marks=[],
             ),
         ],
@@ -636,7 +645,7 @@ class TestCaseAllCLI:
         self,
         mocker,
         entrance: MainEntrance,
-        expected: Expected,
+        expected: Result,
     ) -> None:
         """Test CLI function."""
         mocker.patch(

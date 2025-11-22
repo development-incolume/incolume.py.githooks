@@ -22,6 +22,23 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 ic.disable()
 
 
+def add_class_method_decorator(cls: Self) -> Self:
+    """Decorate dynamically add a class method into any class."""
+
+    def _missing_(cls: Self, value: str) -> Self | None:
+        """Get self instance."""
+        value = value.upper().strip()
+        for key, member in cls._member_map_.items():
+            if value == key:
+                logging.debug(ic(value, key, member.name, member.value))
+                return member
+        return None
+
+    cls._missing_ = classmethod(_missing_)
+    return cls
+
+
+@add_class_method_decorator
 class AutoName(Enum):
     """Rule for next value."""
 
@@ -30,18 +47,8 @@ class AutoName(Enum):
         name: str, start: any, count: any, last_values: any
     ) -> str:
         """Gernerate next value."""
-        ic(name, start, count, last_values)
+        logging.debug(ic(name, start, count, last_values))
         return name.casefold()
-
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
-            if value == key:
-                return member
-        return None
 
     @classmethod
     def to_set(cls) -> set[str]:
@@ -92,21 +99,12 @@ class RefusedBranchName(AutoName):
     WIP: str = auto()
 
 
+@add_class_method_decorator
 class Status(Enum):
     """Status result for CLI."""
 
     SUCCESS: int = 0
     FAILURE: int = 1
-
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            ic(value, key, member.name, member.value)
-            if value == key:
-                return member
-        return None
 
     def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""
@@ -119,6 +117,7 @@ class Status(Enum):
         return self.__or__(value)
 
 
+@add_class_method_decorator
 class LoggingLevel(Enum):
     """The textual or numeric representation of logging level package."""
 
@@ -131,28 +130,10 @@ class LoggingLevel(Enum):
     DEBUG = 10
     NOTSET = 0
 
-    @classmethod
-    def _missing_(cls, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            if value == key:
-                logging.debug(ic(value, key, member.name, member.value))
-                return member
-        return None
-
 
 @dataclass
 class Result:
     """Result dataclass for hooks this project."""
-
-    code: Status = Status.SUCCESS
-    message: str = ''
-
-
-@dataclass
-class Expected:
-    """Expected values."""
 
     code: Status = Status.SUCCESS
     message: str = ''
@@ -168,9 +149,6 @@ class MainEntrance:
     args: list[str] = field(default_factory=list)
     diff_output: str = ''
 
-
-SUCCESS: Final[Status] = Status.SUCCESS
-FAILURE: Final[Status] = Status.FAILURE
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
