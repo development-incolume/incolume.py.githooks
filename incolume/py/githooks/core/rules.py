@@ -44,17 +44,18 @@ def _missing_(cls: Self, value: str) -> Self | None:
     return None
 
 
+def _generate_next_value_(
+    name: str, start: any, count: any, last_values: any
+) -> str:
+    """Gernerate next value."""
+    logging.debug(ic(name, start, count, last_values))
+    return name.casefold()
+
+
 @add_class_method_decorator(_missing_)
+@add_class_method_decorator(_generate_next_value_)
 class AutoName(Enum):
     """Rule for next value."""
-
-    @staticmethod
-    def _generate_next_value_(
-        name: str, start: any, count: any, last_values: any
-    ) -> str:
-        """Gernerate next value."""
-        logging.debug(ic(name, start, count, last_values))
-        return name.casefold()
 
     @classmethod
     def to_set(cls) -> set[str]:
