@@ -54,16 +54,17 @@ def _generate_next_value_(
     return name.casefold()
 
 
+def to_set(cls: Self) -> set[str]:
+    """Enum to set."""
+    return set(cls._value2member_map_)
+
+
 @add_class_method_decorator(_generate_next_value_, method_modo=staticmethod)
 @add_class_method_decorator(_missing_)
+@add_class_method_decorator(to_set)
 class AutoName(Enum):
     """Rule for next value."""
 
-
-    @classmethod
-    def to_set(cls) -> set[str]:
-        """Enum to set."""
-        return set(cls._value2member_map_)
 
     @classmethod
     def to_list(cls) -> list[str]:
