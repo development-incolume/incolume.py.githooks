@@ -8,7 +8,7 @@ import contextlib
 import logging
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from icecream import ic
 
@@ -18,47 +18,59 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 ic.disable()
 
 
-def add_class_method_decorator(cls: Self) -> Self:
+def add_class_method_decorator(
+    method: Callable, method_modo: Callable = classmethod
+) -> Self:
     """Decorate dynamically add a class method into any class."""
 
-    def _missing_(cls: Self, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            if value == key:
-                logging.debug(ic(value, key, member.name, member.value))
-                return member
-        return None
+    def wrapper(cls: Self) -> Self:
+        """Wrap to add class method."""
+        setattr(cls, method.__name__, method_modo(method))
+        return cls
 
-    cls._missing_ = classmethod(_missing_)
-    return cls
+    return wrapper
 
 
-@add_class_method_decorator
+def _missing_(cls: Self, value: str) -> Self | None:
+    """Get self instance."""
+    value = value.upper().strip()
+    for key, member in cls._member_map_.items():
+        if value == key:
+            logging.debug(ic(value, key, member.name, member.value))
+            return member
+    return None
+
+
+def _generate_next_value_(
+    name: str, start: any, count: any, last_values: any
+) -> str:
+    """Gernerate next value."""
+    logging.debug(ic(name, start, count, last_values))
+    return name.casefold()
+
+
+def to_set(cls: Self) -> set[str]:
+    """Enum to set."""
+    return set(cls._value2member_map_)
+
+
+def to_list(cls: Self) -> list[str]:
+    """Enum to list."""
+    return list(cls._value2member_map_)
+
+
+@add_class_method_decorator(_generate_next_value_, method_modo=staticmethod)
+@add_class_method_decorator(_missing_)
+@add_class_method_decorator(to_set)
+@add_class_method_decorator(to_list)
 class AutoName(Enum):
     """Rule for next value."""
-
-    @staticmethod
-    def _generate_next_value_(
-        name: str, start: any, count: any, last_values: any
-    ) -> str:
-        """Gernerate next value."""
-        logging.debug(ic(name, start, count, last_values))
-        return name.casefold()
-
-    @classmethod
-    def to_set(cls) -> set[str]:
-        """Enum to set."""
-        return set(cls._value2member_map_)
-
-    @classmethod
-    def to_list(cls) -> list[str]:
-        """Enum to list."""
-        return list(cls.to_set())
 
 
 class TypeCommit(AutoName):
@@ -99,7 +111,7 @@ class RefusedBranchName(AutoName):
     WIP: str = auto()
 
 
-@add_class_method_decorator
+@add_class_method_decorator(_missing_)
 class Status(Enum):
     """Status result for CLI."""
 
@@ -117,7 +129,7 @@ class Status(Enum):
         return self.__or__(value)
 
 
-@add_class_method_decorator
+@add_class_method_decorator(_missing_)
 class LoggingLevel(Enum):
     """The textual or numeric representation of logging level package."""
 

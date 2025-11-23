@@ -53,6 +53,12 @@ def logging_call(
       message::str: Message logging, default is ;
 
     """
+    match level:
+        case LoggingLevel():
+            pass
+        case _:
+            level = LoggingLevel(level)
+
     message = message or 'Function **{}** called.'
 
     def inner(func: Callable) -> Callable:
