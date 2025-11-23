@@ -6,10 +6,9 @@ from __future__ import annotations
 
 import contextlib
 import logging
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from icecream import ic
 
@@ -19,6 +18,8 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 ic.disable()
 
@@ -59,7 +60,7 @@ def to_set(cls: Self) -> set[str]:
     return set(cls._value2member_map_)
 
 
-def to_list(cls) -> list[str]:
+def to_list(cls: Self) -> list[str]:
     """Enum to list."""
     return list(cls._value2member_map_)
 
