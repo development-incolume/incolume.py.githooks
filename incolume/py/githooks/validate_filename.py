@@ -156,16 +156,20 @@ class ValidateFilename:
             return Result(code=Status.SUCCESS, message='')
 
         if len(refname) < min_len:
-            msg_return += f'\n[red]Name too short ({min_len=}): {filename}[/]'
+            msg_return += (
+                f'\n[red]Name too short ({min_len=}): {filename}[/red]'
+            )
             code_return |= Status.FAILURE
 
         if len(refname) > max_len:
-            msg_return += f'\n[red]Name too long ({max_len=}): {filename}[/]'
+            msg_return += (
+                f'\n[red]Name too long ({max_len=}): {filename}[/red]'
+            )
             code_return |= Status.FAILURE
 
         if SNAKE_CASE_REGEX.search(name) is None:
             msg_return += (
-                f'\n[red]Filename is not in snake_case: {filename}[/]'
+                f'\n[red]Filename is not in snake_case: {filename}[/red]'
             )
             code_return |= Status.FAILURE
 
@@ -173,7 +177,8 @@ class ValidateFilename:
             r'.*_test$', name
         ):
             msg_return += (
-                f'\n[red]Filename should not be in a path: {filename}[/]'
+                f'\n[red]Filename should not be in a path: {filename}[/red]'
             )
+            code_return |= Status.FAILURE
 
         return Result(code=code_return, message=msg_return)
