@@ -133,9 +133,9 @@ class ValidateFilename:
             Result: The result of the check.
 
         Examples:
-            >>> ValidateFilename.is_valid('valid_name.py')
+            >>> ValidateFilename().is_valid('valid_name.py')
             Result(code=<Status.SUCCESS: 0>, message='')
-            >>> ValidateFilename.is_valid('sh.py', min_len=3)
+            >>> ValidateFilename().is_valid('sh.py', min_len=3)
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # noqa: E501
