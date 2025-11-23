@@ -23,12 +23,14 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 ic.disable()
 
 
-def add_class_method_decorator(method: Callable) -> Self:
+def add_class_method_decorator(
+    method: Callable, method_modo: Callable = classmethod
+) -> Self:
     """Decorate dynamically add a class method into any class."""
 
     def wrapper(cls: Self) -> Self:
         """Wrap to add class method."""
-        setattr(cls, method.__name__, classmethod(method))
+        setattr(cls, method.__name__, method_modo(method))
         return cls
 
     return wrapper
@@ -44,17 +46,19 @@ def _missing_(cls: Self, value: str) -> Self | None:
     return None
 
 
+def _generate_next_value_(
+    name: str, start: any, count: any, last_values: any
+) -> str:
+    """Gernerate next value."""
+    logging.debug(ic(name, start, count, last_values))
+    return name.casefold()
+
+
+@add_class_method_decorator(_generate_next_value_, method_modo=staticmethod)
 @add_class_method_decorator(_missing_)
 class AutoName(Enum):
     """Rule for next value."""
 
-    @staticmethod
-    def _generate_next_value_(
-        name: str, start: any, count: any, last_values: any
-    ) -> str:
-        """Gernerate next value."""
-        logging.debug(ic(name, start, count, last_values))
-        return name.casefold()
 
     @classmethod
     def to_set(cls) -> set[str]:
