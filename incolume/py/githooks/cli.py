@@ -18,6 +18,7 @@ from incolume.py.githooks.core import (
     debug_enable,
     get_git_diff,
 )
+from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
     Result,
     Status,
@@ -48,6 +49,7 @@ if TYPE_CHECKING:
 logging.debug('Python %s', platform.python_version())
 
 
+@logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
@@ -108,6 +110,7 @@ def check_len_first_line_commit_msg_cli(
     return result_code.value  # Validation passed, allow commit
 
 
+@logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> sys.exit:
@@ -134,6 +137,7 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
+@logging_call(logging.INFO, 'Checking valid branchname.')
 def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     """Check valid branchname.
 
@@ -195,6 +199,7 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     )
 
 
+@logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     """Maint entry point for the script.
 
@@ -250,6 +255,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     return codes.value
 
 
+@logging_call(logging.INFO, 'Checking private keys in files.')
 def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
@@ -284,6 +290,9 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     return result.code.value
 
 
+@logging_call(
+    logging.INFO, 'Processing footer signed-off-by in commit message.'
+)
 def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     """Função principal que processa os argumentos.
 
@@ -336,6 +345,7 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     return Status.SUCCESS.value
 
 
+@logging_call(logging.INFO, 'Displaying effort message after commit.')
 def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     """Run it.
 
@@ -363,6 +373,7 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
+@logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
@@ -433,6 +444,7 @@ def clean_commit_msg_cli(
     return Status.SUCCESS
 
 
+@logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
@@ -467,6 +479,7 @@ def validate_format_commit_msg_cli(
     return result.code.value
 
 
+@logging_call(logging.INFO, 'Checking pre-commit installation.')
 def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     """Run pre-commit-installed hook.
 
@@ -501,6 +514,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     return result.value
 
 
+@logging_call(logging.INFO, 'Displaying commit message after commit.')
 def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     """Run it."""
     parser = argparse.ArgumentParser(
@@ -532,6 +546,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     return Status.SUCCESS.value
 
 
+@logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     """CLI for module gitdiff."""
     parser = argparse.ArgumentParser(
