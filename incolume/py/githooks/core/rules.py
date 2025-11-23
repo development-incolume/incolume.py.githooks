@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Final
@@ -22,23 +23,28 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 ic.disable()
 
 
-def add_class_method_decorator(cls: Self) -> Self:
+def add_class_method_decorator(method: Callable) -> Self:
     """Decorate dynamically add a class method into any class."""
 
-    def _missing_(cls: Self, value: str) -> Self | None:
-        """Get self instance."""
-        value = value.upper().strip()
-        for key, member in cls._member_map_.items():
-            if value == key:
-                logging.debug(ic(value, key, member.name, member.value))
-                return member
-        return None
+    def wrapper(cls: Self) -> Self:
+        """Wrap to add class method."""
+        setattr(cls, method.__name__, classmethod(method))
+        return cls
 
-    cls._missing_ = classmethod(_missing_)
-    return cls
+    return wrapper
 
 
-@add_class_method_decorator
+def _missing_(cls: Self, value: str) -> Self | None:
+    """Get self instance."""
+    value = value.upper().strip()
+    for key, member in cls._member_map_.items():
+        if value == key:
+            logging.debug(ic(value, key, member.name, member.value))
+            return member
+    return None
+
+
+@add_class_method_decorator(_missing_)
 class AutoName(Enum):
     """Rule for next value."""
 
@@ -99,7 +105,7 @@ class RefusedBranchName(AutoName):
     WIP: str = auto()
 
 
-@add_class_method_decorator
+@add_class_method_decorator(_missing_)
 class Status(Enum):
     """Status result for CLI."""
 
@@ -117,7 +123,7 @@ class Status(Enum):
         return self.__or__(value)
 
 
-@add_class_method_decorator
+@add_class_method_decorator(_missing_)
 class LoggingLevel(Enum):
     """The textual or numeric representation of logging level package."""
 
