@@ -7,9 +7,10 @@ from __future__ import annotations
 import contextlib
 import logging
 from collections import ChainMap
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import TYPE_CHECKING, Final
+from typing import Final
 
 from icecream import ic
 
@@ -19,20 +20,22 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
 
 ic.disable()
 
 
 def add_class_method_decorator(
-    method: Callable, method_modo: Callable = classmethod
+    method: Callable, method_modo: Callable | None = classmethod
 ) -> Self:
     """Decorate dynamically add a class method into any class."""
 
     def wrapper(cls: Self) -> Self:
         """Wrap to add class method."""
-        setattr(cls, method.__name__, method_modo(method))
+        match method_modo:
+            case Callable():
+                setattr(cls, method.__name__, method_modo(method))
+            case _:
+                setattr(cls, method.__name__, method)
         return cls
 
     return wrapper

@@ -165,3 +165,23 @@ class TestCaseRules:
                     pkg.LoggingLevel(entrance)
             case _:
                 pytest.mark.xfail(reason='Not implemented yet.')
+
+    @pytest.mark.parametrize(
+        ['method', 'mode', 'expected'],
+        [
+            pytest.param(int, None, 'int', marks=[]),
+            pytest.param(float, 'staticmethod', 'float', marks=[]),
+            pytest.param(int, 'classmethod', 'int', marks=[]),
+        ],
+    )
+    def test_add_class_method_decorator(self, method, mode, expected) -> None:
+        """Test add_class_method_decorator."""
+
+        @pkg.add_class_method_decorator(method=method, method_modo=mode)
+        class Klass:
+            """Fake class for test."""
+
+        obj = Klass()
+
+        assert isinstance(obj, Klass)
+        assert expected in dir(obj)
