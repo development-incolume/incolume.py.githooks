@@ -36,6 +36,7 @@ def add_class_method_decorator(
                 setattr(cls, method.__name__, method_modo(method))
             case _:
                 setattr(cls, method.__name__, method)
+        logging.debug(dir(cls))
         return cls
 
     return wrapper
