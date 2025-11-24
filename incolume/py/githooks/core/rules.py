@@ -64,7 +64,7 @@ def to_set(cls: Self) -> set[str]:
 
 def to_list(cls: Self) -> list[str]:
     """Enum to list."""
-    return list(cls._value2member_map_)
+    return sorted(cls._value2member_map_)
 
 
 @add_class_method_decorator(_generate_next_value_, method_modo=staticmethod)
