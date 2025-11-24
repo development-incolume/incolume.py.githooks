@@ -40,7 +40,14 @@ def add_class_method_decorator(
 def _missing_(cls: Self, value: str) -> Self | None:
     """Get self instance."""
     value = value.upper().strip()
+    if value.isdigit():
+        value = int(value)
+
     for key, member in cls._member_map_.items():
+        if value == key:
+            logging.debug(ic(value, key, member.name, member.value))
+            return member
+    for key, member in cls._value2member_map_.items():
         if value == key:
             logging.debug(ic(value, key, member.name, member.value))
             return member

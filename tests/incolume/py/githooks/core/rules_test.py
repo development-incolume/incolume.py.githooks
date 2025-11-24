@@ -55,9 +55,13 @@ class TestCaseRules:
         [
             pytest.param(
                 '0',
+                pkg.Status(0),
+            ),
+            pytest.param(
+                '-1',
                 {
                     'expected_exception': ValueError,
-                    'match': "'0' is not a valid Status",
+                    'match': "'-1' is not a valid Status",
                 },
             ),
             pytest.param(
@@ -67,16 +71,16 @@ class TestCaseRules:
                     'match': "'fail' is not a valid Status",
                 },
             ),
-            pytest.param('failure', {}),
+            pytest.param('failure', pkg.Status.FAILURE),
         ],
     )
     def test_status_missing(self, entrance, expected) -> None:
         """Status missing."""
         try:
+            assert pkg.Status(entrance) == expected
+        except ValueError:
             with pytest.raises(**expected):  # noqa: PT010
                 assert pkg.Status(entrance)
-        except ValueError:
-            assert pkg.Status(entrance)
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
