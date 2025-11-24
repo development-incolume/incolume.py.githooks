@@ -148,6 +148,7 @@ class TestCaseRules:
                     'match': r'.* is not a valid LoggingLevel',
                 },
             ),
+            pytest.param('30', 30),
         ],
     )
     def test_logging_level(self, entrance, expected) -> None:
