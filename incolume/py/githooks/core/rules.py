@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
+from collections import ChainMap
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Final
@@ -43,11 +44,9 @@ def _missing_(cls: Self, value: str) -> Self | None:
     if value.isdigit():
         value = int(value)
 
-    for key, member in cls._member_map_.items():
-        if value == key:
-            logging.debug(ic(value, key, member.name, member.value))
-            return member
-    for key, member in cls._value2member_map_.items():
+    for key, member in ChainMap(
+        cls._member_map_, cls._value2member_map_
+    ).items():
         if value == key:
             logging.debug(ic(value, key, member.name, member.value))
             return member
