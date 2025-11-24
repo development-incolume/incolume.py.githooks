@@ -103,6 +103,7 @@ class ProtectedBranchName(AutoName):
     MAIN: str = auto()
     MASTER: str = auto()
     TAGS: str = auto()
+    DEVELOPMENT: str = 'dev'
 
 
 class RefusedBranchName(AutoName):
