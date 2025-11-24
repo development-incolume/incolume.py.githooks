@@ -44,13 +44,10 @@ def _missing_(cls: Self, value: str) -> Self | None:
     if value.isdigit():
         value = int(value)
 
-    for key, member in ChainMap(
-        cls._member_map_, cls._value2member_map_
-    ).items():
-        if value == key:
-            logging.debug(ic(value, key, member.name, member.value))
-            return member
-    return None
+    member = ChainMap(cls._member_map_, cls._value2member_map_).get(value)
+    if member:
+        logging.debug(ic(f'{value=}, {member.name=}, {member.value=}'))
+    return member
 
 
 def _generate_next_value_(
