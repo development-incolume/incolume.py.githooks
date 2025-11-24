@@ -45,8 +45,7 @@ def _missing_(cls: Self, value: str) -> Self | None:
         value = int(value)
 
     member = ChainMap(cls._member_map_, cls._value2member_map_).get(value)
-    if member:
-        logging.debug(ic(f'{value=}, {member.name=}, {member.value=}'))
+    logging.debug(ic(f'{member=}'))
     return member
 
 
