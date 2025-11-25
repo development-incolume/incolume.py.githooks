@@ -106,7 +106,7 @@ class ValidateFilename:
             self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is not None
             self.message += (
                 '\n[red]Parece ser um arquivo de test.'
-                f'\nTry: {Path("tests", filename + "_test.py")}[/red]'
+                f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}_test.py[/red]'
             )
         return self
 
