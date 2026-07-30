@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from deprecated import deprecated
 from icecream import ic
@@ -23,7 +23,7 @@ def critical_log_call(func: Callable) -> Callable:
     """Decoratore to debug function calls."""
 
     @wraps(func)
-    def wrapper(*args: str, **kwargs: dict) -> None:
+    def wrapper(*args: str, **kwargs: dict) -> Any:
         """Wrapp function to add logging critical."""
         debug: bool = debug_var_active()
 
@@ -65,7 +65,7 @@ def logging_call(
         """Inner funtion to receive parameters."""
 
         @wraps(func)
-        def wrapper(*args: str, **kwargs: dict) -> None:
+        def wrapper(*args: str, **kwargs: dict) -> Any:
             """Wrapp function to add logging record."""
             debug: bool = debug_var_active()
 

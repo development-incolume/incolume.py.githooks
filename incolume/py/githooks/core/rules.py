@@ -44,11 +44,12 @@ def add_class_method_decorator(
 
 def _missing_(cls: Self, value: str) -> Self | None:
     """Get self instance."""
+    index: int = 0
     value = value.upper().strip()
     if value.isdigit():
-        value = int(value)
+        index = int(value)
 
-    member = ChainMap(cls._member_map_, cls._value2member_map_).get(value)
+    member = ChainMap(cls._member_map_, cls._value2member_map_).get(index)
     logging.debug(ic(f'{member=}'))
     return member
 

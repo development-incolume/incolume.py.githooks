@@ -35,7 +35,7 @@ class TestCompactShutil:
         ic(f'finished class {cls.__name__} execution')
         shutil.rmtree(cls.PATH)
 
-    def setup_method(self, method) -> None:
+    def setup_method(self, method) -> list[Path]:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
