@@ -1,5 +1,5 @@
 """Test module for package."""
-# ruff: noqa: E501
+# ruff: file-ignore[line-too-long]
 
 from incolume.py.githooks.core.rules import (
     REGEX_SEMVER,

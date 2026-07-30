@@ -1,6 +1,6 @@
 """Module for validate commit message."""
 
-# ruff: noqa: E501
+# ruff: file-ignore[line-too-long]
 from __future__ import annotations
 
 import logging
@@ -65,7 +65,7 @@ def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
             logging.debug('%s', ic(content))
 
         if not regex.match(content):
-            raise AssertionError  # noqa: TRY301
+            raise AssertionError  # ruff: ignore[raise-within-try]
     except (AssertionError, FileNotFoundError, FileExistsError):
         result = Result(Status.FAILURE, MESSAGERROR)
 

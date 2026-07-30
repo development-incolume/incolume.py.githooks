@@ -79,7 +79,7 @@ class TestCaseRules:
         try:
             assert pkg.Status(entrance) == expected
         except ValueError:
-            with pytest.raises(**expected):  # noqa: PT010
+            with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
                 assert pkg.Status(entrance)
 
     @pytest.mark.parametrize(
@@ -161,7 +161,7 @@ class TestCaseRules:
             case int():
                 assert pkg.LoggingLevel(entrance).value == expected
             case dict():
-                with pytest.raises(**expected):  # noqa: PT010
+                with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
                     pkg.LoggingLevel(entrance)
             case _:
                 pytest.mark.xfail(reason='Not implemented yet.')

@@ -1,6 +1,6 @@
 """Module utils for project."""
 
-# ruff: noqa: S404 S607
+# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 
 from __future__ import annotations
 
@@ -67,7 +67,8 @@ def get_signed_off_by() -> str:
 def get_branchname() -> str:
     """Get current branch name."""
     branch = (
-        subprocess.check_output(
+        subprocess
+        .check_output(
             ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
         )
         .strip()

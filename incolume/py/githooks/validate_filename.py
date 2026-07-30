@@ -138,7 +138,7 @@ class ValidateFilename:
             >>> ValidateFilename().is_valid('sh.py', min_len=3)
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
-        """  # noqa: E501
+        """  # ruff: ignore[line-too-long]
         filename: Path = Path(filename)
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
