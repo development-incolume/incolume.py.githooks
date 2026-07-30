@@ -75,6 +75,7 @@ is-valid-msg-commit = "incolume.py.githooks.cli:validate_format_commit_msg_cli"
 set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signedoffby_cli"
 
 [tool.uv]
+allow-insecure-host = ["https://github.com", "https://gitlab.com"]
 
 [tool.uv.build-backend]
 module-root = ""
