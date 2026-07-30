@@ -402,7 +402,7 @@ class TestCaseAllCLI:
         """Test CLI."""
         result = cli.check_valid_filenames_cli([*entrance])
         captured = capsys.readouterr()
-        assert Status(result) == Status(result_expected)
+        assert result == result_expected.value
         assert expected in captured.out
 
     @pytest.mark.parametrize(

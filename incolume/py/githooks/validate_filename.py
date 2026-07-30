@@ -57,7 +57,10 @@ class ValidateFilename:
 
     def __is_python_file(self) -> bool:
         """Check if the file is a Python file."""
-        return self.filename.suffix == '.py'
+        result = self.filename.suffix == '.py'
+        msg = f'{self.filename.as_posix()} {"Is" if result else "Not is"} Python file'
+        logging.debug(msg)
+        return result
 
     def is_too_short(self) -> Self:
         """Check if the filename is too short."""
@@ -110,9 +113,11 @@ class ValidateFilename:
             )
         return self
 
-    @staticmethod
     def is_valid(
-        filename: str | Path, min_len: int = 3, max_len: int = 256
+        self: Self,
+        filename: str | Path = '',
+        min_len: int = 3,
+        max_len: int = 256,
     ) -> Result:
         r"""Check if a filename is valid.
 
@@ -128,9 +133,9 @@ class ValidateFilename:
             Result: The result of the check.
 
         Examples:
-            >>> ValidateFilename.is_valid('valid_name.py')
+            >>> ValidateFilename().is_valid('valid_name.py')
             Result(code=<Status.SUCCESS: 0>, message='')
-            >>> ValidateFilename.is_valid('sh.py', min_len=3)
+            >>> ValidateFilename().is_valid('sh.py', min_len=3)
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # noqa: E501
@@ -147,17 +152,24 @@ class ValidateFilename:
         )
         logging.debug(msg)
 
+        if not self.__is_python_file():
+            return Result(code=Status.SUCCESS, message='')
+
         if len(refname) < min_len:
-            msg_return += f'\n[red]Name too short ({min_len=}): {filename}[/]'
+            msg_return += (
+                f'\n[red]Name too short ({min_len=}): {filename}[/red]'
+            )
             code_return |= Status.FAILURE
 
         if len(refname) > max_len:
-            msg_return += f'\n[red]Name too long ({max_len=}): {filename}[/]'
+            msg_return += (
+                f'\n[red]Name too long ({max_len=}): {filename}[/red]'
+            )
             code_return |= Status.FAILURE
 
         if SNAKE_CASE_REGEX.search(name) is None:
             msg_return += (
-                f'\n[red]Filename is not in snake_case: {filename}[/]'
+                f'\n[red]Filename is not in snake_case: {filename}[/red]'
             )
             code_return |= Status.FAILURE
 
@@ -165,7 +177,8 @@ class ValidateFilename:
             r'.*_test$', name
         ):
             msg_return += (
-                f'\n[red]Filename should not be in a path: {filename}[/]'
+                f'\n[red]Filename should not be in a path: {filename}[/red]'
             )
+            code_return |= Status.FAILURE
 
         return Result(code=code_return, message=msg_return)
