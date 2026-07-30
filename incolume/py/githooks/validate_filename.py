@@ -19,7 +19,7 @@ from incolume.py.githooks.core.rules import (
 )
 
 with suppress(ImportError, ModuleNotFoundError):
-    from typing import Self  # type: ignore[import]
+    from typing import Self  # type: ignore[attr-defined]
 
 with suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]

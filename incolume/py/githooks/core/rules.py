@@ -15,7 +15,7 @@ from typing import Final
 from icecream import ic
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
-    from typing import Self  # type: ignore[import]
+    from typing import Self  # type: ignore[attr-defined]
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
@@ -171,10 +171,10 @@ class MainEntrance:
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
-    rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'
+    rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
 )
 RULE_BRANCHNAME_NOT_REFUSED: Final[str] = (
-    rf'^(?!.*({"|".join(RefusedBranchName.to_set())})).*$'
+    rf'^(?!.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
 )
 RULE_BRANCHNAME: Final[str] = (
     r'^((enhancement-\d{,11})|(feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùüç\-_]+))$'
