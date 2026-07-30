@@ -11,7 +11,7 @@ __author__ = '@britodfbr'  # pragma: no cover
 @pytest.fixture(scope='session')
 def semver_regex() -> str:
     """Fixture para regex de validação do Versionamento Semântico."""
-    return REGEX_SEMVER
+    return rf'{REGEX_SEMVER}'
 
 
 @pytest.fixture
