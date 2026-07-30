@@ -7,7 +7,6 @@ from incolume.py.githooks.core.rules import (
     RULE_COMMITFORMAT,
 )
 import pytest
-from typing import NoReturn
 import rich
 from rich.console import Console
 
@@ -35,11 +34,11 @@ class TestCasePackage:
             ),
         ],
     )
-    def test_package(self, entrance, expected) -> NoReturn:
+    def test_package(self, entrance, expected) -> None:
         """Test package."""
         assert entrance == expected
 
-    def test_rich_output(self, capsys) -> NoReturn:
+    def test_rich_output(self, capsys) -> None:
         """Test rich output."""
         console = Console()
         console.print('Hello from Rich!')

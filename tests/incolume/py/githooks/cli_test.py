@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import subprocess  # ruff: ignore[suspicious-subprocess-import]
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import NoReturn, TYPE_CHECKING
+from typing import TYPE_CHECKING
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
@@ -150,7 +150,7 @@ class TestCaseAllCLI:
     )
     def test_check_len_first_line_commit_msg_cli(
         self, capsys: Generator, entrance: Entrance
-    ) -> NoReturn:
+    ) -> None:
         """Test CLI for check len first line commit messages."""
         result = None
         with NamedTemporaryFile(dir=self.test_dir) as fl:
@@ -179,7 +179,7 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], marks=[]),
         ],
     )
-    def test_check_type_commit_msg_cli(self, args) -> NoReturn:
+    def test_check_type_commit_msg_cli(self, args) -> None:
         """Test CLI for check type commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -417,7 +417,7 @@ class TestCaseAllCLI:
             ],
         ),
     )
-    def test_detect_private_key_cli(self, capsys, entrance, args) -> NoReturn:
+    def test_detect_private_key_cli(self, capsys, entrance, args) -> None:
         """Test CLI."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -441,7 +441,7 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_footer_signedoffby_cli(self, args, expected, capsys) -> NoReturn:
+    def test_footer_signedoffby_cli(self, args, expected, capsys) -> None:
         """Test main function."""
         with NamedTemporaryFile() as tf:
             test_file = Path(tf.name)
@@ -515,7 +515,7 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_clean_commit_msg_cli(self, entrance) -> NoReturn:
+    def test_clean_commit_msg_cli(self, entrance) -> None:
         """Test CLI for clean-commit-msg-cli."""
         with NamedTemporaryFile() as fl:
             filename = Path(fl.name)
@@ -538,9 +538,7 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], 0, marks=[]),
         ],
     )
-    def test_validate_format_commit_msg_cli(
-        self, entrance, expected
-    ) -> NoReturn:
+    def test_validate_format_commit_msg_cli(self, entrance, expected) -> None:
         """Test CLI prepend commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -572,7 +570,7 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_precommit_installed(self, entrance, args, expected) -> NoReturn:
+    def test_precommit_installed(self, entrance, args, expected) -> None:
         """Test for pre-commit installed."""
         result = Status.FAILURE
         with patch.object(Path, 'cwd') as m:
