@@ -116,7 +116,7 @@ class TestCaseUtilsModule:
     def test_type_commit(self, entrance, expected) -> None:
         """Test for Enum TypeCommit."""
         if 'expected_exception' in expected:
-            with pytest.raises(**expected):  # noqa: PT010
+            with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
                 TypeCommit(entrance)
         else:
             assert TypeCommit(entrance).value == expected

@@ -1,13 +1,13 @@
 """Test module for CLI."""
 
-# ruff: noqa: E501
+# ruff: file-ignore[line-too-long]
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
-import subprocess  # noqa: S404
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import NoReturn, TYPE_CHECKING
 import pytest

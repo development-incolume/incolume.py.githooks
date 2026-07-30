@@ -1,6 +1,6 @@
 """Test module for prepare_commit_msg."""
 
-# ruff: noqa: E501
+# ruff: file-ignore[line-too-long]
 from __future__ import annotations
 
 from dataclasses import dataclass, field

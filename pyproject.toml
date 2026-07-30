@@ -41,10 +41,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "incolume-py-changelog>=0.17.0",
-    "ipykernel>=6.30.1",
-    "jupyter[lab]>=1.1.1",
-    "nbformat>=5.10.4",
+    "incolume-py-changelog>=1.0.0",
     "pre-commit>=4.3.0",
     "pytest-cov>=7.0.0",
     "pytest-env>=1.2.0",
@@ -59,6 +56,12 @@ docs = [
     "mkdocstrings-python>=1.18.2",
 ]
 
+[project.optional-dependencies]
+jupyter =[
+    "notebook>=7.6.1",
+]
+all = ["incolume-py-githooks[jupyter]"]
+
 [project.scripts]
 check-len-first-line = "incolume.py.githooks.cli:check_len_first_line_commit_msg_cli"
 clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"
@@ -72,6 +75,7 @@ is-valid-msg-commit = "incolume.py.githooks.cli:validate_format_commit_msg_cli"
 set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signedoffby_cli"
 
 [tool.uv]
+allow-insecure-host = ["https://github.com", "https://gitlab.com"]
 
 [tool.uv.build-backend]
 module-root = ""
