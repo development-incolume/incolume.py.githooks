@@ -870,9 +870,6 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
-all = [
-    { name = "notebook" },
-]
 jupyter = [
     { name = "notebook" },
 ]
@@ -901,13 +898,12 @@ requires-dist = [
     { name = "colorama", specifier = ">=0.4.6" },
     { name = "deprecated", specifier = ">=1.3.1" },
     { name = "icecream", specifier = ">=2.1.7" },
-    { name = "incolume-py-githooks", extras = ["jupyter"], marker = "extra == 'all'" },
     { name = "notebook", marker = "extra == 'jupyter'", specifier = ">=7.6.1" },
     { name = "rich", extras = ["jupyter"], specifier = ">=14.1.0" },
     { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.2.1" },
     { name = "tqdm", specifier = ">=4.67.1" },
 ]
-provides-extras = ["jupyter", "all"]
+provides-extras = ["jupyter"]
 
 [package.metadata.requires-dev]
 dev = [
