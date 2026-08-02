@@ -123,8 +123,8 @@ class RefusedBranchName(AutoName):
 class Status(Enum):
     """Status result for CLI."""
 
-    SUCCESS: int = 0
-    FAILURE: int = 1
+    SUCCESS = 0
+    FAILURE = 1
 
     def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""

@@ -156,7 +156,7 @@ def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
 
     regex = r'(feature|hotfix)\/(\w+-\d+)'
     if re.match(regex, branch):
-        issue = re.match(regex, branch).group(2)
+        issue = re.match(regex, branch).group(2)  # type: ignore[union-attr]
         with commit_msg_filepath.open('r+', encoding='utf-8') as fh:
             commit_msg = fh.read()
             fh.seek(0, 0)

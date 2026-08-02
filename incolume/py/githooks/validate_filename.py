@@ -49,7 +49,7 @@ class ValidateFilename:
     @property
     def refname(self) -> str:
         """Get the reference name."""
-        name = self.filename.stem
+        name = self.filename.stem  # type: ignore[union-attr]
         regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
@@ -57,8 +57,11 @@ class ValidateFilename:
 
     def __is_python_file(self) -> bool:
         """Check if the file is a Python file."""
-        result = self.filename.suffix == '.py'
-        msg = f'{self.filename.as_posix()} {"Is" if result else "Not is"} Python file'
+        result = self.filename.suffix == '.py'  # type: ignore[union-attr]
+        msg = (
+            f'{self.filename.as_posix()} {"Is" if result else "Not is"}'  # type: ignore[union-attr]
+            ' Python file'
+        )
         logging.debug(msg)
         return result
 
@@ -84,7 +87,7 @@ class ValidateFilename:
         """Check if the filename is in snake_case."""
         if (
             self.__is_python_file()
-            and SNAKE_CASE_REGEX.search(self.filename.stem) is None
+            and SNAKE_CASE_REGEX.search(self.filename.stem) is None  # type: ignore[union-attr]
         ):
             self.message += (
                 f'\n[red]Filename is not in snake_case: {self.filename}[/]'
@@ -94,12 +97,12 @@ class ValidateFilename:
 
     def __has_test_in_pathname(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
-        pathname = str(self.filename.parent)
+        pathname = str(self.filename.parent)  # type: ignore[union-attr]
         return bool(re.match(r'^.*tests?.*$', str(pathname)))
 
     def has_testing_in_filename(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
-        filename = self.filename.stem
+        filename = self.filename.stem  # type: ignore[union-attr]
         if (
             self.__is_python_file()
             and self.__has_test_in_pathname()
@@ -142,8 +145,8 @@ class ValidateFilename:
         filename: Path = Path(filename)
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
-        path: Path = filename.parent
-        name: str = filename.stem
+        path: Path = filename.parent  # type: ignore[union-attr]
+        name: str = filename.stem  # type: ignore[union-attr]
 
         refname = re.sub(r'[^a-z0-9]', '', name)
         msg = (
