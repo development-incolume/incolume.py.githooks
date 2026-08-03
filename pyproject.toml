@@ -61,7 +61,6 @@ docs = [
 jupyter =[
     "notebook>=7.6.1",
 ]
-all = ["incolume-py-githooks[jupyter]"]
 
 [project.scripts]
 check-len-first-line = "incolume.py.githooks.cli:check_len_first_line_commit_msg_cli"

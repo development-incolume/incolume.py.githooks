@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from functools import wraps
-from typing import TYPE_CHECKING
+from typing import Any
 
 from deprecated import deprecated
 from icecream import ic
@@ -12,18 +13,15 @@ from icecream import ic
 from . import debug_enable, debug_var_active
 from .rules import LoggingLevel
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
 debug_enable()
 
 
 @deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')
-def critical_log_call(func: Callable) -> Callable:
+def critical_log_call(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Decoratore to debug function calls."""
 
     @wraps(func)
-    def wrapper(*args: str, **kwargs: dict) -> None:
+    def wrapper(*args: str, **kwargs: str) -> Any:
         """Wrapp function to add logging critical."""
         debug: bool = debug_var_active()
 
@@ -45,7 +43,7 @@ def critical_log_call(func: Callable) -> Callable:
 
 def logging_call(
     level: LoggingLevel = LoggingLevel.DEBUG, message: str = ''
-) -> Callable:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decoratore to debug function calls.
 
     Args:
@@ -54,18 +52,16 @@ def logging_call(
 
     """
     match level:
-        case LoggingLevel():
-            pass
         case _:
             level = LoggingLevel(level)
 
     message = message or 'Function **{}** called.'
 
-    def inner(func: Callable) -> Callable:
+    def inner(func: Callable) -> Callable:  # type: ignore[type-arg]
         """Inner funtion to receive parameters."""
 
         @wraps(func)
-        def wrapper(*args: str, **kwargs: dict) -> None:
+        def wrapper(*args: str, **kwargs: str) -> Any:
             """Wrapp function to add logging record."""
             debug: bool = debug_var_active()
 

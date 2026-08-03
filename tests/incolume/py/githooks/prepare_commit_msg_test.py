@@ -6,7 +6,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import re
 import shutil
-from typing import NoReturn
 from unittest.mock import patch
 from icecream import ic
 import pytest
@@ -21,7 +20,7 @@ from inspect import stack
 class Entrance:
     """Entrance dataclass for tests."""
 
-    msg_file: str | Path = None
+    msg_file: str | Path = ''
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
     expected: Result = field(
@@ -93,7 +92,7 @@ class TestCasePrepareCommitMsg:
             ),
         ],
     )
-    def test_messages(self, entrance, expected) -> NoReturn:
+    def test_messages(self, entrance, expected) -> None:
         """Test messages."""
         assert all(element in entrance for element in expected)
 
@@ -117,7 +116,7 @@ class TestCasePrepareCommitMsg:
             ),
         ],
     )
-    def test_prepare_commit_msg(self, entrance) -> NoReturn:
+    def test_prepare_commit_msg(self, entrance) -> None:
         """Test prepend commit message."""
         entrance.msg_file.write_text(entrance.msg_commit)
         result = pkg.validate_format_commit_msg(entrance.msg_file)
@@ -138,7 +137,7 @@ class TestCasePrepareCommitMsg:
             ),
         ],
     )
-    def test_check_len_first_line_commit_msg(self, entrance) -> NoReturn:
+    def test_check_len_first_line_commit_msg(self, entrance) -> None:
         """Test for check len first line commit messages."""
         entrance.msg_file.write_text(entrance.msg_commit)
         assert pkg.check_max_len_first_line_commit_msg(entrance.msg_file)
@@ -245,7 +244,7 @@ class TestCasePrepareCommitMsg:
             ),
         ],
     )
-    def test_check_type_commit_msg(self, entrance: Entrance) -> NoReturn:
+    def test_check_type_commit_msg(self, entrance: Entrance) -> None:
         """Test for check type commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -287,7 +286,7 @@ class TestCasePrepareCommitMsg:
     )
     def test_min_len_first_line_commit_msg(
         self, entrance: Entrance, len_line: int
-    ) -> NoReturn:
+    ) -> None:
         """Test for min len first line commit messages."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)

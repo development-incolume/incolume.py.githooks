@@ -3,7 +3,6 @@
 from __future__ import annotations
 from pathlib import Path
 import shutil
-from typing import NoReturn, TYPE_CHECKING
 from incolume.py.githooks.detect_private_key import (
     has_private_key,
     BLACKLIST,
@@ -14,8 +13,7 @@ import pytest
 
 from incolume.py.githooks.core.rules import Status
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
+from collections.abc import Callable
 
 
 class TestCaseDetectPrivateKey:
@@ -23,7 +21,7 @@ class TestCaseDetectPrivateKey:
 
     test_dir = Path(gettempdir()) / 'TestCaseDetectPrivateKey'
 
-    def setup_method(self, method: Callable) -> None:
+    def setup_method(self, method: Callable) -> None:  # type: ignore[type-arg]
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
@@ -31,7 +29,7 @@ class TestCaseDetectPrivateKey:
         ic(f'setup for {method.__name__}')
         self.test_dir.mkdir(parents=True, exist_ok=True)
 
-    def teardown_method(self, method: Callable) -> None:
+    def teardown_method(self, method: Callable) -> None:  # type: ignore[type-arg]
         """Teardown method.
 
         Remove a arvore de diretórios criadas após os testes realizados.
@@ -50,7 +48,7 @@ class TestCaseDetectPrivateKey:
             ),
         ],
     )
-    def test_no_private_key(self, entrance, expected) -> NoReturn:
+    def test_no_private_key(self, entrance, expected) -> None:
         """Test with a file that does not contain a private key."""
         test_file = self.test_dir / entrance
         test_file.write_text('This is a test file without any private keys.\n')
@@ -61,13 +59,13 @@ class TestCaseDetectPrivateKey:
     @pytest.mark.parametrize(
         'entrance', [pytest.param(line, marks=[]) for line in BLACKLIST]
     )
-    def test_with_private_key(self, entrance) -> NoReturn:
+    def test_with_private_key(self, entrance) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_private_key.txt'
         test_file.write_text(f'----- {entrance} -----\n')
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_rsa_key(self) -> NoReturn:
+    def test_has_rsa_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_RSA_key.txt'
         test_file.write_text(
@@ -78,7 +76,7 @@ class TestCaseDetectPrivateKey:
 
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_dsa_key(self) -> NoReturn:
+    def test_has_dsa_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_DSA_key'
         test_file.write_text(
@@ -88,7 +86,7 @@ class TestCaseDetectPrivateKey:
         )
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_ec_key(self) -> NoReturn:
+    def test_has_ec_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_EC_key.txt'
         test_file.write_text(
@@ -98,7 +96,7 @@ class TestCaseDetectPrivateKey:
         )
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_openssh_key(self) -> NoReturn:
+    def test_has_openssh_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_OpenSSH_key.txt'
         test_file.write_text(
@@ -109,7 +107,7 @@ class TestCaseDetectPrivateKey:
         )
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_pgp_key(self) -> NoReturn:
+    def test_has_pgp_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_PGP_key.txt'
         test_file.write_text(
@@ -122,7 +120,7 @@ class TestCaseDetectPrivateKey:
         )
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_putty_key(self) -> NoReturn:
+    def test_has_putty_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_PuTTY_key.txt'
         test_file.write_text(
@@ -137,7 +135,7 @@ class TestCaseDetectPrivateKey:
         )
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_ssh2_key(self) -> NoReturn:
+    def test_has_ssh2_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_SSH2_key.txt'
         test_file.write_text(
@@ -151,7 +149,7 @@ class TestCaseDetectPrivateKey:
         )
         assert Status(has_private_key(test_file).code) is Status.FAILURE
 
-    def test_has_openvpn_key(self) -> NoReturn:
+    def test_has_openvpn_key(self) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_OpenVPN_key.txt'
         test_file.write_text(

@@ -15,7 +15,7 @@ from typing import Final
 from icecream import ic
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
-    from typing import Self  # type: ignore[import]
+    from typing import Self  # type: ignore[attr-defined]
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing_extensions import Self  # type: ignore[import]
@@ -25,8 +25,9 @@ ic.disable()
 
 
 def add_class_method_decorator(
-    method: Callable, method_modo: Callable | None = classmethod
-) -> Self:
+    method: Callable,  # type: ignore[type-arg]
+    method_modo: Callable | None = classmethod,  # type: ignore[type-arg]
+) -> Callable:  # type: ignore[type-arg]
     """Decorate dynamically add a class method into any class."""
 
     def wrapper(cls: Self) -> Self:
@@ -44,21 +45,20 @@ def add_class_method_decorator(
 
 def _missing_(cls: Self, value: str) -> Self | None:
     """Get self instance."""
+    index: int = 0
     value = value.upper().strip()
     if value.isdigit():
-        value = int(value)
+        index = int(value)
 
-    member = ChainMap(cls._member_map_, cls._value2member_map_).get(value)
+    member = ChainMap(cls._member_map_, cls._value2member_map_).get(index)
     logging.debug(ic(f'{member=}'))
     return member
 
 
-def _generate_next_value_(
-    name: str, start: any, count: any, last_values: any
-) -> str:
+def _generate_next_value_(name, start, count, last_values) -> str:
     """Gernerate next value."""
     logging.debug(ic(name, start, count, last_values))
-    return name.casefold()
+    return str(name.casefold())
 
 
 def to_set(cls: Self) -> set[str]:
@@ -105,25 +105,25 @@ class TypeCommit(AutoName):
 class ProtectedBranchName(AutoName):
     """Protected Branchname for project."""
 
-    DEV: str = auto()
-    MAIN: str = auto()
-    MASTER: str = auto()
-    TAGS: str = auto()
-    DEVELOPMENT: str = 'dev'
+    DEV = auto()
+    MAIN = auto()
+    MASTER = auto()
+    TAGS = auto()
+    DEVELOPMENT = auto()
 
 
 class RefusedBranchName(AutoName):
     """Refused Branchname for project."""
 
-    WIP: str = auto()
+    WIP = auto()
 
 
 @add_class_method_decorator(_missing_)
 class Status(Enum):
     """Status result for CLI."""
 
-    SUCCESS: int = 0
-    FAILURE: int = 1
+    SUCCESS = 0
+    FAILURE = 1
 
     def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""
@@ -171,10 +171,10 @@ class MainEntrance:
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
-    rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'
+    rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
 )
 RULE_BRANCHNAME_NOT_REFUSED: Final[str] = (
-    rf'^(?!.*({"|".join(RefusedBranchName.to_set())})).*$'
+    rf'^(?!.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
 )
 RULE_BRANCHNAME: Final[str] = (
     r'^((enhancement-\d{,11})|(feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùüç\-_]+))$'

@@ -37,16 +37,16 @@ def has_private_key(*filenames: Sequence[Path]) -> Result:
         filenames (Sequence[Path]): The sequence of file paths to check.
 
     """
-    private_key_files = []
     result = Result(code=Status.SUCCESS, message='')
     logging.debug(ic(filenames))
-
-    for filename in filenames:
-        logging.info(ic(filename))
-        with Path(filename).open('rb') as f:
-            content = f.read()
-            if any(line in content for line in BLACKLIST):
-                private_key_files.append(filename)
+    private_key_files = [
+        filename
+        for filename in filenames
+        if any(
+            line in (e.strip() for e in filename.read_bytes().split(b'\n'))  # type: ignore[attr-defined]
+            for line in BLACKLIST
+        )
+    ]
 
     if private_key_files:
         for private_key_file in private_key_files:

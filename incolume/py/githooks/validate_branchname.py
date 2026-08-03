@@ -38,7 +38,7 @@ class ValidateBranchname:
     result: Result = field(default_factory=Result)
     branchname: str = field(default_factory=get_branchname)
 
-    def asdict(self) -> dict:
+    def asdict(self) -> dict[str, str | Result]:
         """Self dict."""
         return self.__dict__
 
@@ -65,7 +65,7 @@ class ValidateBranchname:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
             )
-        return result
+        return bool(result)
 
     def __is_branch_tags(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
@@ -75,7 +75,7 @@ class ValidateBranchname:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
             )
-        return result
+        return bool(result)
 
     def __is_branch_main(self, branchname: str = '') -> bool:
         """Check if the branch name is main branch."""
@@ -137,7 +137,7 @@ class ValidateBranchname:
             return True
         return False
 
-    def is_valid(self, branchname: str = '', **kwargs: str) -> int:
+    def is_valid(self, branchname: str = '', **kwargs: str) -> Status:
         """Validate branch name.
 
         Args:

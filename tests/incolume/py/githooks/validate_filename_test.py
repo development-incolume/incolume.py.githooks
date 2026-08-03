@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 from pathlib import Path
-from typing import NoReturn
 from tempfile import NamedTemporaryFile, gettempdir
 
 from icecream import ic
@@ -43,13 +42,13 @@ class TestCaseValidFilename:
     )
     def test_validfilename_init(
         self, filefortest: Path, entrance: str, expected: object
-    ) -> NoReturn:
+    ) -> None:
         """Test the initialization of the ValidateFilename class."""
         vf = ValidateFilename(filename=filefortest)
         assert filefortest.as_posix() in vf.filename.as_posix()
         assert getattr(vf, entrance) == expected
 
-    def test_refname(self, filefortest: Path) -> NoReturn:
+    def test_refname(self, filefortest: Path) -> None:
         """Test the refname property."""
         vf = ValidateFilename(filename=filefortest)
         assert vf.refname == filefortest.stem
@@ -80,7 +79,7 @@ class TestCaseValidFilename:
     )
     def test_is_too_short(
         self, filefortest: Path, filename, min_len, expected: Result
-    ) -> NoReturn:
+    ) -> None:
         """Test the is_too_short method."""
         filename = filefortest.with_name(filename)
         vf = ValidateFilename(filename=filename, min_len=min_len)
@@ -113,7 +112,7 @@ class TestCaseValidFilename:
     )
     def test_is_too_long(
         self, filefortest: Path, filename, max_len, expected: Result
-    ) -> NoReturn:
+    ) -> None:
         """Test the is_too_long method."""
         filename = filefortest.with_name(filename)
         vf = ValidateFilename(filename=filename, max_len=max_len)
@@ -139,9 +138,11 @@ class TestCaseValidFilename:
     )
     def test_is_snake_case(
         self, filefortest: Path, filename: Path, expected: Result
-    ) -> NoReturn:
+    ) -> None:
         """Test the is_snake_case method."""
-        vf = ValidateFilename(filename=filefortest.with_name(filename))
+        vf = ValidateFilename(
+            filename=filefortest.with_name(filename.as_posix())
+        )
         result = vf.is_snake_case()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -177,9 +178,7 @@ class TestCaseValidFilename:
             ),  # Path, but valid name
         ],
     )
-    def test_has_testing_in_pathname(
-        self, filename, expected: Result
-    ) -> NoReturn:
+    def test_has_testing_in_pathname(self, filename, expected: Result) -> None:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
         result = vf.has_testing_in_filename()
@@ -416,9 +415,7 @@ class TestCaseValidFilename:
             ),  # Path, but valid name
         ],
     )
-    def test_check_if_valid_filenames(
-        self, entrance: dict, expected: Result
-    ) -> NoReturn:
+    def test_check_if_valid_filenames(self, entrance, expected) -> None:
         """Test invalid filenames."""
         fout = self.test_dir / stack()[0][3] / entrance['filename']
         fout.parent.mkdir(parents=True, exist_ok=True)
