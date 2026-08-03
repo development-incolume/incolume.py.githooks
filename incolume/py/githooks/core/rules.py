@@ -107,17 +107,17 @@ class TypeCommit(AutoName):
 class ProtectedBranchName(AutoName):
     """Protected Branchname for project."""
 
-    DEV: str = 'dev'
-    MAIN: str = 'main'
-    MASTER: str = 'master'
-    TAGS: str = 'tags'
-    DEVELOPMENT: str = 'dev'
+    DEV = auto()
+    MAIN = auto()
+    MASTER = auto()
+    TAGS = auto()
+    DEVELOPMENT = auto()
 
 
 class RefusedBranchName(AutoName):
     """Refused Branchname for project."""
 
-    WIP: str = 'wip'
+    WIP = auto()
 
 
 @add_class_method_decorator(_missing_)
