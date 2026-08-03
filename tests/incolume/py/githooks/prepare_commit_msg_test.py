@@ -20,7 +20,7 @@ from inspect import stack
 class Entrance:
     """Entrance dataclass for tests."""
 
-    msg_file: str | Path = None
+    msg_file: str | Path = ''
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
     expected: Result = field(

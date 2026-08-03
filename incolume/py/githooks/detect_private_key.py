@@ -43,8 +43,7 @@ def has_private_key(*filenames: Sequence[Path]) -> Result:
         filename
         for filename in filenames
         if any(
-            line
-            in (e.strip() for e in filename.read_bytes().split(b'\n'))  # type: ignore[attr-defined]
+            line in (e.strip() for e in filename.read_bytes().split(b'\n'))  # type: ignore[attr-defined]
             for line in BLACKLIST
         )
     ]

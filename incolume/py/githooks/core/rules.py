@@ -25,7 +25,8 @@ ic.disable()
 
 
 def add_class_method_decorator(
-    method: Callable, method_modo: Callable | None = classmethod  # type: ignore[type-arg]
+    method: Callable,  # type: ignore[type-arg]
+    method_modo: Callable | None = classmethod,  # type: ignore[type-arg]
 ) -> Callable:  # type: ignore[type-arg]
     """Decorate dynamically add a class method into any class."""
 
@@ -106,17 +107,17 @@ class TypeCommit(AutoName):
 class ProtectedBranchName(AutoName):
     """Protected Branchname for project."""
 
-    DEV: str = auto()
-    MAIN: str = auto()
-    MASTER: str = auto()
-    TAGS: str = auto()
+    DEV: str = 'dev'
+    MAIN: str = 'main'
+    MASTER: str = 'master'
+    TAGS: str = 'tags'
     DEVELOPMENT: str = 'dev'
 
 
 class RefusedBranchName(AutoName):
     """Refused Branchname for project."""
 
-    WIP: str = auto()
+    WIP: str = 'wip'
 
 
 @add_class_method_decorator(_missing_)

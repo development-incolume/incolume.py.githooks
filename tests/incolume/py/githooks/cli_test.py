@@ -29,14 +29,13 @@ from itertools import chain
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-    from collections.abc import Generator
 
 
 @dataclass
 class Entrance:
     """Entrance dataclass for tests."""
 
-    msg_file: str | Path = None
+    msg_file: str | Path = ''
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
     expected: Result = field(
@@ -148,7 +147,9 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_check_len_first_line_commit_msg_cli(self, capsys, entrance) -> None:
+    def test_check_len_first_line_commit_msg_cli(
+        self, capsys, entrance
+    ) -> None:
         """Test CLI for check len first line commit messages."""
         result = None
         with NamedTemporaryFile(dir=self.test_dir) as fl:
