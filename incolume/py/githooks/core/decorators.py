@@ -43,7 +43,7 @@ def critical_log_call(func: Callable) -> Callable:  # type: ignore[type-arg]
 
 def logging_call(
     level: LoggingLevel = LoggingLevel.DEBUG, message: str = ''
-) -> str:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """Decoratore to debug function calls.
 
     Args:
@@ -52,8 +52,6 @@ def logging_call(
 
     """
     match level:
-        case LoggingLevel():
-            pass
         case _:
             level = LoggingLevel(level)
 

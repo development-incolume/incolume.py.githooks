@@ -35,7 +35,7 @@ class TestCompactShutil:
         ic(f'finished class {cls.__name__} execution')
         shutil.rmtree(cls.PATH)
 
-    def setup_method(self, method) -> list[Path]:
+    def setup_method(self, method) -> None:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
@@ -45,7 +45,7 @@ class TestCompactShutil:
             parents=True,
             exist_ok=True,
         )
-        [path.joinpath(f'a{x:02}.txt').touch() for x in range(self.quantity)]
+        [path.joinpath(f'a{x:02}.txt').touch() for x in range(self.quantity)]  # type: ignore[func-returns-value]
 
     def teardown_method(self, method) -> None:
         """Teardown method.

@@ -55,12 +55,10 @@ def _missing_(cls: Self, value: str) -> Self | None:
     return member
 
 
-def _generate_next_value_(
-    name: str, start: any, count: any, last_values: any
-) -> str:
+def _generate_next_value_(name, start, count, last_values) -> str:
     """Gernerate next value."""
     logging.debug(ic(name, start, count, last_values))
-    return name.casefold()
+    return str(name.casefold())
 
 
 def to_set(cls: Self) -> set[str]:

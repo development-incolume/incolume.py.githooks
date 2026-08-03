@@ -54,7 +54,7 @@ def check_len_first_line_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
     """Check commit message."""
-    results = []
+    results: list[Result] = []
     result_code: Status = Status.SUCCESS
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
@@ -113,7 +113,7 @@ def check_len_first_line_commit_msg_cli(
 @logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
     argv: Sequence[str] | None = None,
-) -> sys.exit:
+) -> int:
     """Check commit message."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
