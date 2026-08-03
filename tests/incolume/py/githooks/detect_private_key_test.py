@@ -3,7 +3,6 @@
 from __future__ import annotations
 from pathlib import Path
 import shutil
-from typing import TYPE_CHECKING
 from incolume.py.githooks.detect_private_key import (
     has_private_key,
     BLACKLIST,
@@ -14,8 +13,7 @@ import pytest
 
 from incolume.py.githooks.core.rules import Status
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
+from collections.abc import Callable
 
 
 class TestCaseDetectPrivateKey:
@@ -23,7 +21,7 @@ class TestCaseDetectPrivateKey:
 
     test_dir = Path(gettempdir()) / 'TestCaseDetectPrivateKey'
 
-    def setup_method(self, method: Callable) -> None:
+    def setup_method(self, method: Callable) -> None:  # type: ignore[type-arg]
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
@@ -31,7 +29,7 @@ class TestCaseDetectPrivateKey:
         ic(f'setup for {method.__name__}')
         self.test_dir.mkdir(parents=True, exist_ok=True)
 
-    def teardown_method(self, method: Callable) -> None:
+    def teardown_method(self, method: Callable) -> None:  # type: ignore[type-arg]
         """Teardown method.
 
         Remove a arvore de diretórios criadas após os testes realizados.

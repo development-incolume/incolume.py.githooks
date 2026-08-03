@@ -49,7 +49,7 @@ class TestCaseAllCLI:
 
     test_dir = Path(gettempdir()) / stack()[0][3]
 
-    def setup_method(self, method: Callable) -> None:
+    def setup_method(self, method: Callable) -> None:  # type: ignore[type-arg]
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
@@ -148,9 +148,7 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_check_len_first_line_commit_msg_cli(
-        self, capsys: Generator, entrance: Entrance
-    ) -> None:
+    def test_check_len_first_line_commit_msg_cli(self, capsys, entrance) -> None:
         """Test CLI for check len first line commit messages."""
         result = None
         with NamedTemporaryFile(dir=self.test_dir) as fl:

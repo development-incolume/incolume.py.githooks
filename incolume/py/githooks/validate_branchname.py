@@ -38,7 +38,7 @@ class ValidateBranchname:
     result: Result = field(default_factory=Result)
     branchname: str = field(default_factory=get_branchname)
 
-    def asdict(self) -> dict:
+    def asdict(self) -> dict[str, str | Result]:
         """Self dict."""
         return self.__dict__
 

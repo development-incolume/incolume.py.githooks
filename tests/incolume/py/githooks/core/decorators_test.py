@@ -86,9 +86,7 @@ class TestCaseDecorators:
             ),
         ],
     )
-    def test_logging_call(
-        self, caplog, entrance: str, expected: list, *, debug_mode: bool
-    ) -> None:
+    def test_logging_call(self, caplog, entrance, expected, *, debug_mode) -> None:
         """Test logging_call decorator."""
 
         @decorators.logging_call(LoggingLevel(expected[1]), expected[2])

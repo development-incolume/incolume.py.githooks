@@ -61,7 +61,7 @@ class TestCompactShutil:
         ext = 'zip'
         output_dir = self.PATH / self.PATH.stem
         path = self.PATH.joinpath(inspect.stack()[0][3])
-        result = shutil.make_archive(output_dir, ext, path)
+        result = shutil.make_archive(output_dir.as_posix(), ext, path)
         assert output_dir.with_suffix(f'.{ext}') == Path(result)
         assert Path(result).is_file()
 
@@ -70,7 +70,7 @@ class TestCompactShutil:
         ext = 'tar'
         output_dir = self.PATH / self.PATH.stem
         path = self.PATH.joinpath(inspect.stack()[0][3])
-        result = shutil.make_archive(output_dir, ext, path)
+        result = shutil.make_archive(output_dir.as_posix(), ext, path)
         assert output_dir.with_suffix(f'.{ext}') == Path(result)
         assert Path(result).is_file()
 

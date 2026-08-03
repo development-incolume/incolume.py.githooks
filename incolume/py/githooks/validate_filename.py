@@ -142,7 +142,7 @@ class ValidateFilename:
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # ruff: ignore[line-too-long]
-        filename: Path = Path(filename)
+        filename: Path = Path(filename)  # type: ignore[assignment]
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
         path: Path = filename.parent  # type: ignore[union-attr]
