@@ -25,8 +25,8 @@ ic.disable()
 
 
 def add_class_method_decorator(
-    method: Callable, method_modo: Callable | None = classmethod
-) -> Self:
+    method: Callable, method_modo: Callable | None = classmethod  # type: ignore[type-arg]
+) -> Callable:
     """Decorate dynamically add a class method into any class."""
 
     def wrapper(cls: Self) -> Self:
