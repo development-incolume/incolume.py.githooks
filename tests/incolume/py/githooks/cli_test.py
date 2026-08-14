@@ -358,7 +358,9 @@ class TestCaseAllCLI:
                 marks=[pytest.mark.xfail(reason='False positive')],
             ),
             pytest.param(
-                {f'{"x" * 257}.py'}, Status.FAILURE, 'Name too long', marks=[]
+                {f'{"x" * 257}.py'}, Status.FAILURE, 'Name too long', marks=[
+                    #pytest.mark.xfail(reason='False positive')
+                    ]
             ),
             pytest.param({'x.py'}, 1, 'Name too short', marks=[]),
             pytest.param({'x.py', '--nonexequi'}, 0, '', marks=[]),
@@ -401,7 +403,7 @@ class TestCaseAllCLI:
         """Test CLI."""
         result = cli.check_valid_filenames_cli([*entrance])
         captured = capsys.readouterr()
-        assert result == result_expected.value
+        assert result == result_expected
         assert expected in captured.out
 
     @pytest.mark.parametrize(
