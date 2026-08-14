@@ -1,4 +1,4 @@
-"""Module utils for project."""
+"""Module core.__main__ for project."""
 
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 
