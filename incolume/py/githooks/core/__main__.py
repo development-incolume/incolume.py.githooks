@@ -10,8 +10,6 @@ from os import getenv
 
 from icecream import ic
 
-from incolume.py.githooks.core.rules import Status as Status
-
 ic.disable()
 
 
