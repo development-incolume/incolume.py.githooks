@@ -200,7 +200,7 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
+def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> Status:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
