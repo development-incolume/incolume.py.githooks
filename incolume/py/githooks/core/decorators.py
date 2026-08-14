@@ -10,8 +10,8 @@ from typing import Any
 from deprecated import deprecated
 from icecream import ic
 
-from . import debug_enable, debug_var_active
-from .rules import LoggingLevel
+from incolume.py.githooks.core import debug_enable, debug_var_active
+from incolume.py.githooks.core.rules import LoggingLevel
 
 debug_enable()
 
