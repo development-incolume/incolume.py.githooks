@@ -74,7 +74,7 @@ class TestCompactShutil:
         assert output_dir.with_suffix(f'.{ext}') == Path(result)
         assert Path(result).is_file()
 
-    @pytest.mark.xfail(reason='Test not implemented yet')
+    @pytest.mark.xfail(reason='Proposital fail Test')
     def test_example_xfail(self) -> NoReturn:
         """Test prepend commit message."""
         assert pytest.fail('Test not implemented yet')
