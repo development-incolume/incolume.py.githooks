@@ -7,7 +7,7 @@ from __future__ import annotations
 import contextlib
 import logging
 from collections import ChainMap
-from collections.abc import Callable
+from collections.abc import Callable, Container
 from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Final
@@ -18,7 +18,7 @@ with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing import Self  # type: ignore[attr-defined]
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
-    from typing_extensions import Self  # type: ignore[import]
+    from typing_extensions import Self
 
 
 ic.disable()
@@ -55,7 +55,9 @@ def _missing_(cls: Self, value: str) -> Self | None:
     return member
 
 
-def _generate_next_value_(name, start, count, last_values) -> str:
+def _generate_next_value_(
+    name: str, start: int, count: int, last_values: Container[str]
+) -> str:
     """Gernerate next value."""
     logging.debug(ic(name, start, count, last_values))
     return str(name.casefold())
