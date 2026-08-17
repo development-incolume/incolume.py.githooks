@@ -22,7 +22,7 @@ with suppress(ImportError, ModuleNotFoundError):
     from typing import Self  # type: ignore[attr-defined]
 
 with suppress(ImportError, ModuleNotFoundError):
-    from typing_extensions import Self  # type: ignore[import]
+    from typing_extensions import Self
 
 
 debug_enable()
@@ -48,7 +48,7 @@ class ValidateFilename:
 
     @property
     def refname(self) -> str:
-        """Get the reference name."""
+        """Getting the reference name."""
         name = self.filename.stem  # type: ignore[union-attr]
         regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
         refname = re.sub(regex, '', name)
@@ -112,7 +112,8 @@ class ValidateFilename:
             self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is not None
             self.message += (
                 '\n[red]Parece ser um arquivo de test.'
-                f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}_test.py[/red]'
+                f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}'
+                '_test.py[/red]'
             )
         return self
 
@@ -145,8 +146,8 @@ class ValidateFilename:
         filename = Path(filename)
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
-        path: Path = filename.parent  # type: ignore[union-attr]
-        name: str = filename.stem  # type: ignore[union-attr]
+        path: Path = filename.parent
+        name: str = filename.stem
 
         refname = re.sub(r'[^a-z0-9]', '', name)
         msg = (

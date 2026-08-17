@@ -3,6 +3,7 @@
 from __future__ import annotations
 from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
+from typing import TYPE_CHECKING
 
 from icecream import ic
 import pytest
@@ -12,6 +13,9 @@ from incolume.py.githooks.core.rules import (
 )
 from incolume.py.githooks.validate_filename import ValidateFilename
 from inspect import stack
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class TestCaseValidFilename:
@@ -78,11 +82,11 @@ class TestCaseValidFilename:
         ],
     )
     def test_is_too_short(
-        self, filefortest: Path, filename, min_len, expected: Result
+        self, filefortest: Path, filename: str, min_len: int, expected: Result
     ) -> None:
         """Test the is_too_short method."""
-        filename = filefortest.with_name(filename)
-        vf = ValidateFilename(filename=filename, min_len=min_len)
+        fltest = filefortest.with_name(filename)
+        vf = ValidateFilename(filename=fltest, min_len=min_len)
         result = vf.is_too_short()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -111,11 +115,11 @@ class TestCaseValidFilename:
         ],
     )
     def test_is_too_long(
-        self, filefortest: Path, filename, max_len, expected: Result
+        self, filefortest: Path, filename: str, max_len: int, expected: Result
     ) -> None:
         """Test the is_too_long method."""
-        filename = filefortest.with_name(filename)
-        vf = ValidateFilename(filename=filename, max_len=max_len)
+        fltest = filefortest.with_name(filename)
+        vf = ValidateFilename(filename=fltest, max_len=max_len)
         result = vf.is_too_long()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -178,7 +182,9 @@ class TestCaseValidFilename:
             ),  # Path, but valid name
         ],
     )
-    def test_has_testing_in_pathname(self, filename, expected: Result) -> None:
+    def test_has_testing_in_pathname(
+        self, filename: str, expected: Result
+    ) -> None:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
         result = vf.has_testing_in_filename()
@@ -304,11 +310,7 @@ class TestCaseValidFilename:
             pytest.param(
                 {'filename': '.hiddenfile'},
                 Result(Status.SUCCESS, ''),
-                marks=[
-                    # pytest.mark.xfail(
-                    #     raises=AssertionError, reason='Not implemented yet'
-                    # )
-                ],
+                marks=[],
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '.gitignore'},
@@ -415,7 +417,9 @@ class TestCaseValidFilename:
             ),  # Path, but valid name
         ],
     )
-    def test_check_if_valid_filenames(self, entrance, expected) -> None:
+    def test_check_if_valid_filenames(
+        self, entrance: Mapping[str, str], expected: Result
+    ) -> None:
         """Test invalid filenames."""
         fout = self.test_dir / stack()[0][3] / entrance['filename']
         fout.parent.mkdir(parents=True, exist_ok=True)
