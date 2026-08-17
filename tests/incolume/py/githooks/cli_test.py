@@ -1,7 +1,5 @@
 """Test module for CLI."""
 
-# ruff: file-ignore[line-too-long]
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
