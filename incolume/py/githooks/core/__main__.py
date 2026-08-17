@@ -6,11 +6,30 @@ from __future__ import annotations
 
 import logging
 import subprocess
+from contextlib import suppress
 from os import getenv
+from pathlib import Path
 
 from icecream import ic
 
 ic.disable()
+
+with suppress(ImportError, ModuleNotFoundError):
+    import tomllib as tomli
+
+with suppress(ImportError, ModuleNotFoundError):
+    import tomli
+
+
+confproject = Path(__file__).parents[3] / 'pyproject.toml'
+fileversion = Path(__file__).parents[1] / 'version.txt'
+
+with suppress(FileNotFoundError), confproject.open('rb') as f:
+    fileversion.write_text(
+        f'{tomli.load(f)["project"]["version"]!s}\n',
+    )
+
+__version__ = fileversion.read_text().strip()
 
 
 def debug_var_active() -> bool:
@@ -86,3 +105,6 @@ def get_git_diff() -> str:
     except subprocess.CalledProcessError as e:  # pragma: no cover
         msg = 'Falha ao executar git diff'
         raise RuntimeError(msg) from e
+
+
+debug_enable()  # Enable debug mode if environment variable is set

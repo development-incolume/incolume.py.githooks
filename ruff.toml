@@ -158,6 +158,7 @@ multiline-quotes = "double"
   "PLR6301",
   "S101",
   "ANN401",  # suppress due conflit with mypy
+  "line-too-long",
 ]
 
 [lint.flake8-pytest-style]

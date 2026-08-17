@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
 from functools import wraps
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from deprecated import deprecated
 from icecream import ic
 
 from incolume.py.githooks.core import debug_enable, debug_var_active
 from incolume.py.githooks.core.rules import LoggingLevel
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 debug_enable()
 

@@ -1,6 +1,6 @@
 """Test for module validate_branchname."""
 
-# ruff: file-ignore[line-too-long, private-member-access]
+# ruff: file-ignore[private-member-access]
 
 import pytest
 from incolume.py.githooks.core.rules import Status, Result
