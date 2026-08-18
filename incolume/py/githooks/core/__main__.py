@@ -21,7 +21,7 @@ with suppress(ImportError, ModuleNotFoundError):
     import tomli
 
 
-confproject = Path(__file__).parents[3] / 'pyproject.toml'
+confproject = Path(__file__).parents[4] / 'pyproject.toml'
 fileversion = Path(__file__).parents[1] / 'version.txt'
 
 with suppress(FileNotFoundError), confproject.open('rb') as f:
