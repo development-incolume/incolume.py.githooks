@@ -1,5 +1,7 @@
 """Tests for util."""
 
+from collections.abc import Mapping
+
 import pytest
 from incolume.py.githooks import core
 from incolume.py.githooks.core.rules import TypeCommit
@@ -113,7 +115,9 @@ class TestCaseUtilsModule:
             ),
         ],
     )
-    def test_type_commit(self, entrance, expected) -> None:
+    def test_type_commit(
+        self, entrance: str, expected: Mapping[str, str]
+    ) -> None:
         """Test for Enum TypeCommit."""
         if 'expected_exception' in expected:
             with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
