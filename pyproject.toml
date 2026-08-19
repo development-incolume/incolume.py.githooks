@@ -41,7 +41,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "incolume-py-changelog>=1.0.0",
+    "incolume-py-changelog>=1.2.1",
     "mypy>=2.3.0",
     "pre-commit>=4.3.0",
     "pytest-cov>=7.0.0",
@@ -80,6 +80,9 @@ allow-insecure-host = ["https://github.com", "https://gitlab.com"]
 [tool.uv.build-backend]
 module-root = ""
 module-name = "incolume.py.githooks"
+
+[tool.uv.sources]
+incolume-py-changelog = { git = "https://github.com/development-incolume/incolume.py.changelog", rev = "dev" }
 
 [build-system]
 requires = ["uv_build>=0.8.9,<0.9.0"]

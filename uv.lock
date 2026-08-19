@@ -818,7 +818,7 @@ name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -978,8 +978,8 @@ wheels = [
 
 [[package]]
 name = "incolume-py-changelog"
-version = "1.2.1"
-source = { registry = "https://pypi.org/simple" }
+version = "1.3.0a7"
+source = { git = "https://github.com/development-incolume/incolume.py.changelog?rev=dev#cd00503e9116c195c9deb661be0b95ae499e2674" }
 dependencies = [
     { name = "chardet" },
     { name = "click" },
@@ -988,10 +988,6 @@ dependencies = [
     { name = "python-dotenv", extra = ["cli"] },
     { name = "tomlkit" },
     { name = "unidecode" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/27/f9/f995c618b4de7f2360bc48e1b8a853cf4efb9f4e5c9962e9f518e7a761d4/incolume_py_changelog-1.2.1.tar.gz", hash = "sha256:fc342132e04b028975d85c6d187b3966ccc499b679b02022a1c64e4b24b8fbe2", size = 13295, upload-time = "2026-08-10T16:09:17.476Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f5/02/9d96148d3206ef3b71610ff2d2af0662f66826b307b15fa5c2fb07512c72/incolume_py_changelog-1.2.1-py3-none-any.whl", hash = "sha256:b349dc3d748fd26654ba8d00b95d4e60a6a241d71e1db24018a5f29b4d5d493c", size = 13986, upload-time = "2026-08-10T16:09:16.646Z" },
 ]
 
 [[package]]
@@ -1046,7 +1042,7 @@ provides-extras = ["jupyter"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "incolume-py-changelog", specifier = ">=1.0.0" },
+    { name = "incolume-py-changelog", git = "https://github.com/development-incolume/incolume.py.changelog?rev=dev" },
     { name = "mypy", specifier = ">=2.3.0" },
     { name = "pre-commit", specifier = ">=4.3.0" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
