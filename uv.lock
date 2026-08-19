@@ -978,8 +978,8 @@ wheels = [
 
 [[package]]
 name = "incolume-py-changelog"
-version = "1.3.0a7"
-source = { git = "https://github.com/development-incolume/incolume.py.changelog?rev=dev#cd00503e9116c195c9deb661be0b95ae499e2674" }
+version = "1.3.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "chardet" },
     { name = "click" },
@@ -988,6 +988,10 @@ dependencies = [
     { name = "python-dotenv", extra = ["cli"] },
     { name = "tomlkit" },
     { name = "unidecode" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bd/b7/84d78a676be2fbe7ff87ef9bf62f1fe7bc3988ff031cb029692e0d32700d/incolume_py_changelog-1.3.0.tar.gz", hash = "sha256:1876bd7e4709dc3bf299b36b87e117f286b6c7ec38d2e1431454d3e1e4165b82", size = 13614, upload-time = "2026-08-19T13:44:03.19Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8c/bd/989a8bc6bb8fae23f17b520e33a7eac7d2a68dbb485f4c71abaa0a241ba6/incolume_py_changelog-1.3.0-py3-none-any.whl", hash = "sha256:75358ccd185ff11d6009c8ae583c86ad0d33b5bd4b269d9f39c6434107e026d8", size = 14247, upload-time = "2026-08-19T13:44:02.014Z" },
 ]
 
 [[package]]
@@ -1042,7 +1046,7 @@ provides-extras = ["jupyter"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "incolume-py-changelog", git = "https://github.com/development-incolume/incolume.py.changelog?rev=dev" },
+    { name = "incolume-py-changelog", specifier = ">=1.3.0" },
     { name = "mypy", specifier = ">=2.3.0" },
     { name = "pre-commit", specifier = ">=4.3.0" },
     { name = "pytest-cov", specifier = ">=7.0.0" },
