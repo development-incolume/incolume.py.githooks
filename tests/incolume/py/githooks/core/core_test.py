@@ -1,6 +1,6 @@
 """Tests for util."""
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Callable
 
 import pytest
 from incolume.py.githooks import core
@@ -15,7 +15,7 @@ from unittest.mock import patch
 class TestCaseUtilsEnviron:
     """Testcase for utils module."""
 
-    def setup_method(self, method) -> None:
+    def setup_method(self, method: Callable[[], None]) -> None:
         """Set method."""
         ic(method)
 
@@ -53,7 +53,9 @@ class TestCaseUtilsEnviron:
             pytest.param('INCOLUME_DEBUG_MODE', None, False),
         ],
     )
-    def test_debug_enable(self, envname, entrance, expected) -> None:
+    def test_debug_enable(
+        self, envname: str, entrance: int, expected: int
+    ) -> None:
         """Test debug enable."""
         with mock.patch.dict(os.environ, clear=True):
             os.environ[envname] = str(entrance)
@@ -67,7 +69,7 @@ class TestCaseUtilsModule:
         'entrance',
         [pytest.param('A\tincolume/py/githooks/module_xpto.py', marks=[])],
     )
-    def test_get_diff(self, entrance, mocker) -> None:
+    def test_get_diff(self, entrance: str, mocker: mock.Mock) -> None:
         """Test get_diff_files function."""
         mocker.patch('subprocess.check_output', return_value=entrance)
         assert core.get_git_diff() == entrance
@@ -116,11 +118,11 @@ class TestCaseUtilsModule:
         ],
     )
     def test_type_commit(
-        self, entrance: str, expected: Mapping[str, str]
+        self, entrance: str, expected: str | Mapping[BaseException, str]
     ) -> None:
         """Test for Enum TypeCommit."""
         if 'expected_exception' in expected:
-            with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
+            with pytest.raises(**expected):  # type: ignore[arg-type]  # ruff: ignore[pytest-raises-without-exception]
                 TypeCommit(entrance)
         else:
             assert TypeCommit(entrance).value == expected
