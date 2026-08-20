@@ -5,6 +5,10 @@ import pytest
 from incolume.py.githooks.core import decorators
 from incolume.py.githooks.core.rules import LoggingLevel
 from os import environ
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
 
 
 class TestCaseDecorators:
@@ -26,11 +30,16 @@ class TestCaseDecorators:
         ],
     )
     def test_critical_log_call(
-        self, caplog, entrance: str, expected: None, *, debug_mode: bool
+        self,
+        caplog: pytest.LogCaptureFixture,
+        entrance: str,
+        expected: None,
+        *,
+        debug_mode: bool,
     ) -> None:
         """Test critical_log_call decorator."""
 
-        @decorators.critical_log_call
+        @decorators.critical_log_call()
         def sample_function(a: str) -> str:
             """Sample function to be decorated."""
             return a
@@ -110,7 +119,7 @@ class TestCaseDecorators:
         caplog,
     ) -> None:
         """Test logging_call decorator."""
-        entrance = [
+        entrance: list[Mapping[str, Any]] = [
             {
                 'level': LoggingLevel.DEBUG,
                 'message': 'debug executado via teste',
