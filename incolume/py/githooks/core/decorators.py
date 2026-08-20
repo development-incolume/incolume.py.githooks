@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 debug_enable()
 
 
-@deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')
-def critical_log_call(func: Callable) -> Callable:  # type: ignore[type-arg]
+@deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')  # type: ignore[untyped-decorator]
+def critical_log_call(func: Callable[[Any], Any]) -> Callable[[], Any]:
     """Decoratore to debug function calls."""
 
     @wraps(func)
@@ -63,7 +63,7 @@ def logging_call(
         """Inner funtion to receive parameters."""
 
         @wraps(func)
-        def wrapper(*args: str, **kwargs: str) -> Any:
+        def wrapper(*args: str, **kwargs: str) -> Callable[[], Any]:
             """Wrapp function to add logging record."""
             debug: bool = debug_var_active()
 
