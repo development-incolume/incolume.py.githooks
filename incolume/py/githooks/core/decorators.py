@@ -63,7 +63,7 @@ def logging_call(
         """Inner funtion to receive parameters."""
 
         @wraps(func)
-        def wrapper(*args: str, **kwargs: str) -> Callable[[], Any]:
+        def wrapper(*args: str, **kwargs: str) -> Callable[[Any], Any]:
             """Wrapp function to add logging record."""
             debug: bool = debug_var_active()
 
