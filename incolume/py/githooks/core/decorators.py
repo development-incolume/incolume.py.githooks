@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar
+from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 from deprecated import deprecated
 from icecream import ic
@@ -73,8 +73,11 @@ def logging_call(
 
             if debug:
                 ic.enable()
-                ic(f'Calling function: {func.__name__}')
-                ic(f'Arguments: {args}, {kwargs}')
+                m1 = (
+                    f'Calling function: {func.__name__},',
+                    f' Arguments: {args}, {kwargs}',
+                )
+                ic(m1)
 
             result = func(*args, **kwargs)
 

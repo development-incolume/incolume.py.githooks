@@ -96,7 +96,12 @@ class TestCaseDecorators:
         ],
     )
     def test_logging_call(
-        self, caplog, entrance, expected, *, debug_mode
+        self,
+        caplog: pytest.LogCaptureFixture,
+        entrance: str,
+        expected: tuple[str, int, str],
+        *,
+        debug_mode: bool,
     ) -> None:
         """Test logging_call decorator."""
 
@@ -116,7 +121,7 @@ class TestCaseDecorators:
 
     def test_multiples_logging_call(
         self,
-        caplog,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test logging_call decorator."""
         entrance: list[Mapping[str, Any]] = [
