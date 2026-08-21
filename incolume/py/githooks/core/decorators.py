@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from functools import wraps
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 from deprecated import deprecated
 from icecream import ic
@@ -15,15 +15,19 @@ from incolume.py.githooks.core.rules import LoggingLevel
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+
+P = ParamSpec('P')
+R = TypeVar('R')
+
 debug_enable()
 
 
 @deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')  # type: ignore[untyped-decorator]
-def critical_log_call(func: Callable[[Any], Any]) -> Callable[[], Any]:
+def critical_log_call(func: Callable[P, R]) -> Callable[P, R]:
     """Decoratore to debug function calls."""
 
     @wraps(func)
-    def wrapper(*args: str, **kwargs: str) -> Any:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         """Wrapp function to add logging critical."""
         debug: bool = debug_var_active()
 
@@ -45,7 +49,7 @@ def critical_log_call(func: Callable[[Any], Any]) -> Callable[[], Any]:
 
 def logging_call(
     level: LoggingLevel = LoggingLevel.DEBUG, message: str = ''
-) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
+) -> Callable[[Callable[P, R]], Callable[P, R]]:
     """Decoratore to debug function calls.
 
     Args:
@@ -59,18 +63,21 @@ def logging_call(
 
     message = message or 'Function **{}** called.'
 
-    def inner(func: Callable) -> Callable:  # type: ignore[type-arg]
+    def inner(func: Callable[P, R]) -> Callable[P, R]:
         """Inner funtion to receive parameters."""
 
         @wraps(func)
-        def wrapper(*args: str, **kwargs: str) -> Callable[[Any], Any]:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
             """Wrapp function to add logging record."""
             debug: bool = debug_var_active()
 
             if debug:
                 ic.enable()
-                ic(f'Calling function: {func.__name__}')
-                ic(f'Arguments: {args}, {kwargs}')
+                m1 = (
+                    f'Calling function: {func.__name__},',
+                    f' Arguments: {args}, {kwargs}',
+                )
+                ic(m1)
 
             result = func(*args, **kwargs)
 

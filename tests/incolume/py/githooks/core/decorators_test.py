@@ -39,7 +39,7 @@ class TestCaseDecorators:
     ) -> None:
         """Test critical_log_call decorator."""
 
-        @decorators.critical_log_call()
+        @decorators.critical_log_call()  # type: ignore[untyped-decorator]
         def sample_function(a: str) -> str:
             """Sample function to be decorated."""
             return a
@@ -96,11 +96,16 @@ class TestCaseDecorators:
         ],
     )
     def test_logging_call(
-        self, caplog, entrance, expected, *, debug_mode
+        self,
+        caplog: pytest.LogCaptureFixture,
+        entrance: str,
+        expected: tuple[str, int, str],
+        *,
+        debug_mode: bool,
     ) -> None:
         """Test logging_call decorator."""
 
-        @decorators.logging_call(LoggingLevel(expected[1]), expected[2])
+        @decorators.logging_call(LoggingLevel(expected[1]), expected[2])  # type: ignore[untyped-decorator]
         def sample_function(a: str = 'word') -> str:
             """Sample function to be decorated."""
             return a
@@ -116,7 +121,7 @@ class TestCaseDecorators:
 
     def test_multiples_logging_call(
         self,
-        caplog,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test logging_call decorator."""
         entrance: list[Mapping[str, Any]] = [
@@ -138,10 +143,10 @@ class TestCaseDecorators:
             },
         ]
 
-        @decorators.logging_call(**entrance[0])
-        @decorators.logging_call(**entrance[1])
-        @decorators.logging_call(**entrance[2])
-        @decorators.logging_call(**entrance[3])
+        @decorators.logging_call(**entrance[0])  # type: ignore[untyped-decorator]
+        @decorators.logging_call(**entrance[1])  # type: ignore[untyped-decorator]
+        @decorators.logging_call(**entrance[2])  # type: ignore[untyped-decorator]
+        @decorators.logging_call(**entrance[3])  # type: ignore[untyped-decorator]
         def sample_function(a: str = 'word') -> str:
             """Sample function to be decorated."""
             return a
