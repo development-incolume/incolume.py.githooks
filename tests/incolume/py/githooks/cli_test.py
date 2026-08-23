@@ -7,7 +7,7 @@ from pathlib import Path
 import shutil
 import subprocess  # ruff: ignore[suspicious-subprocess-import]
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
@@ -26,6 +26,7 @@ from unittest.mock import patch
 from itertools import chain
 
 if TYPE_CHECKING:
+    from pytest_mock import MockerFixture
     from collections.abc import Callable
 
 
@@ -146,7 +147,7 @@ class TestCaseAllCLI:
         ],
     )
     def test_check_len_first_line_commit_msg_cli(
-        self, capsys, entrance
+        self, capsys: pytest.CaptureFixture[Any], entrance: Entrance
     ) -> None:
         """Test CLI for check len first line commit messages."""
         result = None
@@ -176,7 +177,7 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], marks=[]),
         ],
     )
-    def test_check_type_commit_msg_cli(self, args) -> None:
+    def test_check_type_commit_msg_cli(self, args: list[str]) -> None:
         """Test CLI for check type commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -326,7 +327,12 @@ class TestCaseAllCLI:
         ],
     )
     def test_check_valid_branchname(
-        self, capsys, entrance, exit_code, params, message
+        self,
+        capsys: pytest.CaptureFixture[Any],
+        entrance: str,
+        exit_code: int,
+        params: list[str],
+        message: str,
     ) -> None:
         """Test check_valid_branchname function."""
         ic(f'{entrance=}, {exit_code=}, {message=}')
@@ -394,7 +400,11 @@ class TestCaseAllCLI:
         ],
     )
     def test_check_valid_filenames_cli(
-        self, capsys, entrance, result_expected, expected
+        self,
+        capsys: pytest.CaptureFixture[Any],
+        entrance: set[str],
+        result_expected: Status,
+        expected: str,
     ) -> None:
         """Test CLI."""
         result = cli.check_valid_filenames_cli([*entrance])
@@ -414,7 +424,12 @@ class TestCaseAllCLI:
             ],
         ),
     )
-    def test_detect_private_key_cli(self, capsys, entrance, args) -> None:
+    def test_detect_private_key_cli(
+        self,
+        capsys: pytest.CaptureFixture[Any],
+        entrance: str,
+        args: list[str],
+    ) -> None:
         """Test CLI."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -438,7 +453,12 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_footer_signedoffby_cli(self, args, expected, capsys) -> None:
+    def test_footer_signedoffby_cli(
+        self,
+        args: list[str],
+        expected: int,
+        capsys: pytest.CaptureFixture[Any],
+    ) -> None:
         """Test main function."""
         with NamedTemporaryFile() as tf:
             test_file = Path(tf.name)
@@ -512,7 +532,7 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_clean_commit_msg_cli(self, entrance) -> None:
+    def test_clean_commit_msg_cli(self, entrance: Entrance) -> None:
         """Test CLI for clean-commit-msg-cli."""
         with NamedTemporaryFile() as fl:
             filename = Path(fl.name)
@@ -535,7 +555,9 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], 0, marks=[]),
         ],
     )
-    def test_validate_format_commit_msg_cli(self, entrance, expected) -> None:
+    def test_validate_format_commit_msg_cli(
+        self, entrance: list[str], expected: int
+    ) -> None:
         """Test CLI prepend commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -567,7 +589,9 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_precommit_installed(self, entrance, args, expected) -> None:
+    def test_precommit_installed(
+        self, entrance: str, args: list[str], expected: Status
+    ) -> None:
         """Test for pre-commit installed."""
         result = Status.FAILURE
         with patch.object(Path, 'cwd') as m:
@@ -585,7 +609,9 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], marks=[]),
         ],
     )
-    def test_get_msg_cli(self, capsys, entrance) -> None:
+    def test_get_msg_cli(
+        self, capsys: pytest.CaptureFixture[Any], entrance: list[str]
+    ) -> None:
         """Test get_msg function."""
         cli.get_msg_cli(entrance)
         captured = capsys.readouterr()
@@ -650,7 +676,7 @@ class TestCaseAllCLI:
     )
     def test_insert_diff_cli(
         self,
-        mocker,
+        mocker: MockerFixture,
         entrance: MainEntrance,
         expected: Result,
     ) -> None:
