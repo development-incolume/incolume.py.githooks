@@ -2,6 +2,8 @@
 
 # ruff: file-ignore[private-member-access]
 
+from typing import Any
+
 import pytest
 from incolume.py.githooks.core.rules import Status, Result
 from incolume.py.githooks.validate_branchname import ValidateBranchname
@@ -136,7 +138,7 @@ class TestCaseValidateBranchname:
             pytest.param('develop', False, marks=[]),
         ],
     )
-    def test_is_branch_main(self, branchname, expected) -> None:
+    def test_is_branch_main(self, branchname: str, *, expected: bool) -> None:
         """Test is_branch_main method."""
         v = ValidateBranchname()
         assert v._ValidateBranchname__is_branch_main(branchname) is expected
@@ -205,7 +207,9 @@ class TestCaseValidateBranchname:
             pytest.param('enhancement-1627890123', False, marks=[]),
         ],
     )
-    def test_is_github_branch(self, branchname, expected) -> None:
+    def test_is_github_branch(
+        self, branchname: str, *, expected: bool
+    ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert v._ValidateBranchname__is_github_branch(branchname) is expected
@@ -222,7 +226,9 @@ class TestCaseValidateBranchname:
             pytest.param('enhancement-1627890123', True, marks=[]),
         ],
     )
-    def test_is_enhancement_epoch(self, branchname, expected) -> None:
+    def test_is_enhancement_epoch(
+        self, branchname: str, *, expected: bool
+    ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert (
@@ -242,7 +248,9 @@ class TestCaseValidateBranchname:
             pytest.param('enhancement-1627890123', False, marks=[]),
         ],
     )
-    def test_is_incolume_branch_rule(self, branchname, expected) -> None:
+    def test_is_incolume_branch_rule(
+        self, branchname: str, *, expected: bool
+    ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert (
@@ -334,7 +342,13 @@ class TestCaseValidateBranchname:
             ),
         ],
     )
-    def test_is_valid(self, entrance, kwargs, expected, capsys) -> None:
+    def test_is_valid(
+        self,
+        entrance: str,
+        kwargs: dict[str, Any],
+        expected: Result,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
         """Test validate method."""
         v = ValidateBranchname(branchname=entrance)
         result = v.is_valid(**kwargs)

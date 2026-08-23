@@ -48,7 +48,7 @@ class TestCaseDetectPrivateKey:
             ),
         ],
     )
-    def test_no_private_key(self, entrance, expected) -> None:
+    def test_no_private_key(self, entrance: str, expected: Status) -> None:
         """Test with a file that does not contain a private key."""
         test_file = self.test_dir / entrance
         test_file.write_text('This is a test file without any private keys.\n')
@@ -59,7 +59,7 @@ class TestCaseDetectPrivateKey:
     @pytest.mark.parametrize(
         'entrance', [pytest.param(line, marks=[]) for line in BLACKLIST]
     )
-    def test_with_private_key(self, entrance) -> None:
+    def test_with_private_key(self, entrance: str) -> None:
         """Test with a file that contains a private key."""
         test_file = self.test_dir / 'with_private_key.txt'
         test_file.write_text(f'----- {entrance} -----\n')

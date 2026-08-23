@@ -33,11 +33,11 @@ class TestCasePackage:
             ),
         ],
     )
-    def test_package(self, entrance, expected) -> None:
+    def test_package(self, entrance: str, expected: str) -> None:
         """Test package."""
         assert entrance == expected
 
-    def test_rich_output(self, capsys) -> None:
+    def test_rich_output(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Test rich output."""
         console = Console()
         console.print('Hello from Rich!')

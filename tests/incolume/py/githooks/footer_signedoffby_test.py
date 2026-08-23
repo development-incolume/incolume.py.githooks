@@ -79,7 +79,7 @@ class TestCaseFooterSignedOffBy:
         ],
     )
     def test_add_blank_line_if_needed(
-        self, entrance, commit_source, expected
+        self, entrance: str, commit_source: str, expected: str
     ) -> None:
         """Test add_blank_line_if_needed function."""
         with tempfile.NamedTemporaryFile() as tf:
