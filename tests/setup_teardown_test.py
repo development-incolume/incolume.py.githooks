@@ -34,7 +34,6 @@ class TestCompactShutil:
          e diretórios gerados ao final.
         """
         ic(f'finished class {cls.__name__} execution')
-        shutil.rmtree(cls.PATH)
 
     def setup_method(self, method: Callable[[], None]) -> None:
         """Set method.
