@@ -30,7 +30,7 @@ class TestCaseGitDiff:
         ],
     )
     def test_insert_git_diff(
-        self, commit_msg_file, diff_output, expected
+        self, commit_msg_file: str, diff_output: str, expected: str
     ) -> None:
         """Test insert_git_diff function."""
         with tempfile.NamedTemporaryFile() as tf:
