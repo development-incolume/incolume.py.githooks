@@ -8,7 +8,7 @@ import logging
 import platform
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, ParamSpec, TypeVar
+from typing import TYPE_CHECKING
 
 import rich
 from icecream import ic
@@ -40,13 +40,11 @@ from incolume.py.githooks.prepare_commit_msg import (
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import ValidateFilename
 
+debug_enable()
+
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-
-debug_enable()
-P = ParamSpec('P')
-R = TypeVar('R')
 
 logging.debug('Python %s', platform.python_version())
 
