@@ -6,6 +6,7 @@ import shutil
 import tempfile
 from inspect import stack
 from typing import ClassVar, NoReturn
+from collections.abc import Callable
 from icecream import ic
 import pytest
 
@@ -35,7 +36,7 @@ class TestCompactShutil:
         ic(f'finished class {cls.__name__} execution')
         shutil.rmtree(cls.PATH)
 
-    def setup_method(self, method) -> None:
+    def setup_method(self, method: Callable[[], None]) -> None:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
@@ -47,7 +48,7 @@ class TestCompactShutil:
         )
         [path.joinpath(f'a{x:02}.txt').touch() for x in range(self.quantity)]  # type: ignore[func-returns-value]
 
-    def teardown_method(self, method) -> None:
+    def teardown_method(self, method: Callable[[], None]) -> None:
         """Teardown method.
 
         Remove a arvore de diretórios criadas após os testes realizados.
@@ -130,7 +131,13 @@ class TestCompactShutil:
             ),
         ],
     )
-    def test_extrair(self, filename, type_format, quantia, expected) -> None:
+    def test_extrair(
+        self,
+        filename: Path,
+        type_format: str,
+        quantia: int,
+        expected: list[str],
+    ) -> None:
         """Unit test."""
         extract_dir = self.PATH / inspect.stack()[0][3]
 
