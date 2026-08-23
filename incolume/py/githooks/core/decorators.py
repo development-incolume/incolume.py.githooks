@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from functools import wraps
-from typing import TYPE_CHECKING, ParamSpec, TypeVar
+from typing import Any, ParamSpec, TypeVar, cast
 
 from deprecated import deprecated
 from icecream import ic
@@ -12,14 +13,22 @@ from icecream import ic
 from incolume.py.githooks.core import debug_enable, debug_var_active
 from incolume.py.githooks.core.rules import LoggingLevel
 
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-
 P = ParamSpec('P')
 R = TypeVar('R')
 
 debug_enable()
+
+
+def my_decorator(func: Callable[P, R]) -> Callable[P, R]:
+    """Model decorator."""
+
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        ic(f'Before function "{func.__name__}" call')
+        result = func(*args, **kwargs)
+        ic(f'After function "{func.__name__}" call')
+        return result
+
+    return wrapper
 
 
 @deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')  # type: ignore[untyped-decorator]
@@ -89,3 +98,13 @@ def logging_call(
         return wrapper
 
     return inner
+
+
+if __name__ == '__main__':
+
+    @my_decorator
+    def add_numbers(x: int, y: int) -> int:
+        """Add numbers."""
+        return x + y
+
+    add_numbers(1, 2)
