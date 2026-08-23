@@ -18,12 +18,13 @@ if TYPE_CHECKING:
 
 P = ParamSpec('P')
 R = TypeVar('R')
+Func = TypeVar('Func', bound=Callable[P, R])
 
 debug_enable()
 
 
 @deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')  # type: ignore[untyped-decorator]
-def critical_log_call(func: Callable[P, R]) -> Callable[P, R]:
+def critical_log_call(func: Func) -> Callable[P, R]:
     """Decoratore to debug function calls."""
 
     @wraps(func)
@@ -49,7 +50,7 @@ def critical_log_call(func: Callable[P, R]) -> Callable[P, R]:
 
 def logging_call(
     level: LoggingLevel = LoggingLevel.DEBUG, message: str = ''
-) -> Callable[[Callable[P, R]], Callable[P, R]]:
+) -> Func:
     """Decoratore to debug function calls.
 
     Args:
@@ -63,7 +64,7 @@ def logging_call(
 
     message = message or 'Function **{}** called.'
 
-    def inner(func: Callable[P, R]) -> Callable[P, R]:
+    def inner(func: Func) -> Func:
         """Inner funtion to receive parameters."""
 
         @wraps(func)
