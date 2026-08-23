@@ -44,7 +44,7 @@ def simple_decorator(func: F) -> F:
     return cast('F', wrapper)
 
 
-@deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')  # type: ignore[untyped-decorator]
+@deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')
 def critical_log_call(func: Callable[P, R]) -> Callable[P, R]:
     """Decoratore to debug function calls."""
 

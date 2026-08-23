@@ -39,7 +39,7 @@ class TestCaseDecorators:
     ) -> None:
         """Test critical_log_call decorator."""
 
-        @decorators.critical_log_call()  # type: ignore[untyped-decorator]
+        @decorators.critical_log_call()
         def sample_function(a: str) -> str:
             """Sample function to be decorated."""
             return a
@@ -105,7 +105,7 @@ class TestCaseDecorators:
     ) -> None:
         """Test logging_call decorator."""
 
-        @decorators.logging_call(LoggingLevel(expected[1]), expected[2])  # type: ignore[untyped-decorator]
+        @decorators.logging_call(LoggingLevel(expected[1]), expected[2])
         def sample_function(a: str = 'word') -> str:
             """Sample function to be decorated."""
             return a
@@ -143,10 +143,10 @@ class TestCaseDecorators:
             },
         ]
 
-        @decorators.logging_call(**entrance[0])  # type: ignore[untyped-decorator]
-        @decorators.logging_call(**entrance[1])  # type: ignore[untyped-decorator]
-        @decorators.logging_call(**entrance[2])  # type: ignore[untyped-decorator]
-        @decorators.logging_call(**entrance[3])  # type: ignore[untyped-decorator]
+        @decorators.logging_call(**entrance[0])
+        @decorators.logging_call(**entrance[1])
+        @decorators.logging_call(**entrance[2])
+        @decorators.logging_call(**entrance[3])
         def sample_function(a: str = 'word') -> str:
             """Sample function to be decorated."""
             return a
