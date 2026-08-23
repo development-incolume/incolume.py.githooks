@@ -15,6 +15,7 @@ from incolume.py.githooks.core.rules import LoggingLevel
 
 P = ParamSpec('P')
 R = TypeVar('R')
+F = TypeVar('F', bound=Callable[..., Any])
 
 debug_enable()
 
@@ -29,6 +30,18 @@ def my_decorator(func: Callable[P, R]) -> Callable[P, R]:
         return result
 
     return wrapper
+
+
+def simple_decorator(func: F) -> F:
+    """Model simple deocrator."""
+
+    def wrapper(*args: Any, **kwargs: Any) -> Any:  # ruff: ignore[any-type]
+        ic(f'Before function "{func.__name__}" call')
+        result = func(*args, **kwargs)
+        ic(f'After function "{func.__name__}" call')
+        return result
+
+    return cast('F', wrapper)
 
 
 @deprecated(version='1.10.0', reason='Deprecated in favor of `logging_call`.')  # type: ignore[untyped-decorator]
@@ -107,4 +120,10 @@ if __name__ == '__main__':
         """Add numbers."""
         return x + y
 
+    @simple_decorator
+    def sum_numbers(x: int, y: int) -> int:
+        """Sum numbers."""
+        return x + y
+
     add_numbers(1, 2)
+    sum_numbers(1, 2)
