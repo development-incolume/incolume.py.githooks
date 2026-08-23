@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from icecream import ic
@@ -13,6 +12,7 @@ from incolume.py.githooks.core.rules import Result, Status
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from pathlib import Path
 
 debug_enable()
 

@@ -60,9 +60,8 @@ def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
     logging.debug('%s', regex.pattern)
 
     try:
-        with msgfile.open('rb') as f:
-            content = f.read().strip().decode()
-            logging.debug('%s', ic(content))
+        content = msgfile.read_bytes().strip().decode()
+        logging.debug('%s', ic(content))
 
         if not regex.match(content):
             raise AssertionError  # ruff: ignore[raise-within-try]
@@ -77,8 +76,7 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
-    with Path(commit_msg_filepath).open('rb') as f:
-        commit_message = f.read().decode().strip()
+    commit_message = commit_msg_filepath.read_bytes().decode().strip()
 
     # Example validation: Ensure message starts with a type (e.g., feat, fix, chore)
     if not regex.match(commit_message):

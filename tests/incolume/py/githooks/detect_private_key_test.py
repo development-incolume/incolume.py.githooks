@@ -13,7 +13,10 @@ import pytest
 
 from incolume.py.githooks.core.rules import Status
 
-from collections.abc import Callable
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class TestCaseDetectPrivateKey:
