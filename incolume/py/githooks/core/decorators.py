@@ -79,9 +79,7 @@ def logging_call(
       message::str: Message logging, default is ;
 
     """
-    match level:
-        case _:
-            level = LoggingLevel(level)
+    level = LoggingLevel(level)
 
     message = message or 'Function **{}** called.'
 
@@ -104,7 +102,7 @@ def logging_call(
             result = func(*args, **kwargs)
 
             getattr(logging, level.name.casefold())(
-                ic(message.format(func.__name__))
+                message.format(func.__name__)
             )
             return result
 
