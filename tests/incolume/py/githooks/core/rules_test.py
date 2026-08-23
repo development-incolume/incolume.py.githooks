@@ -1,5 +1,7 @@
 """Test for rules module."""
 
+from typing import Any
+
 import pytest
 import incolume.py.githooks.core.rules as pkg
 
@@ -14,7 +16,7 @@ class TestCaseRules:
             pytest.param(1),
         ],
     )
-    def test_status_value(self, entrance) -> None:
+    def test_status_value(self, entrance: int) -> None:
         """Test status enum."""
         assert pkg.Status(entrance).value == entrance
 
@@ -29,7 +31,7 @@ class TestCaseRules:
             pytest.param('FAILURE', 1),
         ],
     )
-    def test_status_enum(self, entrance, expected) -> None:
+    def test_status_enum(self, entrance: str | int, expected: int) -> None:
         """Test status enum."""
         assert pkg.Status(entrance).value == expected
 
@@ -46,7 +48,9 @@ class TestCaseRules:
             pytest.param(1, pkg.Status(0), pkg.Status(1)),
         ],
     )
-    def test_status_op(self, ent0, ent1, expected) -> None:
+    def test_status_op(
+        self, ent0: pkg.Status, ent1: pkg.Status, expected: pkg.Status
+    ) -> None:
         """Status operations."""
         assert ent0 | ent1 == expected
 
@@ -74,7 +78,9 @@ class TestCaseRules:
             pytest.param('failure', pkg.Status.FAILURE),
         ],
     )
-    def test_status_missing(self, entrance, expected) -> None:
+    def test_status_missing(
+        self, entrance: str, expected: pkg.Status | dict[str, object]
+    ) -> None:
         """Status missing."""
         try:
             assert pkg.Status(entrance) == expected
@@ -89,7 +95,7 @@ class TestCaseRules:
             pytest.param(1, 1),
         ],
     )
-    def test_status_casting(self, entrance, expected) -> None:
+    def test_status_casting(self, entrance: int, expected: int) -> None:
         """Casting Status."""
         assert pkg.Status(entrance).value == expected
 
@@ -100,7 +106,7 @@ class TestCaseRules:
             pytest.param(1),
         ],
     )
-    def test_status_value_int(self, entrance) -> None:
+    def test_status_value_int(self, entrance: int) -> None:
         """Casting Status."""
         assert isinstance(pkg.Status(entrance).value, int)
 
@@ -155,7 +161,9 @@ class TestCaseRules:
             pytest.param('30', 30),
         ],
     )
-    def test_logging_level(self, entrance, expected) -> None:
+    def test_logging_level(
+        self, entrance: str | int, expected: int | dict[str, Any] | None
+    ) -> None:
         """Test LoggingLevel."""
         match expected:
             case int():
@@ -174,7 +182,9 @@ class TestCaseRules:
             pytest.param(int, 'classmethod', 'int', marks=[]),
         ],
     )
-    def test_add_class_method_decorator(self, method, mode, expected) -> None:
+    def test_add_class_method_decorator(
+        self, method: type, mode: str | None, expected: str
+    ) -> None:
         """Test add_class_method_decorator."""
 
         @pkg.add_class_method_decorator(method=method, method_modo=mode)
