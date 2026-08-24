@@ -421,7 +421,7 @@ class TestCaseValidFilename:
         self, entrance: Mapping[str, str], expected: Result
     ) -> None:
         """Test invalid filenames."""
-        fout = self.test_dir / stack()[0][3] / entrance['filename']
+        fout = self.test_dir / stack()[0][3] / entrance.get('filename', '')
         fout.parent.mkdir(parents=True, exist_ok=True)
         vf = ValidateFilename(filename=fout)
         result = vf.is_valid()
