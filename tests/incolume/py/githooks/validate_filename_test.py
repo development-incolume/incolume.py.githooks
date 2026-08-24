@@ -145,7 +145,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the is_snake_case method."""
         vf = ValidateFilename(
-            filename=filefortest.with_name(filename.as_posix())
+            filename=filefortest.with_name(str(filename))
         )
         result = vf.is_snake_case()
         assert Status(result.code) == Status(expected.code)
