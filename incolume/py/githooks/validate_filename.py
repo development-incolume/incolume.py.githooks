@@ -149,23 +149,22 @@ class ValidateFilename:
         path: Path = filename.parent
         name: str = filename.stem
 
-        refname = re.sub(r'[^a-z0-9]', '', name)
         msg = (
-            f'{name=}, {len(name)=}, {refname=},'
-            f'{len(refname)=}, {min_len=}, {max_len=}'
+            f'{name=}, {len(name)=}, {self.refname=},'
+            f'{len(self.refname)=}, {min_len=}, {max_len=}'
         )
         logging.debug(msg)
 
         if not self.__is_python_file():
             return Result(code=Status.SUCCESS, message='')
 
-        if len(refname) < min_len:
+        if len(self.refname) < min_len:
             msg_return += (
                 f'\n[red]Name too short ({min_len=}): {filename}[/red]'
             )
             code_return |= Status.FAILURE
 
-        if len(refname) > max_len:
+        if len(self.refname) > max_len:
             msg_return += (
                 f'\n[red]Name too long ({max_len=}): {filename}[/red]'
             )
