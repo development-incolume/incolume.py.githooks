@@ -43,7 +43,7 @@ class TestCaseValidFilename:
             pytest.param('min_len', 3, marks=[]),
             pytest.param('max_len', 256, marks=[]),
             pytest.param('code', Status.SUCCESS, marks=[]),
-            pytest.param('message', '', marks=[]),
+            pytest.param('messages', [], marks=[]),
         ],
     )
     def test_validfilename_init(
@@ -91,7 +91,8 @@ class TestCaseValidFilename:
         vf = ValidateFilename(filename=fltest, min_len=min_len)
         result = vf.is_too_short()
         assert Status(result.code) == Status(expected.code)
-        assert expected.message in result.message
+        # assert any({expected.message}.issubset(m) for m in result.messages)
+        assert (expected.message in m for m in result.messages)
 
     @pytest.mark.parametrize(
         ['filename', 'max_len', 'expected'],
@@ -124,7 +125,7 @@ class TestCaseValidFilename:
         vf = ValidateFilename(filename=fltest, max_len=max_len)
         result = vf.is_too_long()
         assert Status(result.code) == Status(expected.code)
-        assert expected.message in result.message
+        assert (expected.message in m for m in result.messages)
 
     @pytest.mark.parametrize(
         ['filename', 'expected'],
@@ -151,7 +152,7 @@ class TestCaseValidFilename:
         )
         result = vf.is_snake_case()
         assert Status(result.code) == Status(expected.code)
-        assert expected.message in result.message
+        assert (expected.message in m for m in result.messages)
 
     @pytest.mark.parametrize(
         ['filename', 'expected'],
@@ -191,7 +192,8 @@ class TestCaseValidFilename:
         vf = ValidateFilename(filename=filename)
         result = vf.has_testing_in_filename()
         assert Status(result.code) == Status(expected.code)
-        assert all(m1 in result.message for m1 in expected.message)
+        # assert all(m1 in result.message for m1 in expected.message)
+        assert expected.message in vf.messages.pop()
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],

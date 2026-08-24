@@ -68,7 +68,7 @@ class ValidateFilename:
     def is_too_short(self) -> Self:
         """Check if the filename is too short."""
         if self.__is_python_file() and (len(self.refname) < self.min_len):
-            self.message += (
+            self.messages.append(
                 f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
             )
             self.code |= Status.FAILURE
@@ -77,7 +77,7 @@ class ValidateFilename:
     def is_too_long(self) -> Self:
         """Check if the filename is too long."""
         if self.__is_python_file() and (len(self.refname) > self.max_len):
-            self.message += (
+            self.messages.append(
                 f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
             )
             self.code |= Status.FAILURE
@@ -89,7 +89,7 @@ class ValidateFilename:
             self.__is_python_file()
             and SNAKE_CASE_REGEX.search(self.filename.stem) is None  # type: ignore[union-attr]
         ):
-            self.message += (
+            self.messages.append(
                 f'\n[red]Filename is not in snake_case: {self.filename}[/]'
             )
             self.code |= Status.FAILURE
