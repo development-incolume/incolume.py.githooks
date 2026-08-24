@@ -26,7 +26,9 @@ class TestCaseValidFilename:
     @pytest.fixture(scope='class')
     def filefortest(self) -> Path:
         """Get the path to this file."""
-        with NamedTemporaryFile(dir=gettempdir(), suffix='.py') as tf:
+        dout: Path = self.test_dir / 'files'
+        dout.mkdir(parents=True, exist_ok=True)
+        with NamedTemporaryFile(dir=dout, suffix='.py') as tf:
             return Path(tf.name)
 
     @pytest.mark.parametrize(
