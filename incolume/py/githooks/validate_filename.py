@@ -40,7 +40,7 @@ class ValidateFilename:
     min_len: int = 3
     max_len: int = 256
     code: int = field(default=Status.SUCCESS, init=False)
-    message: str = field(default='', init=False)
+    messages: list[str] = field(default_factory=list, init=False)
 
     def __post_init__(self) -> None:
         """Post init."""
