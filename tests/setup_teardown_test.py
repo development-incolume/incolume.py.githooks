@@ -34,14 +34,13 @@ class TestCompactShutil:
          e diretórios gerados ao final.
         """
         ic(f'finished class {cls.__name__} execution')
-        shutil.rmtree(cls.PATH)
 
     def setup_method(self, method: Callable[[], None]) -> None:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
         """
-        ic(f'starting execution ({method.__name__}) of {stack()[0][3]}')
+        ic(f'setup execution for {method.__name__}.')
         (path := self.PATH.joinpath(method.__name__)).mkdir(
             parents=True,
             exist_ok=True,
@@ -53,7 +52,7 @@ class TestCompactShutil:
 
         Remove a arvore de diretórios criadas após os testes realizados.
         """
-        ic(f'finished execution ({method.__name__}) of {stack()[0][3]}')
+        ic(f'teardown after execution for {method.__name__} ')
         path = self.PATH.joinpath(method.__name__)
         shutil.rmtree(path)
 
