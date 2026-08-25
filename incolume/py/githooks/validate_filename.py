@@ -46,13 +46,6 @@ class ValidateFilename:
         """Post init."""
         self.filename = Path(self.filename)
         self.messages.append('')
-        self.rule1 = self.is_python_file() and self.has_test_in_pathname()
-        self.rule2 = self.is_python_file() and re.match(
-            r'^.*_tests?$', self.filename
-        )
-        self.rule3 = self.is_python_file() and re.match(
-            r'^(?:(?!tests?).)*$', self.filename
-        )
 
     @property
     def refname(self) -> str:
@@ -111,18 +104,19 @@ class ValidateFilename:
     def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
         filename = self.filename.stem  # type: ignore[union-attr]
-        msg = (
-            'Parece ser um arquivo de test.',
-            f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}_test.py',
-        )
         if (
-            (not self.rule1 and self.rule2)
-            or (self.rule1 and self.rule2)
-            or not (self.rule1 and self.rule3)
+            self.is_python_file()
+            and self.__has_test_in_pathname()
+            and not re.match(r'^.*_test$', filename)
         ):
-            return True
-        self.messages.append(f'\n[red] {msg} [/red]')
-        return False
+            self.code |= re.match(r'^.*_tests?$', filename) is None
+            self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is not None
+            self.messages.append(
+                '\n[red]Parece ser um arquivo de test.'
+                f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}'
+                '_test.py[/red]'
+            )
+        return self
 
     def is_valid(
         self: Self,
