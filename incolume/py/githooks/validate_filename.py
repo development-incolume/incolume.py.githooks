@@ -45,6 +45,7 @@ class ValidateFilename:
     def __post_init__(self) -> None:
         """Post init."""
         self.filename = Path(self.filename)
+        self.messages.append('')
 
     @property
     def refname(self) -> str:
@@ -110,7 +111,7 @@ class ValidateFilename:
         ):
             self.code |= re.match(r'^.*_tests?$', filename) is None
             self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is not None
-            self.message += (
+            self.messages.append(
                 '\n[red]Parece ser um arquivo de test.'
                 f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}'
                 '_test.py[/red]'
