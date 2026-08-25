@@ -104,19 +104,23 @@ class ValidateFilename:
     def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
         filename = self.filename.stem  # type: ignore[union-attr]
-        if (
-            self.is_python_file()
-            and self.__has_test_in_pathname()
-            and not re.match(r'^.*_test$', filename)
-        ):
-            self.code |= re.match(r'^.*_tests?$', filename) is None
-            self.code |= re.match(r'^(?:(?!tests?).)*$', filename) is not None
-            self.messages.append(
-                '\n[red]Parece ser um arquivo de test.'
-                f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}'
-                '_test.py[/red]'
-            )
-        return self
+        rule1 = self.is_python_file() and self.has_test_in_pathname()
+        rule2 = self.is_python_file() and re.match(
+            r'^.*_tests?$', self.filename
+        )
+        rule3 = self.is_python_file() and re.match(
+            r'^(?:(?!tests?).)*$', self.filename
+        )
+
+        if (not rule1 and rule2) or (rule1 and rule2) or not (rule1 and rule3):
+            return True
+
+        self.messages.append(
+            '\n[red]Parece ser um arquivo de test.'
+            f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}'
+            '_test.py[/red]'
+        )
+        return False
 
     def is_valid(
         self: Self,
