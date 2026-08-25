@@ -56,9 +56,9 @@ class ValidateFilename:
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
 
-    def __is_python_file(self, filename: Path| str = '') -> bool:
+    def is_python_file(self, filename: Path | str = '') -> bool:
         """Check if the file is a Python file."""
-        result = Path(filename).suffix == '.py' or self.filename.suffix == '.py'  # type: ignore[union-attr]
+        result = Path(filename or self.filename).suffix == '.py'
         msg = (
             f'{self.filename.as_posix()} {"Is" if result else "Not is"}'  # type: ignore[union-attr]
             ' Python file'
@@ -66,46 +66,46 @@ class ValidateFilename:
         logging.debug(msg)
         return result
 
-    def is_too_short(self) -> Self:
+    def is_too_short(self) -> bool:
         """Check if the filename is too short."""
-        if self.__is_python_file() and (len(self.refname) < self.min_len):
-            self.messages.append(
-                f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
-            )
+        result = self.is_python_file() and (len(self.refname) < self.min_len)
+        msg = f'Name too short ({self.min_len=}): {self.filename}'
+        if result:
+            self.messages.append(f'\n[red]{msg}[/]')
             self.code |= Status.FAILURE
-        return self
+        return result
 
-    def is_too_long(self) -> Self:
+    def is_too_long(self) -> bool:
         """Check if the filename is too long."""
-        if self.__is_python_file() and (len(self.refname) > self.max_len):
-            self.messages.append(
-                f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
-            )
+        result = self.is_python_file() and (len(self.refname) > self.max_len)
+        msg = f'Name too long ({self.max_len=}): {self.filename}'
+        if result:
+            self.messages.append(f'\n[red]{msg}[/]')
             self.code |= Status.FAILURE
-        return self
+        return result
 
-    def is_snake_case(self) -> Self:
+    def is_snake_case(self) -> bool:
         """Check if the filename is in snake_case."""
-        if (
-            self.__is_python_file()
-            and SNAKE_CASE_REGEX.search(self.filename.stem) is None  # type: ignore[union-attr]
-        ):
-            self.messages.append(
-                f'\n[red]Filename is not in snake_case: {self.filename}[/]'
-            )
+        result = (
+            self.is_python_file()
+            and SNAKE_CASE_REGEX.search(Path(self.filename).stem) is None
+        )
+        msg = f'Filename is not in snake_case: {self.filename}'
+        if result:
+            self.messages.append(f'\n[red]{msg}[/]')
             self.code |= Status.FAILURE
-        return self
+        return result
 
-    def __has_test_in_pathname(self) -> Self:
+    def has_test_in_pathname(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
         pathname = str(self.filename.parent)  # type: ignore[union-attr]
         return bool(re.match(r'^.*tests?.*$', str(pathname)))
 
-    def has_testing_in_filename(self) -> Self:
+    def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
         filename = self.filename.stem  # type: ignore[union-attr]
         if (
-            self.__is_python_file()
+            self.is_python_file()
             and self.__has_test_in_pathname()
             and not re.match(r'^.*_test$', filename)
         ):
@@ -144,7 +144,7 @@ class ValidateFilename:
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # ruff: ignore[line-too-long]
-        filename = Path(filename) or self.filename
+        filename = Path(filename or self.filename)
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
         path: Path = filename.parent
@@ -156,7 +156,7 @@ class ValidateFilename:
         )
         logging.debug(msg)
 
-        if not self.__is_python_file():
+        if not self.is_python_file():
             return Result(code=Status.SUCCESS, message='')
 
         if len(self.refname) < min_len:
