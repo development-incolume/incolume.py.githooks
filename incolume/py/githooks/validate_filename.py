@@ -56,9 +56,9 @@ class ValidateFilename:
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
 
-    def __is_python_file(self) -> bool:
+    def __is_python_file(self, filename: Path| str = '') -> bool:
         """Check if the file is a Python file."""
-        result = self.filename.suffix == '.py'  # type: ignore[union-attr]
+        result = Path(filename).suffix == '.py' or self.filename.suffix == '.py'  # type: ignore[union-attr]
         msg = (
             f'{self.filename.as_posix()} {"Is" if result else "Not is"}'  # type: ignore[union-attr]
             ' Python file'
@@ -144,14 +144,14 @@ class ValidateFilename:
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # ruff: ignore[line-too-long]
-        filename = Path(filename)
+        filename = Path(filename) or self.filename
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
         path: Path = filename.parent
-        name: str = filename.stem
+        basename: str = filename.stem
 
         msg = (
-            f'{name=}, {len(name)=}, {self.refname=},'
+            f'{basename=}, {len(basename)=}, {self.refname=},'
             f'{len(self.refname)=}, {min_len=}, {max_len=}'
         )
         logging.debug(msg)
@@ -171,14 +171,14 @@ class ValidateFilename:
             )
             code_return |= Status.FAILURE
 
-        if SNAKE_CASE_REGEX.search(name) is None:
+        if SNAKE_CASE_REGEX.search(basename) is None:
             msg_return += (
                 f'\n[red]Filename is not in snake_case: {filename}[/red]'
             )
             code_return |= Status.FAILURE
 
         if re.match(r'^.*tests?.*$', path.stem) and not re.match(
-            r'.*_test$', name
+            r'.*_test$', basename
         ):
             msg_return += (
                 f'\n[red]Filename should not be in a path: {filename}[/red]'
