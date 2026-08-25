@@ -159,7 +159,7 @@ class TestCaseValidFilename:
                 test_dir / 'tests' / 'fake_module_test.py',
                 Result(Status.SUCCESS, ['']),
                 marks=[],
-            ),  # Path, but valid name
+            ),
             pytest.param(
                 test_dir / 'tests' / 'fake_module.py',
                 Result(
@@ -170,17 +170,17 @@ class TestCaseValidFilename:
                     ),
                 ),
                 marks=[],
-            ),  # Path, but valid name
+            ),
             pytest.param(
                 'incolume/py/githooks/fakepackage/test_fake_module.py',
                 Result(Status.FAILURE, 'kxz'),
                 marks=[pytest.mark.xfail(reason='Not implemented yet')],
-            ),  # Path, but valid name
+            ),
             pytest.param(
                 'incolume/py/githooks/fakepackage/fake_test_module.py',
                 Result(Status.FAILURE, 'kxz'),
                 marks=[pytest.mark.xfail(reason='Not implemented yet')],
-            ),  # Path, but valid name
+            ),
         ],
     )
     def test_has_testing_in_pathname(
