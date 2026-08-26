@@ -81,9 +81,14 @@ class ValidateFilename:
         return bool(re.match(r'^.*tests?.*$', pathname))
 
     @property
+    def rule_is_dundle_init(self) -> bool:
+        """Check if is dundler init file."""
+        return bool(re.match(r'^__init__.py$', str(self.filename.name)))
+
+    @property
     def rule_has_filename_ends_with_test(self) -> bool:
         """Check if filename ends with test."""
-        return bool(re.match(r'^.*_tests?$', str(self.filename)))
+        return bool(re.match(r'^.*_tests?$', self.filename.stem))
 
     def is_python_file(self, filename: Path | str = '') -> bool:
         """Check if the file is a Python file."""
