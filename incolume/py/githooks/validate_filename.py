@@ -59,7 +59,7 @@ class ValidateFilename:
         return refname
 
     @property
-    def rule1(self) -> bool:
+    def rule_is_python_file(self) -> bool:
         """Rule for match filename.
 
         Return True if filename is a python file.
@@ -67,18 +67,25 @@ class ValidateFilename:
         return Path(self.filename).suffix == '.py'
 
     @property
-    def rule2(self) -> bool:
+    def rule_has_test_into_filename(self) -> bool:
         """Rule for match filename.
 
         Return True if filename has test into filename.
         """
         return not bool(re.match(r'^(?:(?!tests?).)*$', str(self.filename)))
 
+    @property
+    def rule_has_test_in_pathname(self) -> bool:
+        """Check if the filename has 'test' or 'tests' in its name."""
+        pathname: str = str(self.filename.parent)  # type: ignore[union-attr]
+        return bool(re.match(r'^.*tests?.*$', pathname))
+
     def is_python_file(self, filename: Path | str = '') -> bool:
         """Check if the file is a Python file."""
-        result = Path(filename or self.filename).suffix == '.py'
+        self.filename = Path(filename or self.filename)
+        result = self.rule_is_python_file
         msg = (
-            f'{self.filename.as_posix()} {"Is" if result else "Not is"}'  # type: ignore[union-attr]
+            f'{self.filename.as_posix()} {"Is" if result else "Not is"}'
             ' Python file'
         )
         logging.debug(msg)
@@ -114,15 +121,12 @@ class ValidateFilename:
             self.code |= Status.FAILURE
         return result
 
-    def has_test_in_pathname(self) -> bool:
-        """Check if the filename has 'test' or 'tests' in its name."""
-        pathname = str(self.filename.parent)  # type: ignore[union-attr]
-        return bool(re.match(r'^.*tests?.*$', str(pathname)))
+
 
     def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
         filename = self.filename.stem  # type: ignore[union-attr]
-        rule1 = self.is_python_file() and self.has_test_in_pathname()
+        rule1 = self.is_python_file() and self.rule_has_test_in_pathname()
         rule2 = self.is_python_file() and re.match(
             r'^.*_tests?$', str(self.filename)
         )

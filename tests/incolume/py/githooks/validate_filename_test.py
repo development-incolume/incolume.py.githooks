@@ -231,7 +231,9 @@ class TestCaseValidFilename:
             ),
         ],
     )
-    def test_is_valid_testing_filename(self, entrance: str, *, expected: bool) -> None:
+    def test_is_valid_testing_filename(
+        self, entrance: str, *, expected: bool
+    ) -> None:
         """Test is_valid_testing_filename."""
         vf = ValidateFilename(filename=entrance)
         assert vf.is_valid_testing_filename() == expected
@@ -240,16 +242,25 @@ class TestCaseValidFilename:
         ['entrance', 'expected'],
         [
             # If is Python file
-            pytest.param({'filename': 'a.py', 'rule': 'rule1'}, True),
-            pytest.param({'filename': 'a.txt', 'rule': 'rule1'}, False),
+            pytest.param({'filename': 'a.py', 'rule': 'rule_is_python_file'}, True),
+            pytest.param({'filename': 'a.txt', 'rule': 'rule_is_python_file'}, False),
+            pytest.param({'filename': '__init__.py', 'rule': 'rule_is_python_file'}, True),
+            # If has test into pathname
+            pytest.param({'filename': 'a.txt', 'rule': 'rule_has_test_in_pathname'}, False),
+            pytest.param({'filename': 'test/a.txt', 'rule': 'rule_has_test_in_pathname'}, True),
+            pytest.param({'filename': 'tests/a.txt', 'rule': 'rule_has_test_in_pathname'}, True),
+            pytest.param({'filename': 'test/__init__.py', 'rule': 'rule_has_test_in_pathname'}, True),
             # If has test into filename
-            pytest.param({'filename': 'a.txt', 'rule': 'rule2'}, False),
-            pytest.param({'filename': 'test_a.txt', 'rule': 'rule2'}, True),
-            pytest.param({'filename': 'a_tests.txt', 'rule': 'rule2'}, True),
-            pytest.param({'filename': 'a_test.py', 'rule': 'rule2'}, True),
+            pytest.param({'filename': 'a.txt', 'rule': 'rule_has_test_into_filename'}, False),
+            pytest.param({'filename': 'test_a.txt', 'rule': 'rule_has_test_into_filename'}, True),
+            pytest.param({'filename': 'a_tests.txt', 'rule': 'rule_has_test_into_filename'}, True),
+            pytest.param({'filename': 'a_test.py', 'rule': 'rule_has_test_into_filename'}, True),
+            pytest.param({'filename': 'test/__init__.py', 'rule': 'rule_has_test_into_filename'}, True),
         ],
     )
-    def test_rules(self, entrance: Mapping[str, str], *, expected: bool) -> None:
+    def test_rules(
+        self, entrance: Mapping[str, str], *, expected: bool
+    ) -> None:
         """Test rules."""
         vf = ValidateFilename(entrance.get('filename'))
         assert getattr(vf, entrance.get('rule', '')) == expected
