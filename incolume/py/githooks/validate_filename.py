@@ -34,11 +34,13 @@ SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 class ValidateFilename:
     """Rules for valid filename."""
 
-    filename: Path | str = ''
-    alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
-    considers_underscore: bool = True
-    min_len: int = 3
-    max_len: int = 256
+    filename: Path | str = field(default='')
+    alphabet: str = field(
+        default=ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç', init=False
+    )
+    considers_underscore: bool = field(default=True)
+    min_len: int = field(default=3)
+    max_len: int = field(default=256)
     code: int = field(default=Status.SUCCESS, init=False)
     messages: list[str] = field(default_factory=list, init=False)
 

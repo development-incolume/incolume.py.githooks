@@ -150,18 +150,10 @@ class TestCaseValidFilename:
                 ),
                 marks=[],
             ),
-            pytest.param(
-                '__init__.py', Result(code=0, message=''), marks=[]
-            ),
-            pytest.param(
-                '_core.py', Result(code=0, message=''), marks=[]
-            ),
-            pytest.param(
-                '_core4pkg.py', Result(code=0, message=''), marks=[]
-            ),
-            pytest.param(
-                'README.md', Result(code=0, message=''), marks=[]
-            ),
+            pytest.param('__init__.py', Result(code=0, message=''), marks=[]),
+            pytest.param('_core.py', Result(code=0, message=''), marks=[]),
+            pytest.param('_core4pkg.py', Result(code=0, message=''), marks=[]),
+            pytest.param('README.md', Result(code=0, message=''), marks=[]),
         ],
     )
     def test_is_snake_case(
@@ -187,9 +179,7 @@ class TestCaseValidFilename:
                 marks=[],
             ),
             pytest.param(
-                Path(
-                    'incolume/py/githooks/fakepackage/test_fake_module.py'
-                ),
+                Path('incolume/py/githooks/fakepackage/test_fake_module.py'),
                 False,
                 marks=[],
             ),
@@ -438,7 +428,11 @@ class TestCaseValidFilename:
         self, entrance: Mapping[str, str], expected: Result
     ) -> None:
         """Test invalid filenames."""
-        fout = self.test_dir / stack()[0][3] / entrance.get('filename', '')
+        fout = (
+            self.test_dir
+            / stack()[0][3]
+            / entrance.get('filename', 'missing-file.txt')
+        )
         fout.parent.mkdir(parents=True, exist_ok=True)
         vf = ValidateFilename(filename=fout)
         result = vf.is_valid()
