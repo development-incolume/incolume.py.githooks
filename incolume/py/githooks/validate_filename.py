@@ -133,17 +133,23 @@ class ValidateFilename:
 
     def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
-        filename = self.filename.stem  # type: ignore[union-attr]
+        validate_rules: bool = True
+        validate_rules = validate_rules and self.rule_is_dundle_init
+        validate_rules = validate_rules and (self.rule_is_python_file and self.rule_has_test_in_pathname)
+        validate_rules = validate_rules and (self.rule_is_python_file and self.rule_has_filename_ends_with_test)
+        validate_rules = validate_rules and (self.rule_is_python_file and self.rule_has_test_into_filename)
         rule1 = self.rule_is_python_file and self.rule_has_test_in_pathname
-        rule2 = self.rule_is_python_file and self.rule_has_filename_ends_with_test
+        rule2 = (
+            self.rule_is_python_file and self.rule_has_filename_ends_with_test
+        )
         rule3 = self.rule_is_python_file and self.rule_has_test_into_filename
 
-        if (not rule1 and rule2) or (rule1 and rule2) or not (rule1 and rule3):
+        if validate_rules:
             return True
 
         self.messages.append(
             '\n[red]Parece ser um arquivo de test.'
-            f'\nTry: {Path("tests", re.sub(r"tests?", "", filename))}'
+            f'\nTry: {Path("tests", re.sub(r"tests?", "", self.filename))}'
             '_test.py[/red]'
         )
         return False
