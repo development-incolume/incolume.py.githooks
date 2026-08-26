@@ -107,6 +107,15 @@ class TestCaseValidFilename:
                 marks=[],
             ),
             pytest.param(
+                'abc.py',
+                2,
+                Result(
+                    code=1,
+                    message='\n[red]Name too long (self.max_len=2):',
+                ),
+                marks=[],
+            ),
+            pytest.param(
                 'abcefghijk.py',
                 10,
                 Result(
@@ -140,6 +149,18 @@ class TestCaseValidFilename:
                     message='[red]Filename is not in snake_case:',
                 ),
                 marks=[],
+            ),
+            pytest.param(
+                '__init__.py', Result(code=0, message=''), marks=[]
+            ),
+            pytest.param(
+                '_core.py', Result(code=0, message=''), marks=[]
+            ),
+            pytest.param(
+                '_core4pkg.py', Result(code=0, message=''), marks=[]
+            ),
+            pytest.param(
+                'README.md', Result(code=0, message=''), marks=[]
             ),
         ],
     )
