@@ -204,31 +204,19 @@ class TestCaseValidFilename:
             pytest.param('', True, marks=[]),
             pytest.param('4file.py', True, marks=[]),
             pytest.param('README.md', True, marks=[]),
+            pytest.param('module/module_test.py', False, marks=[pytest.mark.xfail]),
+            pytest.param('module/module_tests.py', False, marks=[pytest.mark.xfail]),
+            pytest.param('module/tests_module.py', False, marks=[pytest.mark.xfail]),
             pytest.param('test/README.md', True, marks=[]),
             pytest.param('test/__init__.py', True, marks=[]),
             pytest.param('test/module_test.py', True, marks=[]),
             pytest.param('test/module_tests.py', True, marks=[]),
-            pytest.param(
-                'test/test_module.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'test/tests_module.py', False, marks=[pytest.mark.xfail]
-            ),
+            pytest.param('test/test_module.py', False, marks=[pytest.mark.xfail]),
+            pytest.param('test/tests_module.py', False, marks=[pytest.mark.xfail]),
             pytest.param('tests/README.md', True, marks=[]),
             pytest.param('tests/module_test.py', True, marks=[]),
             pytest.param('tests/module_tests.py', True, marks=[]),
-            pytest.param(
-                'tests/test_module.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'module/module_test.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'module/module_tests.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'module/tests_module.py', False, marks=[pytest.mark.xfail]
-            ),
+            pytest.param('tests/test_module.py', False, marks=[pytest.mark.xfail]),
         ],
     )
     def test_is_valid_testing_filename(
@@ -256,6 +244,11 @@ class TestCaseValidFilename:
             pytest.param({'filename': 'a_tests.txt', 'rule': 'rule_has_test_into_filename'}, True),
             pytest.param({'filename': 'a_test.py', 'rule': 'rule_has_test_into_filename'}, True),
             pytest.param({'filename': 'test/__init__.py', 'rule': 'rule_has_test_into_filename'}, True),
+            # If has filename ends with test or tests
+            pytest.param({'filename': 'test/__init__.py', 'rule': 'rule_has_filename_ends_with_test'}, False),
+            pytest.param({'filename': 'a_test.py', 'rule': 'rule_has_filename_ends_with_test'}, True),
+            pytest.param({'filename': 'a_tests.py', 'rule': 'rule_has_filename_ends_with_test'}, True),
+            pytest.param({'filename': 'test_s.py', 'rule': 'rule_has_filename_ends_with_test'}, True),
         ],
     )
     def test_rules(

@@ -80,6 +80,11 @@ class ValidateFilename:
         pathname: str = str(self.filename.parent)  # type: ignore[union-attr]
         return bool(re.match(r'^.*tests?.*$', pathname))
 
+    @property
+    def rule_has_filename_ends_with_test(self) -> bool:
+        """Check if filename ends with test."""
+        return bool(re.match(r'^.*_tests?$', str(self.filename)))
+
     def is_python_file(self, filename: Path | str = '') -> bool:
         """Check if the file is a Python file."""
         self.filename = Path(filename or self.filename)
@@ -121,15 +126,11 @@ class ValidateFilename:
             self.code |= Status.FAILURE
         return result
 
-
-
     def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
         filename = self.filename.stem  # type: ignore[union-attr]
-        rule1 = self.is_python_file() and self.rule_has_test_in_pathname()
-        rule2 = self.is_python_file() and re.match(
-            r'^.*_tests?$', str(self.filename)
-        )
+        rule1 = self.rule_is_python_file and self.rule_has_test_in_pathname
+        rule2 = self.rule_is_python_file and self.rule_has_filename_ends_with_test
         rule3 = self.is_python_file() and re.match(
             r'^(?:(?!tests?).)*$', str(self.filename)
         )
