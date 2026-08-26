@@ -39,8 +39,8 @@ class ValidateFilename:
         default=ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç', init=False
     )
     considers_underscore: bool = field(default=True)
-    min_len: int = field(default=3)
-    max_len: int = field(default=256)
+    min_len: int = 3
+    max_len: int = 256
     code: int = field(default=Status.SUCCESS, init=False)
     messages: list[str] = field(default_factory=list, init=False)
 
@@ -127,8 +127,8 @@ class ValidateFilename:
     def is_valid(
         self: Self,
         filename: str | Path = '',
-        min_len: int = 3,
-        max_len: int = 256,
+        min_len: int = min_len,
+        max_len: int = max_len,
     ) -> Result:
         r"""Check if a filename is valid.
 
