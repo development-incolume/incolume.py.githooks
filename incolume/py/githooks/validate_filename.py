@@ -58,6 +58,22 @@ class ValidateFilename:
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
 
+    @property
+    def rule1(self) -> bool:
+        """Rule for match filename.
+
+        Return True if filename is a python file.
+        """
+        return Path(self.filename).suffix == '.py'
+
+    @property
+    def rule2(self) -> bool:
+        """Rule for match filename.
+
+        Return True if filename has test into filename.
+        """
+        return not bool(re.match(r'^(?:(?!tests?).)*$', str(self.filename)))
+
     def is_python_file(self, filename: Path | str = '') -> bool:
         """Check if the file is a Python file."""
         result = Path(filename or self.filename).suffix == '.py'
@@ -150,7 +166,7 @@ class ValidateFilename:
             Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # ruff: ignore[line-too-long]
-        filename = Path(filename or self.filename)
+        self.filename = filename = Path(filename or self.filename)
         msg_return: str = ''
         code_return: Status = Status.SUCCESS
         path: Path = filename.parent

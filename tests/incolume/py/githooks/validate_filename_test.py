@@ -217,13 +217,42 @@ class TestCaseValidFilename:
             pytest.param('tests/README.md', True, marks=[]),
             pytest.param('tests/module_test.py', True, marks=[]),
             pytest.param('tests/module_tests.py', True, marks=[]),
-            pytest.param('tests/test_module.py', False, marks=[pytest.mark.xfail]),
+            pytest.param(
+                'tests/test_module.py', False, marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'module/module_test.py', False, marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'module/module_tests.py', False, marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'module/tests_module.py', False, marks=[pytest.mark.xfail]
+            ),
         ],
     )
-    def test_is_valid_testing_filename(self, entrance, expected) -> None:
+    def test_is_valid_testing_filename(self, entrance: str, *, expected: bool) -> None:
         """Test is_valid_testing_filename."""
         vf = ValidateFilename(filename=entrance)
         assert vf.is_valid_testing_filename() == expected
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            # If is Python file
+            pytest.param({'filename': 'a.py', 'rule': 'rule1'}, True),
+            pytest.param({'filename': 'a.txt', 'rule': 'rule1'}, False),
+            # If has test into filename
+            pytest.param({'filename': 'a.txt', 'rule': 'rule2'}, False),
+            pytest.param({'filename': 'test_a.txt', 'rule': 'rule2'}, True),
+            pytest.param({'filename': 'a_tests.txt', 'rule': 'rule2'}, True),
+            pytest.param({'filename': 'a_test.py', 'rule': 'rule2'}, True),
+        ],
+    )
+    def test_rules(self, entrance: Mapping[str, str], *, expected: bool) -> None:
+        """Test rules."""
+        vf = ValidateFilename(entrance.get('filename'))
+        assert getattr(vf, entrance.get('rule', '')) == expected
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
