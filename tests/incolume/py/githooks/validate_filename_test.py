@@ -201,6 +201,33 @@ class TestCaseValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+            pytest.param('', True, marks=[]),
+            pytest.param('4file.py', True, marks=[]),
+            pytest.param('README.md', True, marks=[]),
+            pytest.param('test/README.md', True, marks=[]),
+            pytest.param('test/__init__.py', True, marks=[]),
+            pytest.param('test/module_test.py', True, marks=[]),
+            pytest.param('test/module_tests.py', True, marks=[]),
+            pytest.param(
+                'test/test_module.py', False, marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'test/tests_module.py', False, marks=[pytest.mark.xfail]
+            ),
+            pytest.param('tests/README.md', True, marks=[]),
+            pytest.param('tests/module_test.py', True, marks=[]),
+            pytest.param('tests/module_tests.py', True, marks=[]),
+            pytest.param('tests/test_module.py', False, marks=[pytest.mark.xfail]),
+        ],
+    )
+    def test_is_valid_testing_filename(self, entrance, expected) -> None:
+        """Test is_valid_testing_filename."""
+        vf = ValidateFilename(filename=entrance)
+        assert vf.is_valid_testing_filename() == expected
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
             pytest.param(
                 {'filename': '__main__.py'},
                 Result(Status.SUCCESS, ''),
