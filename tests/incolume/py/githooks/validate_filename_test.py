@@ -178,41 +178,35 @@ class TestCaseValidFilename:
         [
             pytest.param(
                 test_dir / 'tests' / 'fake_module_test.py',
-                Result(Status.SUCCESS, ['']),
+                True,
                 marks=[],
             ),
             pytest.param(
                 test_dir / 'tests' / 'fake_module.py',
-                Result(
-                    Status.FAILURE,
-                    (
-                        'Parece ser um arquivo de test.\n'
-                        'Try: tests/fake_module_test.py'
-                    ),
-                ),
+                True,
                 marks=[],
             ),
             pytest.param(
-                'incolume/py/githooks/fakepackage/test_fake_module.py',
-                Result(Status.FAILURE, 'kxz'),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+                Path(
+                    'incolume/py/githooks/fakepackage/test_fake_module.py'
+                ),
+                False,
+                marks=[],
             ),
             pytest.param(
                 'incolume/py/githooks/fakepackage/fake_test_module.py',
-                Result(Status.FAILURE, 'kxz'),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+                False,
+                marks=[],
             ),
         ],
     )
     def test_has_testing_in_pathname(
-        self, filename: str, expected: Result
+        self, filename: str, *, expected: bool
     ) -> None:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
-        result = vf.has_testing_in_filename()
-        assert Status(result.code) == Status(expected.code)
-        # assert all(m1 in result.message for m1 in expected.message)
-        assert expected.message in vf.messages.pop()
+        result = vf.has_test_in_pathname()
+        assert result == expected
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
