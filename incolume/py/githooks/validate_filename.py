@@ -131,9 +131,7 @@ class ValidateFilename:
         filename = self.filename.stem  # type: ignore[union-attr]
         rule1 = self.rule_is_python_file and self.rule_has_test_in_pathname
         rule2 = self.rule_is_python_file and self.rule_has_filename_ends_with_test
-        rule3 = self.is_python_file() and re.match(
-            r'^(?:(?!tests?).)*$', str(self.filename)
-        )
+        rule3 = self.rule_is_python_file and self.rule_has_test_into_filename
 
         if (not rule1 and rule2) or (rule1 and rule2) or not (rule1 and rule3):
             return True
