@@ -195,7 +195,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
-        result = vf.has_test_in_pathname()
+        result = vf.rule_has_test_in_pathname
         assert result == expected
 
     @pytest.mark.parametrize(
