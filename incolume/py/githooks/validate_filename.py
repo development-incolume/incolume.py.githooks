@@ -55,7 +55,16 @@ class ValidateFilename:
         name = self.filename.stem  # type: ignore[union-attr]
         regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
         refname = re.sub(regex, '', name)
-        ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
+        msg_log: str = (
+            f'{name=}, '
+            f'{len(name)=}, '
+            f'{refname=}, '
+            f'{len(refname)=}, '
+            f'{self.min_len=}, '
+            f'{self.max_len=}'
+        )
+        logging.debug(msg_log)
+        ic(msg_log)
         return refname
 
     @property
@@ -83,12 +92,12 @@ class ValidateFilename:
     @property
     def rule_is_dundle_init(self) -> bool:
         """Check if is dundler init file."""
-        return bool(re.match(r'^__init__.py$', str(self.filename.name)))
+        return bool(re.match(r'^__init__.py$', Path(self.filename).name))
 
     @property
     def rule_has_filename_ends_with_test(self) -> bool:
         """Check if filename ends with test."""
-        return bool(re.match(r'^.*_tests?$', self.filename.stem))
+        return bool(re.match(r'^.*_tests?$', Path(self.filename).stem))
 
     def is_python_file(self, filename: Path | str = '') -> bool:
         """Check if the file is a Python file."""
