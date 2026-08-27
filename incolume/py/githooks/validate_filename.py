@@ -165,20 +165,22 @@ class ValidateFilename:
             # not self.rule_not_started_with_number,
             # self.rule_is_dundle_init,
             # self.rule_is_python_file and self.rule_has_test_in_pathname,
-            # self.rule_is_python_file and self.rule_has_filename_ends_with_test,
+            # ,
             # self.rule_is_python_file and self.rule_has_test_into_filename,
         ]
-        if not self.rule_is_python_file:
-            return True
-
-        if all(validate_rules):
-            return True
-
-        self.messages.append(
-            '\n[red]Parece ser um arquivo de test.'
-            '\nTry: {Path("tests", re.sub(r"tests?", "", self.filename))}'
-            '_test.py[/red]'
-        )
+        match self:
+            case self.rule_is_dundle_init:
+                return True
+            case self.rule_is_python_file:
+                return True
+            case self.rule_not_started_with_number:
+                return True
+            case _:
+                self.messages.append(
+                    '\n[red]Parece ser um arquivo de test.'
+                    '\nTry: {Path("tests", re.sub(r"tests?", "", self.filename))}'
+                    '_test.py[/red]'
+                )
         return False
 
     def is_valid(
