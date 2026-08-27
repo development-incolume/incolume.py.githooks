@@ -169,6 +169,8 @@ class ValidateFilename:
             # self.rule_is_python_file and self.rule_has_test_into_filename,
         ]
         match self:
+            case (self.rule_is_python_file and self.rule_has_filename_ends_with_test):
+                return True
             case self.rule_is_dundle_init:
                 return True
             case self.rule_is_python_file:
