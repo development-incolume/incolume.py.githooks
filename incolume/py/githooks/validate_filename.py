@@ -159,19 +159,19 @@ class ValidateFilename:
 
     def is_valid_testing_filename(self) -> bool:
         """Check if the filename has 'test' or 'tests' in its name."""
-        validate_rules: bool = True
-        validate_rules = validate_rules or not self.rule_is_python_file
-        validate_rules = validate_rules or self.rule_is_dundle_init
-        validate_rules = validate_rules or (self.rule_is_python_file and self.rule_has_test_in_pathname)
-        validate_rules = validate_rules or (self.rule_is_python_file and self.rule_has_filename_ends_with_test)
-        validate_rules = validate_rules or (self.rule_is_python_file and self.rule_has_test_into_filename)
-        rule1 = self.rule_is_python_file and self.rule_has_test_in_pathname
-        rule2 = (
-            self.rule_is_python_file and self.rule_has_filename_ends_with_test
-        )
-        rule3 = self.rule_is_python_file and self.rule_has_test_into_filename
+        validate_rules: list[bool] = [
+            # not self.rule_is_python_file,
+            self.rule_filename_notnull and self.rule_is_python_file,
+            # not self.rule_not_started_with_number,
+            # self.rule_is_dundle_init,
+            # self.rule_is_python_file and self.rule_has_test_in_pathname,
+            # self.rule_is_python_file and self.rule_has_filename_ends_with_test,
+            # self.rule_is_python_file and self.rule_has_test_into_filename,
+        ]
+        if not self.rule_is_python_file:
+            return True
 
-        if validate_rules:
+        if all(validate_rules):
             return True
 
         self.messages.append(
