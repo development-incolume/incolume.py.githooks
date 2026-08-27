@@ -76,6 +76,14 @@ class ValidateFilename:
         return Path(self.filename).suffix == '.py'
 
     @property
+    def rule_not_started_with_number(self) -> bool:
+        """Rule for match filename.
+
+        Return True if not start with number.
+        """
+        return bool(re.match(r'[^0-9][a-zA-Z0-9_]*', self.filename.stem))
+
+    @property
     def rule_has_test_into_filename(self) -> bool:
         """Rule for match filename.
 
