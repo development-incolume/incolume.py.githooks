@@ -172,10 +172,13 @@ class ValidateFilename:
         ]
         ic(self)
         ic(self.rule_is_dundle_init)
-        match self:
+        match self.filename:
             case self.rule_is_dundle_init:
                 return True
-            case True if self.rule_is_python_file and self.rule_has_filename_ends_with_test:
+            case True if (
+                self.rule_is_python_file
+                and self.rule_has_filename_ends_with_test
+            ):
                 return True
             case self.rule_is_python_file:
                 return True

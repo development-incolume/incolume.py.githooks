@@ -317,16 +317,49 @@ class TestCaseValidFilename:
                 False,
             ),
             # rule_not_started_with_number
-            pytest.param({'rule': 'rule_not_started_with_number', 'filename': '4file.py'}, False),
-            pytest.param({'rule': 'rule_not_started_with_number', 'filename': '4_file.py'}, False),
-            pytest.param({'rule': 'rule_not_started_with_number', 'filename': '4.py'}, False),
-            pytest.param({'rule': 'rule_not_started_with_number', 'filename': 'file.py'}, True),
-            pytest.param({'rule': 'rule_not_started_with_number', 'filename': 'file_4.py'}, True),
-            pytest.param({'rule': 'rule_not_started_with_number', 'filename': 'f4.py'}, True),
+            pytest.param(
+                {
+                    'rule': 'rule_not_started_with_number',
+                    'filename': '4file.py',
+                },
+                False,
+            ),
+            pytest.param(
+                {
+                    'rule': 'rule_not_started_with_number',
+                    'filename': '4_file.py',
+                },
+                False,
+            ),
+            pytest.param(
+                {'rule': 'rule_not_started_with_number', 'filename': '4.py'},
+                False,
+            ),
+            pytest.param(
+                {
+                    'rule': 'rule_not_started_with_number',
+                    'filename': 'file.py',
+                },
+                True,
+            ),
+            pytest.param(
+                {
+                    'rule': 'rule_not_started_with_number',
+                    'filename': 'file_4.py',
+                },
+                True,
+            ),
+            pytest.param(
+                {'rule': 'rule_not_started_with_number', 'filename': 'f4.py'},
+                True,
+            ),
             # rule_filename_notnull
-            pytest.param({'rule': 'rule_filename_notnull', 'filename': 'f4.py'}, True),
-            pytest.param({'rule': 'rule_filename_notnull', 'filename': ''}, False),
-
+            pytest.param(
+                {'rule': 'rule_filename_notnull', 'filename': 'f4.py'}, True
+            ),
+            pytest.param(
+                {'rule': 'rule_filename_notnull', 'filename': ''}, False
+            ),
         ],
     )
     def test_rules(
