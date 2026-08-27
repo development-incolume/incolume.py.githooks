@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,6 +16,7 @@ from icecream import ic
 from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.core.rules import (
     SNAKE_CASE,
+    RequestFl,
     Result,
     Status,
 )
@@ -29,6 +31,8 @@ with suppress(ImportError, ModuleNotFoundError):
 debug_enable()
 
 SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
+PolicyFn = Callable[[Path, RequestFl], None]
+
 
 @deprecated(reason='Deprecated, will be removed coming soon.', version='1.10.0a39')
 @dataclass

@@ -144,9 +144,7 @@ class TestCaseValidFilename:
         self, filefortest: Path, filename: Path, expected: Result
     ) -> None:
         """Test the is_snake_case method."""
-        vf = ValidateFilename(
-            filename=filefortest.with_name(str(filename))
-        )
+        vf = ValidateFilename(filename=filefortest.with_name(str(filename)))
         result = vf.is_snake_case()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
