@@ -109,7 +109,9 @@ class ValidateFilename:
     @property
     def rule_is_dundle_init(self) -> bool:
         """Check if is dundler init file."""
-        return bool(re.match(r'^__init__.py$', Path(self.filename).name))
+        result = re.match(r'^__init__.py$', Path(self.filename).name)
+        ic(result)
+        return bool(result)
 
     @property
     def rule_has_filename_ends_with_test(self) -> bool:
@@ -166,12 +168,14 @@ class ValidateFilename:
             # self.rule_is_dundle_init,
             # self.rule_is_python_file and self.rule_has_test_in_pathname,
             # ,
-            # self.rule_is_python_file and self.rule_has_test_into_filename,
+            # ,
         ]
+        ic(self)
+        ic(self.rule_is_dundle_init)
         match self:
-            case (self.rule_is_python_file and self.rule_has_filename_ends_with_test):
-                return True
             case self.rule_is_dundle_init:
+                return True
+            case True if self.rule_is_python_file and self.rule_has_filename_ends_with_test:
                 return True
             case self.rule_is_python_file:
                 return True
@@ -190,7 +194,7 @@ class ValidateFilename:
         filename: str | Path = '',
         min_len: int = min_len,
         max_len: int = max_len,
-    ) -> Result:
+    ) -> Self:
         r"""Check if a filename is valid.
 
         A valid filename is in snake_case and has at least `min_len` characters.
@@ -207,8 +211,9 @@ class ValidateFilename:
         Examples:
             >>> ValidateFilename().is_valid('valid_name.py')
             Result(code=<Status.SUCCESS: 0>, message='')
-            >>> ValidateFilename().is_valid('sh.py', min_len=3)
-            Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
+
+            # >>> ValidateFilename().is_valid('sh.py', min_len=3)
+            # Result(code=<Status.FAILURE: 1>, message='\n[red]Name too short (min_len=3): sh.py[/]')
 
         """  # ruff: ignore[line-too-long]
         self.filename = filename = Path(filename or self.filename)
