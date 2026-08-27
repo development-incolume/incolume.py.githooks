@@ -7,6 +7,7 @@ import re
 from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
+from functools import reduce
 from pathlib import Path
 from string import ascii_lowercase, digits
 
@@ -34,6 +35,15 @@ SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 PolicyFn = Callable[[RequestFl], RequestFl]
 
 
+def apply_policies(
+    filename: Path, request: RequestFl, policies: list[PolicyFn]
+) -> RequestFl:
+    """Apply policies."""
+    return reduce(
+        lambda current, policy: policy(filename, current), policies, request
+    )
+
+
 def rule_filename_notnull(filename: Path, request: RequestFl) -> RequestFl:
     """Rule for match filename.
 
@@ -42,12 +52,14 @@ def rule_filename_notnull(filename: Path, request: RequestFl) -> RequestFl:
     ic(self.refname)
     return bool(self.refname)
 
+
 def rule_is_python_file() -> bool:
     """Rule for match filename.
 
     Return True if filename is a python file.
     """
     return Path(self.filename).suffix == '.py'
+
 
 def rule_not_started_with_number() -> bool:
     """Rule for match filename.
@@ -56,22 +68,27 @@ def rule_not_started_with_number() -> bool:
     """
     return bool(re.match(r'[^0-9][a-zA-Z0-9_]*', Path(self.filename).stem))
 
+
 def rule_has_test_into_filename() -> bool:
     """Rule for match filename.
 
     Return True if filename has test into filename.
     """
     return not bool(re.match(r'^(?:(?!tests?).)*$', str(self.filename)))
+
+
 def rule_has_test_in_pathname() -> bool:
     """Check if the filename has 'test' or 'tests' in its name."""
     pathname: str = str(self.filename.parent)  # type: ignore[union-attr]
     return bool(re.match(r'^.*tests?.*$', pathname))
+
 
 def rule_is_dundle_init() -> bool:
     """Check if is dundler init file."""
     result = re.match(r'^__init__.py$', Path(self.filename).name)
     ic(result)
     return bool(result)
+
 
 def rule_has_filename_ends_with_test() -> bool:
     """Check if filename ends with test."""
