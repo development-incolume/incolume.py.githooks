@@ -68,6 +68,15 @@ class ValidateFilename:
         return refname
 
     @property
+    def rule_filename_notnull(self) -> bool:
+        """Rule for match filename.
+
+        Return True if filename is not null.
+        """
+        ic(self.refname)
+        return bool(self.refname)
+
+    @property
     def rule_is_python_file(self) -> bool:
         """Rule for match filename.
 
