@@ -90,7 +90,7 @@ class ValidateFilename:
 
         Return True if not start with number.
         """
-        return bool(re.match(r'[^0-9][a-zA-Z0-9_]*', self.filename.stem))
+        return bool(re.match(r'[^0-9][a-zA-Z0-9_]*', Path(self.filename).stem))
 
     @property
     def rule_has_test_into_filename(self) -> bool:
