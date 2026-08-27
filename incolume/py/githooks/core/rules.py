@@ -171,6 +171,20 @@ class MainEntrance:
     diff_output: str = ''
 
 
+@dataclass(slots=True)
+class RequestFl:
+    """Request data files."""
+
+    path: str
+    action: str
+    requires_audit: bool = False
+    required_role: str | None = None
+    audit_log: list[str] = field(default_factory=list[str])
+    access_granted: bool = False
+    code: Status = Status.SUCCESS
+    messages: list[str] = field(default_factory=list[str])
+
+
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
     rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
