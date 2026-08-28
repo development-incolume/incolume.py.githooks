@@ -206,6 +206,11 @@ class RequestFl:
         return refname
 
     @property
+    def is_dundle_init(self) -> bool:
+        """Check if filename is dundler init."""
+        return bool(re.match(r'^__init__.py$', self.filename.name))
+
+    @property
     def is_python_file(self) -> bool:
         """Check if python file."""
         return self.filename.suffix == '.py'
