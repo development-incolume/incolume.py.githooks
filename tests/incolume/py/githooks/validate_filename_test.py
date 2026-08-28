@@ -1,6 +1,7 @@
 """Module to validate filenames."""
 
 from __future__ import annotations
+import logging
 from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import TYPE_CHECKING
@@ -10,8 +11,9 @@ import pytest
 from incolume.py.githooks.core.rules import (
     Result,
     Status,
+    RequestFl,
 )
-from incolume.py.githooks.validate_filename import ValidateFilename
+import incolume.py.githooks.validate_filename as pkg
 from inspect import stack
 
 if TYPE_CHECKING:
@@ -48,13 +50,13 @@ class TestCaseValidFilename:
         self, filefortest: Path, entrance: str, expected: object
     ) -> None:
         """Test the initialization of the ValidateFilename class."""
-        vf = ValidateFilename(filename=filefortest)
+        vf = pkg.ValidateFilename(filename=filefortest)
         assert filefortest.as_posix() in vf.filename.as_posix()
         assert getattr(vf, entrance) == expected
 
     def test_refname(self, filefortest: Path) -> None:
         """Test the refname property."""
-        vf = ValidateFilename(filename=filefortest)
+        vf = pkg.ValidateFilename(filename=filefortest)
         assert vf.refname == filefortest.stem
 
     @pytest.mark.parametrize(
@@ -86,7 +88,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the is_too_short method."""
         fltest = filefortest.with_name(filename)
-        vf = ValidateFilename(filename=fltest, min_len=min_len)
+        vf = pkg.ValidateFilename(filename=fltest, min_len=min_len)
         result = vf.is_too_short()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -119,7 +121,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the is_too_long method."""
         fltest = filefortest.with_name(filename)
-        vf = ValidateFilename(filename=fltest, max_len=max_len)
+        vf = pkg.ValidateFilename(filename=fltest, max_len=max_len)
         result = vf.is_too_long()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -144,7 +146,7 @@ class TestCaseValidFilename:
         self, filefortest: Path, filename: Path, expected: Result
     ) -> None:
         """Test the is_snake_case method."""
-        vf = ValidateFilename(filename=filefortest.with_name(str(filename)))
+        vf = pkg.ValidateFilename(filename=filefortest.with_name(str(filename)))
         result = vf.is_snake_case()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -184,7 +186,7 @@ class TestCaseValidFilename:
         self, filename: str, expected: Result
     ) -> None:
         """Test the has_testing_in_pathname method."""
-        vf = ValidateFilename(filename=filename)
+        vf = pkg.ValidateFilename(filename=filename)
         result = vf.has_testing_in_filename()
         assert Status(result.code) == Status(expected.code)
         assert all(m1 in result.message for m1 in expected.message)
@@ -421,8 +423,58 @@ class TestCaseValidFilename:
         """Test invalid filenames."""
         fout = self.test_dir / stack()[0][3] / entrance.get('filename', '')
         fout.parent.mkdir(parents=True, exist_ok=True)
-        vf = ValidateFilename(filename=fout)
+        vf = pkg.ValidateFilename(filename=fout)
         result = vf.is_valid()
         ic(result)
         assert Status(result.code) is Status(expected.code)  # Not snake_case
         assert expected.message in result.message
+
+
+class TestCasePolicyValidFilename:
+    """Test cases for the `policy` functions."""
+
+    test_dir = Path(gettempdir()) / stack()[0][3]
+
+    @classmethod
+    def setup_class(cls) -> None:
+        """Set class."""
+        logging.debug('starting class %s execution', cls.__name__)
+        cls.test_dir.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+    @classmethod
+    def teardown_class(cls) -> None:
+        """Teardown class.
+
+        Teardown da classe. Remove todos os arquivos
+         e diretórios gerados ao final.
+        """
+        logging.debug('finished class %s execution', cls.__name__)
+
+    @pytest.fixture(scope='class')
+    def filefortest(self) -> Path:
+        """Get the path to this file."""
+        with NamedTemporaryFile(dir=self.test_dir, suffix='.py') as tf:
+            return Path(tf.name)
+
+    def test_refname(self, filefortest: Path) -> None:
+        """Test the refname property."""
+        vf = RequestFl(filename=filefortest)
+        ic(vf)
+        assert vf.refname == filefortest.stem
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('a.py', Result(code=Status.SUCCESS), marks=[]),
+            pytest.param('', Result(code=Status.FAILURE, message='Null Filename is invalid.'), marks=[]),
+        ]
+    )
+    def test_rule_filename_notnull(self, entrance, expected) -> None:
+        """rule_filename_notnull."""
+        result = pkg.rule_filename_notnull(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert expected.message in result.messages
