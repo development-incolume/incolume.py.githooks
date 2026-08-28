@@ -478,3 +478,18 @@ class TestCasePolicyValidFilename:
         assert result.code == expected.code
         if result.code.value:
             assert expected.message in result.messages
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('', Result(code=Status.SUCCESS), marks=[pytest.mark.xfail]),
+            pytest.param('abc.py', Result(code=Status.SUCCESS), marks=[]),
+            pytest.param('4u.py', Result(code=Status.FAILURE, message='Filename started with number is invalid.'), marks=[]),
+        ]
+    )
+    def test_rule_not_started_with_number(self, entrance, expected) -> None:
+        """rule_filename_notnull."""
+        result = pkg.rule_not_started_with_number(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert expected.message in result.messages

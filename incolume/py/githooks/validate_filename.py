@@ -57,20 +57,16 @@ def rule_filename_notnull(request: RequestFl) -> RequestFl:
     return request
 
 
-def rule_is_python_file() -> bool:
-    """Rule for match filename.
-
-    Return True if filename is a python file.
-    """
-    return Path(self.filename).suffix == '.py'
-
-
-def rule_not_started_with_number() -> bool:
+def rule_not_started_with_number(request: RequestFl) -> RequestFl:
     """Rule for match filename.
 
     Return True if not start with number.
     """
-    return bool(re.match(r'[^0-9][a-zA-Z0-9_]*', Path(self.filename).stem))
+    if bool(re.match(r'[^0-9][a-zA-Z0-9_]*', request.filename.stem)):
+        return request
+    request.code |= Status.FAILURE
+    request.messages.append('Filename started with number is invalid.')
+    return request
 
 
 def rule_has_test_into_filename() -> bool:
