@@ -215,6 +215,11 @@ class RequestFl:
         """Check if python test file."""
         return bool(re.match(r'^(?:(?!tests?).)*$', self.filename.as_posix()))
 
+    @property
+    def has_test_pathname(self) -> bool:
+        """Check if path is test."""
+        return bool(re.match(r'^.*tests?.*$', self.filename.parent.as_posix()))
+
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
