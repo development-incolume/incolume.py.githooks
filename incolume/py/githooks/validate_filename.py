@@ -69,27 +69,6 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
     return request
 
 
-def rule_has_test_into_filename() -> bool:
-    """Rule for match filename.
-
-    Return True if filename has test into filename.
-    """
-    return not bool(re.match(r'^(?:(?!tests?).)*$', str(self.filename)))
-
-
-def rule_has_test_in_pathname() -> bool:
-    """Check if the filename has 'test' or 'tests' in its name."""
-    pathname: str = str(self.filename.parent)  # type: ignore[union-attr]
-    return bool(re.match(r'^.*tests?.*$', pathname))
-
-
-def rule_is_dundle_init() -> bool:
-    """Check if is dundler init file."""
-    result = re.match(r'^__init__.py$', Path(self.filename).name)
-    ic(result)
-    return bool(result)
-
-
 def rule_has_filename_ends_with_test() -> bool:
     """Check if filename ends with test."""
     return bool(re.match(r'^.*_tests?$', Path(self.filename).stem))
