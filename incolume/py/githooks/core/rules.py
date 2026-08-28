@@ -6,10 +6,13 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import re
 from collections import ChainMap
 from collections.abc import Callable, Container
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from pathlib import Path
+from string import ascii_lowercase, digits
 from typing import Final
 
 from icecream import ic
@@ -173,16 +176,34 @@ class MainEntrance:
 
 @dataclass(slots=True)
 class RequestFl:
-    """Request data files."""
+    """Request data files.
 
-    path: str
-    action: str
+    Rules for valid filename.
+    """
+
+    filename: Path
+    alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
+    considers_underscore: bool = True
+    min_len: int = 3
+    max_len: int = 256
     requires_audit: bool = False
     required_role: str | None = None
     audit_log: list[str] = field(default_factory=list[str])
-    access_granted: bool = False
-    code: Status = Status.SUCCESS
+    code: Status = field(default=Status.SUCCESS, init=False)
     messages: list[str] = field(default_factory=list[str])
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        self.filename = Path(self.filename)
+
+    @property
+    def refname(self) -> str:
+        """Getting the reference name."""
+        name = self.filename.stem  # type: ignore[union-attr]
+        regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
+        refname = re.sub(regex, '', name)
+        ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
+        return refname
 
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
