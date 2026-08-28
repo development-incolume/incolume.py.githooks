@@ -205,6 +205,11 @@ class RequestFl:
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
 
+    @property
+    def is_python_file(self) -> bool:
+        """Check if python file."""
+        return self.filename.suffix == '.py'
+
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
