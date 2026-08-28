@@ -199,7 +199,7 @@ class RequestFl:
     @property
     def refname(self) -> str:
         """Getting the reference name."""
-        name = self.filename.stem  # type: ignore[union-attr]
+        name = self.filename.stem
         regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
