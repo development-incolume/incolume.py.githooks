@@ -69,9 +69,14 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
     return request
 
 
-def rule_has_filename_ends_with_test() -> bool:
+def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     """Check if filename ends with test."""
-    return bool(re.match(r'^.*_tests?$', Path(self.filename).stem))
+    if request.has_test_pathname and bool(re.match(r'^.*_tests?$', request.filename.stem)):
+        return request
+    request.code |= Status.FAILURE
+    request.messages.append('It appears to be a test file outside the test directory.')
+    return request
+
 
 
 @deprecated(reason='Deprecated, will be removed coming soon.', version='1.10.0a39')

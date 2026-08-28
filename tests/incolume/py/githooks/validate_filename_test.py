@@ -146,7 +146,9 @@ class TestCaseValidFilename:
         self, filefortest: Path, filename: Path, expected: Result
     ) -> None:
         """Test the is_snake_case method."""
-        vf = pkg.ValidateFilename(filename=filefortest.with_name(str(filename)))
+        vf = pkg.ValidateFilename(
+            filename=filefortest.with_name(str(filename))
+        )
         result = vf.is_snake_case()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -469,10 +471,18 @@ class TestCasePolicyValidFilename:
         ['entrance', 'expected'],
         [
             pytest.param('a.py', Result(code=Status.SUCCESS), marks=[]),
-            pytest.param('', Result(code=Status.FAILURE, message='Null Filename is invalid.'), marks=[]),
-        ]
+            pytest.param(
+                '',
+                Result(
+                    code=Status.FAILURE, message='Null Filename is invalid.'
+                ),
+                marks=[],
+            ),
+        ],
     )
-    def test_rule_filename_notnull(self, entrance, expected) -> None:
+    def test_rule_filename_notnull(
+        self, entrance: str, expected: Result
+    ) -> None:
         """rule_filename_notnull."""
         result = pkg.rule_filename_notnull(RequestFl(filename=entrance))
         assert result.code == expected.code
@@ -482,14 +492,55 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param('', Result(code=Status.SUCCESS), marks=[pytest.mark.xfail]),
+            pytest.param(
+                '', Result(code=Status.SUCCESS), marks=[pytest.mark.xfail]
+            ),
             pytest.param('abc.py', Result(code=Status.SUCCESS), marks=[]),
-            pytest.param('4u.py', Result(code=Status.FAILURE, message='Filename started with number is invalid.'), marks=[]),
-        ]
+            pytest.param(
+                '4u.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename started with number is invalid.',
+                ),
+                marks=[],
+            ),
+        ],
     )
-    def test_rule_not_started_with_number(self, entrance, expected) -> None:
+    def test_rule_not_started_with_number(
+        self, entrance: str, expected: Result
+    ) -> None:
         """rule_filename_notnull."""
         result = pkg.rule_not_started_with_number(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert expected.message in result.messages
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                'test/abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]
+            ),
+            pytest.param('tests/abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]),
+            pytest.param('tests/test_abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]),
+            pytest.param('tests/tests_abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]),
+            pytest.param(
+                'tests/test_4u.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param('tests/abc_test.py', Result(code=Status.SUCCESS), marks=[]),
+            pytest.param('tests/abc_tests.py', Result(code=Status.SUCCESS), marks=[]),
+        ],
+    )
+    def test_rule_has_filename_ends_with_test(
+        self, entrance: str, expected: Result
+    ) -> None:
+        """rule_filename_notnull."""
+        result = pkg.rule_has_filename_ends_with_test(RequestFl(filename=entrance))
         assert result.code == expected.code
         if result.code.value:
             assert expected.message in result.messages
