@@ -44,13 +44,17 @@ def apply_policies(
     )
 
 
-def rule_filename_notnull(filename: Path, request: RequestFl) -> RequestFl:
+def rule_filename_notnull(request: RequestFl) -> RequestFl:
     """Rule for match filename.
 
     Return True if filename is not null.
     """
-    ic(self.refname)
-    return bool(self.refname)
+    ic(request.refname)
+    if bool(request.refname):
+        return request
+    request.code |= Status.FAILURE
+    request.messages.append('Null Filename is invalid.')
+    return request
 
 
 def rule_is_python_file() -> bool:
