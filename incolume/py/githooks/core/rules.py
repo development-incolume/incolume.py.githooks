@@ -210,6 +210,11 @@ class RequestFl:
         """Check if python file."""
         return self.filename.suffix == '.py'
 
+    @property
+    def is_test_filename(self) -> bool:
+        """Check if python test file."""
+        return bool(re.match(r'^(?:(?!tests?).)*$', self.filename.as_posix()))
+
 
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
