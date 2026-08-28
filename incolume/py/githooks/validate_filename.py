@@ -44,30 +44,21 @@ def apply_policies(
     )
 
 
-def refname(filename: Path, *, considers_underscore: bool = True) -> str:
-    """Get the reference name."""
-    name = filename.stem  # type: ignore[union-attr]
-    regex = r'[^a-z0-9_]' if considers_underscore else r'[^a-z0-9]'
-    refname = re.sub(regex, '', name)
-    ic(name, len(name), refname, len(refname))
-    return refname
-
-
 def rule_filename_notnull(filename: Path, request: RequestFl) -> RequestFl:
     """Rule for match filename.
 
     Return True if filename is not null.
     """
-    ic(refname(filename))
-    return bool(refname)
+    ic(self.refname)
+    return bool(self.refname)
 
 
-def rule_is_python_file(filename: Path) -> bool:
+def rule_is_python_file() -> bool:
     """Rule for match filename.
 
     Return True if filename is a python file.
     """
-    return filename.suffix == '.py'
+    return Path(self.filename).suffix == '.py'
 
 
 def rule_not_started_with_number() -> bool:
