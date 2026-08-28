@@ -519,11 +519,37 @@ class TestCasePolicyValidFilename:
         ['entrance', 'expected'],
         [
             pytest.param(
-                'test/abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]
+                'test/abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
             ),
-            pytest.param('tests/abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]),
-            pytest.param('tests/test_abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]),
-            pytest.param('tests/tests_abc.py', Result(code=Status.FAILURE, message='It appears to be a test file outside the test directory.'), marks=[]),
+            pytest.param(
+                'tests/abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/test_abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/tests_abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
             pytest.param(
                 'tests/test_4u.py',
                 Result(
@@ -532,15 +558,21 @@ class TestCasePolicyValidFilename:
                 ),
                 marks=[],
             ),
-            pytest.param('tests/abc_test.py', Result(code=Status.SUCCESS), marks=[]),
-            pytest.param('tests/abc_tests.py', Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                'tests/abc_test.py', Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                'tests/abc_tests.py', Result(code=Status.SUCCESS), marks=[]
+            ),
         ],
     )
     def test_rule_has_filename_ends_with_test(
         self, entrance: str, expected: Result
     ) -> None:
         """rule_filename_notnull."""
-        result = pkg.rule_has_filename_ends_with_test(RequestFl(filename=entrance))
+        result = pkg.rule_has_filename_ends_with_test(
+            RequestFl(filename=entrance)
+        )
         assert result.code == expected.code
         if result.code.value:
             assert expected.message in result.messages
