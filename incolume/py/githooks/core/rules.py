@@ -246,7 +246,7 @@ RULE_BRANCHNAME: Final[str] = (
 RULE_COMMITFORMAT: Final[str] = (
     r'^(((Merge|Bumping|Revert)|(bugfix|build|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
 )
-SNAKE_CASE: Final[str] = r'^[a-z_][a-z_0-9]+$'
+SNAKE_CASE: Final[str] = r'^[a-z_0-9]+$'
 
 MESSAGES: Final[list[str]] = [
     'Boa! Continue o bom trabalho com a força, Jedi!',
