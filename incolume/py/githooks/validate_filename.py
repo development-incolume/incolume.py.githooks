@@ -101,12 +101,26 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
 
 def rule_too_short(request: RequestFl) -> RequestFl:
     """Check if the filename is too short."""
+    request = rule_filename_notnull(request)
     if request.is_python_file and (len(request.refname) >= request.min_len):
         return request
 
     request.code |= Status.FAILURE
     request.messages.append(
             f'Filename too short ({request.min_len}+): {request.filename.name}'
+        )
+    return request
+
+
+def rule_too_long(request: RequestFl) -> RequestFl:
+    """Check if the filename is too long."""
+    request = rule_filename_notnull(request)
+    if request.is_python_file and (len(request.refname) <= request.max_len):
+        return request
+
+    request.code |= Status.FAILURE
+    request.messages.append(
+            f'Filename too long ({request.max_len}-): {request.filename.name}'
         )
     return request
 
@@ -146,17 +160,6 @@ class ValidateFilename:
         )
         logging.debug(msg)
         return result
-
-
-
-    def is_too_long(self) -> Self:
-        """Check if the filename is too long."""
-        if self.__is_python_file() and (len(self.refname) > self.max_len):
-            self.message += (
-                f'\n[red]Name too long ({self.max_len=}): {self.filename}[/]'
-            )
-            self.code |= Status.FAILURE
-        return self
 
     def is_snake_case(self) -> Self:
         """Check if the filename is in snake_case."""
