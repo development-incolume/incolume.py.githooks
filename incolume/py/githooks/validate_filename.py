@@ -136,6 +136,27 @@ def rule_snake_case(request: RequestFl) -> RequestFl:
     return request
 
 
+def validate_filename(*args, **kwargs) -> RequestFl:
+    """Check if a filename is valid.
+
+    A valid filename is in snake_case and has at least `min_len` characters.
+    extract the name so that `/my/repo/x.py` becomes `x`
+
+    Args:
+      kwargs:
+        filename: The filename to check.
+        min_len: Minimum length of the filename (default: 3).
+        max_len: Maximum length of the filename (default: 256).
+
+    Returns:
+        Result: The result of the check.
+
+    Examples:
+        >>> validade_filename('module/valid_name.py')
+
+    """
+
+
 @deprecated(
     reason='Deprecated, will be removed coming soon.', version='1.10.0a39'
 )
