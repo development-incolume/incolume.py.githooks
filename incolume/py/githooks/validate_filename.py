@@ -99,6 +99,17 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     return request
 
 
+def rule_too_short(request: RequestFl) -> RequestFl:
+    """Check if the filename is too short."""
+    if request.is_python_file and (len(request.refname) >= request.min_len):
+        return request
+
+    request.code |= Status.FAILURE
+    request.messages.append(
+            f'Filename too short ({request.min_len}+): {request.filename.name}'
+        )
+    return request
+
 
 @deprecated(reason='Deprecated, will be removed coming soon.', version='1.10.0a39')
 @dataclass
@@ -136,14 +147,7 @@ class ValidateFilename:
         logging.debug(msg)
         return result
 
-    def is_too_short(self) -> Self:
-        """Check if the filename is too short."""
-        if self.__is_python_file() and (len(self.refname) < self.min_len):
-            self.message += (
-                f'\n[red]Name too short ({self.min_len=}): {self.filename}[/]'
-            )
-            self.code |= Status.FAILURE
-        return self
+
 
     def is_too_long(self) -> Self:
         """Check if the filename is too long."""

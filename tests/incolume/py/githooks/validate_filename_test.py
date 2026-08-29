@@ -581,6 +581,32 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+            pytest.param(RequestFl('a.py', min_len=5), Result(code=Status.FAILURE, message='Filename too short (5+): a.py'), marks=[]),
+            pytest.param(RequestFl('tests/a.py', min_len=5), Result(code=Status.FAILURE, message='Filename too short (5+): a.py'), marks=[]),
+            pytest.param(RequestFl('module/a.py'), Result(code=Status.FAILURE, message='Filename too short (3+): a.py'), marks=[]),
+            pytest.param(RequestFl('module/__a__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Filename too short (3+): '
+                ),
+                marks=[],
+            ),
+            pytest.param(RequestFl(filename='__init__.py'), Result(code=Status.SUCCESS), marks=[]),
+        ],
+    )
+    def test_rule_too_short(
+        self, entrance: RequestFl, expected: Result
+    ) -> None:
+        """rule_too_short."""
+        result = pkg.rule_too_short(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
             pytest.param(
                 {
                     'filename': 'abc.py',
