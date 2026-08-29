@@ -136,21 +136,21 @@ def rule_snake_case(request: RequestFl) -> RequestFl:
     return request
 
 
-def validate_filename(*args: list[str], **kwargs: dict[str, str]) -> RequestFl:
+def validate_filename(
+    filename: str, **kwargs: dict[str, str | Path]
+) -> RequestFl:
     """Check if a filename is valid.
 
     A valid filename is in snake_case and has at least `min_len` characters.
     extract the name so that `/my/repo/x.py` becomes `x`
 
     Args:
+      filename (Path | str): Filename to check;
       kwargs:
-        filename (Path | str): Filename to check;
-        alphabet (str): Alphabet used;
-        considers_underscore (bool): If consider underscore in filename;
         min_len (int): Minimum length of the filename (default: 3);
         max_len (int): Maximum length of the filename (default: 256);
-      args:
-        values of kwargs in same order;
+        considers_underscore (bool): If consider
+              underscore in filename (default: True);
 
     Returns:
         Result: The result of the check.
@@ -159,6 +159,18 @@ def validate_filename(*args: list[str], **kwargs: dict[str, str]) -> RequestFl:
         >>> validade_filename('module/valid_name.py')
 
     """
+    flname: Path = Path(filename or kwargs.get('filename', ''))  # type: ignore[arg-type]
+    min_len = kwargs.get('min_len', 3)
+    max_len = kwargs.get('max_len', 256)
+    considers_underscore = kwargs.get('considers_underscore', True)
+    request: RequestFl = RequestFl(
+        flname,
+        min_len=min_len,
+        max_len=max_len,
+        considers_underscore=considers_underscore,
+    )
+
+    return request
 
 
 @deprecated(
