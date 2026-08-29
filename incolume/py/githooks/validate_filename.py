@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from string import ascii_lowercase, digits
 
+from deprecated import deprecated
 from icecream import ic
 
 from incolume.py.githooks.core import debug_enable
@@ -29,7 +30,7 @@ debug_enable()
 
 SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 
-
+@deprecated(reason='Deprecated, will be removed coming soon.', version='1.10.0a39')
 @dataclass
 class ValidateFilename:
     """Rules for valid filename."""
