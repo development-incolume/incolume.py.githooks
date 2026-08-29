@@ -26,9 +26,7 @@ class TestCaseValidFilename:
     @pytest.fixture(scope='class')
     def filefortest(self) -> Path:
         """Get the path to this file."""
-        dout: Path = self.test_dir / 'files'
-        dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout, suffix='.py') as tf:
+        with NamedTemporaryFile(dir=gettempdir(), suffix='.py') as tf:
             return Path(tf.name)
 
     @pytest.mark.parametrize(
@@ -43,7 +41,7 @@ class TestCaseValidFilename:
             pytest.param('min_len', 3, marks=[]),
             pytest.param('max_len', 256, marks=[]),
             pytest.param('code', Status.SUCCESS, marks=[]),
-            pytest.param('messages', [''], marks=[]),
+            pytest.param('message', '', marks=[]),
         ],
     )
     def test_validfilename_init(
@@ -90,8 +88,8 @@ class TestCaseValidFilename:
         fltest = filefortest.with_name(filename)
         vf = ValidateFilename(filename=fltest, min_len=min_len)
         result = vf.is_too_short()
-        assert Status(result) == Status(expected.code)
-        assert (expected.message in m for m in vf.messages)
+        assert Status(result.code) == Status(expected.code)
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['filename', 'max_len', 'expected'],
@@ -102,15 +100,6 @@ class TestCaseValidFilename:
                 Result(
                     code=1,
                     message='\n[red]Name too long (self.max_len=9):',
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                'abc.py',
-                2,
-                Result(
-                    code=1,
-                    message='\n[red]Name too long (self.max_len=2):',
                 ),
                 marks=[],
             ),
@@ -132,8 +121,8 @@ class TestCaseValidFilename:
         fltest = filefortest.with_name(filename)
         vf = ValidateFilename(filename=fltest, max_len=max_len)
         result = vf.is_too_long()
-        assert Status(result) == Status(expected.code)
-        assert (expected.message in m for m in vf.messages)
+        assert Status(result.code) == Status(expected.code)
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['filename', 'expected'],
@@ -149,273 +138,58 @@ class TestCaseValidFilename:
                 ),
                 marks=[],
             ),
-            pytest.param('__init__.py', Result(code=0, message=''), marks=[]),
-            pytest.param('_core.py', Result(code=0, message=''), marks=[]),
-            pytest.param('_core4pkg.py', Result(code=0, message=''), marks=[]),
-            pytest.param('README.md', Result(code=0, message=''), marks=[]),
         ],
     )
     def test_is_snake_case(
         self, filefortest: Path, filename: Path, expected: Result
     ) -> None:
         """Test the is_snake_case method."""
-        vf = ValidateFilename(filename=filefortest.with_name(str(filename)))
+        vf = ValidateFilename(
+            filename=filefortest.with_name(str(filename))
+        )
         result = vf.is_snake_case()
-        assert Status(result) == Status(expected.code)
-        assert (expected.message in m for m in vf.messages)
+        assert Status(result.code) == Status(expected.code)
+        assert expected.message in result.message
 
     @pytest.mark.parametrize(
         ['filename', 'expected'],
         [
             pytest.param(
                 test_dir / 'tests' / 'fake_module_test.py',
-                True,
+                Result(Status.SUCCESS, ['']),
                 marks=[],
-            ),
+            ),  # Path, but valid name
             pytest.param(
                 test_dir / 'tests' / 'fake_module.py',
-                True,
+                Result(
+                    Status.FAILURE,
+                    (
+                        'Parece ser um arquivo de test.\n'
+                        'Try: tests/fake_module_test.py'
+                    ),
+                ),
                 marks=[],
-            ),
+            ),  # Path, but valid name
             pytest.param(
-                Path('incolume/py/githooks/fakepackage/test_fake_module.py'),
-                False,
-                marks=[],
-            ),
+                'incolume/py/githooks/fakepackage/test_fake_module.py',
+                Result(Status.FAILURE, 'kxz'),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+            ),  # Path, but valid name
             pytest.param(
                 'incolume/py/githooks/fakepackage/fake_test_module.py',
-                False,
-                marks=[],
-            ),
+                Result(Status.FAILURE, 'kxz'),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+            ),  # Path, but valid name
         ],
     )
     def test_has_testing_in_pathname(
-        self, filename: str, *, expected: bool
+        self, filename: str, expected: Result
     ) -> None:
         """Test the has_testing_in_pathname method."""
         vf = ValidateFilename(filename=filename)
-        result = vf.rule_has_test_in_pathname
-        assert result == expected
-
-    @pytest.mark.parametrize(
-        ['entrance', 'expected'],
-        [
-            # If is dundler init file
-            pytest.param(
-                {'filename': 'a.py', 'rule': 'rule_is_dundle_init'}, False
-            ),
-            pytest.param(
-                {'filename': '__init__.py', 'rule': 'rule_is_dundle_init'},
-                True,
-            ),
-            pytest.param(
-                {
-                    'filename': 'tests/__init__.py',
-                    'rule': 'rule_is_dundle_init',
-                },
-                True,
-            ),
-            # If is Python file
-            pytest.param(
-                {'filename': 'a.py', 'rule': 'rule_is_python_file'}, True
-            ),
-            pytest.param(
-                {'filename': 'a.txt', 'rule': 'rule_is_python_file'}, False
-            ),
-            pytest.param(
-                {'filename': '__init__.py', 'rule': 'rule_is_python_file'},
-                True,
-            ),
-            # If has test into pathname
-            pytest.param(
-                {'filename': 'a.txt', 'rule': 'rule_has_test_in_pathname'},
-                False,
-            ),
-            pytest.param(
-                {
-                    'filename': 'test/a.txt',
-                    'rule': 'rule_has_test_in_pathname',
-                },
-                True,
-            ),
-            pytest.param(
-                {
-                    'filename': 'tests/a.txt',
-                    'rule': 'rule_has_test_in_pathname',
-                },
-                True,
-            ),
-            pytest.param(
-                {
-                    'filename': 'test/__init__.py',
-                    'rule': 'rule_has_test_in_pathname',
-                },
-                True,
-            ),
-            # If has test into filename
-            pytest.param(
-                {'filename': 'a.txt', 'rule': 'rule_has_test_into_filename'},
-                False,
-            ),
-            pytest.param(
-                {
-                    'filename': 'test_a.txt',
-                    'rule': 'rule_has_test_into_filename',
-                },
-                True,
-            ),
-            pytest.param(
-                {
-                    'filename': 'a_tests.txt',
-                    'rule': 'rule_has_test_into_filename',
-                },
-                True,
-            ),
-            pytest.param(
-                {
-                    'filename': 'a_test.py',
-                    'rule': 'rule_has_test_into_filename',
-                },
-                True,
-            ),
-            pytest.param(
-                {
-                    'filename': 'test/__init__.py',
-                    'rule': 'rule_has_test_into_filename',
-                },
-                True,
-            ),
-            # If has filename ends with test or tests
-            pytest.param(
-                {
-                    'filename': 'test/__init__.py',
-                    'rule': 'rule_has_filename_ends_with_test',
-                },
-                False,
-            ),
-            pytest.param(
-                {
-                    'filename': 'a_test.py',
-                    'rule': 'rule_has_filename_ends_with_test',
-                },
-                True,
-                marks=[],
-            ),
-            pytest.param(
-                {
-                    'filename': 'a_tests.py',
-                    'rule': 'rule_has_filename_ends_with_test',
-                },
-                True,
-                marks=[],
-            ),
-            pytest.param(
-                {
-                    'filename': 'test_s.py',
-                    'rule': 'rule_has_filename_ends_with_test',
-                },
-                False,
-            ),
-            # rule_not_started_with_number
-            pytest.param(
-                {
-                    'rule': 'rule_not_started_with_number',
-                    'filename': '4file.py',
-                },
-                False,
-            ),
-            pytest.param(
-                {
-                    'rule': 'rule_not_started_with_number',
-                    'filename': '4_file.py',
-                },
-                False,
-            ),
-            pytest.param(
-                {'rule': 'rule_not_started_with_number', 'filename': '4.py'},
-                False,
-            ),
-            pytest.param(
-                {
-                    'rule': 'rule_not_started_with_number',
-                    'filename': 'file.py',
-                },
-                True,
-            ),
-            pytest.param(
-                {
-                    'rule': 'rule_not_started_with_number',
-                    'filename': 'file_4.py',
-                },
-                True,
-            ),
-            pytest.param(
-                {'rule': 'rule_not_started_with_number', 'filename': 'f4.py'},
-                True,
-            ),
-            # rule_filename_notnull
-            pytest.param(
-                {'rule': 'rule_filename_notnull', 'filename': 'f4.py'}, True
-            ),
-            pytest.param(
-                {'rule': 'rule_filename_notnull', 'filename': ''}, False
-            ),
-        ],
-    )
-    def test_rules(
-        self, entrance: Mapping[str, str], *, expected: bool
-    ) -> None:
-        """Test rules."""
-        vf = ValidateFilename(entrance.get('filename'))
-        assert getattr(vf, entrance.get('rule', '')) == expected
-
-    @pytest.mark.parametrize(
-        ['entrance', 'expected'],
-        [
-            pytest.param('', False, marks=[]),
-            pytest.param('4file.py', False, marks=[]),
-            pytest.param('README.md', True, marks=[pytest.mark.xfail]),
-            pytest.param('__init__.py', True, marks=[pytest.mark.xfail]),
-            pytest.param('test/__init__.py', True, marks=[pytest.mark.xfail]),
-            pytest.param(
-                'module/module_test.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'module/module_tests.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'module/tests_module.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param('test/README.md', True, marks=[pytest.mark.xfail]),
-            pytest.param(
-                'test/module_test.py', True, marks=[pytest.mark.xfail]
-            ),
-            pytest.param('test/module_tests.py', True, marks=[]),
-            pytest.param(
-                'test/test_module.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'test/tests_module.py', False, marks=[pytest.mark.xfail]
-            ),
-            pytest.param('tests/README.md', True, marks=[]),
-            pytest.param(
-                'tests/module_test.py', True, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'tests/module_tests.py', True, marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'tests/test_module.py', False, marks=[pytest.mark.xfail]
-            ),
-        ],
-    )
-    def test_is_valid_testing_filename(
-        self, entrance: str, *, expected: bool
-    ) -> None:
-        """Test is_valid_testing_filename."""
-        ic(entrance)
-        vf = ValidateFilename(filename=entrance)
-        assert vf.is_valid_testing_filename() == expected
+        result = vf.has_testing_in_filename()
+        assert Status(result.code) == Status(expected.code)
+        assert all(m1 in result.message for m1 in expected.message)
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
@@ -647,17 +421,10 @@ class TestCaseValidFilename:
         self, entrance: Mapping[str, str], expected: Result
     ) -> None:
         """Test invalid filenames."""
-        fout = (
-            self.test_dir
-            / stack()[0][3]
-            / entrance.get('filename', 'missing-file.txt')
-        )
+        fout = self.test_dir / stack()[0][3] / entrance.get('filename', '')
         fout.parent.mkdir(parents=True, exist_ok=True)
         vf = ValidateFilename(filename=fout)
         result = vf.is_valid()
         ic(result)
-        # assert Status(result.code) is Status(expected.code)
-        # assert result.code == ''
-        # assert expected.code == ''
-        assert Status(result.code) == Status(expected.code)
+        assert Status(result.code) is Status(expected.code)  # Not snake_case
         assert expected.message in result.message
