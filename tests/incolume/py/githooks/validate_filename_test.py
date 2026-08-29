@@ -12,6 +12,7 @@ from incolume.py.githooks.core.rules import (
     Result,
     Status,
     RequestFl,
+    MainEntrance,
 )
 import incolume.py.githooks.validate_filename as pkg
 from inspect import stack
@@ -576,3 +577,31 @@ class TestCasePolicyValidFilename:
         assert result.code == expected.code
         if result.code.value:
             assert expected.message in result.messages
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                {
+                    'filename': 'abc.py',
+                    'action': 'rule_filename_notnull',
+                    'requires_audit': True,
+                },
+                'abc.py performed on `rule_filename_notnull`',
+            ),
+            pytest.param({'filename': 'abc.py', 'action': 'rule_other'}, ''),
+            pytest.param(
+                {
+                    'filename': 'file.py',
+                    'action': 'rule_other',
+                    'requires_audit': True,
+                },
+                'file.py performed on `rule_other`',
+            ),
+        ],
+    )
+    def test_audit(self, entrance: MainEntrance, expected: Result) -> None:
+        """Test audit."""
+        result = pkg.audit(RequestFl(**entrance))
+
+        assert expected in result.audit_log if result.requires_audit else ...

@@ -188,6 +188,7 @@ class RequestFl:
     max_len: int = 256
     requires_audit: bool = False
     required_role: str | None = None
+    action: str = ''
     audit_log: list[str] = field(default_factory=list[str])
     code: Status = field(default=Status.SUCCESS, init=False)
     messages: list[str] = field(default_factory=list[str])

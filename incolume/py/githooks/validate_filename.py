@@ -6,7 +6,7 @@ import logging
 import re
 from collections.abc import Callable
 from contextlib import suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import reduce
 from pathlib import Path
 from string import ascii_lowercase, digits
@@ -41,6 +41,19 @@ def apply_policies(
     """Apply policies."""
     return reduce(
         lambda current, policy: policy(filename, current), policies, request
+    )
+
+
+def audit(request: RequestFl) -> RequestFl:
+    """Register for auditory."""
+    if not request.requires_audit:
+        return request
+    return replace(
+        request,
+        audit_log=[
+            *request.audit_log,
+            f'{request.filename} performed on `{request.action}`',
+        ],
     )
 
 
