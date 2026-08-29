@@ -170,6 +170,12 @@ def validate_filename(
         considers_underscore=considers_underscore,
     )
 
+    policies: list[PolicyFn] = [
+        rule_snake_case, rule_too_short, rule_too_long,
+    ]
+    request = apply_policies(request, policies)
+    logging.debug(request)
+
     return request
 
 
