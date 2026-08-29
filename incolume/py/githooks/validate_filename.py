@@ -36,11 +36,11 @@ PolicyFn = Callable[[RequestFl], RequestFl]
 
 
 def apply_policies(
-    filename: Path, request: RequestFl, policies: list[PolicyFn]
+    request: RequestFl, policies: list[PolicyFn]
 ) -> RequestFl:
     """Apply policies."""
     return reduce(
-        lambda current, policy: policy(filename, current), policies, request
+        lambda current, policy: policy(current), policies, request
     )
 
 

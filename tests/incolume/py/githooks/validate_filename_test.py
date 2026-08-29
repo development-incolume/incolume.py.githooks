@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from icecream import ic
 import pytest
@@ -605,3 +605,21 @@ class TestCasePolicyValidFilename:
         result = pkg.audit(RequestFl(**entrance))
 
         assert expected in result.audit_log if result.requires_audit else ...
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param({'request': RequestFl(filename='abc.py'), 'policies': []}, Result(), marks=[]),
+            pytest.param({'request': RequestFl(filename='4_test_abc.py'), 'policies': [pkg.rule_filename_notnull, pkg.rule_not_started_with_number, pkg.rule_has_filename_ends_with_test]}, Result(code=Status.FAILURE, message=['Filename started with number is invalid.', 'It appears to be a test file outside the test directory.']), marks=[]),
+            pytest.param({'request': RequestFl(filename='4_test_abc.py', requires_audit=True), 'policies': [pkg.rule_filename_notnull, pkg.rule_not_started_with_number, pkg.rule_has_filename_ends_with_test]}, Result(code=Status.FAILURE, message={}), marks=[]),
+        ]
+    )
+    def test_apply_policies(self, entrance: Mapping[str, Any], expected: Result) -> None:
+        """Test apply policies."""
+        result = pkg.apply_policies(**entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert set(expected.message).issubset(result.messages)
+        if result.requires_audit:
+            assert set(expected.message).issubset(result.audit_log)
+
