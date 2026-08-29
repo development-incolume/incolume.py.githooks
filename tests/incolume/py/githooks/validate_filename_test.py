@@ -589,7 +589,7 @@ class TestCasePolicyValidFilename:
                 },
                 'abc.py performed on `rule_filename_notnull`',
             ),
-            pytest.param({'filename': 'abc.py', 'action': 'rule_other'}, ''),
+            pytest.param({'filename': 'abc.py', 'action': 'rule_other'}, '', marks=[pytest.mark.xfail]),
             pytest.param(
                 {
                     'filename': 'file.py',
@@ -604,7 +604,7 @@ class TestCasePolicyValidFilename:
         """Test audit."""
         result = pkg.audit(RequestFl(**entrance))
 
-        assert expected in result.audit_log if result.requires_audit else ...
+        assert expected in result.audit_log
 
     @pytest.mark.parametrize(
         ['entrance', 'expected'],

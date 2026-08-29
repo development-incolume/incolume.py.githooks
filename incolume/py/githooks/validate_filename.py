@@ -8,6 +8,7 @@ from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, field, replace
 from functools import reduce
+from inspect import stack
 from pathlib import Path
 from string import ascii_lowercase, digits
 
@@ -62,6 +63,7 @@ def rule_filename_notnull(request: RequestFl) -> RequestFl:
 
     Return True if filename is not null.
     """
+    request.action = stack()[0][3]
     ic(request.refname)
     if bool(request.refname):
         return request
@@ -75,6 +77,7 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
 
     Return True if not start with number.
     """
+    request.action = stack()[0][3]
     if bool(re.match(r'[^0-9][a-zA-Z0-9_]*', request.filename.stem)):
         return request
     request.code |= Status.FAILURE
@@ -84,6 +87,7 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
 
 def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     """Check if filename ends with test."""
+    request.action = stack()[0][3]
     if request.has_test_pathname and bool(
         re.match(r'^.*_tests?$', request.filename.stem)
     ):
