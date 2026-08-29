@@ -136,7 +136,7 @@ def rule_snake_case(request: RequestFl) -> RequestFl:
     return request
 
 
-def validate_filename(*args, **kwargs) -> RequestFl:
+def validate_filename(*args: list[str], **kwargs: dict[str, str]) -> RequestFl:
     """Check if a filename is valid.
 
     A valid filename is in snake_case and has at least `min_len` characters.
@@ -144,9 +144,13 @@ def validate_filename(*args, **kwargs) -> RequestFl:
 
     Args:
       kwargs:
-        filename: The filename to check.
-        min_len: Minimum length of the filename (default: 3).
-        max_len: Maximum length of the filename (default: 256).
+        filename (Path | str): Filename to check;
+        alphabet (str): Alphabet used;
+        considers_underscore (bool): If consider underscore in filename;
+        min_len (int): Minimum length of the filename (default: 3);
+        max_len (int): Maximum length of the filename (default: 256);
+      args:
+        values of kwargs in same order;
 
     Returns:
         Result: The result of the check.
