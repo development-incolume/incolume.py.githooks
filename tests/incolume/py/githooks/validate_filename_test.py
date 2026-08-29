@@ -633,6 +633,36 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+            pytest.param(RequestFl('modulo/Project1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: Project1.py'), marks=[]),
+            pytest.param(RequestFl('ModuloProject1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: ModuloProject1.py'), marks=[]),
+            pytest.param(RequestFl('modulo_Project1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: modulo_Project1.py'), marks=[]),
+            pytest.param(RequestFl('modulo-Project1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: modulo-Project1.py'), marks=[]),
+            pytest.param(RequestFl('modulo_do_project1.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('__init__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('__main__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('__main.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('_app.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('_.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('a.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('a_.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('a9.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('_9.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('9.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('.gitignore'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('README.md'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(RequestFl('JavaScriptFile.js'), Result(code=Status.SUCCESS), marks=[]),
+        ]
+    )
+    def test_rule_snake_case(self, entrance:RequestFl, expected:Result) -> None:
+        """Test rule snake case."""
+        result = pkg.rule_snake_case(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
             pytest.param(
                 {
                     'filename': 'abc.py',

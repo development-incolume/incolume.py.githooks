@@ -125,6 +125,18 @@ def rule_too_long(request: RequestFl) -> RequestFl:
     return request
 
 
+def rule_snake_case(request: RequestFl) -> RequestFl:
+    """Check if the filename is in snake_case."""
+    if not request.is_python_file or (request.is_python_file and SNAKE_CASE_REGEX.search(request.filename.stem)):
+        return request
+
+    request.code |= Status.FAILURE
+    request.messages.append(
+            f'Filename is not in snake_case: {request.filename.name}'
+        )
+    return request
+
+
 @deprecated(reason='Deprecated, will be removed coming soon.', version='1.10.0a39')
 @dataclass
 class ValidateFilename:
@@ -160,18 +172,6 @@ class ValidateFilename:
         )
         logging.debug(msg)
         return result
-
-    def is_snake_case(self) -> Self:
-        """Check if the filename is in snake_case."""
-        if (
-            self.__is_python_file()
-            and SNAKE_CASE_REGEX.search(self.filename.stem) is None  # type: ignore[union-attr]
-        ):
-            self.message += (
-                f'\n[red]Filename is not in snake_case: {self.filename}[/]'
-            )
-            self.code |= Status.FAILURE
-        return self
 
     def __has_test_in_pathname(self) -> Self:
         """Check if the filename has 'test' or 'tests' in its name."""
