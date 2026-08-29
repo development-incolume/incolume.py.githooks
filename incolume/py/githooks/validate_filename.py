@@ -36,13 +36,9 @@ SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 PolicyFn = Callable[[RequestFl], RequestFl]
 
 
-def apply_policies(
-    request: RequestFl, policies: list[PolicyFn]
-) -> RequestFl:
+def apply_policies(request: RequestFl, policies: list[PolicyFn]) -> RequestFl:
     """Apply policies."""
-    return reduce(
-        lambda current, policy: policy(current), policies, request
-    )
+    return reduce(lambda current, policy: policy(current), policies, request)
 
 
 def audit(request: RequestFl) -> RequestFl:
@@ -107,8 +103,8 @@ def rule_too_short(request: RequestFl) -> RequestFl:
 
     request.code |= Status.FAILURE
     request.messages.append(
-            f'Filename too short ({request.min_len}+): {request.filename.name}'
-        )
+        f'Filename too short ({request.min_len}+): {request.filename.name}'
+    )
     return request
 
 
@@ -120,24 +116,29 @@ def rule_too_long(request: RequestFl) -> RequestFl:
 
     request.code |= Status.FAILURE
     request.messages.append(
-            f'Filename too long ({request.max_len}-): {request.filename.name}'
-        )
+        f'Filename too long ({request.max_len}-): {request.filename.name}'
+    )
     return request
 
 
 def rule_snake_case(request: RequestFl) -> RequestFl:
     """Check if the filename is in snake_case."""
-    if not request.is_python_file or (request.is_python_file and SNAKE_CASE_REGEX.search(request.filename.stem)):
+    if not request.is_python_file or (
+        request.is_python_file
+        and SNAKE_CASE_REGEX.search(request.filename.stem)
+    ):
         return request
 
     request.code |= Status.FAILURE
     request.messages.append(
-            f'Filename is not in snake_case: {request.filename.name}'
-        )
+        f'Filename is not in snake_case: {request.filename.name}'
+    )
     return request
 
 
-@deprecated(reason='Deprecated, will be removed coming soon.', version='1.10.0a39')
+@deprecated(
+    reason='Deprecated, will be removed coming soon.', version='1.10.0a39'
+)
 @dataclass
 class ValidateFilename:
     """Rules for valid filename."""

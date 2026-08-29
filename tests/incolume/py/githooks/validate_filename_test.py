@@ -581,10 +581,35 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param(RequestFl('a.py', min_len=5), Result(code=Status.FAILURE, message='Filename too short (5+): a.py'), marks=[]),
-            pytest.param(RequestFl('tests/a.py', min_len=5), Result(code=Status.FAILURE, message='Filename too short (5+): a.py'), marks=[]),
-            pytest.param(RequestFl('module/a.py'), Result(code=Status.FAILURE, message='Filename too short (3+): a.py'), marks=[]),
-            pytest.param(RequestFl('module/__a__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                RequestFl('a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/a.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (3+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
             pytest.param(
                 RequestFl(filename=''),
                 Result(
@@ -592,7 +617,11 @@ class TestCasePolicyValidFilename:
                 ),
                 marks=[],
             ),
-            pytest.param(RequestFl(filename='__init__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
         ],
     )
     def test_rule_too_short(
@@ -607,10 +636,35 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param(RequestFl('abcdefg.py', max_len=5), Result(code=Status.FAILURE, message='Filename too long (5-): abcdefg.py'), marks=[]),
-            pytest.param(RequestFl('tests/abcdefg.py', max_len=5), Result(code=Status.FAILURE, message='Filename too long (5-): abcdefg.py'), marks=[]),
-            pytest.param(RequestFl(f'module/{"a"*257}.py'), Result(code=Status.FAILURE, message=f'Filename too long (256-): {"a"*257}.py'), marks=[]),
-            pytest.param(RequestFl('module/__a__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                RequestFl('abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(f'module/{"a" * 257}.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message=f'Filename too long (256-): {"a" * 257}.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
             pytest.param(
                 RequestFl(filename=''),
                 Result(
@@ -618,7 +672,11 @@ class TestCasePolicyValidFilename:
                 ),
                 marks=[],
             ),
-            pytest.param(RequestFl(filename='__init__.py'), Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
         ],
     )
     def test_rule_too_long(
@@ -633,27 +691,89 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param(RequestFl('modulo/Project1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: Project1.py'), marks=[]),
-            pytest.param(RequestFl('ModuloProject1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: ModuloProject1.py'), marks=[]),
-            pytest.param(RequestFl('modulo_Project1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: modulo_Project1.py'), marks=[]),
-            pytest.param(RequestFl('modulo-Project1.py'), Result(code=Status.FAILURE, message='Filename is not in snake_case: modulo-Project1.py'), marks=[]),
-            pytest.param(RequestFl('modulo_do_project1.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('__init__.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('__main__.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('__main.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('_app.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('_.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('a.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('a_.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('a9.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('_9.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('9.py'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('.gitignore'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('README.md'), Result(code=Status.SUCCESS), marks=[]),
-            pytest.param(RequestFl('JavaScriptFile.js'), Result(code=Status.SUCCESS), marks=[]),
-        ]
+            pytest.param(
+                RequestFl('modulo/Project1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: Project1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('ModuloProject1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: ModuloProject1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('modulo_Project1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: modulo_Project1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('modulo-Project1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: modulo-Project1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('modulo_do_project1.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('__init__.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('__main__.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('__main.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('_app.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('_.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('a.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('a_.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('a9.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('_9.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('9.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('.gitignore'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('README.md'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('JavaScriptFile.js'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+        ],
     )
-    def test_rule_snake_case(self, entrance:RequestFl, expected:Result) -> None:
+    def test_rule_snake_case(
+        self, entrance: RequestFl, expected: Result
+    ) -> None:
         """Test rule snake case."""
         result = pkg.rule_snake_case(entrance)
         assert result.code == expected.code
@@ -671,7 +791,11 @@ class TestCasePolicyValidFilename:
                 },
                 'abc.py performed on `rule_filename_notnull`',
             ),
-            pytest.param({'filename': 'abc.py', 'action': 'rule_other'}, '', marks=[pytest.mark.xfail]),
+            pytest.param(
+                {'filename': 'abc.py', 'action': 'rule_other'},
+                '',
+                marks=[pytest.mark.xfail],
+            ),
             pytest.param(
                 {
                     'filename': 'file.py',
@@ -691,12 +815,48 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param({'request': RequestFl(filename='abc.py'), 'policies': []}, Result(), marks=[]),
-            pytest.param({'request': RequestFl(filename='4_test_abc.py'), 'policies': [pkg.rule_filename_notnull, pkg.rule_not_started_with_number, pkg.rule_has_filename_ends_with_test]}, Result(code=Status.FAILURE, message=['Filename started with number is invalid.', 'It appears to be a test file outside the test directory.']), marks=[]),
-            pytest.param({'request': RequestFl(filename='4_test_abc.py', requires_audit=True), 'policies': [pkg.rule_filename_notnull, pkg.rule_not_started_with_number, pkg.rule_has_filename_ends_with_test]}, Result(code=Status.FAILURE, message={}), marks=[]),
-        ]
+            pytest.param(
+                {'request': RequestFl(filename='abc.py'), 'policies': []},
+                Result(),
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'request': RequestFl(filename='4_test_abc.py'),
+                    'policies': [
+                        pkg.rule_filename_notnull,
+                        pkg.rule_not_started_with_number,
+                        pkg.rule_has_filename_ends_with_test,
+                    ],
+                },
+                Result(
+                    code=Status.FAILURE,
+                    message=[
+                        'Filename started with number is invalid.',
+                        'It appears to be a test file outside the test directory.',
+                    ],
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'request': RequestFl(
+                        filename='4_test_abc.py', requires_audit=True
+                    ),
+                    'policies': [
+                        pkg.rule_filename_notnull,
+                        pkg.rule_not_started_with_number,
+                        pkg.rule_has_filename_ends_with_test,
+                    ],
+                },
+                Result(code=Status.FAILURE, message={}),
+                marks=[],
+            ),
+        ],
     )
-    def test_apply_policies(self, entrance: Mapping[str, Any], expected: Result) -> None:
+    def test_apply_policies(
+        self, entrance: Mapping[str, Any], expected: Result
+    ) -> None:
         """Test apply policies."""
         result = pkg.apply_policies(**entrance)
         assert result.code == expected.code
@@ -704,4 +864,3 @@ class TestCasePolicyValidFilename:
             assert set(expected.message).issubset(result.messages)
         if result.requires_audit:
             assert set(expected.message).issubset(result.audit_log)
-
