@@ -10,13 +10,15 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-08-21:
+## [Unreleased]	 &#8212; 	2026-08-29:
 ### Added
   - Adicionado decorador para registro rápido de logging;
   - Adicionado mypy para validação de tipo;
 ### Changed
   - Ampliado cobertura de código;
   - Atualizado pacotes excenciais do projeto;
+### Deprecated
+  - Modulo ValidateFilename em conflito tornado obsoleto;
 
 ## [1.9.0]	 &#8212; 	2025-11-19:
 ### Added
