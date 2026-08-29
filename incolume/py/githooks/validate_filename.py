@@ -65,7 +65,7 @@ def rule_filename_notnull(request: RequestFl) -> RequestFl:
     """
     request.action = stack()[0][3]
     ic(request.refname)
-    if bool(request.refname):
+    if bool(request.refname) or request.has_filename:
         return request
     request.code |= Status.FAILURE
     request.messages.append('Null Filename is invalid.')

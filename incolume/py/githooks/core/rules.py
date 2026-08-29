@@ -208,6 +208,11 @@ class RequestFl:
         return refname
 
     @property
+    def has_filename(self) -> bool:
+        """Check if filename is null."""
+        return bool(self.filename.name)
+
+    @property
     def is_dundle_init(self) -> bool:
         """Check if filename is dundler init."""
         return bool(re.match(r'^__init__.py$', self.filename.name))
