@@ -932,6 +932,102 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
+           pytest.param(
+                RequestFl('a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/a.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (3+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Filename too short (3+): '
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(f'module/{"a" * 257}.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message=f'Filename too long (256-): {"a" * 257}.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Null Filename is invalid.'
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_length(
+        self, entrance: RequestFl, expected: Result
+    ) -> None:
+        """rule_length."""
+        result = pkg.rule_length(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
             pytest.param(
                 RequestFl('modulo/Project1.py'),
                 Result(

@@ -121,6 +121,25 @@ def rule_too_long(request: RequestFl) -> RequestFl:
     return request
 
 
+def rule_length(request: RequestFl) -> RequestFl:
+    """Check if the filename is too short."""
+    request.action = stack()[0][3]
+    request = rule_filename_notnull(request)
+    length = len(request.refname)
+    if request.is_python_file and (request.min_len <= length <= request.max_len):
+        return request
+
+    request.code |= Status.FAILURE
+    if length < request.min_len:
+        request.messages.append(
+        f'Filename too short ({request.min_len}+): {request.filename.name}'
+    )
+    if length > request.max_len:
+        request.messages.append(
+        f'Filename too long ({request.max_len}-): {request.filename.name}'
+    )
+    return request
+
 def rule_snake_case(request: RequestFl) -> RequestFl:
     """Check if the filename is in snake_case."""
     if not request.is_python_file or (
