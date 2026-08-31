@@ -6,10 +6,13 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import re
 from collections import ChainMap
 from collections.abc import Callable, Container
 from dataclasses import dataclass, field
 from enum import Enum, auto
+from pathlib import Path
+from string import ascii_lowercase, digits
 from typing import Final
 
 from icecream import ic
@@ -171,6 +174,67 @@ class MainEntrance:
     diff_output: str = ''
 
 
+@dataclass(slots=True)
+class RequestFl:
+    """Request data files.
+
+    Rules for valid filename.
+    """
+
+    filename: Path
+    alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
+    considers_underscore: bool = True
+    min_len: int = 3
+    max_len: int = 256
+    requires_audit: bool = False
+    required_role: str | None = None
+    action: str = ''
+    audit_log: list[str] = field(default_factory=list[str])
+    code: Status = field(default=Status.SUCCESS, init=False)
+    messages: list[str] = field(default_factory=list[str])
+
+    def __post_init__(self) -> None:
+        """Post init."""
+        self.filename = Path(self.filename)
+        self.messages.append('')
+        self.audit_log.append('')
+
+    @property
+    def refname(self) -> str:
+        """Getting the reference name."""
+        name = self.filename.stem
+        regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
+        refname = re.sub(regex, '', name)
+        ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
+        return refname
+
+    @property
+    def has_filename(self) -> bool:
+        """Check if filename is null."""
+        return bool(self.filename.name)
+
+    @property
+    def is_dundle_init(self) -> bool:
+        """Check if filename is dundler init."""
+        return bool(re.match(r'^__init__.py$', self.filename.name))
+
+    @property
+    def is_python_file(self) -> bool:
+        """Check if python file."""
+        return self.filename.suffix == '.py'
+
+    @property
+    def is_not_test_filename(self) -> bool:
+        """Check if python test file."""
+        return bool(re.match(r'^(?:(?!tests?).)*$', self.filename.as_posix()))
+
+    @property
+    def has_test_pathname(self) -> bool:
+        """Check if path is test."""
+        return bool(re.match(r'^.*tests?.*$', self.filename.parent.as_posix()))
+
+
+FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[a-zA-Z0-9_\-\.]+$'
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
     rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
@@ -184,7 +248,7 @@ RULE_BRANCHNAME: Final[str] = (
 RULE_COMMITFORMAT: Final[str] = (
     r'^(((Merge|Bumping|Revert)|(bugfix|build|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
 )
-SNAKE_CASE: Final[str] = r'^[a-z_][a-z_0-9]+$'
+SNAKE_CASE: Final[str] = r'^[a-z_0-9]+$'
 
 MESSAGES: Final[list[str]] = [
     'Boa! Continue o bom trabalho com a força, Jedi!',

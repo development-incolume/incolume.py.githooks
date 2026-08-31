@@ -1,17 +1,20 @@
 """Module to validate filenames."""
 
 from __future__ import annotations
+import logging
 from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from icecream import ic
 import pytest
 from incolume.py.githooks.core.rules import (
     Result,
     Status,
+    RequestFl,
+    MainEntrance,
 )
-from incolume.py.githooks.validate_filename import ValidateFilename
+import incolume.py.githooks.validate_filename as pkg
 from inspect import stack
 
 if TYPE_CHECKING:
@@ -48,13 +51,13 @@ class TestCaseValidFilename:
         self, filefortest: Path, entrance: str, expected: object
     ) -> None:
         """Test the initialization of the ValidateFilename class."""
-        vf = ValidateFilename(filename=filefortest)
+        vf = pkg.ValidateFilename(filename=filefortest)
         assert filefortest.as_posix() in vf.filename.as_posix()
         assert getattr(vf, entrance) == expected
 
     def test_refname(self, filefortest: Path) -> None:
         """Test the refname property."""
-        vf = ValidateFilename(filename=filefortest)
+        vf = pkg.ValidateFilename(filename=filefortest)
         assert vf.refname == filefortest.stem
 
     @pytest.mark.parametrize(
@@ -86,7 +89,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the is_too_short method."""
         fltest = filefortest.with_name(filename)
-        vf = ValidateFilename(filename=fltest, min_len=min_len)
+        vf = pkg.ValidateFilename(filename=fltest, min_len=min_len)
         result = vf.is_too_short()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -119,7 +122,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the is_too_long method."""
         fltest = filefortest.with_name(filename)
-        vf = ValidateFilename(filename=fltest, max_len=max_len)
+        vf = pkg.ValidateFilename(filename=fltest, max_len=max_len)
         result = vf.is_too_long()
         assert Status(result.code) == Status(expected.code)
         assert expected.message in result.message
@@ -144,7 +147,7 @@ class TestCaseValidFilename:
         self, filefortest: Path, filename: Path, expected: Result
     ) -> None:
         """Test the is_snake_case method."""
-        vf = ValidateFilename(
+        vf = pkg.ValidateFilename(
             filename=filefortest.with_name(str(filename))
         )
         result = vf.is_snake_case()
@@ -186,7 +189,7 @@ class TestCaseValidFilename:
         self, filename: str, expected: Result
     ) -> None:
         """Test the has_testing_in_pathname method."""
-        vf = ValidateFilename(filename=filename)
+        vf = pkg.ValidateFilename(filename=filename)
         result = vf.has_testing_in_filename()
         assert Status(result.code) == Status(expected.code)
         assert all(m1 in result.message for m1 in expected.message)
@@ -423,8 +426,846 @@ class TestCaseValidFilename:
         """Test invalid filenames."""
         fout = self.test_dir / stack()[0][3] / entrance.get('filename', '')
         fout.parent.mkdir(parents=True, exist_ok=True)
-        vf = ValidateFilename(filename=fout)
+        vf = pkg.ValidateFilename(filename=fout)
         result = vf.is_valid()
         ic(result)
         assert Status(result.code) is Status(expected.code)  # Not snake_case
-        assert expected.message in result.message
+        assert expected.message in result.messages
+
+
+class TestCaseValidateFileName:
+    """Validate filename."""
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                {'filename': '__main__.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': '__init__.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': '_validname01.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'validname01.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'valid_name01.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'validname_01.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'valid_name_01.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'validname.py'},
+                Result(Status.SUCCESS, ''),
+                id='validname.py',
+            ),
+            pytest.param(
+                {'filename': 'valid_name.py'},
+                Result(Status.SUCCESS, ''),
+                id='valid_name.py',
+            ),
+            pytest.param(
+                {'filename': 'another_valid_name.txt'},
+                Result(Status.SUCCESS, ''),
+                id='another_valid_name.txt',
+            ),
+            pytest.param(
+                {'filename': 'a_bc.py', 'min_len': 3},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'snake_case_file.md'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': '0_invalid_name.py'},
+                Result(
+                    Status.FAILURE,
+                    ['Filename started with number is invalid.'],
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '0_Invalid_Name.py'},
+                Result(
+                    Status.FAILURE,
+                    {
+                        'Filename is not in snake_case: 0_Invalid_Name.py',
+                        'Filename started with number is invalid.',
+                    },
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '0InvalidName.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename is not in snake_case: 0InvalidName.py',
+                        'Filename started with number is invalid.',
+                    ],
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': 'InvalidName.py'},
+                Result(
+                    Status.FAILURE,
+                    ['Filename is not in snake_case: InvalidName.py'],
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': 'short.py', 'min_len': 6},
+                Result(Status.FAILURE, ['Filename too short (6+): short.py']),
+                marks=[],
+            ),  # Too short
+            pytest.param(
+                {'filename': 'noextension'},
+                Result(Status.SUCCESS, ''),
+                marks=[],
+            ),  # No extension, but valid name
+            pytest.param(
+                {'filename': 'UPPERCASE.TXT'},
+                Result(
+                    Status.SUCCESS,
+                    [],
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': 'UPPERCASE.py'},
+                Result(
+                    Status.FAILURE,
+                    ['Filename is not in snake_case: UPPERCASE.py'],
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': 'mixed_Case.py'},
+                Result(
+                    Status.FAILURE,
+                    ['Filename is not in snake_case: mixed_Case.py'],
+                ),
+                marks=[],
+            ),  # Not snake_case
+            pytest.param(
+                {'filename': '.hiddenfile'},
+                Result(Status.SUCCESS, ''),
+                marks=[],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '.gitignore'},
+                Result(Status.SUCCESS, ''),
+                marks=[],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '.editorconfig'},
+                Result(Status.SUCCESS, ''),
+                marks=[],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '.coveragerc'},
+                Result(Status.SUCCESS, ''),
+                marks=[],
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': '..doublehidden'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename structure is invalid.',
+                    ],
+                ),
+            ),  # Hidden file, no name
+            pytest.param(
+                {'filename': 'file..py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename structure is invalid.',
+                    ],
+                ),
+            ),  # Hidden file, no name
+            pytest.param(
+                {
+                    'filename': 'a_b_c_d_e_f_g_h_i_j_k_l_m'
+                    '_n_o_p_q_r_s_t_u_v_w_x_y_z.py'
+                },
+                Result(Status.SUCCESS, ''),
+            ),  # Long valid name
+            pytest.param(
+                {'filename': 'a' * 256 + '.py'}, Result(Status.SUCCESS, '')
+            ),  # Very long name, but valid
+            pytest.param(
+                {'filename': 'a' * 257 + '.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename too long (256-): aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.py'
+                    ],
+                ),
+            ),  # Very long name, but valid
+            pytest.param(
+                {'filename': 'incolume/py/fakepackage/fake_test_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'incolume/py/fakepackage/fake_module.py'},
+                Result(Status.SUCCESS, []),
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'tests/fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'tests/test_fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'tests/fake_module_test.py'},
+                Result(Status.SUCCESS, ''),
+                marks=[],
+            ),  # Path, but valid name
+            pytest.param(
+                {'filename': 'test/fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                {'filename': 'test/test_fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                {'filename': '4_fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename started with number is invalid.'
+                    ],
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                {'filename': 'module/04_fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename started with number is invalid.'
+                    ],
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_validade_filename(
+        self, entrance: Mapping[str, str], expected: Result
+    ) -> None:
+        """Test invalid filenames."""
+        result: RequestFl = pkg.validate_filename(**entrance)
+        ic(result)
+
+        assert Status(result.code) is Status(expected.code)
+        if result.code.value:
+            assert set(expected.message).issubset(result.messages)
+
+
+class TestCasePolicyValidFilename:
+    """Test cases for the `policy` functions."""
+
+    test_dir = Path(gettempdir()) / stack()[0][3]
+
+    @classmethod
+    def setup_class(cls) -> None:
+        """Set class."""
+        logging.debug('starting class %s execution', cls.__name__)
+        cls.test_dir.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+    @classmethod
+    def teardown_class(cls) -> None:
+        """Teardown class.
+
+        Teardown da classe. Remove todos os arquivos
+         e diretórios gerados ao final.
+        """
+        logging.debug('finished class %s execution', cls.__name__)
+
+    @pytest.fixture(scope='class')
+    def filefortest(self) -> Path:
+        """Get the path to this file."""
+        with NamedTemporaryFile(dir=self.test_dir, suffix='.py') as tf:
+            return Path(tf.name)
+
+    def test_refname(self, filefortest: Path) -> None:
+        """Test the refname property."""
+        vf = RequestFl(filename=filefortest)
+        ic(vf)
+        assert vf.refname == filefortest.stem
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                '..git',
+                Result(
+                    code=Status.FAILURE,
+                    message=['Filename structure is invalid.'],
+                ),
+            ),
+            pytest.param(
+                'file..0',
+                Result(
+                    code=Status.FAILURE,
+                    message=['Filename structure is invalid.'],
+                ),
+            ),
+            pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
+        ],
+    )
+    def test_filename_structure(self, entrance, expected) -> None:
+        """Test structure for filename."""
+        result = pkg.rule_filename_structure(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert set(expected.message).issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('a.py', Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                '',
+                Result(
+                    code=Status.FAILURE, message='Null Filename is invalid.'
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_filename_notnull(
+        self, entrance: str, expected: Result
+    ) -> None:
+        """rule_filename_notnull."""
+        result = pkg.rule_filename_notnull(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert expected.message in result.messages
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                '', Result(code=Status.SUCCESS), marks=[pytest.mark.xfail]
+            ),
+            pytest.param('abc.py', Result(code=Status.SUCCESS), marks=[]),
+            pytest.param(
+                '4u.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename started with number is invalid.',
+                ),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_not_started_with_number(
+        self, entrance: str, expected: Result
+    ) -> None:
+        """rule_filename_notnull."""
+        result = pkg.rule_not_started_with_number(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert expected.message in result.messages
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                'test/abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/test_abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/tests_abc.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/test_4u.py',
+                Result(
+                    code=Status.FAILURE,
+                    message='It appears to be a test file outside the test directory.',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                'tests/abc_test.py', Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                'tests/abc_tests.py', Result(code=Status.SUCCESS), marks=[]
+            ),
+        ],
+    )
+    def test_rule_has_filename_ends_with_test(
+        self, entrance: str, expected: Result
+    ) -> None:
+        """rule_filename_notnull."""
+        result = pkg.rule_has_filename_ends_with_test(
+            RequestFl(filename=entrance)
+        )
+        assert result.code == expected.code
+        if result.code.value:
+            assert expected.message in result.messages
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                RequestFl('a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/a.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (3+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Filename too short (3+): '
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_too_short(
+        self, entrance: RequestFl, expected: Result
+    ) -> None:
+        """rule_too_short."""
+        result = pkg.rule_too_short(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                RequestFl('abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(f'module/{"a" * 257}.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message=f'Filename too long (256-): {"a" * 257}.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Null Filename is invalid.'
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_too_long(
+        self, entrance: RequestFl, expected: Result
+    ) -> None:
+        """rule_too_long."""
+        result = pkg.rule_too_long(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                RequestFl('a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/a.py', min_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (5+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/a.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too short (3+): a.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Filename too short (3+): '
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('tests/abcdefg.py', max_len=5),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename too long (5-): abcdefg.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(f'module/{"a" * 257}.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message=f'Filename too long (256-): {"a" * 257}.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('module/__a__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename=''),
+                Result(
+                    code=Status.FAILURE, message='Null Filename is invalid.'
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl(filename='__init__.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_length(self, entrance: RequestFl, expected: Result) -> None:
+        """rule_length."""
+        result = pkg.rule_length(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                RequestFl('modulo/Project1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: Project1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('ModuloProject1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: ModuloProject1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('modulo_Project1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: modulo_Project1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('modulo-Project1.py'),
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: modulo-Project1.py',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('modulo_do_project1.py'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+            pytest.param(
+                RequestFl('__init__.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('__main__.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('__main.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('_app.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('_.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('a.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('a_.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('a9.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('_9.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('9.py'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('.gitignore'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('README.md'), Result(code=Status.SUCCESS), marks=[]
+            ),
+            pytest.param(
+                RequestFl('JavaScriptFile.js'),
+                Result(code=Status.SUCCESS),
+                marks=[],
+            ),
+        ],
+    )
+    def test_rule_snake_case(
+        self, entrance: RequestFl, expected: Result
+    ) -> None:
+        """Test rule snake case."""
+        result = pkg.rule_snake_case(entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert {expected.message}.issubset(result.messages)
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                {
+                    'filename': 'abc.py',
+                    'action': 'rule_filename_notnull',
+                    'requires_audit': True,
+                },
+                'abc.py performed on `rule_filename_notnull`',
+            ),
+            pytest.param(
+                {'filename': 'abc.py', 'action': 'rule_other'},
+                '',
+                marks=[],
+            ),
+            pytest.param(
+                {'filename': 'abc.py', 'action': 'rule_other', 'requires_audit': False},
+                '',
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'filename': 'file.py',
+                    'action': 'rule_other',
+                    'requires_audit': True,
+                },
+                'file.py performed on `rule_other`',
+            ),
+        ],
+    )
+    def test_audit(self, entrance: MainEntrance, expected: Result) -> None:
+        """Test audit."""
+        result = pkg.audit(RequestFl(**entrance))
+
+        assert expected in result.audit_log
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param(
+                {'request': RequestFl(filename='abc.py'), 'policies': []},
+                Result(),
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'request': RequestFl(filename='4_test_abc.py'),
+                    'policies': [
+                        pkg.rule_filename_notnull,
+                        pkg.rule_not_started_with_number,
+                        pkg.rule_has_filename_ends_with_test,
+                    ],
+                },
+                Result(
+                    code=Status.FAILURE,
+                    message=[
+                        'Filename started with number is invalid.',
+                        'It appears to be a test file outside the test directory.',
+                    ],
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'request': RequestFl(
+                        filename='4_test_abc.py', requires_audit=True
+                    ),
+                    'policies': [
+                        pkg.rule_filename_notnull,
+                        pkg.rule_not_started_with_number,
+                        pkg.rule_has_filename_ends_with_test,
+                    ],
+                },
+                Result(code=Status.FAILURE, message={}),
+                marks=[],
+            ),
+        ],
+    )
+    def test_apply_policies(
+        self, entrance: Mapping[str, Any], expected: Result
+    ) -> None:
+        """Test apply policies."""
+        result = pkg.apply_policies(**entrance)
+        assert result.code == expected.code
+        if result.code.value:
+            assert set(expected.message).issubset(result.messages)
+        if result.requires_audit:
+            assert set(expected.message).issubset(result.audit_log)
