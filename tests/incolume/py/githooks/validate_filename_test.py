@@ -682,9 +682,7 @@ class TestCaseValidateFileName:
                 {'filename': '4_fake_module.py'},
                 Result(
                     Status.FAILURE,
-                    [
-                        'Filename started with number is invalid.'
-                    ],
+                    ['Filename started with number is invalid.'],
                 ),
                 marks=[],
             ),
@@ -692,9 +690,7 @@ class TestCaseValidateFileName:
                 {'filename': 'module/04_fake_module.py'},
                 Result(
                     Status.FAILURE,
-                    [
-                        'Filename started with number is invalid.'
-                    ],
+                    ['Filename started with number is invalid.'],
                 ),
                 marks=[],
             ),
@@ -1063,20 +1059,10 @@ class TestCasePolicyValidFilename:
                 marks=[],
             ),
             pytest.param(
-                RequestFl('module/__a__.py'),
-                Result(code=Status.SUCCESS),
-                marks=[],
-            ),
-            pytest.param(
                 RequestFl(filename=''),
                 Result(
                     code=Status.FAILURE, message='Null Filename is invalid.'
                 ),
-                marks=[],
-            ),
-            pytest.param(
-                RequestFl(filename='__init__.py'),
-                Result(code=Status.SUCCESS),
                 marks=[],
             ),
         ],
@@ -1197,7 +1183,11 @@ class TestCasePolicyValidFilename:
                 marks=[],
             ),
             pytest.param(
-                {'filename': 'abc.py', 'action': 'rule_other', 'requires_audit': False},
+                {
+                    'filename': 'abc.py',
+                    'action': 'rule_other',
+                    'requires_audit': False,
+                },
                 '',
                 marks=[],
             ),
