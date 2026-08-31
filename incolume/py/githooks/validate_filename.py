@@ -94,7 +94,7 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     )
     return request
 
-
+@deprecated(reason='deprecated in favor of `rule_lenght`', version='1.10.0a40')
 def rule_too_short(request: RequestFl) -> RequestFl:
     """Check if the filename is too short."""
     request = rule_filename_notnull(request)
@@ -108,6 +108,7 @@ def rule_too_short(request: RequestFl) -> RequestFl:
     return request
 
 
+@deprecated(reason='deprecated in favor of `rule_lenght`', version='1.10.0a40')
 def rule_too_long(request: RequestFl) -> RequestFl:
     """Check if the filename is too long."""
     request = rule_filename_notnull(request)
@@ -190,7 +191,8 @@ def validate_filename(
     )
 
     policies: list[PolicyFn] = [
-        rule_snake_case, rule_too_short, rule_too_long,
+        rule_snake_case,
+        rule_length,
     ]
     request = apply_policies(request, policies)
     logging.debug(request)
