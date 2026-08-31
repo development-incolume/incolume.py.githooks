@@ -763,7 +763,7 @@ class TestCasePolicyValidFilename:
             pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
         ],
     )
-    def test_filename_structure(self, entrance, expected) -> None:
+    def test_filename_structure(self, entrance: str, expected: Result) -> None:
         """Test structure for filename."""
         result = pkg.rule_filename_structure(RequestFl(filename=entrance))
         assert result.code == expected.code
