@@ -20,6 +20,7 @@ from incolume.py.githooks.core import (
 )
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
+    RequestFl,
     Result,
     Status,
 )
@@ -38,7 +39,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     validate_format_commit_msg,
 )
 from incolume.py.githooks.validate_branchname import ValidateBranchname
-from incolume.py.githooks.validate_filename import ValidateFilename
+from incolume.py.githooks.validate_filename import validate_filename
 
 debug_enable()
 
@@ -200,7 +201,7 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> Status:
+def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -243,15 +244,15 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> Status:
     if args.nonexequi:
         return 0
 
-    results: list[Result] = [
-        ValidateFilename().is_valid(
+    results: list[RequestFl] = [
+        validate_filename(
             filename=filename, min_len=args.min_len, max_len=args.max_len
         )
         for filename in args.filenames
     ]
     for result in results:
-        rich.print(result.message)
-        codes |= result.code
+        rich.print(result.messages)
+
     return codes.value
 
 
