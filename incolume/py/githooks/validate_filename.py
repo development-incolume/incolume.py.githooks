@@ -59,7 +59,7 @@ def audit(request: RequestFl) -> RequestFl:
 
 def rule_filename_structure(request: RequestFl) -> RequestFl:
     """Rule for structure filename."""
-    structure_fail = FILENAME_STRUCTURE_REGEX.search(request.filename.as_posix())
+    structure_fail = FILENAME_STRUCTURE_REGEX.search(request.filename.name)
 
     if bool(structure_fail):
         return request
@@ -206,9 +206,16 @@ def validate_filename(
     )
 
     policies: list[PolicyFn] = [
+        rule_filename_notnull,
         rule_snake_case,
         rule_length,
+        rule_not_started_with_number,
     ]
+
+    request = rule_filename_structure(request)
+    if not request.is_python_file and request.code is Status.SUCCESS:
+        return request
+
     request = apply_policies(request, policies)
     logging.debug(request)
 
