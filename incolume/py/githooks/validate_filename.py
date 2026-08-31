@@ -165,6 +165,7 @@ def rule_length(request: RequestFl) -> RequestFl:
 
 def rule_snake_case(request: RequestFl) -> RequestFl:
     """Check if the filename is in snake_case."""
+    request.action = stack()[0][3]
     if not request.is_python_file or (
         request.is_python_file
         and SNAKE_CASE_REGEX.search(request.filename.stem)

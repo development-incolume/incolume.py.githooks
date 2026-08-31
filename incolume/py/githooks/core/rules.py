@@ -197,6 +197,7 @@ class RequestFl:
         """Post init."""
         self.filename = Path(self.filename)
         self.messages.append('')
+        self.audit_log.append('')
 
     @property
     def refname(self) -> str:

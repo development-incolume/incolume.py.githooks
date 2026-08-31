@@ -667,7 +667,7 @@ class TestCaseValidateFileName:
                     ],
                 ),
                 marks=[],
-            ),  # Path, but valid name
+            ),
             pytest.param(
                 {'filename': 'test/test_fake_module.py'},
                 Result(
@@ -677,7 +677,27 @@ class TestCaseValidateFileName:
                     ],
                 ),
                 marks=[],
-            ),  # Path, but valid name
+            ),
+            pytest.param(
+                {'filename': '4_fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename started with number is invalid.'
+                    ],
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                {'filename': 'module/04_fake_module.py'},
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename started with number is invalid.'
+                    ],
+                ),
+                marks=[],
+            ),
         ],
     )
     def test_validade_filename(
@@ -1174,7 +1194,12 @@ class TestCasePolicyValidFilename:
             pytest.param(
                 {'filename': 'abc.py', 'action': 'rule_other'},
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
+            ),
+            pytest.param(
+                {'filename': 'abc.py', 'action': 'rule_other', 'requires_audit': False},
+                '',
+                marks=[],
             ),
             pytest.param(
                 {
