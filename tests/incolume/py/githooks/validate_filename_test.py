@@ -502,7 +502,10 @@ class TestCaseValidateFileName:
                 {'filename': '0_Invalid_Name.py'},
                 Result(
                     Status.FAILURE,
-                    {'Filename is not in snake_case: 0_Invalid_Name.py', 'Filename started with number is invalid.'},
+                    {
+                        'Filename is not in snake_case: 0_Invalid_Name.py',
+                        'Filename started with number is invalid.',
+                    },
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -510,7 +513,10 @@ class TestCaseValidateFileName:
                 {'filename': '0InvalidName.py'},
                 Result(
                     Status.FAILURE,
-                    ['Filename is not in snake_case: 0InvalidName.py', 'Filename started with number is invalid.'],
+                    [
+                        'Filename is not in snake_case: 0InvalidName.py',
+                        'Filename started with number is invalid.',
+                    ],
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -518,7 +524,7 @@ class TestCaseValidateFileName:
                 {'filename': 'InvalidName.py'},
                 Result(
                     Status.FAILURE,
-                    [ 'Filename is not in snake_case: InvalidName.py'],
+                    ['Filename is not in snake_case: InvalidName.py'],
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -544,7 +550,7 @@ class TestCaseValidateFileName:
                 {'filename': 'UPPERCASE.py'},
                 Result(
                     Status.FAILURE,
-                    ['Filename is not in snake_case: UPPERCASE.py']
+                    ['Filename is not in snake_case: UPPERCASE.py'],
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -564,26 +570,24 @@ class TestCaseValidateFileName:
             pytest.param(
                 {'filename': '.gitignore'},
                 Result(Status.SUCCESS, ''),
-                marks=[
-                ],
+                marks=[],
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '.editorconfig'},
                 Result(Status.SUCCESS, ''),
-                marks=[
-                ],
+                marks=[],
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '.coveragerc'},
                 Result(Status.SUCCESS, ''),
-                marks=[
-                ],
+                marks=[],
             ),  # Hidden file, no name
             pytest.param(
                 {'filename': '..doublehidden'},
                 Result(
                     Status.FAILURE,
-                    ['Filename structure is invalid.',
+                    [
+                        'Filename structure is invalid.',
                     ],
                 ),
             ),  # Hidden file, no name
@@ -591,7 +595,8 @@ class TestCaseValidateFileName:
                 {'filename': 'file..py'},
                 Result(
                     Status.FAILURE,
-                    ['Filename structure is invalid.',
+                    [
+                        'Filename structure is invalid.',
                     ],
                 ),
             ),  # Hidden file, no name
@@ -607,38 +612,46 @@ class TestCaseValidateFileName:
             ),  # Very long name, but valid
             pytest.param(
                 {'filename': 'a' * 257 + '.py'},
-                Result(Status.FAILURE, [ 'Filename too long (256-): aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.py']),
+                Result(
+                    Status.FAILURE,
+                    [
+                        'Filename too long (256-): aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.py'
+                    ],
+                ),
             ),  # Very long name, but valid
             pytest.param(
                 {'filename': 'incolume/py/fakepackage/fake_test_module.py'},
-                Result(Status.FAILURE, 'asdf'),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'incolume/py/fakepackage/fake_module.py'},
-                Result(Status.SUCCESS, ''),
+                Result(Status.SUCCESS, []),
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'tests/fake_module.py'},
-                Result(Status.FAILURE, 'asd'),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'tests/test_fake_module.py'},
-                Result(Status.FAILURE, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'tests/fake_module_test.py'},
@@ -647,21 +660,23 @@ class TestCaseValidateFileName:
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'test/fake_module.py'},
-                Result(Status.FAILURE, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
             ),  # Path, but valid name
             pytest.param(
                 {'filename': 'test/test_fake_module.py'},
-                Result(Status.FAILURE, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
+                Result(
+                    Status.FAILURE,
+                    [
+                        'It appears to be a test file outside the test directory.'
+                    ],
+                ),
+                marks=[],
             ),  # Path, but valid name
         ],
     )
@@ -713,12 +728,24 @@ class TestCasePolicyValidFilename:
         assert vf.refname == filefortest.stem
 
     @pytest.mark.parametrize(
-        'entrance expected'.split(),
+        ['entrance', 'expected'],
         [
-            pytest.param('..git', Result(code=Status.FAILURE, message=['Filename structure is invalid.'])),
-            pytest.param('file..0', Result(code=Status.FAILURE, message=[ 'Filename structure is invalid.'])),
+            pytest.param(
+                '..git',
+                Result(
+                    code=Status.FAILURE,
+                    message=['Filename structure is invalid.'],
+                ),
+            ),
+            pytest.param(
+                'file..0',
+                Result(
+                    code=Status.FAILURE,
+                    message=['Filename structure is invalid.'],
+                ),
+            ),
             pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
-        ]
+        ],
     )
     def test_filename_structure(self, entrance, expected) -> None:
         """Test structure for filename."""
@@ -950,7 +977,7 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-           pytest.param(
+            pytest.param(
                 RequestFl('a.py', min_len=5),
                 Result(
                     code=Status.FAILURE,
@@ -1034,9 +1061,7 @@ class TestCasePolicyValidFilename:
             ),
         ],
     )
-    def test_rule_length(
-        self, entrance: RequestFl, expected: Result
-    ) -> None:
+    def test_rule_length(self, entrance: RequestFl, expected: Result) -> None:
         """rule_length."""
         result = pkg.rule_length(entrance)
         assert result.code == expected.code

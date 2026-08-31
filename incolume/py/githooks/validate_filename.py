@@ -59,6 +59,7 @@ def audit(request: RequestFl) -> RequestFl:
 
 def rule_filename_structure(request: RequestFl) -> RequestFl:
     """Rule for structure filename."""
+    request.action = stack()[0][3]
     structure_fail = FILENAME_STRUCTURE_REGEX.search(request.filename.name)
 
     if bool(structure_fail):
@@ -99,8 +100,10 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
 def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     """Check if filename ends with test."""
     request.action = stack()[0][3]
-    if request.has_test_pathname and bool(
-        re.match(r'^.*_tests?$', request.filename.stem)
+
+    if (request.is_python_file and request.is_not_test_filename) or (
+        request.has_test_pathname
+        and bool(re.match(r'^.*_tests?$', request.filename.stem))
     ):
         return request
     request.code |= Status.FAILURE
@@ -143,18 +146,20 @@ def rule_length(request: RequestFl) -> RequestFl:
     request.action = stack()[0][3]
     request = rule_filename_notnull(request)
     length = len(request.refname)
-    if request.is_python_file and (request.min_len <= length <= request.max_len):
+    if request.is_python_file and (
+        request.min_len <= length <= request.max_len
+    ):
         return request
 
     request.code |= Status.FAILURE
     if length < request.min_len:
         request.messages.append(
-        f'Filename too short ({request.min_len}+): {request.filename.name}'
-    )
+            f'Filename too short ({request.min_len}+): {request.filename.name}'
+        )
     if length > request.max_len:
         request.messages.append(
-        f'Filename too long ({request.max_len}-): {request.filename.name}'
-    )
+            f'Filename too long ({request.max_len}-): {request.filename.name}'
+        )
     return request
 
 
@@ -212,6 +217,7 @@ def validate_filename(
         rule_snake_case,
         rule_length,
         rule_not_started_with_number,
+        rule_has_filename_ends_with_test,
     ]
 
     request = rule_filename_structure(request)
