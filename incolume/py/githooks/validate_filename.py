@@ -17,11 +17,11 @@ from icecream import ic
 
 from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.core.rules import (
+    FILENAME_STRUCTURE,
     SNAKE_CASE,
     RequestFl,
     Result,
     Status,
-    FILENAME_STRUCTURE,
 )
 
 with suppress(ImportError, ModuleNotFoundError):
@@ -109,6 +109,7 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     )
     return request
 
+
 @deprecated(reason='deprecated in favor of `rule_lenght`', version='1.10.0a40')
 def rule_too_short(request: RequestFl) -> RequestFl:
     """Check if the filename is too short."""
@@ -155,6 +156,7 @@ def rule_length(request: RequestFl) -> RequestFl:
         f'Filename too long ({request.max_len}-): {request.filename.name}'
     )
     return request
+
 
 def rule_snake_case(request: RequestFl) -> RequestFl:
     """Check if the filename is in snake_case."""
