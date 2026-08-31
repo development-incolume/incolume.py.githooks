@@ -710,6 +710,21 @@ class TestCasePolicyValidFilename:
         assert vf.refname == filefortest.stem
 
     @pytest.mark.parametrize(
+        'entrance expected'.split(),
+        [
+            pytest.param('..git', Result(code=Status.FAILURE, message=['Filename structure is invalid.'])),
+            pytest.param('file..0', Result(code=Status.FAILURE, message=[ 'Filename structure is invalid.'])),
+            pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
+        ]
+    )
+    def test_filename_structure(self, entrance, expected) -> None:
+        """Test structure for filename."""
+        result = pkg.rule_filename_structure(RequestFl(filename=entrance))
+        assert result.code == expected.code
+        if result.code.value:
+            assert set(expected.message).issubset(result.messages)
+
+    @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
             pytest.param('a.py', Result(code=Status.SUCCESS), marks=[]),

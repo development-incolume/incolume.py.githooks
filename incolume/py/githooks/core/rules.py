@@ -233,6 +233,7 @@ class RequestFl:
         return bool(re.match(r'^.*tests?.*$', self.filename.parent.as_posix()))
 
 
+FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[a-zA-Z0-9_\-\.]+$'
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
     rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]

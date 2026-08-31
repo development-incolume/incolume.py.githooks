@@ -21,6 +21,7 @@ from incolume.py.githooks.core.rules import (
     RequestFl,
     Result,
     Status,
+    FILENAME_STRUCTURE,
 )
 
 with suppress(ImportError, ModuleNotFoundError):
@@ -33,6 +34,8 @@ with suppress(ImportError, ModuleNotFoundError):
 debug_enable()
 
 SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
+FILENAME_STRUCTURE_REGEX = re.compile(FILENAME_STRUCTURE)
+
 PolicyFn = Callable[[RequestFl], RequestFl]
 
 
@@ -54,6 +57,17 @@ def audit(request: RequestFl) -> RequestFl:
     )
 
 
+def rule_filename_structure(request: RequestFl) -> RequestFl:
+    """Rule for structure filename."""
+    structure_fail = FILENAME_STRUCTURE_REGEX.search(request.filename.as_posix())
+
+    if bool(structure_fail):
+        return request
+    request.code |= Status.FAILURE
+    request.messages.append('Filename structure is invalid.')
+    return request
+
+
 def rule_filename_notnull(request: RequestFl) -> RequestFl:
     """Rule for match filename.
 
@@ -65,6 +79,7 @@ def rule_filename_notnull(request: RequestFl) -> RequestFl:
         return request
     request.code |= Status.FAILURE
     request.messages.append('Null Filename is invalid.')
+
     return request
 
 
