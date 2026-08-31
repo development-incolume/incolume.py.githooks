@@ -588,6 +588,14 @@ class TestCaseValidateFileName:
                 ),
             ),  # Hidden file, no name
             pytest.param(
+                {'filename': 'file..py'},
+                Result(
+                    Status.FAILURE,
+                    ['Filename structure is invalid.',
+                    ],
+                ),
+            ),  # Hidden file, no name
+            pytest.param(
                 {
                     'filename': 'a_b_c_d_e_f_g_h_i_j_k_l_m'
                     '_n_o_p_q_r_s_t_u_v_w_x_y_z.py'
