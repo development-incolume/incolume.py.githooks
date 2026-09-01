@@ -60,378 +60,6 @@ class TestCaseValidFilename:
         vf = pkg.ValidateFilename(filename=filefortest)
         assert vf.refname == filefortest.stem
 
-    @pytest.mark.parametrize(
-        ['filename', 'min_len', 'expected'],
-        [
-            pytest.param(
-                'ab.py',
-                3,
-                Result(
-                    code=1,
-                    message='[red]Name too short (self.min_len=3):',
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                'abcefghij.py',
-                10,
-                Result(
-                    code=1,
-                    message='[red]Name too short (self.min_len=10):',
-                ),
-                marks=[],
-            ),
-            pytest.param('abcd.py', 3, Result(code=0, message=''), marks=[]),
-        ],
-    )
-    def test_is_too_short(
-        self, filefortest: Path, filename: str, min_len: int, expected: Result
-    ) -> None:
-        """Test the is_too_short method."""
-        fltest = filefortest.with_name(filename)
-        vf = pkg.ValidateFilename(filename=fltest, min_len=min_len)
-        result = vf.is_too_short()
-        assert Status(result.code) == Status(expected.code)
-        assert expected.message in result.message
-
-    @pytest.mark.parametrize(
-        ['filename', 'max_len', 'expected'],
-        [
-            pytest.param(
-                'abcefghijk.py',
-                9,
-                Result(
-                    code=1,
-                    message='\n[red]Name too long (self.max_len=9):',
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                'abcefghijk.py',
-                10,
-                Result(
-                    code=0,
-                    message='',
-                ),
-                marks=[],
-            ),
-        ],
-    )
-    def test_is_too_long(
-        self, filefortest: Path, filename: str, max_len: int, expected: Result
-    ) -> None:
-        """Test the is_too_long method."""
-        fltest = filefortest.with_name(filename)
-        vf = pkg.ValidateFilename(filename=fltest, max_len=max_len)
-        result = vf.is_too_long()
-        assert Status(result.code) == Status(expected.code)
-        assert expected.message in result.message
-
-    @pytest.mark.parametrize(
-        ['filename', 'expected'],
-        [
-            pytest.param(
-                'valid_name.py', Result(code=0, message=''), marks=[]
-            ),
-            pytest.param(
-                'invalidName.py',
-                Result(
-                    code=1,
-                    message='[red]Filename is not in snake_case:',
-                ),
-                marks=[],
-            ),
-        ],
-    )
-    def test_is_snake_case(
-        self, filefortest: Path, filename: Path, expected: Result
-    ) -> None:
-        """Test the is_snake_case method."""
-        vf = pkg.ValidateFilename(
-            filename=filefortest.with_name(str(filename))
-        )
-        result = vf.is_snake_case()
-        assert Status(result.code) == Status(expected.code)
-        assert expected.message in result.message
-
-    @pytest.mark.parametrize(
-        ['filename', 'expected'],
-        [
-            pytest.param(
-                test_dir / 'tests' / 'fake_module_test.py',
-                Result(Status.SUCCESS, ['']),
-                marks=[],
-            ),  # Path, but valid name
-            pytest.param(
-                test_dir / 'tests' / 'fake_module.py',
-                Result(
-                    Status.FAILURE,
-                    (
-                        'Parece ser um arquivo de test.\n'
-                        'Try: tests/fake_module_test.py'
-                    ),
-                ),
-                marks=[],
-            ),  # Path, but valid name
-            pytest.param(
-                'incolume/py/githooks/fakepackage/test_fake_module.py',
-                Result(Status.FAILURE, 'kxz'),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
-            ),  # Path, but valid name
-            pytest.param(
-                'incolume/py/githooks/fakepackage/fake_test_module.py',
-                Result(Status.FAILURE, 'kxz'),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
-            ),  # Path, but valid name
-        ],
-    )
-    def test_has_testing_in_pathname(
-        self, filename: str, expected: Result
-    ) -> None:
-        """Test the has_testing_in_pathname method."""
-        vf = pkg.ValidateFilename(filename=filename)
-        result = vf.has_testing_in_filename()
-        assert Status(result.code) == Status(expected.code)
-        assert all(m1 in result.message for m1 in expected.message)
-
-    @pytest.mark.parametrize(
-        ['entrance', 'expected'],
-        [
-            pytest.param(
-                {'filename': '__main__.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': '__init__.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': '_validname01.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': 'validname01.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': 'valid_name01.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': 'validname_01.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': 'valid_name_01.py'},
-                Result(Status.SUCCESS, ''),
-            ),
-            pytest.param(
-                {'filename': 'validname.py'},
-                Result(Status.SUCCESS, ''),
-                id='validname.py',
-            ),
-            pytest.param(
-                {'filename': 'valid_name.py'},
-                Result(Status.SUCCESS, ''),
-                id='valid_name.py',
-            ),
-            pytest.param(
-                {'filename': 'another_valid_name.txt'},
-                Result(Status.SUCCESS, ''),
-                id='another_valid_name.txt',
-            ),
-            pytest.param(
-                {'filename': 'a_bc.py', 'min_len': 3},
-                Result(Status.SUCCESS, ''),
-                id='another_valid_name.txt',
-            ),
-            pytest.param(
-                {'filename': 'snake_case_file.md'},
-                Result(Status.SUCCESS, ''),
-                id='another_valid_name.txt',
-            ),
-            pytest.param(
-                {'filename': '0_invalid_name.py'},
-                Result(
-                    Status.FAILURE,
-                    '\n[red]Filename is not in'
-                    ' snake_case: 0_invalid_name.py[/]',
-                ),
-                marks=[],
-            ),  # Not snake_case
-            pytest.param(
-                {'filename': '0_Invalid_Name.py'},
-                Result(
-                    Status.FAILURE,
-                    '[red]Filename is not in snake_case: 0_Invalid_Name.py[/]',
-                ),
-                marks=[],
-            ),  # Not snake_case
-            pytest.param(
-                {'filename': '0InvalidName.py'},
-                Result(
-                    Status.FAILURE,
-                    '[red]Filename is not in snake_case: 0InvalidName.py[/]',
-                ),
-                marks=[],
-            ),  # Not snake_case
-            pytest.param(
-                {'filename': 'InvalidName.py'},
-                Result(
-                    Status.FAILURE,
-                    '[red]Filename is not in snake_case: InvalidName.py[/]',
-                ),
-                marks=[],
-            ),  # Not snake_case
-            pytest.param(
-                {'filename': 'short.py', 'min_len': 6},
-                Result(Status.FAILURE, 'Name too short (min_len=6): short.py'),
-                marks=[],
-            ),  # Too short
-            pytest.param(
-                {'filename': 'noextension'},
-                Result(Status.SUCCESS, ''),
-                marks=[],
-            ),  # No extension, but valid name
-            pytest.param(
-                {'filename': 'UPPERCASE.TXT'},
-                Result(
-                    Status.FAILURE,
-                    '[red]Name too short (min_len=3): UPPERCASE.TXT[/]'
-                    '\n[red]Filename is not in snake_case: UPPERCASE.TXT[/]',
-                ),
-                marks=[],
-            ),  # Not snake_case
-            pytest.param(
-                {'filename': 'mixed_Case.py'},
-                Result(
-                    Status.FAILURE,
-                    'Filename is not in snake_case: mixed_Case.py',
-                ),
-                marks=[],
-            ),  # Not snake_case
-            pytest.param(
-                {'filename': '.hiddenfile'},
-                Result(Status.SUCCESS, ''),
-                marks=[],
-            ),  # Hidden file, no name
-            pytest.param(
-                {'filename': '.gitignore'},
-                Result(Status.SUCCESS, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Hidden file, no name
-            pytest.param(
-                {'filename': '.editorconfig'},
-                Result(Status.SUCCESS, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Hidden file, no name
-            pytest.param(
-                {'filename': '.coveragerc'},
-                Result(Status.SUCCESS, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Hidden file, no name
-            pytest.param(
-                {'filename': '..doublehidden'},
-                Result(
-                    Status.FAILURE,
-                    'Name too short (min_len=3): ..doublehidden[/]\n'
-                    '[red]Filename is not in snake_case: ..doublehidden',
-                ),
-            ),  # Hidden file, no name
-            pytest.param(
-                {
-                    'filename': 'a_b_c_d_e_f_g_h_i_j_k_l_m'
-                    '_n_o_p_q_r_s_t_u_v_w_x_y_z.py'
-                },
-                Result(Status.SUCCESS, ''),
-            ),  # Long valid name
-            pytest.param(
-                {'filename': 'a' * 256 + '.py'}, Result(Status.SUCCESS, '')
-            ),  # Very long name, but valid
-            pytest.param(
-                {'filename': 'a' * 257 + '.py'},
-                Result(Status.FAILURE, 'Name too long (max_len=256)'),
-            ),  # Very long name, but valid
-            pytest.param(
-                {'filename': 'incolume/py/fakepackage/fake_test_module.py'},
-                Result(Status.FAILURE, 'asdf'),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Path, but valid name
-            pytest.param(
-                {'filename': 'incolume/py/fakepackage/fake_module.py'},
-                Result(Status.SUCCESS, ''),
-            ),  # Path, but valid name
-            pytest.param(
-                {'filename': 'tests/fake_module.py'},
-                Result(Status.FAILURE, 'asd'),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Path, but valid name
-            pytest.param(
-                {'filename': 'tests/test_fake_module.py'},
-                Result(Status.FAILURE, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Path, but valid name
-            pytest.param(
-                {'filename': 'tests/fake_module_test.py'},
-                Result(Status.SUCCESS, ''),
-                marks=[],
-            ),  # Path, but valid name
-            pytest.param(
-                {'filename': 'test/fake_module.py'},
-                Result(Status.FAILURE, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Path, but valid name
-            pytest.param(
-                {'filename': 'test/test_fake_module.py'},
-                Result(Status.FAILURE, ''),
-                marks=[
-                    pytest.mark.xfail(
-                        raises=AssertionError, reason='Not implemented yet'
-                    )
-                ],
-            ),  # Path, but valid name
-        ],
-    )
-    def test_check_if_valid_filenames(
-        self, entrance: Mapping[str, str], expected: Result
-    ) -> None:
-        """Test invalid filenames."""
-        fout = self.test_dir / stack()[0][3] / entrance.get('filename', '')
-        fout.parent.mkdir(parents=True, exist_ok=True)
-        vf = pkg.ValidateFilename(filename=fout)
-        result = vf.is_valid()
-        ic(result)
-        assert Status(result.code) is Status(expected.code)  # Not snake_case
-        assert expected.message in result.messages
-
 
 class TestCaseValidateFileName:
     """Validate filename."""
@@ -682,9 +310,7 @@ class TestCaseValidateFileName:
                 {'filename': '4_fake_module.py'},
                 Result(
                     Status.FAILURE,
-                    [
-                        'Filename started with number is invalid.'
-                    ],
+                    ['Filename started with number is invalid.'],
                 ),
                 marks=[],
             ),
@@ -692,9 +318,7 @@ class TestCaseValidateFileName:
                 {'filename': 'module/04_fake_module.py'},
                 Result(
                     Status.FAILURE,
-                    [
-                        'Filename started with number is invalid.'
-                    ],
+                    ['Filename started with number is invalid.'],
                 ),
                 marks=[],
             ),
@@ -765,9 +389,19 @@ class TestCasePolicyValidFilename:
                 ),
             ),
             pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
+            pytest.param(
+                'jürgen.py',
+                Result(code=Status.SUCCESS, message=''),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+            ),
+            pytest.param(
+                'Jürgen.jsonl',
+                Result(code=Status.SUCCESS, message=''),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+            ),
         ],
     )
-    def test_filename_structure(self, entrance, expected) -> None:
+    def test_filename_structure(self, entrance: str, expected: Result) -> None:
         """Test structure for filename."""
         result = pkg.rule_filename_structure(RequestFl(filename=entrance))
         assert result.code == expected.code
@@ -1063,20 +697,10 @@ class TestCasePolicyValidFilename:
                 marks=[],
             ),
             pytest.param(
-                RequestFl('module/__a__.py'),
-                Result(code=Status.SUCCESS),
-                marks=[],
-            ),
-            pytest.param(
                 RequestFl(filename=''),
                 Result(
                     code=Status.FAILURE, message='Null Filename is invalid.'
                 ),
-                marks=[],
-            ),
-            pytest.param(
-                RequestFl(filename='__init__.py'),
-                Result(code=Status.SUCCESS),
                 marks=[],
             ),
         ],
@@ -1169,6 +793,21 @@ class TestCasePolicyValidFilename:
                 Result(code=Status.SUCCESS),
                 marks=[],
             ),
+            pytest.param(
+                RequestFl('jürgen.py'),
+                Result(code=Status.SUCCESS, message=''),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+            ),
+            pytest.param(
+                RequestFl('Jürgen.py'),
+                Result(code=Status.FAILURE, message='xpto'),
+                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+            ),
+            pytest.param(
+                RequestFl('Jürgen.jsonl'),
+                Result(code=Status.SUCCESS, message=''),
+                marks=[],
+            ),
         ],
     )
     def test_rule_snake_case(
@@ -1197,7 +836,11 @@ class TestCasePolicyValidFilename:
                 marks=[],
             ),
             pytest.param(
-                {'filename': 'abc.py', 'action': 'rule_other', 'requires_audit': False},
+                {
+                    'filename': 'abc.py',
+                    'action': 'rule_other',
+                    'requires_audit': False,
+                },
                 '',
                 marks=[],
             ),

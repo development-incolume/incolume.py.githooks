@@ -11,7 +11,7 @@ from icecream import ic
 import pytest
 
 
-class TestCompactShutil:
+class TestCaseCompactShutil:
     """Test case."""
 
     PATH: ClassVar[Path] = Path(tempfile.gettempdir()) / stack()[0][3]

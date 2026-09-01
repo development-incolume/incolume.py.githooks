@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from icecream import ic
@@ -11,8 +12,7 @@ from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.core.rules import Result, Status
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
-    from pathlib import Path
+    from os import PathLike
 
 debug_enable()
 
@@ -30,7 +30,7 @@ BLACKLIST: list[bytes] = [
 ]
 
 
-def has_private_key(*filenames: Sequence[Path]) -> Result:
+def has_private_key(*filenames: PathLike[str]) -> Result:
     """Check if the content contains a private key.
 
     Args:
@@ -43,7 +43,8 @@ def has_private_key(*filenames: Sequence[Path]) -> Result:
         filename
         for filename in filenames
         if any(
-            line in (e.strip() for e in filename.read_bytes().split(b'\n'))  # type: ignore[attr-defined]
+            line
+            in (e.strip() for e in Path(filename).read_bytes().split(b'\n'))
             for line in BLACKLIST
         )
     ]

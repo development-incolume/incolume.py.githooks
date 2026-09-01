@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
+from click import secho
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
@@ -20,6 +21,7 @@ from incolume.py.githooks.core import (
 )
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
+    RequestFl,
     Result,
     Status,
 )
@@ -38,7 +40,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     validate_format_commit_msg,
 )
 from incolume.py.githooks.validate_branchname import ValidateBranchname
-from incolume.py.githooks.validate_filename import ValidateFilename
+from incolume.py.githooks.validate_filename import validate_filename
 
 debug_enable()
 
@@ -133,7 +135,9 @@ def check_type_commit_msg_cli(
     if args.nonexequi:
         sys.exit(0)
 
-    rich.print(result.message)
+    secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
@@ -200,7 +204,7 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> Status:
+def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -239,20 +243,25 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> Status:
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+    codes = Status.SUCCESS
 
     if args.nonexequi:
-        return 0
+        return Status.SUCCESS
 
-    results: list[Result] = [
-        ValidateFilename().is_valid(
+    results: list[RequestFl] = [
+        validate_filename(
             filename=filename, min_len=args.min_len, max_len=args.max_len
         )
         for filename in args.filenames
     ]
     for result in results:
-        rich.print(result.message)
         codes |= result.code
-    return codes.value
+        for message in result.messages:
+            secho(
+                message, fg='green' if result.code == Status.SUCCESS else 'red'
+            )
+
+    return codes
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
@@ -286,7 +295,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
 
     ic(args)
     result = has_private_key(*args.filenames)
-    rich.print(result.message)
+    secho(result.message, fg='red')
     return result.code.value
 
 
@@ -369,7 +378,7 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    rich.print(effort_msg())
+    secho(effort_msg(), fg='green')
     return 0
 
 
@@ -475,7 +484,9 @@ def validate_format_commit_msg_cli(
 
     result = validate_format_commit_msg(*args.filenames)
 
-    rich.print(result.message)
+    secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
     return result.code.value
 
 
@@ -506,9 +517,10 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
     if not files:
-        rich.print(
-            '\n\n[red]`pre-commit` configuration detected,'
-            ' but `pre-commit install` was never ran.[/red]\n',
+        secho(
+            '\n\n`pre-commit` configuration detected,'
+            ' but `pre-commit install` was never ran.\n',
+            fg='red',
         )
         result |= Status.FAILURE
     return result.value
@@ -541,7 +553,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
 
     if not args.nonexequi:
-        rich.print(get_msg(fixed=args.fixed))
+        secho(get_msg(fixed=args.fixed), fg='green')
 
     return Status.SUCCESS.value
 

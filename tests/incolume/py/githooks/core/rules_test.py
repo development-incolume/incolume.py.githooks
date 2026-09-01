@@ -24,11 +24,13 @@ class TestCaseRules:
         ['entrance', 'expected'],
         [
             pytest.param('success', 0),
-            pytest.param('failure', 1),
-            pytest.param(0, 0),
-            pytest.param(1, 1),
+            pytest.param('failure', 1, marks=[]),
+            pytest.param(0, 0, marks=[]),
+            pytest.param(1, 1, marks=[]),
             pytest.param('SUCCESS', 0),
-            pytest.param('FAILURE', 1),
+            pytest.param('FAILURE', 1, marks=[]),
+            pytest.param('0', 0),
+            pytest.param('1', 1),
         ],
     )
     def test_status_enum(self, entrance: str | int, expected: int) -> None:
@@ -60,6 +62,13 @@ class TestCaseRules:
             pytest.param(
                 '0',
                 pkg.Status(0),
+            ),
+            pytest.param(
+                5,
+                {
+                    'expected_exception': ValueError,
+                    'match': '5 is not a valid Status',
+                },
             ),
             pytest.param(
                 '-1',
