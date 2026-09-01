@@ -20,16 +20,8 @@ from incolume.py.githooks.core.rules import (
     FILENAME_STRUCTURE,
     SNAKE_CASE,
     RequestFl,
-    Result,
     Status,
 )
-
-with suppress(ImportError, ModuleNotFoundError):
-    from typing import Self  # type: ignore[attr-defined]
-
-with suppress(ImportError, ModuleNotFoundError):
-    from typing_extensions import Self
-
 
 debug_enable()
 
