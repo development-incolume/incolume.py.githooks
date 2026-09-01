@@ -135,7 +135,9 @@ def check_type_commit_msg_cli(
     if args.nonexequi:
         sys.exit(0)
 
-    secho(result.message, fg='green' if result.code == Status.SUCCESS else 'red')
+    secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
@@ -255,7 +257,9 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     for result in results:
         codes |= result.code
         for message in result.messages:
-            secho(message, fg='green' if result.code == Status.SUCCESS else 'red')
+            secho(
+                message, fg='green' if result.code == Status.SUCCESS else 'red'
+            )
 
     return codes
 
@@ -480,7 +484,9 @@ def validate_format_commit_msg_cli(
 
     result = validate_format_commit_msg(*args.filenames)
 
-    secho(result.message, fg='green' if result.code == Status.SUCCESS else 'red')
+    secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
     return result.code.value
 
 
@@ -514,7 +520,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
         secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
-            fg='red'
+            fg='red',
         )
         result |= Status.FAILURE
     return result.value

@@ -484,7 +484,15 @@ class TestCaseAllCLI:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param({}, 'Boa! Continue trabalhando com', marks=[pytest.mark.xfail(reason='Identify color in output not improved')]),
+            pytest.param(
+                {},
+                'Boa! Continue trabalhando com',
+                marks=[
+                    pytest.mark.xfail(
+                        reason='Identify color in output not improved'
+                    )
+                ],
+            ),
             pytest.param({'--nonexequi'}, '', marks=[]),
         ],
     )
