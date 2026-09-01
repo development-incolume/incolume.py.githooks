@@ -389,6 +389,8 @@ class TestCasePolicyValidFilename:
                 ),
             ),
             pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
+            pytest.param('jürgen.py', Result(code=Status.SUCCESS, message=''), marks=[pytest.mark.xfail(reason='Not implemented yet')]),
+            pytest.param('Jürgen.jsonl', Result(code=Status.SUCCESS, message=''), marks=[pytest.mark.xfail(reason='Not implemented yet')]),
         ],
     )
     def test_filename_structure(self, entrance: str, expected: Result) -> None:
@@ -783,6 +785,9 @@ class TestCasePolicyValidFilename:
                 Result(code=Status.SUCCESS),
                 marks=[],
             ),
+            pytest.param(RequestFl('jürgen.py'), Result(code=Status.SUCCESS, message=''), marks=[pytest.mark.xfail(reason='Not implemented yet')]),
+            pytest.param(RequestFl('Jürgen.py'), Result(code=Status.FAILURE, message='xpto'), marks=[pytest.mark.xfail(reason='Not implemented yet')]),
+            pytest.param(RequestFl('Jürgen.jsonl'), Result(code=Status.SUCCESS, message=''), marks=[]),
         ],
     )
     def test_rule_snake_case(

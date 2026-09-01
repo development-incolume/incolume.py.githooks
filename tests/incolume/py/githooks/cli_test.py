@@ -376,13 +376,13 @@ class TestCaseAllCLI:
                 {'xVar.py'},
                 Status.FAILURE,
                 'Filename is not in snake_case',
-                marks=[pytest.mark.xfail(reason='False positive')],
+                marks=[],
             ),
             pytest.param(
                 {'xVar.toml'},
                 Status.SUCCESS,
-                'ok',
-                marks=[pytest.mark.xfail(reason='False positive')],
+                '',
+                marks=[],
             ),
             pytest.param(
                 {'x.py', '--min-len=5'},
