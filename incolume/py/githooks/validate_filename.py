@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 import re
 from collections.abc import Callable
-from contextlib import suppress
 from dataclasses import dataclass, field, replace
 from functools import reduce
 from inspect import stack
@@ -192,7 +191,7 @@ def validate_filename(
 
     Examples:
         >>> validate_filename('module/valid_name.py')
-        RequestFl(filename=WindowsPath('module/valid_name.py'), alphabet='abcdefghijklmnopqrstuvwxyz0123456789_áàãâéèêíìîóòõôúùûç', considers_underscore=True, min_len=3, max_len=256, requires_audit=False, required_role=None, action='rule_has_filename_ends_with_test', audit_log=[''], code=<Status.SUCCESS: 0>, messages=[''])
+        RequestFl(filename=WindowsPath('module/valid_name.py'), min_len=3, max_len=256, requires_audit=False, required_role=None, action='rule_has_filename_ends_with_test', code=<Status.SUCCESS: 0>)
 
     """  # ruff:ignore[line-too-long]
     flname: Path = Path(filename or kwargs.get('filename', ''))  # type: ignore[arg-type]

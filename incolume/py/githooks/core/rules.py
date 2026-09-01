@@ -183,9 +183,9 @@ class RequestFl:
 
     filename: Path
     alphabet: str = field(
-        default=ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç', init=False
+        default=ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç', repr=False
     )
-    considers_underscore: bool = True
+    considers_underscore: bool = field(default=True, repr=False)
     min_len: int = 3
     max_len: int = 256
     requires_audit: bool = False
