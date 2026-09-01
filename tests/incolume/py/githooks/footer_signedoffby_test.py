@@ -1,7 +1,6 @@
 """Module test footer_signedoffby hook."""
 
 from __future__ import annotations
-from typing import NoReturn
 import incolume.py.githooks.footer_signedoffby as pkg
 import pytest
 import tempfile
@@ -12,7 +11,7 @@ from unittest.mock import patch
 class TestCaseFooterSignedOffBy:
     """Test class for footer_signedoffby module."""
 
-    def test_clean_commit_msg(self) -> NoReturn:
+    def test_clean_commit_msg(self) -> None:
         """Test clean_commit_msg function."""
         with tempfile.NamedTemporaryFile('bw+') as tf:
             test_file = Path(tf.name)
@@ -36,7 +35,7 @@ class TestCaseFooterSignedOffBy:
         test_file.write_text(content, encoding='utf-8')
         assert pkg.clean_commit_msg(test_file)
 
-    def test_get_signed_off_by(self) -> NoReturn:
+    def test_get_signed_off_by(self) -> None:
         """Test get_signed_off_by function."""
         with patch.object(
             pkg.subprocess,
@@ -52,7 +51,7 @@ class TestCaseFooterSignedOffBy:
                 text=True,
             )
 
-    def test_add_signed_off_by(self) -> NoReturn:
+    def test_add_signed_off_by(self) -> None:
         """Test add_signed_off_by function."""
         with tempfile.NamedTemporaryFile() as tf:
             test_file = Path(tf.name)
@@ -80,8 +79,8 @@ class TestCaseFooterSignedOffBy:
         ],
     )
     def test_add_blank_line_if_needed(
-        self, entrance, commit_source, expected
-    ) -> NoReturn:
+        self, entrance: str, commit_source: str, expected: str
+    ) -> None:
         """Test add_blank_line_if_needed function."""
         with tempfile.NamedTemporaryFile() as tf:
             test_file = Path(tf.name)

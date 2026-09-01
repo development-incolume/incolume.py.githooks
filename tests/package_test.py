@@ -1,13 +1,11 @@
 """Test module for package."""
-# ruff: noqa: E501
 
-from incolume.py.githooks.rules import (
+from incolume.py.githooks.core.rules import (
     REGEX_SEMVER,
     RULE_BRANCHNAME,
     RULE_COMMITFORMAT,
 )
 import pytest
-from typing import NoReturn
 import rich
 from rich.console import Console
 
@@ -35,11 +33,11 @@ class TestCasePackage:
             ),
         ],
     )
-    def test_package(self, entrance, expected) -> NoReturn:
+    def test_package(self, entrance: str, expected: str) -> None:
         """Test package."""
         assert entrance == expected
 
-    def test_rich_output(self, capsys) -> NoReturn:
+    def test_rich_output(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Test rich output."""
         console = Console()
         console.print('Hello from Rich!')

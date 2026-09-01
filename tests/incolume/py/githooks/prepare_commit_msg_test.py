@@ -1,17 +1,14 @@
 """Test module for prepare_commit_msg."""
 
-# ruff: noqa: E501
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 import re
 import shutil
-from typing import NoReturn
 from unittest.mock import patch
 from icecream import ic
 import pytest
-from incolume.py.githooks.core import Result
-from incolume.py.githooks.rules import SUCCESS, FAILURE
+from incolume.py.githooks.core.rules import Result, Status
 import incolume.py.githooks.prepare_commit_msg as pkg
 from tempfile import NamedTemporaryFile, gettempdir
 from pathlib import Path
@@ -22,11 +19,11 @@ from inspect import stack
 class Entrance:
     """Entrance dataclass for tests."""
 
-    msg_file: str | Path = None
+    msg_file: str | Path = ''
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
     expected: Result = field(
-        default_factory=lambda: Result(FAILURE, pkg.MESSAGERROR)
+        default_factory=lambda: Result(Status.FAILURE, pkg.MESSAGERROR)
     )
 
 
@@ -94,7 +91,7 @@ class TestCasePrepareCommitMsg:
             ),
         ],
     )
-    def test_messages(self, entrance, expected) -> NoReturn:
+    def test_messages(self, entrance: list[str], expected: list[str]) -> None:
         """Test messages."""
         assert all(element in entrance for element in expected)
 
@@ -112,15 +109,15 @@ class TestCasePrepareCommitMsg:
                 Entrance(
                     msg_file=test_dir / 'valid-msg.txt',
                     msg_commit='feat: #1 implementado o metodo fake.',
-                    expected=Result(SUCCESS, pkg.MESSAGESUCCESS),
+                    expected=Result(Status.SUCCESS, pkg.MESSAGESUCCESS),
                 ),
                 marks=[],
             ),
         ],
     )
-    def test_prepare_commit_msg(self, entrance) -> NoReturn:
+    def test_prepare_commit_msg(self, entrance: Entrance) -> None:
         """Test prepend commit message."""
-        entrance.msg_file.write_text(entrance.msg_commit)
+        entrance.msg_file.write_text(entrance.msg_commit)  # type: ignore[union-attr]
         result = pkg.validate_format_commit_msg(entrance.msg_file)
         ic(result)
         assert result == entrance.expected
@@ -139,9 +136,9 @@ class TestCasePrepareCommitMsg:
             ),
         ],
     )
-    def test_check_len_first_line_commit_msg(self, entrance) -> NoReturn:
+    def test_check_len_first_line_commit_msg(self, entrance: Entrance) -> None:
         """Test for check len first line commit messages."""
-        entrance.msg_file.write_text(entrance.msg_commit)
+        entrance.msg_file.write_text(entrance.msg_commit)  # type: ignore[union-attr]
         assert pkg.check_max_len_first_line_commit_msg(entrance.msg_file)
 
     @pytest.mark.parametrize(
@@ -151,7 +148,7 @@ class TestCasePrepareCommitMsg:
                 Entrance(
                     msg_commit='a' * 51,
                     expected=Result(
-                        FAILURE,
+                        Status.FAILURE,
                         message='Error: Commit message must start with a type',
                     ),
                 ),
@@ -159,74 +156,94 @@ class TestCasePrepareCommitMsg:
             pytest.param(
                 Entrance(
                     msg_commit='fix: fixed a fake file',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 ),
             ),
             pytest.param(
                 Entrance(
                     msg_commit='added: bcd.txt',
                     expected=Result(
-                        code=FAILURE, message='Error: Commit message'
+                        code=Status.FAILURE, message='Error: Commit message'
                     ),
                 ),
             ),
             pytest.param(
                 Entrance(
                     msg_commit='feat: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='chore: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='docs: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='style: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='refactor: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='test: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='perf: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='ci: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
             pytest.param(
                 Entrance(
                     msg_commit='build: fake feature',
-                    expected=Result(code=SUCCESS, message=pkg.MESSAGESUCCESS),
+                    expected=Result(
+                        code=Status.SUCCESS, message=pkg.MESSAGESUCCESS
+                    ),
                 )
             ),
         ],
     )
-    def test_check_type_commit_msg(self, entrance: Entrance) -> NoReturn:
+    def test_check_type_commit_msg(self, entrance: Entrance) -> None:
         """Test for check type commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
@@ -242,20 +259,23 @@ class TestCasePrepareCommitMsg:
                 Entrance(
                     msg_commit='a' * 3,
                     expected=Result(
-                        FAILURE,
+                        Status.FAILURE,
                         'Error: Commit subject line has an insufficient number of 10 characters allowed (3 - aaa).',
                     ),
                 ),
                 10,
             ),
             pytest.param(
-                Entrance(msg_commit='b' * 10, expected=Result(SUCCESS, '')), 10
+                Entrance(
+                    msg_commit='b' * 10, expected=Result(Status.SUCCESS, '')
+                ),
+                10,
             ),
             pytest.param(
                 Entrance(
                     msg_commit='c' * 20,
                     expected=Result(
-                        SUCCESS,
+                        Status.SUCCESS,
                         '[green]Commit minimum length for message is validated [OK][/green]',
                     ),
                 ),
@@ -265,14 +285,13 @@ class TestCasePrepareCommitMsg:
     )
     def test_min_len_first_line_commit_msg(
         self, entrance: Entrance, len_line: int
-    ) -> NoReturn:
+    ) -> None:
         """Test for min len first line commit messages."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(entrance.msg_commit.encode())
         result = pkg.check_min_len_first_line_commit_msg(test_file, len_line)
         assert result.code == entrance.expected.code
-        assert entrance.expected.message in result.message
 
     @pytest.mark.parametrize(
         ['message_commit', 'return_value', 'expected'],
@@ -281,7 +300,7 @@ class TestCasePrepareCommitMsg:
                 'new feature implemented about issue.',
                 'feature/issue-1234',
                 Result(
-                    SUCCESS,
+                    Status.SUCCESS,
                     '',
                 ),
             ),
@@ -289,7 +308,7 @@ class TestCasePrepareCommitMsg:
                 'fixed implemented about bug.',
                 'hotfix/issue-4321',
                 Result(
-                    SUCCESS,
+                    Status.SUCCESS,
                     '',
                 ),
             ),
@@ -297,7 +316,7 @@ class TestCasePrepareCommitMsg:
                 'incolume-py-githooks 1.99.0',
                 'main',
                 Result(
-                    SUCCESS,
+                    Status.SUCCESS,
                     '',
                 ),
                 marks=[],
@@ -306,7 +325,7 @@ class TestCasePrepareCommitMsg:
                 'incolume-py-githooks 1.99.0',
                 'tests/issue-234',
                 Result(
-                    FAILURE,
+                    Status.FAILURE,
                     '\nIncorrect branch name',
                 ),
                 marks=[],

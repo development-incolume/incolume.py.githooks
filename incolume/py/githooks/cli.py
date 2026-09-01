@@ -11,13 +11,19 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
+from click import secho
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
-    Result,
     debug_enable,
     get_git_diff,
+)
+from incolume.py.githooks.core.decorators import logging_call
+from incolume.py.githooks.core.rules import (
+    RequestFl,
+    Result,
+    Status,
 )
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg
@@ -33,13 +39,8 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_type_commit_msg,
     validate_format_commit_msg,
 )
-from incolume.py.githooks.rules import (
-    FAILURE,
-    SUCCESS,
-    Status,
-)
-from incolume.py.githooks.valid_filename import ValidateFilename
 from incolume.py.githooks.validate_branchname import ValidateBranchname
+from incolume.py.githooks.validate_filename import validate_filename
 
 debug_enable()
 
@@ -47,11 +48,15 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
+logging.debug('Python %s', platform.python_version())
+
+
+@logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
     argv: Sequence[str] | None = None,
 ) -> int:
     """Check commit message."""
-    results = []
+    results: list[Result] = []
     result_code: Status = Status.SUCCESS
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
@@ -88,7 +93,7 @@ def check_len_first_line_commit_msg_cli(
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return result_code.value
+        return int(result_code.value)
 
     for filename in args.filenames:
         ic(filename)
@@ -104,12 +109,13 @@ def check_len_first_line_commit_msg_cli(
         rich.print(result.message)
         result_code |= result.code
 
-    return result_code.value  # Validation passed, allow commit
+    return int(result_code.value)  # Validation passed, allow commit
 
 
+@logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
     argv: Sequence[str] | None = None,
-) -> sys.exit:
+) -> int:
     """Check commit message."""
     parser = argparse.ArgumentParser()
     parser.add_argument('filenames', nargs='*', help='Filenames to check')
@@ -129,11 +135,14 @@ def check_type_commit_msg_cli(
     if args.nonexequi:
         sys.exit(0)
 
-    rich.print(result.message)
+    secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
-def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(logging.INFO, 'Checking valid branchname.')
+def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
     """Check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -181,12 +190,11 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     )
 
     args = parser.parse_args(argv)
-    logging.debug(platform.python_version_tuple())
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return SUCCESS.value
+        return Status.SUCCESS.value
 
     return ValidateBranchname().is_valid(
         protected_dev=args.protected_dev,
@@ -195,12 +203,13 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     )
 
 
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(logging.INFO, 'Checking valid filenames.')
+def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    codes: Status = SUCCESS
+    codes: Status = Status.SUCCESS
     parser = argparse.ArgumentParser(
         prog='validate-filename',
     )
@@ -234,23 +243,29 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+    codes = Status.SUCCESS
 
     if args.nonexequi:
-        return 0
+        return Status.SUCCESS
 
-    results: list[Result] = [
-        ValidateFilename.is_valid(
+    results: list[RequestFl] = [
+        validate_filename(
             filename=filename, min_len=args.min_len, max_len=args.max_len
         )
         for filename in args.filenames
     ]
     for result in results:
-        rich.print(result.message)
         codes |= result.code
-    return codes.value
+        for message in result.messages:
+            secho(
+                message, fg='green' if result.code == Status.SUCCESS else 'red'
+            )
+
+    return codes
 
 
-def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(logging.INFO, 'Checking private keys in files.')
+def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
     """CLI to check private key.
 
     Hook designed for stages: all
@@ -280,11 +295,14 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
 
     ic(args)
     result = has_private_key(*args.filenames)
-    rich.print(result.message)
+    secho(result.message, fg='red')
     return result.code.value
 
 
-def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(
+    logging.INFO, 'Processing footer signed-off-by in commit message.'
+)
+def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> Status:
     """Função principal que processa os argumentos.
 
     E aplica as transformações no arquivo de commit.
@@ -333,9 +351,10 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> int:
     if not args.nonexequi:
         add_signed_off_by(args.commit_msg_filename)
     add_blank_line_if_needed(args.commit_msg_filename, commit_source)
-    return SUCCESS.value
+    return Status.SUCCESS.value
 
 
+@logging_call(logging.INFO, 'Displaying effort message after commit.')
 def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     """Run it.
 
@@ -359,13 +378,14 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    rich.print(effort_msg())
+    secho(effort_msg(), fg='green')
     return 0
 
 
+@logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
     argv: Sequence[str] | None = None,
-) -> int:
+) -> Status:
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
@@ -398,7 +418,7 @@ def clean_commit_msg_cli(
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return SUCCESS
+        return Status.SUCCESS
 
     commit_msg_file = args.commit_msg_file
     commit_source = args.commit_source
@@ -430,12 +450,13 @@ def clean_commit_msg_cli(
 
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
 
-    return SUCCESS
+    return Status.SUCCESS
 
 
+@logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     argv: Sequence[str] | None = None,
-) -> int:
+) -> Status:
     """Run CLI for prepare-commit-msg hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -463,11 +484,14 @@ def validate_format_commit_msg_cli(
 
     result = validate_format_commit_msg(*args.filenames)
 
-    rich.print(result.message)
+    secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
     return result.code.value
 
 
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(logging.INFO, 'Checking pre-commit installation.')
+def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
     """Run pre-commit-installed hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -489,19 +513,21 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    result = SUCCESS
+    result = Status.SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
     if not files:
-        rich.print(
-            '\n\n[red]`pre-commit` configuration detected,'
-            ' but `pre-commit install` was never ran.[/red]\n',
+        secho(
+            '\n\n`pre-commit` configuration detected,'
+            ' but `pre-commit install` was never ran.\n',
+            fg='red',
         )
-        result |= FAILURE
+        result |= Status.FAILURE
     return result.value
 
 
-def get_msg_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(logging.INFO, 'Displaying commit message after commit.')
+def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
     """Run it."""
     parser = argparse.ArgumentParser(
         description='Exibe mensagens de sucesso após exito do commit.'
@@ -527,12 +553,13 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
 
     if not args.nonexequi:
-        rich.print(get_msg(fixed=args.fixed))
+        secho(get_msg(fixed=args.fixed), fg='green')
 
-    return SUCCESS.value
+    return Status.SUCCESS.value
 
 
-def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
+@logging_call(logging.INFO, 'Inserting git diff into commit message.')
+def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     """CLI for module gitdiff."""
     parser = argparse.ArgumentParser(
         description='Processa mensagens de commit'
@@ -560,9 +587,9 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> int:
     ic(args)
 
     if not args.nonexequi:
-        return SUCCESS.value
+        return Status.SUCCESS.value
 
     diff_output = get_git_diff()
     insert_git_diff(args.commit_msg_file, diff_output)
 
-    return SUCCESS.value
+    return Status.SUCCESS.value

@@ -3,7 +3,7 @@
 import pytest
 from click.testing import CliRunner
 
-from incolume.py.githooks.rules import REGEX_SEMVER
+from incolume.py.githooks.core.rules import REGEX_SEMVER
 
 __author__ = '@britodfbr'  # pragma: no cover
 
@@ -11,7 +11,7 @@ __author__ = '@britodfbr'  # pragma: no cover
 @pytest.fixture(scope='session')
 def semver_regex() -> str:
     """Fixture para regex de validação do Versionamento Semântico."""
-    return REGEX_SEMVER
+    return rf'{REGEX_SEMVER}'
 
 
 @pytest.fixture

@@ -6,11 +6,12 @@ import shutil
 import tempfile
 from inspect import stack
 from typing import ClassVar, NoReturn
+from collections.abc import Callable
 from icecream import ic
 import pytest
 
 
-class TestCompactShutil:
+class TestCaseCompactShutil:
     """Test case."""
 
     PATH: ClassVar[Path] = Path(tempfile.gettempdir()) / stack()[0][3]
@@ -33,26 +34,25 @@ class TestCompactShutil:
          e diretórios gerados ao final.
         """
         ic(f'finished class {cls.__name__} execution')
-        shutil.rmtree(cls.PATH)
 
-    def setup_method(self, method) -> None:
+    def setup_method(self, method: Callable[[], None]) -> None:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
         """
-        ic(f'starting execution ({method.__name__}) of {stack()[0][3]}')
+        ic(f'setup execution for {method.__name__}.')
         (path := self.PATH.joinpath(method.__name__)).mkdir(
             parents=True,
             exist_ok=True,
         )
-        [path.joinpath(f'a{x:02}.txt').touch() for x in range(self.quantity)]
+        [path.joinpath(f'a{x:02}.txt').touch() for x in range(self.quantity)]  # type: ignore[func-returns-value]
 
-    def teardown_method(self, method) -> None:
+    def teardown_method(self, method: Callable[[], None]) -> None:
         """Teardown method.
 
         Remove a arvore de diretórios criadas após os testes realizados.
         """
-        ic(f'finished execution ({method.__name__}) of {stack()[0][3]}')
+        ic(f'teardown after execution for {method.__name__} ')
         path = self.PATH.joinpath(method.__name__)
         shutil.rmtree(path)
 
@@ -61,7 +61,7 @@ class TestCompactShutil:
         ext = 'zip'
         output_dir = self.PATH / self.PATH.stem
         path = self.PATH.joinpath(inspect.stack()[0][3])
-        result = shutil.make_archive(output_dir, ext, path)
+        result = shutil.make_archive(output_dir.as_posix(), ext, path)
         assert output_dir.with_suffix(f'.{ext}') == Path(result)
         assert Path(result).is_file()
 
@@ -70,11 +70,11 @@ class TestCompactShutil:
         ext = 'tar'
         output_dir = self.PATH / self.PATH.stem
         path = self.PATH.joinpath(inspect.stack()[0][3])
-        result = shutil.make_archive(output_dir, ext, path)
+        result = shutil.make_archive(output_dir.as_posix(), ext, path)
         assert output_dir.with_suffix(f'.{ext}') == Path(result)
         assert Path(result).is_file()
 
-    @pytest.mark.xfail(reason='Test not implemented yet')
+    @pytest.mark.xfail(reason='Proposital fail Test')
     def test_example_xfail(self) -> NoReturn:
         """Test prepend commit message."""
         assert pytest.fail('Test not implemented yet')
@@ -130,7 +130,13 @@ class TestCompactShutil:
             ),
         ],
     )
-    def test_extrair(self, filename, type_format, quantia, expected) -> None:
+    def test_extrair(
+        self,
+        filename: Path,
+        type_format: str,
+        quantia: int,
+        expected: list[str],
+    ) -> None:
         """Unit test."""
         extract_dir = self.PATH / inspect.stack()[0][3]
 
