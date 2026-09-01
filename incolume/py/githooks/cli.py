@@ -240,9 +240,10 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
+    codes = Status.SUCCESS
 
     if args.nonexequi:
-        return 0
+        return Status.SUCCESS
 
     results: list[RequestFl] = [
         validate_filename(
@@ -251,9 +252,11 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
         for filename in args.filenames
     ]
     for result in results:
-        rich.print(result.messages)
+        codes |= result.code
+        for message in result.messages:
+            rich.print(message)
 
-    return codes.value
+    return codes
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
