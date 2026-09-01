@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import rich
+from click import secho
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
@@ -134,7 +135,7 @@ def check_type_commit_msg_cli(
     if args.nonexequi:
         sys.exit(0)
 
-    rich.print(result.message)
+    secho(result.message, fg='green' if result.code == Status.SUCCESS else 'red')
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
@@ -254,7 +255,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     for result in results:
         codes |= result.code
         for message in result.messages:
-            rich.print(message)
+            secho(message, fg='green' if result.code == Status.SUCCESS else 'red')
 
     return codes
 
@@ -290,7 +291,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
 
     ic(args)
     result = has_private_key(*args.filenames)
-    rich.print(result.message)
+    secho(result.message, fg='red')
     return result.code.value
 
 
@@ -373,7 +374,7 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    rich.print(effort_msg())
+    secho(effort_msg(), fg='green')
     return 0
 
 
@@ -479,7 +480,7 @@ def validate_format_commit_msg_cli(
 
     result = validate_format_commit_msg(*args.filenames)
 
-    rich.print(result.message)
+    secho(result.message, fg='green' if result.code == Status.SUCCESS else 'red')
     return result.code.value
 
 
@@ -510,9 +511,10 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
     if not files:
-        rich.print(
-            '\n\n[red]`pre-commit` configuration detected,'
-            ' but `pre-commit install` was never ran.[/red]\n',
+        secho(
+            '\n\n`pre-commit` configuration detected,'
+            ' but `pre-commit install` was never ran.\n',
+            fg='red'
         )
         result |= Status.FAILURE
     return result.value
@@ -545,7 +547,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
 
     if not args.nonexequi:
-        rich.print(get_msg(fixed=args.fixed))
+        secho(get_msg(fixed=args.fixed), fg='green')
 
     return Status.SUCCESS.value
 
