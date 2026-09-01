@@ -366,9 +366,14 @@ class TestCaseAllCLI:
                 marks=[pytest.mark.xfail(reason='False positive')],
             ),
             pytest.param(
-                {f'{"x" * 257}.py'}, Status.FAILURE, 'Filename too long', marks=[]
+                {f'{"x" * 257}.py'},
+                Status.FAILURE,
+                'Filename too long',
+                marks=[],
             ),
-            pytest.param({'x.py'}, Status.FAILURE, 'Filename too short', marks=[]),
+            pytest.param(
+                {'x.py'}, Status.FAILURE, 'Filename too short', marks=[]
+            ),
             pytest.param(
                 {'x.py', '--nonexequi'}, Status.SUCCESS, '', marks=[]
             ),
