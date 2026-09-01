@@ -48,12 +48,12 @@ def add_class_method_decorator(
 
 def _missing_(cls: Self, value: str) -> Self | None:
     """Get self instance."""
-    index: int = 0
-    value = value.upper().strip()
-    if value.isdigit():
-        index = int(value)
+    value = str(value).upper().strip()
 
-    member = ChainMap(cls._member_map_, cls._value2member_map_).get(index)
+    member = {
+        str(k): v
+        for k, v in ChainMap(cls._member_map_, cls._value2member_map_).items()
+    }.get(value)
     logging.debug(ic(f'{member=}'))
     return member
 
@@ -182,16 +182,18 @@ class RequestFl:
     """
 
     filename: Path
-    alphabet: str = ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç'
+    alphabet: str = field(
+        default=ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç', init=False
+    )
     considers_underscore: bool = True
     min_len: int = 3
     max_len: int = 256
     requires_audit: bool = False
     required_role: str | None = None
     action: str = ''
-    audit_log: list[str] = field(default_factory=list[str])
+    audit_log: list[str] = field(default_factory=list[str], repr=False)
     code: Status = field(default=Status.SUCCESS, init=False)
-    messages: list[str] = field(default_factory=list[str])
+    messages: list[str] = field(default_factory=list[str], repr=False)
 
     def __post_init__(self) -> None:
         """Post init."""
