@@ -1,15 +1,16 @@
 """Test for module validate_branchname."""
 
-# ruff: noqa: E501 SLF001
+# ruff: file-ignore[private-member-access]
+
+from typing import Any
 
 import pytest
-from incolume.py.githooks.rules import Status
-from incolume.py.githooks import core
+from incolume.py.githooks.core.rules import Status, Result
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from icecream import ic
+from incolume.py.githooks.core import debug_enable
 
-
-ic(core.debug_enable())
+ic(debug_enable())
 
 
 class TestCaseValidateBranchname:
@@ -137,7 +138,7 @@ class TestCaseValidateBranchname:
             pytest.param('develop', False, marks=[]),
         ],
     )
-    def test_is_branch_main(self, branchname, expected) -> None:
+    def test_is_branch_main(self, branchname: str, *, expected: bool) -> None:
         """Test is_branch_main method."""
         v = ValidateBranchname()
         assert v._ValidateBranchname__is_branch_main(branchname) is expected
@@ -206,7 +207,9 @@ class TestCaseValidateBranchname:
             pytest.param('enhancement-1627890123', False, marks=[]),
         ],
     )
-    def test_is_github_branch(self, branchname, expected) -> None:
+    def test_is_github_branch(
+        self, branchname: str, *, expected: bool
+    ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert v._ValidateBranchname__is_github_branch(branchname) is expected
@@ -223,7 +226,9 @@ class TestCaseValidateBranchname:
             pytest.param('enhancement-1627890123', True, marks=[]),
         ],
     )
-    def test_is_enhancement_epoch(self, branchname, expected) -> None:
+    def test_is_enhancement_epoch(
+        self, branchname: str, *, expected: bool
+    ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert (
@@ -243,7 +248,9 @@ class TestCaseValidateBranchname:
             pytest.param('enhancement-1627890123', False, marks=[]),
         ],
     )
-    def test_is_incolume_branch_rule(self, branchname, expected) -> None:
+    def test_is_incolume_branch_rule(
+        self, branchname: str, *, expected: bool
+    ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert (
@@ -257,7 +264,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'main',
                 {},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -266,7 +273,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'dev',
                 {'protected_dev': True},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"dev\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -275,7 +282,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'tags',
                 {'protected_tags': True},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"tags\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -284,7 +291,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'wip',
                 {},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     """Your commit was rejected due to branching name incompatible with rules.
  - Can not be WIP (Work in Progress)
@@ -300,7 +307,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'enhancement-1234567890',
                 {},
-                core.Result(
+                Result(
                     Status.SUCCESS,
                     'Branching name rules. [OK]',
                 ),
@@ -309,7 +316,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 '123-abc-7890',
                 {},
-                core.Result(
+                Result(
                     Status.SUCCESS,
                     'Branching name rules. [OK]',
                 ),
@@ -318,7 +325,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'feature/issue#123',
                 {},
-                core.Result(
+                Result(
                     Status.SUCCESS,
                     'Branching name rules. [OK]',
                 ),
@@ -327,7 +334,7 @@ class TestCaseValidateBranchname:
             pytest.param(
                 'random-branch-name',
                 {},
-                core.Result(
+                Result(
                     Status.FAILURE,
                     "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 ),
@@ -335,7 +342,13 @@ class TestCaseValidateBranchname:
             ),
         ],
     )
-    def test_is_valid(self, entrance, kwargs, expected, capsys) -> None:
+    def test_is_valid(
+        self,
+        entrance: str,
+        kwargs: dict[str, Any],
+        expected: Result,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
         """Test validate method."""
         v = ValidateBranchname(branchname=entrance)
         result = v.is_valid(**kwargs)

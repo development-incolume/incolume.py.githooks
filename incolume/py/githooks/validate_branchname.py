@@ -1,8 +1,9 @@
 """Module to validate branch name."""
-# ruff: noqa: E501
+# ruff: file-ignore[line-too-long]
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass, field
 
@@ -10,12 +11,13 @@ import rich
 from icecream import ic
 from rich.console import Console
 
-from incolume.py.githooks.core import Result, debug_enable, get_branchname
-from incolume.py.githooks.rules import (
-    FAILURE,
+from incolume.py.githooks.core import debug_enable, get_branchname
+from incolume.py.githooks.core.rules import (
     RULE_BRANCHNAME,
     RULE_BRANCHNAME_REFUSED,
     ProtectedBranchName,
+    Result,
+    Status,
     TypeCommit,
 )
 
@@ -36,7 +38,7 @@ class ValidateBranchname:
     result: Result = field(default_factory=Result)
     branchname: str = field(default_factory=get_branchname)
 
-    def asdict(self) -> dict:
+    def asdict(self) -> dict[str, str | Result]:
         """Self dict."""
         return self.__dict__
 
@@ -63,7 +65,7 @@ class ValidateBranchname:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
             )
-        return result
+        return bool(result)
 
     def __is_branch_tags(self, branchname: str = '') -> bool:
         """Check if the branch name is a default branch."""
@@ -73,7 +75,7 @@ class ValidateBranchname:
             self.violation_text = (
                 f'\n - Branch name "{branchname}" is protected.'
             )
-        return result
+        return bool(result)
 
     def __is_branch_main(self, branchname: str = '') -> bool:
         """Check if the branch name is main branch."""
@@ -135,7 +137,7 @@ class ValidateBranchname:
             return True
         return False
 
-    def is_valid(self, branchname: str = '', **kwargs: str) -> int:
+    def is_valid(self, branchname: str = '', **kwargs: str) -> Status:
         """Validate branch name.
 
         Args:
@@ -156,36 +158,37 @@ class ValidateBranchname:
         protected_main = kwargs.get('protected_main', True)
 
         console = Console()
-        ic(branchname)
+        logging.debug('detected: %s', ic(branchname))
+
         ic(self.result)
         msg: str = ''
 
         if protected_main and self.__is_branch_main(branchname):
             ic('is main protected branches')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if protected_dev and self.__is_branch_dev(branchname):
             ic('is dev protected branches')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if protected_tags and self.__is_branch_tags(branchname):
             ic('is tags protected branches')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if self.__is_refused(branchname):
             ic('is refused branch')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
         if self.__is_not_matches_rule(branchname):
             ic('is not matches rule')
-            self.result.code = FAILURE
+            self.result.code = Status.FAILURE
             msg += self.violation_text
 
-        if self.result.code == FAILURE:
+        if self.result.code == Status.FAILURE:
             rich.print(self.msg_refused.format(msg))
         else:
             console.print(self.msg_ok)

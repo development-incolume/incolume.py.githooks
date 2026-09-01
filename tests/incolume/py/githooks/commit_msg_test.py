@@ -2,7 +2,7 @@
 
 from incolume.py.githooks.commit_msg import get_msg
 
-from incolume.py.githooks.rules import MESSAGES
+from incolume.py.githooks.core.rules import MESSAGES
 
 
 class TestCaseCommitMsg:

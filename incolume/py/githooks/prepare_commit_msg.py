@@ -1,6 +1,6 @@
 """Module for validate commit message."""
 
-# ruff: noqa: E501
+# ruff: file-ignore[line-too-long]
 from __future__ import annotations
 
 import logging
@@ -9,11 +9,11 @@ from pathlib import Path
 
 from icecream import ic
 
-from incolume.py.githooks.core import Result, debug_enable, get_branchname
-from incolume.py.githooks.rules import (
-    FAILURE,
+from incolume.py.githooks.core import debug_enable, get_branchname
+from incolume.py.githooks.core.rules import (
     RULE_COMMITFORMAT,
-    SUCCESS,
+    Result,
+    Status,
     TypeCommit,
 )
 
@@ -55,19 +55,18 @@ def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
       - prepare_commit_msg
     """
     msgfile = Path(msgfile)
-    result = Result(SUCCESS, MESSAGESUCCESS)
+    result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
 
     try:
-        with msgfile.open('rb') as f:
-            content = f.read().strip().decode()
-            logging.debug('%s', ic(content))
+        content = msgfile.read_bytes().strip().decode()
+        logging.debug('%s', ic(content))
 
         if not regex.match(content):
-            raise AssertionError  # noqa: TRY301
+            raise AssertionError  # ruff: ignore[raise-within-try]
     except (AssertionError, FileNotFoundError, FileExistsError):
-        result = Result(FAILURE, MESSAGERROR)
+        result = Result(Status.FAILURE, MESSAGERROR)
 
     return result
 
@@ -76,14 +75,13 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
     regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
     commit_msg_filepath = Path(commit_msg_filepath)
-    result = Result(SUCCESS, MESSAGESUCCESS)
-    with Path(commit_msg_filepath).open('rb') as f:
-        commit_message = f.read().decode().strip()
+    result = Result(Status.SUCCESS, MESSAGESUCCESS)
+    commit_message = commit_msg_filepath.read_bytes().decode().strip()
 
     # Example validation: Ensure message starts with a type (e.g., feat, fix, chore)
     if not regex.match(commit_message):
         result = Result(
-            code=FAILURE,
+            code=Status.FAILURE,
             message='Error: Commit message must start with a type (e.g., feat:, fix:).',
         )
     return result
@@ -101,7 +99,7 @@ def check_min_len_first_line_commit_msg(
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(10, len_line)
     result = Result(
-        SUCCESS,
+        Status.SUCCESS,
         '[green]Commit minimum length for message is validated [OK][/green]',
     )
 
@@ -110,7 +108,7 @@ def check_min_len_first_line_commit_msg(
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
     if len(first_line) < len_line:
-        result.code = FAILURE
+        result.code = Status.FAILURE
         result.message = f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)} - {commit_message}).'
     return result
 
@@ -127,7 +125,7 @@ def check_max_len_first_line_commit_msg(
     commit_msg_filepath = Path(commit_msg_filepath)
     len_line = min(50, len_line)
     result = Result(
-        SUCCESS,
+        Status.SUCCESS,
         '[green]Commit maximum length for message is validated [OK][/green]',
     )
 
@@ -136,7 +134,7 @@ def check_max_len_first_line_commit_msg(
     # Example validation: Check subject line length (e.g., 50 character limit)
     first_line = commit_message.split('\n')[0]
     if len(first_line) > len_line:
-        result.code = FAILURE
+        result.code = Status.FAILURE
         result.message = f'Error: Commit subject line exceeds {len_line} characters ({len(first_line)}).'
     return result
 
@@ -156,12 +154,12 @@ def prefixing_commit_msg(commit_msg_filepath: Path | str) -> Result:
 
     regex = r'(feature|hotfix)\/(\w+-\d+)'
     if re.match(regex, branch):
-        issue = re.match(regex, branch).group(2)
+        issue = re.match(regex, branch).group(2)  # type: ignore[union-attr]
         with commit_msg_filepath.open('r+', encoding='utf-8') as fh:
             commit_msg = fh.read()
             fh.seek(0, 0)
             fh.write(f'[{issue}] {commit_msg}')
     elif branch not in {'master', 'dev', 'main', 'tags'}:
         result.message += '\nIncorrect branch name'
-        result.code |= FAILURE
+        result.code |= Status.FAILURE
     return result

@@ -1,26 +1,19 @@
 """Module githooks."""
 
-from __future__ import annotations
+from incolume.py.githooks.core import (
+    __version__,
+    debug_enable,
+    debug_var_active,
+    get_branchname,
+    get_git_diff,
+    get_signed_off_by,
+)
 
-from contextlib import suppress
-from pathlib import Path
-
-from incolume.py.githooks.core import debug_enable
-
-with suppress(ImportError, ModuleNotFoundError):
-    import tomllib as tomli  # type: ignore[import]
-
-with suppress(ImportError, ModuleNotFoundError):
-    import tomli  # type: ignore[import]
-
-debug_enable()
-
-confproject = Path(__file__).parents[3] / 'pyproject.toml'
-fileversion = Path(__file__).parent / 'version.txt'
-
-with suppress(FileNotFoundError), confproject.open('rb') as f:
-    fileversion.write_text(
-        f'{tomli.load(f)["project"]["version"]!s}\n',
-    )
-
-__version__ = fileversion.read_text().strip()
+__all__ = [
+    '__version__',
+    'debug_enable',
+    'debug_var_active',
+    'get_branchname',
+    'get_git_diff',
+    'get_signed_off_by',
+]

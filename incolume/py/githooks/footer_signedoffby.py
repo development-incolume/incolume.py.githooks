@@ -1,6 +1,6 @@
 """Module trailers hook."""
 
-# ruff: noqa: S404 S607
+# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 from __future__ import annotations
 
 import re
@@ -71,7 +71,7 @@ def add_signed_off_by(path: Path, sob: str | None = None) -> None:
 
     """
     sob = sob or get_signed_off_by()
-    subprocess.run(  # noqa: S603
+    subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
         [
             'git',
             'interpret-trailers',

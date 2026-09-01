@@ -5,10 +5,33 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and [Conventional Commit](https://www.conventionalcommits.org/pt-br/v1.0.0/).
 
-This file was automatically generated for [incolume.py.changelog](https://github.com/development-incolume/incolume.py.changelog/-/tree/0.17.0)
+This file was automatically generated for [incolume.py.changelog](https://github.com/development-incolume/incolume.py.changelog/tree/1.3.0)
 
 ---
 
+
+## [Unreleased]	 &#8212; 	2026-08-31:
+### Added
+  - Adicionado decorador para registro rápido de logging;
+  - Adicionado mypy para validação de tipo;
+### Changed
+  - Ampliado cobertura de código;
+  - Atualizado pacotes excenciais do projeto;
+  - Aplicado design partner policy para validação de nomes de arquivos;
+### Deprecated
+  - Modulo ValidateFilename em conflito tornado obsoleto;
+
+## [1.10.0]	 &#8212; 	2026-09-01:
+### Added
+  - Adicionado decorador para registro rápido de logging;
+  - Adicionado mypy para validação de tipo;
+### Changed
+  - Ampliado cobertura de código;
+  - Atualizado pacotes excenciais do projeto;
+  - Aplicado design partner policy para validação de nomes de arquivos;
+### Deprecated
+  - Modulo ValidateFilename em conflito tornado obsoleto;
+  - Pacote rich será descontinuado no projeto;
 
 ## [1.9.0]	 &#8212; 	2025-11-19:
 ### Added
@@ -162,3 +185,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.7.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...1.7.0
 [1.8.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.7.0...1.8.0
 [1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.9.0
+[1.10.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.9.0...1.10.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...Unreleased
