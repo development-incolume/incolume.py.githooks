@@ -39,7 +39,7 @@ class TestCaseDecorators:
     ) -> None:
         """Test critical_log_call decorator."""
 
-        @decorators.critical_log_call()
+        @decorators.critical_log_call
         def sample_function(a: str) -> str:
             """Sample function to be decorated."""
             return a

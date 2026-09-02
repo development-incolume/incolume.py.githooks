@@ -39,15 +39,13 @@ def has_private_key(*filenames: PathLike[str]) -> Result:
     """
     result = Result(code=Status.SUCCESS, message='')
     logging.debug(ic(filenames))
-    private_key_files = [
-        filename
-        for filename in filenames
-        if any(
-            line
-            in (e.strip() for e in Path(filename).read_bytes().split(b'\n'))
-            for line in BLACKLIST
-        )
-    ]
+
+    private_key_files = {
+        file
+        for line in BLACKLIST
+        for file in filenames
+        if line in Path(file).read_bytes()
+    }
 
     if private_key_files:
         for private_key_file in private_key_files:

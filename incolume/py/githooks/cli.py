@@ -293,9 +293,9 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
         return 0
 
     ic(args)
-    result = has_private_key(*args.filenames)
+    result: Result = has_private_key(*args.filenames)
     secho(result.message, fg='red')
-    return result.code.value
+    return result.code
 
 
 @logging_call(
