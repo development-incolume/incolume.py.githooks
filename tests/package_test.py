@@ -6,8 +6,7 @@ from incolume.py.githooks.core.rules import (
     RULE_COMMITFORMAT,
 )
 import pytest
-import rich
-from rich.console import Console
+from click import secho
 
 
 class TestCasePackage:
@@ -39,9 +38,8 @@ class TestCasePackage:
 
     def test_rich_output(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Test rich output."""
-        console = Console()
-        console.print('Hello from Rich!')
-        rich.print('[red]Error message[/red]')
+        secho('Hello from Rich!', fg='blue')
+        secho('Error message', fg='red')
 
         captured = capsys.readouterr()
 

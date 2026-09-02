@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import rich
 from click import secho
 from icecream import ic
 
@@ -106,7 +105,7 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
     for result in results:
-        rich.print(result.message)
+        secho(result.message)
         result_code |= result.code
 
     return int(result_code.value)  # Validation passed, allow commit
