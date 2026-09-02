@@ -10,16 +10,14 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-08-31:
-### Added
-  - Adicionado decorador para registro rápido de logging;
-  - Adicionado mypy para validação de tipo;
-### Changed
-  - Ampliado cobertura de código;
-  - Atualizado pacotes excenciais do projeto;
-  - Aplicado design partner policy para validação de nomes de arquivos;
+## [Unreleased]	 &#8212; 	2026-09-02:
 ### Deprecated
-  - Modulo ValidateFilename em conflito tornado obsoleto;
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Changed
+  - Atualizado `pytest` para aceitar configuração via TOML;
+### Security
+  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.changelog?color=00FFFF);
 
 ## [1.10.0]	 &#8212; 	2026-09-01:
 ### Added
