@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import subprocess
 from contextlib import suppress
 from os import getenv
@@ -104,6 +105,11 @@ def get_git_diff() -> str:
     except subprocess.CalledProcessError as e:  # pragma: no cover
         msg = 'Falha ao executar git diff'
         raise RuntimeError(msg) from e
+
+
+def remove_color_tags(text: str) -> str:
+    """Remove tags of colors from text."""
+    return re.sub(r'\[.*?\]', '', text)
 
 
 debug_enable()  # Enable debug mode if environment variable is set

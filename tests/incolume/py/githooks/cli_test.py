@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-import re
 import shutil
 import subprocess  # ruff: ignore[suspicious-subprocess-import]
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import TYPE_CHECKING, Any
+from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
@@ -635,14 +635,9 @@ class TestCaseAllCLI:
         self, capsys: pytest.CaptureFixture[Any], entrance: list[str]
     ) -> None:
         """Test get_msg function."""
-
-        def remove_tags(text: str) -> str:
-            """Remove tags from text."""
-            return re.sub(r'\[.*?\]', '', text)
-
         cli.get_msg_cli(entrance)
         captured = capsys.readouterr()
-        assert remove_tags(captured.out.strip()) in {'', *MESSAGES}
+        assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 
     @pytest.mark.parametrize(
         [
