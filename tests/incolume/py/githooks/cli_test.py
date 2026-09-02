@@ -443,11 +443,12 @@ class TestCaseAllCLI:
         args: list[str],
     ) -> None:
         """Test CLI."""
-        with NamedTemporaryFile(dir=self.test_dir/stack()[0][3]) as fl:
+        dout = self.test_dir / stack()[0][3]
+        dout.mkdir(parents=True, exist_ok=True)
+        with NamedTemporaryFile(dir=dout) as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
-        test_file.parent.mkdir(parents=True, exist_ok=True)
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
         cli.detect_private_key_cli([test_file.as_posix(), *args])
         captured = capsys.readouterr()
