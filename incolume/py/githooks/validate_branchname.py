@@ -27,11 +27,11 @@ debug_enable()
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    msg_ok: str = '\n[green]Branching name rules. [OK][/green]'
+    msg_ok: str = '\nBranching name rules. [OK]'
     msg_refused: str = (
-        '\n[red]Your commit was rejected due to branching name '
+        '\nYour commit was rejected due to branching name '
         'incompatible with rules.'
-        '{}[/red]'
+        '{}'
     )
     violation_text: str = ''
     result: Result = field(default_factory=Result)
