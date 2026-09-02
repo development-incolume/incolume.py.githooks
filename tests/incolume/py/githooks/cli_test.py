@@ -428,11 +428,11 @@ class TestCaseAllCLI:
         ['entrance', 'args'],
         chain.from_iterable(
             [
-                (pytest.param(line, [], marks=[]) for line in BLACKLIST),
                 (
                     pytest.param(line, ['--nonexequi'], marks=[])
                     for line in BLACKLIST
                 ),
+                (pytest.param(line, [], marks=[]) for line in BLACKLIST),
             ],
         ),
     )
@@ -443,10 +443,11 @@ class TestCaseAllCLI:
         args: list[str],
     ) -> None:
         """Test CLI."""
-        with NamedTemporaryFile(dir=self.test_dir) as fl:
+        with NamedTemporaryFile(dir=self.test_dir/stack()[0][3]) as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
+        test_file.parent.mkdir(parents=True, exist_ok=True)
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
         cli.detect_private_key_cli([test_file.as_posix(), *args])
         captured = capsys.readouterr()
