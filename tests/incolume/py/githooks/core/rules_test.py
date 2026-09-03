@@ -263,7 +263,7 @@ class TestCaseRules:
         ],
     )
     def test_request_file_class_model(
-        self, test_file, method, expected
+        self, test_file: str, method: str, expected: Any
     ) -> None:
         """Test for RequestFl."""
         fout: Path = (
