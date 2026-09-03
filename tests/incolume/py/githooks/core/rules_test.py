@@ -4,6 +4,9 @@ from typing import Any
 
 import pytest
 import incolume.py.githooks.core.rules as pkg
+from tempfile import gettempdir
+from pathlib import Path
+from inspect import stack
 
 
 class TestCaseRules:
@@ -204,3 +207,53 @@ class TestCaseRules:
 
         assert isinstance(obj, Klass)
         assert expected in dir(obj)
+
+    @pytest.mark.parametrize(
+        ['test_file', 'method', 'expected'],
+        [
+            pytest.param('module/file.py', 'refname', 'file', marks=[]),
+            pytest.param(
+                'module/__init__.py', 'refname', '__init__', marks=[]
+            ),
+            pytest.param('module/file.py', 'has_filename', True, marks=[]),
+            pytest.param('module/file.py', 'is_dundle_init', False, marks=[]),
+            pytest.param(
+                'module/__init__.py', 'is_dundle_init', True, marks=[]
+            ),
+            pytest.param('module/file.py', 'is_python_file', True, marks=[]),
+            pytest.param(
+                'module/README.md', 'is_python_file', False, marks=[]
+            ),
+            pytest.param(
+                'module/file.py',
+                'is_not_test_filename',
+                True,
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                'tests/file.py',
+                'has_test_pathname',
+                True,
+                marks=[],
+            ),
+            pytest.param(
+                'module/file.py',
+                'has_test_pathname',
+                False,
+                marks=[pytest.mark.xfail],
+            ),
+        ],
+    )
+    def test_request_file_class_model(
+        self, test_file, method, expected
+    ) -> None:
+        """Test for RequestFl."""
+        fout: Path = (
+            Path(gettempdir())
+            / self.__class__.__name__
+            / stack()[0][3]
+            / test_file
+        )
+        test_file: pkg.RequestFl = pkg.RequestFl(fout)
+        result = getattr(test_file, method)
+        assert result == expected
