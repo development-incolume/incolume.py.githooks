@@ -6,7 +6,6 @@ import pytest
 import incolume.py.githooks.core.rules as pkg
 from tempfile import gettempdir
 from pathlib import Path
-from inspect import stack
 
 
 class TestCaseRules:
@@ -267,9 +266,7 @@ class TestCaseRules:
     ) -> None:
         """Test for RequestFl."""
         fout: Path = (
-            Path(gettempdir())
-            / 'VerifyRequestFileClassModel'
-            / test_file
+            Path(gettempdir()) / 'VerifyRequestFileClassModel' / test_file
         )
         tfile: pkg.RequestFl = pkg.RequestFl(fout)
         result = getattr(tfile, method)

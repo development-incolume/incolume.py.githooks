@@ -228,7 +228,9 @@ class RequestFl:
     @property
     def is_not_test_filename(self) -> bool:
         """Check if python not is a test file."""
-        return bool(re.match(r'(?i)^(?:(?!tests?).)*$', self.filename.as_posix()))
+        return bool(
+            re.match(r'(?i)^(?:(?!tests?).)*$', self.filename.as_posix())
+        )
 
     @property
     def has_test_pathname(self) -> bool:
