@@ -225,7 +225,25 @@ class TestCaseRules:
                 'module/README.md', 'is_python_file', False, marks=[]
             ),
             pytest.param(
+                'tests/file.py',
+                'is_not_test_filename',
+                False,
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                'module/file_tests.py',
+                'is_not_test_filename',
+                False,
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
                 'module/file.py',
+                'is_not_test_filename',
+                True,
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                'module/__init__.py',
                 'is_not_test_filename',
                 True,
                 marks=[pytest.mark.xfail],
