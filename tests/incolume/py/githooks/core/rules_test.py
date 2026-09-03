@@ -272,6 +272,6 @@ class TestCaseRules:
             / stack()[0][3]
             / test_file
         )
-        test_file: pkg.RequestFl = pkg.RequestFl(fout)
-        result = getattr(test_file, method)
+        tfile: pkg.RequestFl = pkg.RequestFl(fout)
+        result = getattr(tfile, method)
         assert result == expected
