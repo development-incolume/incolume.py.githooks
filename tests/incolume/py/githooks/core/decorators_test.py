@@ -44,6 +44,7 @@ class TestCaseDecorators:
         capture = capsys.readouterr()
         assert all(e in capture.err for e in expected)
 
+    @pytest.mark.noci
     def test_simple_decorator(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
