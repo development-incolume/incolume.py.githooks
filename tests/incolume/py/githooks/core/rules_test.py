@@ -228,25 +228,25 @@ class TestCaseRules:
                 'tests/file.py',
                 'is_not_test_filename',
                 False,
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'module/file_tests.py',
                 'is_not_test_filename',
                 False,
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'module/file.py',
                 'is_not_test_filename',
                 True,
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'module/__init__.py',
                 'is_not_test_filename',
                 True,
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'tests/file.py',
@@ -258,7 +258,7 @@ class TestCaseRules:
                 'module/file.py',
                 'has_test_pathname',
                 False,
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -268,8 +268,7 @@ class TestCaseRules:
         """Test for RequestFl."""
         fout: Path = (
             Path(gettempdir())
-            / self.__class__.__name__
-            / stack()[0][3]
+            / 'VerifyRequestFileClassModel'
             / test_file
         )
         tfile: pkg.RequestFl = pkg.RequestFl(fout)
