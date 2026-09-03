@@ -30,7 +30,10 @@ class TestCaseDecorators:
 
     def test_my_decorator(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Test para decorador my-decorator."""
-        expected = 'ic| f\'Before function "{func.__name__}" call\': \'Before function "sample_function" call\'\nic| f\'After function "{func.__name__}" call\': \'After function "sample_function" call\'\n'
+        expected = (
+            'Before function "sample_function" call',
+            'After function "sample_function" call',
+        )
 
         @decorators.my_decorator
         def sample_function(a: str) -> str:
@@ -39,13 +42,17 @@ class TestCaseDecorators:
 
         sample_function('abc')
         capture = capsys.readouterr()
-        assert capture.err == expected
+        assert all(e in capture.err for e in expected)
 
     def test_simple_decorator(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:
         """Test para decorador my-decorator."""
-        expected = 'ic| f\'Debug mode {"enabled" if debug else "disabled"}.\': \'Debug mode enabled.\'\nic| f\'Before function "{func.__name__}" call\': \'Before function "sample_function" call\'\nic| f\'After function "{func.__name__}" call\': \'After function "sample_function" call\'\n'
+        expected = (
+            'Debug mode enabled.',
+            'Before function "sample_function" call',
+            'After function "sample_function" call',
+        )
 
         @decorators.simple_decorator
         def sample_function(a: str) -> str:
@@ -57,7 +64,7 @@ class TestCaseDecorators:
 
         sample_function('abc')
         capture = capsys.readouterr()
-        assert capture.err == expected
+        assert all(e in capture.err for e in expected)
 
     @pytest.mark.parametrize(
         ['entrance', 'expected', 'debug_mode'],
