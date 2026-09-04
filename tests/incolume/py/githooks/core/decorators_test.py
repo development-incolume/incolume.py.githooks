@@ -29,7 +29,7 @@ class TestCaseDecorators:
         debug_enable()
 
     @pytest.mark.noci
-    def test_my_decorator(self, capsys: pytest.CaptureFixture[str]) -> None:
+    def test_my_decorator(self, capsys: pytest.CaptureFixture[str]) -> None:   # pragma: no cover
         """Test para decorador my-decorator."""
         expected = (
             'Before function "sample_function" call',
@@ -48,7 +48,7 @@ class TestCaseDecorators:
     @pytest.mark.noci
     def test_simple_decorator(
         self, capsys: pytest.CaptureFixture[str]
-    ) -> None:
+    ) -> None:   # pragma: no cover
         """Test para decorador my-decorator."""
         expected = (
             'Debug mode enabled.',
