@@ -1,6 +1,14 @@
 # You can also use sections like [tool.coverage.run]
 [run]
 branch = true
+omit = [
+    # omit anything in a .local directory anywhere
+    "*/.local/*",
+    # omit everything in /usr
+    "/usr/*",
+    # omit this single file
+    "utils/tirefire.py",
+    ]
 
 [report]
 ignore_errors = true
