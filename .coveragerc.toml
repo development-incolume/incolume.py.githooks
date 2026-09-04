@@ -61,3 +61,8 @@ directory = "coverage_report/html"
 [xml]
 directory = "coverage_report/"
 output = "coverage.xml"
+
+[json]
+directory = "coverage_report/"
+output = "coverage.json"
+pretty_print = true

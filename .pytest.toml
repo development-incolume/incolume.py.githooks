@@ -28,6 +28,8 @@ addopts = [
   "html:coverage_report/html", 
   "--cov-report", 
   "xml:coverage_report/coverage.xml",
+  "--cov-report", 
+  "json:coverage_report/coverage.json"
   ]
 
 required_plugins = [
