@@ -19,6 +19,17 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.changelog?color=00FFFF);
 
+## [1.11.0]	 &#8212; 	2026-09-04:
+### Deprecated
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Changed
+  - Atualizado `pytest` para aceitar configuração via TOML;
+  - Migrado configuração pytest.ini -> pytest.toml;
+  - Ajustes de execução em CI/CD;
+### Security
+  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.changelog?color=00FFFF);
+
 ## [1.10.0]	 &#8212; 	2026-09-01:
 ### Added
   - Adicionado decorador para registro rápido de logging;
@@ -184,4 +195,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.8.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.7.0...1.8.0
 [1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.9.0
 [1.10.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.9.0...1.10.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...Unreleased
+[1.11.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...1.11.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...Unreleased
