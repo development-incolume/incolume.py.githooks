@@ -57,3 +57,7 @@ exclude_also = [
 
 [html]
 directory = "coverage_report/html"
+
+[xml]
+directory = "coverage_report/"
+output = "coverage.xml"
