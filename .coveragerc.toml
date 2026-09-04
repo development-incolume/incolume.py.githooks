@@ -3,6 +3,12 @@
 branch = true
 
 [report]
+ignore_errors = true
+fail_under = 99.7
+precision = 2
+skip_covered = true
+show_missing = true
+
 # Regexes for lines to exclude from consideration
 exclude_also = [
     # Don't complain about missing debug-only code:
@@ -21,7 +27,6 @@ exclude_also = [
     "@(abc\\.)?abstractmethod",
     ]
 
-ignore_errors = true
 
 [html]
-directory = "coverage_html_report"
+directory = "coverage_report/html"
