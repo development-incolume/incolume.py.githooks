@@ -58,11 +58,15 @@ exclude_also = [
 [html]
 directory = "coverage_report/html"
 
-[xml]
-directory = "coverage_report/"
-output = "coverage.xml"
-
 [json]
 directory = "coverage_report/"
 output = "coverage.json"
 pretty_print = true
+
+[lcov]
+directory = "coverage_report/"
+output = "coverage.lcov"
+
+[xml]
+directory = "coverage_report/"
+output = "coverage.xml"
