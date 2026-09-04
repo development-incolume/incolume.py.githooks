@@ -1,0 +1,72 @@
+# You can also use sections like [tool.coverage.run]
+[run]
+branch = true
+omit = [
+    # omit anything in a .local directory anywhere
+    "*/.local/*",
+    # omit everything in /usr
+    "/usr/*",
+    # omit this single file
+    "utils/tirefire.py",
+    ]
+
+[report]
+ignore_errors = true
+fail_under = 99.7
+precision = 2
+skip_covered = true
+show_missing = true
+
+# Regexes for lines to exclude from consideration
+exclude_lines =[
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "logger.debug",
+    "logger.info",
+    "logger.warning",
+    "logger.error",
+    "ImportError",
+    "ModuleNotFoundError",
+    "__package__ =",
+    "def run",
+    "def terminal.",
+    "__author__",
+    "class IElements",
+    "ic",
+
+]
+
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+    ]
+
+
+[html]
+directory = "coverage_report/html"
+
+[json]
+directory = "coverage_report/"
+output = "coverage.json"
+pretty_print = true
+
+[lcov]
+directory = "coverage_report/"
+output = "coverage.lcov"
+
+[xml]
+directory = "coverage_report/"
+output = "coverage.xml"
