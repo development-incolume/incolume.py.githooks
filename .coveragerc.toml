@@ -38,6 +38,7 @@ exclude_lines =[
 
 # Regexes for lines to exclude from consideration
 exclude_also = [
+    "if TYPE_CHECKING:",
     # Don't complain about missing debug-only code:
     "def __repr__",
     "if self\\.debug",
