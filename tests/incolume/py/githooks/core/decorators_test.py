@@ -28,6 +28,7 @@ class TestCaseDecorators:
         environ.pop('DEBUG_MODE')
         debug_enable()
 
+    @pytest.mark.noci
     def test_my_decorator(self, capsys: pytest.CaptureFixture[str]) -> None:
         """Test para decorador my-decorator."""
         expected = (
