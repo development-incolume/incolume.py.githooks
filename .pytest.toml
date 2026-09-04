@@ -55,10 +55,10 @@ python_files = [
 ]
 
 markers = [
-  "fasttest: marks tests as fast tests (deselect with '-m \"not fasttest\"')"
+  "fasttest: marks tests as fast tests (deselect with '-m \"not fasttest\"')",
   "noci: marks tests as slow (deselect with '-m \"not noci\"')",
   "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-  "webtest: marks tests as web tests (deselect with '-m \"not webtest\"')",
+  "webtest: marks tests as web tests (deselect with '-m \"not webtest\"')"
 ]
 
 filterwarnings = [
