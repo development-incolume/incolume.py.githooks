@@ -41,8 +41,4 @@ jobs:
         uv run ruff format incolume/ tests/
     - name: Test with pytest
       run: |
-        uv 
-        run 
-        pytest 
-        -m 
-        not noci
+        uv run pytest -m 'not noci'
