@@ -18,6 +18,25 @@ skip_covered = true
 show_missing = true
 
 # Regexes for lines to exclude from consideration
+exclude_lines =[
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "logger.debug",
+    "logger.info",
+    "logger.warning",
+    "logger.error",
+    "ImportError",
+    "ModuleNotFoundError",
+    "__package__ =",
+    "def run",
+    "def terminal.",
+    "__author__",
+    "class IElements",
+    "ic",
+
+]
+
+# Regexes for lines to exclude from consideration
 exclude_also = [
     # Don't complain about missing debug-only code:
     "def __repr__",
