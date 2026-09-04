@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import rich
 from click import secho
 from icecream import ic
 
@@ -106,7 +105,7 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
     for result in results:
-        rich.print(result.message)
+        secho(result.message)
         result_code |= result.code
 
     return int(result_code.value)  # Validation passed, allow commit
@@ -294,9 +293,9 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
         return 0
 
     ic(args)
-    result = has_private_key(*args.filenames)
+    result: Result = has_private_key(*args.filenames)
     secho(result.message, fg='red')
-    return result.code.value
+    return result.code
 
 
 @logging_call(

@@ -7,9 +7,8 @@ import logging
 import re
 from dataclasses import dataclass, field
 
-import rich
+from click import secho
 from icecream import ic
-from rich.console import Console
 
 from incolume.py.githooks.core import debug_enable, get_branchname
 from incolume.py.githooks.core.rules import (
@@ -28,11 +27,11 @@ debug_enable()
 class ValidateBranchname:
     """Rules for valid branch name."""
 
-    msg_ok: str = '\n[green]Branching name rules. [OK][/green]'
+    msg_ok: str = '\nBranching name rules. [OK]'
     msg_refused: str = (
-        '\n[red]Your commit was rejected due to branching name '
+        '\nYour commit was rejected due to branching name '
         'incompatible with rules.'
-        '{}[/red]'
+        '{}'
     )
     violation_text: str = ''
     result: Result = field(default_factory=Result)
@@ -157,7 +156,6 @@ class ValidateBranchname:
         protected_tags = kwargs.get('protected_tags', False)
         protected_main = kwargs.get('protected_main', True)
 
-        console = Console()
         logging.debug('detected: %s', ic(branchname))
 
         ic(self.result)
@@ -189,9 +187,9 @@ class ValidateBranchname:
             msg += self.violation_text
 
         if self.result.code == Status.FAILURE:
-            rich.print(self.msg_refused.format(msg))
+            secho(self.msg_refused.format(msg), fg='red')
         else:
-            console.print(self.msg_ok)
+            secho(self.msg_ok, fg='green')
         return self.result.code.value
 
 

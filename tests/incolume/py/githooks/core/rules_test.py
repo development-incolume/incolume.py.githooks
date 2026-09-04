@@ -4,6 +4,8 @@ from typing import Any
 
 import pytest
 import incolume.py.githooks.core.rules as pkg
+from tempfile import gettempdir
+from pathlib import Path
 
 
 class TestCaseRules:
@@ -204,3 +206,68 @@ class TestCaseRules:
 
         assert isinstance(obj, Klass)
         assert expected in dir(obj)
+
+    @pytest.mark.parametrize(
+        ['test_file', 'method', 'expected'],
+        [
+            pytest.param('module/file.py', 'refname', 'file', marks=[]),
+            pytest.param(
+                'module/__init__.py', 'refname', '__init__', marks=[]
+            ),
+            pytest.param('module/file.py', 'has_filename', True, marks=[]),
+            pytest.param('module/file.py', 'is_dundle_init', False, marks=[]),
+            pytest.param(
+                'module/__init__.py', 'is_dundle_init', True, marks=[]
+            ),
+            pytest.param('module/file.py', 'is_python_file', True, marks=[]),
+            pytest.param(
+                'module/README.md', 'is_python_file', False, marks=[]
+            ),
+            pytest.param(
+                'tests/file.py',
+                'is_not_test_filename',
+                False,
+                marks=[],
+            ),
+            pytest.param(
+                'module/file_tests.py',
+                'is_not_test_filename',
+                False,
+                marks=[],
+            ),
+            pytest.param(
+                'module/file.py',
+                'is_not_test_filename',
+                True,
+                marks=[],
+            ),
+            pytest.param(
+                'module/__init__.py',
+                'is_not_test_filename',
+                True,
+                marks=[],
+            ),
+            pytest.param(
+                'tests/file.py',
+                'has_test_pathname',
+                True,
+                marks=[],
+            ),
+            pytest.param(
+                'module/file.py',
+                'has_test_pathname',
+                False,
+                marks=[],
+            ),
+        ],
+    )
+    def test_request_file_class_model(
+        self, test_file: str, method: str, expected: Any
+    ) -> None:
+        """Test for RequestFl."""
+        fout: Path = (
+            Path(gettempdir()) / 'VerifyRequestFileClassModel' / test_file
+        )
+        tfile: pkg.RequestFl = pkg.RequestFl(fout)
+        result = getattr(tfile, method)
+        assert result == expected
