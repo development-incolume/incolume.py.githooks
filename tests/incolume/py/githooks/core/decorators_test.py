@@ -2,10 +2,12 @@
 
 import logging
 import pytest
-from incolume.py.githooks.core import decorators
+from incolume.py.githooks.core import decorators, debug_enable
 from incolume.py.githooks.core.rules import LoggingLevel
 from os import environ
 from typing import TYPE_CHECKING, Any
+from collections.abc import Callable
+from icecream import ic
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -13,6 +15,60 @@ if TYPE_CHECKING:
 
 class TestCaseDecorators:
     """Test case for decorators module."""
+
+    def setup_method(self, method: Callable[[], None]) -> None:
+        """Set method."""
+        ic(f'setup execution for {method.__name__}.')
+        environ['DEBUG_MODE'] = '1'
+        debug_enable()
+
+    def teardown_method(self, method: Callable[[], None]) -> None:
+        """Teardown method."""
+        ic(f'teardown execution for {method.__name__}.')
+        environ.pop('DEBUG_MODE')
+        debug_enable()
+
+    @pytest.mark.noci
+    def test_my_decorator(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:  # pragma: no cover
+        """Test para decorador my-decorator."""
+        expected = (
+            'Before function "sample_function" call',
+            'After function "sample_function" call',
+        )
+
+        @decorators.my_decorator
+        def sample_function(a: str) -> str:
+            """Sample function to be decorated."""
+            return a
+
+        sample_function('abc')
+        capture = capsys.readouterr()
+        assert all(e in capture.err for e in expected)
+
+    @pytest.mark.noci
+    def test_simple_decorator(
+        self, capsys: pytest.CaptureFixture[str]
+    ) -> None:  # pragma: no cover
+        """Test para decorador my-decorator."""
+        expected = (
+            'Debug mode enabled.',
+            'Before function "sample_function" call',
+            'After function "sample_function" call',
+        )
+
+        @decorators.simple_decorator
+        def sample_function(a: str) -> str:
+            """Sample function to be decorated."""
+            return a
+
+        environ['DEBUG_MODE'] = '1'
+        debug_enable()
+
+        sample_function('abc')
+        capture = capsys.readouterr()
+        assert all(e in capture.err for e in expected)
 
     @pytest.mark.parametrize(
         ['entrance', 'expected', 'debug_mode'],
@@ -39,7 +95,7 @@ class TestCaseDecorators:
     ) -> None:
         """Test critical_log_call decorator."""
 
-        @decorators.critical_log_call()
+        @decorators.critical_log_call
         def sample_function(a: str) -> str:
             """Sample function to be decorated."""
             return a

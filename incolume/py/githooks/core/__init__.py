@@ -7,6 +7,8 @@ from incolume.py.githooks.core.__main__ import (
     get_branchname,
     get_git_diff,
     get_signed_off_by,
+    remove_color_tags,
+    subprocess,
 )
 
 __all__ = [
@@ -16,4 +18,6 @@ __all__ = [
     'get_branchname',
     'get_git_diff',
     'get_signed_off_by',
+    'remove_color_tags',
+    'subprocess',
 ]
