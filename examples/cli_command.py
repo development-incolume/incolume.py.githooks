@@ -19,12 +19,13 @@ def main() -> int:
 
     exit_code = PASS
     for command in commands:
+        args = command.split(' ')
+        # insert `--json-out` right after
+        # `hamilton` for proper stdout parsing
+        # no issue if `--json-out` is present twice
+        args.insert(1, '--json-out')
+
         try:
-            args = command.split(' ')
-            # insert `--json-out` right after
-            # `hamilton` for proper stdout parsing
-            # no issue if `--json-out` is present twice
-            args.insert(1, '--json-out')
             result = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 args, check=False, stdout=subprocess.PIPE, text=True
             )
@@ -33,7 +34,7 @@ def main() -> int:
             if response['success'] is False:
                 raise ValueError  # ruff: ignore[raise-within-try]
 
-        except Exception:  # ruff: ignore[blind-except, try-except-in-loop]
+        except Exception:  # ruff: ignore[blind-except]
             exit_code |= FAIL
 
     return exit_code
