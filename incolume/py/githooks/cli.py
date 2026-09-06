@@ -266,7 +266,7 @@ def check_valid_filenames_cli(
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
-def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
+def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
@@ -297,7 +297,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
     result: Result = has_private_key(*args.filenames)
     secho(result.message, fg='red')
-    return result.code
+    return int(result.code.value)
 
 
 @logging_call(
