@@ -203,7 +203,9 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
+def check_valid_filenames_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -245,7 +247,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     codes = Status.SUCCESS
 
     if args.nonexequi:
-        return Status.SUCCESS
+        return int(Status.SUCCESS.value)
 
     results: list[RequestFl] = [
         validate_filename(
@@ -260,7 +262,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
                 message, fg='green' if result.code == Status.SUCCESS else 'red'
             )
 
-    return codes
+    return int(codes.value)
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
