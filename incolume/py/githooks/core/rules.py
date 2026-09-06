@@ -215,6 +215,11 @@ class RequestFl:
         return bool(self.filename.name)
 
     @property
+    def is_conf_test(self) -> bool:
+        """Check if filename is conftest.py."""
+        return bool(re.match(r'^conftest.py$', self.filename.name))
+
+    @property
     def is_dundle_init(self) -> bool:
         """Check if filename is dundler init."""
         return bool(re.match(r'^__init__.py$', self.filename.name))
