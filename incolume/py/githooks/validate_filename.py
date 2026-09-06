@@ -102,7 +102,8 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
         return request
     request.code |= Status.FAILURE
     request.messages.append(
-        'It appears to be a test file outside the test directory.'
+        'It appears to be a test file outside the test directory:'
+        f' "{request.filename}".'
     )
     return request
 
