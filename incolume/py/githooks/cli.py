@@ -203,7 +203,9 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
+def check_valid_filenames_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -245,7 +247,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     codes = Status.SUCCESS
 
     if args.nonexequi:
-        return Status.SUCCESS
+        return int(Status.SUCCESS.value)
 
     results: list[RequestFl] = [
         validate_filename(
@@ -260,11 +262,11 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
                 message, fg='green' if result.code == Status.SUCCESS else 'red'
             )
 
-    return codes
+    return int(codes.value)
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
-def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
+def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
@@ -295,7 +297,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
     result: Result = has_private_key(*args.filenames)
     secho(result.message, fg='red')
-    return result.code
+    return int(result.code.value)
 
 
 @logging_call(
@@ -490,7 +492,7 @@ def validate_format_commit_msg_cli(
 
 
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
+def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     """Run pre-commit-installed hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -522,7 +524,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
             fg='red',
         )
         result |= Status.FAILURE
-    return result.value
+    return int(result.value)
 
 
 @logging_call(logging.INFO, 'Displaying commit message after commit.')

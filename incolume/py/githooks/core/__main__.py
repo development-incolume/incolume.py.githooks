@@ -40,7 +40,9 @@ def debug_var_active() -> bool:
         for x in ('INCOLUME_DEBUG_MODE', 'DEBUG_MODE', 'DEBUG')
     )
 
-    logging.debug(ic(f'Debug mode {"enabled" if debug else "disabled"}.'))
+    msg: str = f'Debug mode {"enabled" if debug else "disabled"}.'
+    ic(msg)
+    logging.debug(msg=msg)
 
     return debug
 

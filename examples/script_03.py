@@ -9,11 +9,11 @@ by Roman Gorbatenko
 import re
 import sys
 from pathlib import Path
-from subprocess import check_output  # noqa: S404
+from subprocess import check_output  # ruff: ignore[suspicious-subprocess-import]
 
 commit_msg_filepath = sys.argv[1]
 branch = (
-    check_output(['git', 'symbolic-ref', '--short', 'HEAD'])  # noqa: S607
+    check_output(['git', 'symbolic-ref', '--short', 'HEAD'])  # ruff: ignore[start-process-with-partial-path]
     .decode('utf-8')
     .strip()
 )

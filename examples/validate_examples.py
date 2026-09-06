@@ -56,12 +56,12 @@ def validate_notebook(notebook_path: pathlib.Path) -> int:
         #%% CELL_2
         # Title of the notebook ![Colab badge](colab_url) ![GitHub badge](github_url)
 
-    """  # noqa: E501
+    """  # ruff: ignore[line-too-long]
     return_value: int = SUCCESS
 
     try:
         notebook = nbformat.read(notebook_path, as_version=4)
-    except Exception as e:  # noqa: BLE001
+    except Exception as e:  # ruff: ignore[blind-except]
         rich.print(f'{notebook_path}: {e}')
         return FAILURE
 

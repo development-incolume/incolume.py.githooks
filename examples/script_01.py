@@ -7,7 +7,7 @@
 # ]
 # ///
 
-# ruff: noqa: E501 PLR2004 PTH123 S404 S607 SIM108
+# ruff: file-ignore[line-too-long, magic-value-comparison, builtin-open, suspicious-subprocess-import, start-process-with-partial-path, if-else-block-instead-of-if-exp]
 
 import re
 import sys

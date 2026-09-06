@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-import subprocess  # noqa: S404
+import subprocess  # ruff: ignore[suspicious-subprocess-import]
 import sys
 
 PASS = 0
@@ -19,21 +19,22 @@ def main() -> int:
 
     exit_code = PASS
     for command in commands:
+        args = command.split(' ')
+        # insert `--json-out` right after
+        # `hamilton` for proper stdout parsing
+        # no issue if `--json-out` is present twice
+        args.insert(1, '--json-out')
+
         try:
-            args = command.split(' ')
-            # insert `--json-out` right after
-            # `hamilton` for proper stdout parsing
-            # no issue if `--json-out` is present twice
-            args.insert(1, '--json-out')
-            result = subprocess.run(  # noqa: S603
+            result = subprocess.run(  # ruff: ignore[subprocess-without-shell-equals-true]
                 args, check=False, stdout=subprocess.PIPE, text=True
             )
             response = json.loads(result.stdout)
 
             if response['success'] is False:
-                raise ValueError  # noqa: TRY301
+                raise ValueError  # ruff: ignore[raise-within-try]
 
-        except Exception:  # noqa: BLE001, PERF203
+        except Exception:  # ruff: ignore[blind-except]
             exit_code |= FAIL
 
     return exit_code
