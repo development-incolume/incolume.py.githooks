@@ -492,7 +492,7 @@ def validate_format_commit_msg_cli(
 
 
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
+def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     """Run pre-commit-installed hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -524,7 +524,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
             fg='red',
         )
         result |= Status.FAILURE
-    return result.value
+    return int(result.value)
 
 
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
