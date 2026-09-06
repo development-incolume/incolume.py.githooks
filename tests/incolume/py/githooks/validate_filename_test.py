@@ -322,6 +322,14 @@ class TestCaseValidateFileName:
                 ),
                 marks=[],
             ),
+            pytest.param(
+                {'filename': 'tests/__init__.py'},
+                Result(Status.SUCCESS, ''),
+            ),
+            pytest.param(
+                {'filename': 'tests/conftest.py'},
+                Result(Status.SUCCESS, ''),
+            ),
         ],
     )
     def test_validade_filename(

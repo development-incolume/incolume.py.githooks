@@ -92,6 +92,9 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
     """Check if filename ends with test."""
     request.action = stack()[0][3]
 
+    if request.is_dundle_init or request.is_conf_test:
+        return request
+
     if (request.is_python_file and request.is_not_test_filename) or (
         request.has_test_pathname
         and bool(re.match(r'^.*_tests?$', request.filename.stem))
