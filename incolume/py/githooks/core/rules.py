@@ -198,7 +198,6 @@ class RequestFl:
     def __post_init__(self) -> None:
         """Post init."""
         self.filename = Path(self.filename)
-        self.messages.append('')
         self.audit_log.append('')
 
     @property
