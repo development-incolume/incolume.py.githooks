@@ -10,14 +10,15 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-09-04:
+## [Unreleased]	 &#8212; 	2026-09-07:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
   - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Changed
   - Atualizado `coverage` para aceitar configuração via TOML;
+  - Hook desativado: check-precommit-installed;
 ### Security
-  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.changelog?color=00FFFF);
+  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
 
 ## [1.11.0]	 &#8212; 	2026-09-04:
 ### Deprecated
