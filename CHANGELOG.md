@@ -19,6 +19,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Hook desativado: check-precommit-installed;
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
+  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
 ## [1.11.0]	 &#8212; 	2026-09-04:
 ### Deprecated
