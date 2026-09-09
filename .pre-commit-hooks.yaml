@@ -27,7 +27,7 @@
   language: python
   additional_dependencies: [icecream,rich]  # Python dependency for the script
   types: [python]
-  stages: [pre-commit, pre-push, manual]
+  # stages: [pre-commit, pre-push, manual]
 
 - id: clean-commit-message
   name: Incolume - Clean Commit message
