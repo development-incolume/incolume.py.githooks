@@ -25,9 +25,9 @@
   description: Guarantees valid filenames for Python.
   entry: is-valid-filename
   language: python
-  additional_dependencies: [icecream,rich]  # Python dependency for the script
-  types: [python]
-  # stages: [pre-commit, pre-push, manual]
+  additional_dependencies: [icecream]  # Python dependency for the script
+  types: [file]
+  stages: [pre-commit, pre-push, manual]
 
 - id: clean-commit-message
   name: Incolume - Clean Commit message
@@ -45,7 +45,7 @@
   description: detects the presence of private keys.
   entry: detect-key
   language: python
-  types: [text]
+  types: [file]
   exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
 
 - id: effort-message
