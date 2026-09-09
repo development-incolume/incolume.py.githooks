@@ -58,7 +58,7 @@ docs = [
 ]
 
 [project.optional-dependencies]
-jupyter =[
+jupyter = [
     "notebook>=7.6.1",
 ]
 
