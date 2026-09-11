@@ -140,3 +140,17 @@ class TestCaseUtilsModule:
             core.subprocess, 'check_output', return_value=entrance.encode()
         ):
             assert core.get_branchname() == entrance.strip()
+
+    @pytest.mark.parametrize(
+        'entrance',
+        [
+            pytest.param('38b060a751ac96384cd9327eb1b1e36a21fdb711', marks=[]),
+            pytest.param('0e0705782c35afcc3c52a80a5da4a1b553c61bc9', marks=[]),
+        ],
+    )
+    def test_get_commit_hash(self, entrance: str) -> None:
+        """Test for get commit hash."""
+        with patch.object(
+            core.subprocess, 'check_output', return_value=entrance.encode()
+        ):
+            assert core.get_commit_hash() == entrance.strip()
