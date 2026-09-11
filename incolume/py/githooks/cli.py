@@ -17,6 +17,7 @@ from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
     debug_enable,
     get_git_diff,
+    get_issue_from_branch,
 )
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
@@ -597,3 +598,29 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     insert_git_diff(args.commit_msg_file, diff_output)
 
     return Status.SUCCESS.value
+
+
+def get_issue_from_branch_cli() -> int:
+    """CLI para extrair o número do ticket do nome do branch.
+
+    Verifica se o hook foi chamado com a opção
+    -m (mensagem fornecida pelo usuário)
+    Se sim, evita sobrescrever a mensagem manualmente inserida
+    """
+    commit_type = sys.argv[2] if len(sys.argv) > 2 else ''
+
+    if commit_type == 'message':
+        return
+
+    commit_msg_filepath = sys.argv[1]
+    issue_number = get_issue_from_branch()
+
+    if issue_number:
+        header = f'[ISSUE-{issue_number}] '
+
+        with Path(commit_msg_filepath).open('r+', encoding='utf-8') as f:
+            content = f.read()
+            # Prependa o header se não existir já
+            if not content.startswith(header):
+                f.seek(0, 0)
+                f.write(header + content)
