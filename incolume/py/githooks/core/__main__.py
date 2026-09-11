@@ -97,6 +97,20 @@ def get_branchname() -> str:
     return branch
 
 
+def get_commit_hash() -> str:
+    """Get current commit hash."""
+    commit_hash = (
+        subprocess
+        .check_output(
+            ['git', 'rev-parse', 'HEAD'],
+        )
+        .strip()
+        .decode('utf-8')
+    )
+    logging.debug(ic(commit_hash))
+    return commit_hash
+
+
 def get_git_diff() -> str:
     """Retorna a saída de `git diff --cached --name-status -r`."""
     try:
