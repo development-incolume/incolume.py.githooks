@@ -111,6 +111,20 @@ def get_commit_hash() -> str:
     return commit_hash
 
 
+def get_issue_from_branch() -> str:
+    """Extrai o número do ticket do nome do branch."""
+    # Obtém o nome do branch atual
+    branch = subprocess.check_output(
+        ["git", "symbolic-ref", "--short", "HEAD"]
+    ).strip().decode("utf-8")
+
+    # Exemplo: branch '195-check-len-first' -> '195'
+    match = re.match(r'^(\d+).+', branch)
+    if match:
+        return match.group(1)
+    return ''  # Retorna string vazia se não houver correspondência
+
+
 def get_git_diff() -> str:
     """Retorna a saída de `git diff --cached --name-status -r`."""
     try:
