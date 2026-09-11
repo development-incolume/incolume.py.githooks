@@ -86,6 +86,9 @@ def check_len_first_line_commit_msg_cli(
         action='store_true',
         help='Não executar hook.',
     )
+
+    logging.debug('argv: %s', argv)
+    ic(argv)
     args = parser.parse_args(argv)
 
     logging.info(inspect.stack()[0][3])
