@@ -154,3 +154,20 @@ class TestCaseUtilsModule:
             core.subprocess, 'check_output', return_value=entrance.encode()
         ):
             assert core.get_commit_hash() == entrance.strip()
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('80-fatora-código', '80', marks=[]),
+            pytest.param('146-viabilizar-cicd', '146', marks=[]),
+            pytest.param(
+                '0e0705782c35afcc3c52a80a5da4a1b553c61bc9', '', marks=[]
+            ),
+        ],
+    )
+    def test_get_issue_from_branch(self, entrance: str, expected: str) -> None:
+        """Test for get issue from branch."""
+        with patch.object(
+            core.subprocess, 'check_output', return_value=entrance.encode()
+        ):
+            assert core.get_issue_from_branch() == expected
