@@ -122,7 +122,7 @@ def get_issue_from_branch() -> str:
     )
 
     # Exemplo: branch '195-check-len-first' -> '195'
-    match = re.match(r'^(\d+)\-.+', branch)
+    match = re.match(r'^(\d+)\-.+$', branch)
     if match:
         return match.group(1)
     return ''  # Retorna string vazia se não houver correspondência
