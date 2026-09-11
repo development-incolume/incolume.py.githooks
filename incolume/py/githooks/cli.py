@@ -612,7 +612,7 @@ def set_issue_from_branch_cli() -> int:
     if commit_type == 'message':
         return
 
-    commit_msg_filepath = sys.argv[1]
+    commit_msg_filepath = sys.argv[1] if sys.argv else ''
     issue_number = get_issue_from_branch()
 
     if issue_number:
