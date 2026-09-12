@@ -600,7 +600,7 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     return Status.SUCCESS.value
 
 
-def set_issue_from_branch_cli() -> int:
+def set_issue_from_branch_cli() -> None:
     """CLI para extrair o número do ticket do nome do branch.
 
     Verifica se o hook foi chamado com a opção
