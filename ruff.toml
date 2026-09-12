@@ -99,7 +99,13 @@ select = [
   "UP",  # pyupgrade
   "YTT",    #flake8-2020
 ]
-ignore = ["COM812", "CPY001", "D203", "D213", "INP001"]
+ignore = [
+  "missing-trailing-comma", 
+  "missing-copyright-notice", 
+  "incorrect-blank-line-before-class", 
+  "multi-line-summary-second-line", 
+  "implicit-namespace-package"
+  ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -146,18 +152,18 @@ multiline-quotes = "double"
 
 [lint.per-file-ignores]
 # Ignore `E402` (import violations) in all `__init__.py` files, and in `path/to/file.py`.
-#"__init__.py" = ["E402"]
-#"path/to/file.py" = ["E402"]
-"**/{tutorial}/*" = ["N999"]
-"**/{tests,docs,tools,utils}/*" = ["EXE002"]
+# "__init__.py" = ["module-import-not-at-top-of-file"]
+# "path/to/file.py" = ["module-import-not-at-top-of-file"]
+"**/{tutorial}/*" = ["invalid-module-name"]
+"**/{tests,docs,tools,utils}/*" = ["shebang-missing-executable-file"]
 "**/{*_tests,test_*,*_test}.py" = [
-  "ANN001",
-  "ANN101",
-  "EXE002",
-  "I001",
-  "PLR6301",
-  "S101",
-  "ANN401",  # suppress due conflit with mypy
+  "missing-type-function-argument",
+  "missing-type-self",
+  "shebang-missing-executable-file",
+  "unsorted-imports",
+  "no-self-use",
+  "assert",
+  "any-type",  # suppress due conflit with mypy
   "line-too-long",
 ]
 
