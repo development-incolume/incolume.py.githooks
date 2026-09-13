@@ -100,11 +100,11 @@ select = [
   "YTT",    #flake8-2020
 ]
 ignore = [
-  "missing-trailing-comma", 
-  "missing-copyright-notice", 
-  "incorrect-blank-line-before-class", 
-  "multi-line-summary-second-line", 
-  "implicit-namespace-package"
+  "implicit-namespace-package",
+  "incorrect-blank-line-before-class",
+  "missing-copyright-notice",
+  "missing-trailing-comma",
+  "multi-line-summary-second-line",
   ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -157,14 +157,14 @@ multiline-quotes = "double"
 "**/{tutorial}/*" = ["invalid-module-name"]
 "**/{tests,docs,tools,utils}/*" = ["shebang-missing-executable-file"]
 "**/{*_tests,test_*,*_test}.py" = [
-  "missing-type-function-argument",
-  "missing-type-self",
-  "shebang-missing-executable-file",
-  "unsorted-imports",
-  "no-self-use",
-  "assert",
-  "any-type",  # suppress due conflit with mypy
-  "line-too-long",
+"any-type",  # suppress due conflit with mypy
+"assert",
+"line-too-long",
+"missing-type-function-argument",
+"missing-type-self",
+"no-self-use",
+"shebang-missing-executable-file",
+"unsorted-imports",
 ]
 
 [lint.flake8-pytest-style]
