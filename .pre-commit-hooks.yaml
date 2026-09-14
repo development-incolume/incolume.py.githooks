@@ -74,3 +74,14 @@
   additional_dependencies: []  # Python dependency for the script
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: false
+
+
+- id: set_issue_from_branch_cli
+  name: Incolume - Set Issue from Branch Name
+  description: Extracts the issue number from the branch name and sets it in the commit message.
+  entry: set-issue-from-branch
+  language: python
+  additional_dependencies: []  # Python dependency for the script
+  pass_filenames: false
+  stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+  verbose: true

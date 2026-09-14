@@ -34,10 +34,10 @@ repos:
   hooks:
     # Run the linter.
     - id: ruff-check
-      args: [--config, ruff.toml, --fix ]
+      args: [--config, .ruff.toml, --fix ]
     # Run the formatter.
     - id: ruff-format
-      args: [--config, ruff.toml]
+      args: [--config, .ruff.toml]
 
 # - repo: https://github.com/development-incolume/incolume.py.githooks
 #   rev: 1.7.0
@@ -146,6 +146,16 @@ repos:
       stages: [commit-msg, manual]  # this hook is run at commit time
       args: []
       verbose: false
+
+    - id: set-issue-from-branch-cli
+      name: Incolume - Set Issue from Branch Name
+      description: Extracts the issue number from the branch name and sets it in the commit message.
+      entry: set-issue-from-branch
+      language: python
+      additional_dependencies: []  # Python dependency for the script
+      pass_filenames: false
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      verbose: true
 
     - id: validate-message-commit
       name: Incolume - validate message Commit agree with Conventional Commits
