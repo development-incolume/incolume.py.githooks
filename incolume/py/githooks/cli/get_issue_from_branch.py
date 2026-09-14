@@ -34,7 +34,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     except IndexError:
         commit_msg_filepath = ''
     ic(f'{commit_msg_filepath=}')
-    flin: pathlib.Path = pathlib.Path(commit_msg_filepath)
+    flin: pathlib.Path = pathlib.Path(commit_msg_filepath or '')
     issue_number = get_issue_from_branch()
     ic(f'{issue_number=}')
 
