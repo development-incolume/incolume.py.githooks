@@ -608,7 +608,7 @@ def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
     Se sim, evita sobrescrever a mensagem manualmente inserida
     """
     ic(f'{sys.argv=}, {argv=}')
-    argv = sys.argv or argv
+    argv = sys.argv or argv or []
 
     try:
         commit_type = argv[2]
