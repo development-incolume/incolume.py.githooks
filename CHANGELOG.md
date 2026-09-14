@@ -19,6 +19,8 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Changed
   - Atualizado `coverage` para aceitar configuração via TOML;
   - Hook desativado: check-precommit-installed;
+  - Arquivo de configuração mypy alterado;
+  - Arquivo de configuração do ruff alterado;
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
