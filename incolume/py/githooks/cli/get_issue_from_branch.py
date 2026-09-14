@@ -28,7 +28,11 @@ def main(argv: Sequence[str] | None = None) -> None:
     if commit_type == 'message':
         return
 
-    commit_msg_filepath = sys.argv[1]
+    try:
+        commit_msg_filepath = sys.argv[1]
+    except IndexError:
+        commit_msg_filepath = ''
+
     issue_number = get_issue_from_branch()
 
     if issue_number:
