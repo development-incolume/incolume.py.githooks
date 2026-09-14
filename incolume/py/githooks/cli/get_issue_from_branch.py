@@ -24,6 +24,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         commit_type = argv[2]
     except IndexError:
         commit_type = ''
+    ic(f'{commit_type=}')
 
     if commit_type == 'message':
         return
@@ -32,8 +33,10 @@ def main(argv: Sequence[str] | None = None) -> None:
         commit_msg_filepath = sys.argv[1]
     except IndexError:
         commit_msg_filepath = ''
+    ic(f'{commit_msg_filepath=}')
 
     issue_number = get_issue_from_branch()
+    ic(f'{issue_number=}')
 
     if issue_number:
         header = f'[ISSUE-{issue_number}] '
