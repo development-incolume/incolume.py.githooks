@@ -7,7 +7,7 @@ from collections.abc import Sequence
 
 from icecream import ic
 
-from incolume.py.githooks.cli import get_issue_from_branch
+from incolume.py.githooks.core import get_issue_from_branch
 
 
 def main(argv: Sequence[str] | None = None) -> None:
