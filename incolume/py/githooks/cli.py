@@ -600,14 +600,20 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     return Status.SUCCESS.value
 
 
-def set_issue_from_branch_cli() -> None:
+def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
     """CLI para extrair o número do ticket do nome do branch.
 
     Verifica se o hook foi chamado com a opção
     -m (mensagem fornecida pelo usuário)
     Se sim, evita sobrescrever a mensagem manualmente inserida
     """
-    commit_type = sys.argv[2] if len(sys.argv) > 2 else ''
+    ic(f'{sys.argv=}, {argv=}')
+    argv = sys.argv or argv
+
+    try:
+        commit_type = argv[2]
+    except IndexError:
+        commit_type = ''
 
     if commit_type == 'message':
         return
