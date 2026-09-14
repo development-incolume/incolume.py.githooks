@@ -1,5 +1,20 @@
 """Module githooks."""
 
+from incolume.py.githooks.cli import (
+    check_len_first_line_commit_msg_cli,
+    check_type_commit_msg_cli,
+    check_valid_branchname_cli,
+    check_valid_filenames_cli,
+    clean_commit_msg_cli,
+    detect_private_key_cli,
+    effort_msg_cli,
+    footer_signedoffby_cli,
+    get_issue_from_branch,
+    get_msg_cli,
+    insert_diff_cli,
+    pre_commit_installed_cli,
+    validate_format_commit_msg_cli,
+)
 from incolume.py.githooks.core import (
     __version__,
     debug_enable,
@@ -13,11 +28,23 @@ from incolume.py.githooks.core import (
 
 __all__ = [
     '__version__',
+    'check_len_first_line_commit_msg_cli',
+    'check_type_commit_msg_cli',
+    'check_valid_branchname_cli',
+    'check_valid_filenames_cli',
+    'clean_commit_msg_cli',
     'debug_enable',
     'debug_var_active',
+    'detect_private_key_cli',
+    'effort_msg_cli',
+    'footer_signedoffby_cli',
     'get_branchname',
     'get_commit_hash',
     'get_git_diff',
     'get_issue_from_branch',
+    'get_msg_cli',
     'get_signed_off_by',
+    'insert_diff_cli',
+    'pre_commit_installed_cli',
+    'validate_format_commit_msg_cli',
 ]
