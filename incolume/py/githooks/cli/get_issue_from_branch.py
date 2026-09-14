@@ -34,16 +34,14 @@ def main(argv: Sequence[str] | None = None) -> None:
     except IndexError:
         commit_msg_filepath = ''
     ic(f'{commit_msg_filepath=}')
-
+    flin: pathlib.Path = pathlib.Path(commit_msg_filepath)
     issue_number = get_issue_from_branch()
     ic(f'{issue_number=}')
 
-    if issue_number:
+    if issue_number and flin.is_file():
         header = f'[ISSUE-{issue_number}] '
 
-        with pathlib.Path(commit_msg_filepath).open(
-            'r+', encoding='utf-8'
-        ) as f:
+        with flin.open('r+', encoding='utf-8') as f:
             content = f.read()
             # Prependa o header se não existir já
             if not content.startswith(header):
