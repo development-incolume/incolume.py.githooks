@@ -1,31 +1,29 @@
-#!/usr/bin/env python
+"""Module."""
+
+# !/usr/bin/env python
 import pathlib
-import re
-import subprocess
 import sys
+from collections.abc import Sequence
+
+from icecream import ic
+
+from incolume.py.githooks.cli import get_issue_from_branch
 
 
-def get_issue_from_branch():
-    """Extrai o número do ticket do nome do branch."""
-    # Obtém o nome do branch atual
-    branch = (
-        subprocess
-        .check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
-        .strip()
-        .decode('utf-8')
-    )
+def main(argv: Sequence[str] | None = None) -> None:
+    """Extrair o número do ticket do branchname e adicioná-lo à commit-msg.
 
-    # Exemplo: branch 'issue-123-fix-bug' -> '123'
-    match = re.match(r'issue-(\d+)', branch)
-    if match:
-        return match.group(1)
-    return None
+    Verifica se o hook foi chamado
+    com a opção -m (mensagem fornecida pelo usuário)
+    Se sim, evita sobrescrever a mensagem manualmente inserida
+    """
+    ic(f'{sys.argv=}, {argv=}')
+    argv = sys.argv or argv or []
 
-
-def main():
-    # Verifica se o hook foi chamado com a opção -m (mensagem fornecida pelo usuário)
-    # Se sim, evita sobrescrever a mensagem manualmente inserida
-    commit_type = sys.argv[2] if len(sys.argv) > 2 else ''
+    try:
+        commit_type = argv[2]
+    except IndexError:
+        commit_type = ''
 
     if commit_type == 'message':
         return
@@ -36,7 +34,9 @@ def main():
     if issue_number:
         header = f'[ISSUE-{issue_number}] '
 
-        with pathlib.Path(commit_msg_filepath).open('r+') as f:
+        with pathlib.Path(commit_msg_filepath).open(
+            'r+', encoding='utf-8'
+        ) as f:
             content = f.read()
             # Prependa o header se não existir já
             if not content.startswith(header):
