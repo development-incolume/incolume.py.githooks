@@ -28,7 +28,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         commit_type = ''
     ic(f'{commit_type=}')
 
-    if commit_type == 'message':
+    if '--nonexequi' in argv or commit_type == 'message':
         return
 
     try:
