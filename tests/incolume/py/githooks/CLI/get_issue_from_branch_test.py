@@ -41,7 +41,7 @@ class TestCaseGetIssueFromBranch:
         expected: str,
     ) -> None:
         """Test get_issue_from_branch function."""
-        flname = filefortest
+        flname = filefortest(self)
         entrance[1] = str(flname)
         main(entrance)
         assert flname.read_text() == expected
