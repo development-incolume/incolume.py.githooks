@@ -31,6 +31,9 @@ class TestCaseGetIssueFromBranch:
         ['entrance', 'expected'],
         [
             pytest.param(['', '', ''], '[ISSUE-195] ', marks=[]),
+            pytest.param(
+                ['', test_dir / 'COMMIT_EDITMSG', ''], '[ISSUE-195] ', marks=[]
+            ),
         ],
         scope='class',
     )
@@ -41,6 +44,9 @@ class TestCaseGetIssueFromBranch:
         expected: str,
     ) -> None:
         """Test get_issue_from_branch function."""
-        entrance[1] = str(filefortest)
+        flin: Path = Path(entrance[1] or filefortest)
+        flin.parent.mkdir(parents=True, exist_ok=True)
+        flin.touch(exist_ok=True)
+        entrance[1] = str(flin)
         main(entrance)
-        assert filefortest.read_text(encoding='utf-8') == expected
+        assert flin.read_text(encoding='utf-8') == expected
