@@ -1,6 +1,6 @@
 """Module test for get_issue_from_branch."""
 
-from collections.abc import Callable, Generator
+from collections.abc import Generator
 import shutil
 
 from incolume.py.githooks.cli.get_issue_from_branch import main
@@ -15,14 +15,11 @@ class TestCaseGetIssueFromBranch:
 
     test_dir = Path(gettempdir()) / stack()[0][3]
 
-    def setup_teardown_method(self, method: Callable[[], None]) -> None:
-        """Set method.
-
-        Cria a estrutura em arvore de diretórios necessários para os testes.
-        """
-        path = self.test_dir / method.__name__
-        path.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=path) as tf:
+    @pytest.fixture(scope='class')
+    def filefortest(self) -> Generator[Path, None, None]:
+        """Get the path to this file."""
+        self.test_dir.mkdir(parents=True, exist_ok=True)
+        with NamedTemporaryFile(dir=self.test_dir) as tf:
             filename = Path(tf.name)
         filename.parent.mkdir(parents=True, exist_ok=True)
         filename.touch(exist_ok=True)
@@ -37,6 +34,7 @@ class TestCaseGetIssueFromBranch:
     )
     def test_get_issue_from_branch(
         self,
+        filefortest: Generator[Path, None, None],
         entrance: list[str],
         expected: str,
     ) -> None:
