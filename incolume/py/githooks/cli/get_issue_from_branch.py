@@ -20,6 +20,8 @@ def main(argv: Sequence[str] | None = None) -> None:
     ic(f'{sys.argv=}, {argv=}')
     argv = sys.argv or argv or []
 
+    ic(f'{argv=}')
+
     try:
         commit_type = argv[2]
     except IndexError:
