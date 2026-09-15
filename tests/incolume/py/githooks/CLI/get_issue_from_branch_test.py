@@ -9,6 +9,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
 from inspect import stack
 
+
 @pytest.fixture(scope='class')
 def filefortest(request) -> Generator[Path, None, None]:
     """Get the path to this file."""
@@ -26,8 +27,6 @@ class TestCaseGetIssueFromBranch:
 
     test_dir = Path(gettempdir()) / stack()[0][3]
 
-
-
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
@@ -37,11 +36,11 @@ class TestCaseGetIssueFromBranch:
     )
     def test_get_issue_from_branch(
         self,
+        filefortest: Path,
         entrance: list[str],
         expected: str,
     ) -> None:
         """Test get_issue_from_branch function."""
-        flname = filefortest(self)
-        entrance[1] = str(flname)
+        entrance[1] = str(filefortest)
         main(entrance)
-        assert flname.read_text() == expected
+        assert filefortest.read_text(encoding='utf-8') == expected
