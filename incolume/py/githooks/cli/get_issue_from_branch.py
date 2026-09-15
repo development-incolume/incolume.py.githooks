@@ -18,7 +18,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     Se sim, evita sobrescrever a mensagem manualmente inserida
     """
     ic(f'{sys.argv=}, {argv=}')
-    argv = sys.argv or argv or []
+    argv = argv or sys.argv or []
 
     ic(f'{argv=}')
 
@@ -32,7 +32,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         return
 
     try:
-        commit_msg_filepath = sys.argv[1]
+        commit_msg_filepath = argv[1]
     except IndexError:
         commit_msg_filepath = '.git/COMMIT_EDITMSG'
     ic(f'{commit_msg_filepath=}')
