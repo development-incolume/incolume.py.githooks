@@ -11,7 +11,7 @@ from inspect import stack
 
 
 @pytest.fixture(scope='class')
-def filefortest(request) -> Generator[Path, None, None]:
+def filefortest(request: pytest.FixtureRequest) -> Generator[Path, None, None]:
     """Get the path to this file."""
     request.cls.test_dir.mkdir(parents=True, exist_ok=True)
     with NamedTemporaryFile(dir=request.cls.test_dir) as tf:
