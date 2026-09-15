@@ -32,9 +32,9 @@ def main(argv: Sequence[str] | None = None) -> None:
     try:
         commit_msg_filepath = sys.argv[1]
     except IndexError:
-        commit_msg_filepath = ''
+        commit_msg_filepath = '.git/COMMIT_EDITMSG'
     ic(f'{commit_msg_filepath=}')
-    flin: pathlib.Path = pathlib.Path(commit_msg_filepath or '')
+    flin: pathlib.Path = pathlib.Path(commit_msg_filepath)
     issue_number = get_issue_from_branch()
     ic(f'{issue_number=}')
 
