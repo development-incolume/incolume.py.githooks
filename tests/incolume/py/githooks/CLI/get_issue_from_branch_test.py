@@ -44,9 +44,11 @@ class TestCaseGetIssueFromBranch:
         expected: str,
     ) -> None:
         """Test get_issue_from_branch function."""
-        flin: Path = Path(entrance[1] or filefortest)
-        flin.parent.mkdir(parents=True, exist_ok=True)
-        flin.touch(exist_ok=True)
-        entrance[1] = str(flin)
+        flin: Path | None = None
+        if entrance[1]:
+            flin: Path = Path(entrance[1])
+            flin.parent.mkdir(parents=True, exist_ok=True)
+            flin.touch(exist_ok=True)
+        entrance[1] = str(flin) or None
         main(entrance)
         assert flin.read_text(encoding='utf-8') == expected
