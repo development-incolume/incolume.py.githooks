@@ -18,7 +18,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     Se sim, evita sobrescrever a mensagem manualmente inserida
     """
     ic(f'{sys.argv=}, {argv=}')
-    argv = sys.argv or argv or list()
+    argv = sys.argv or argv or []
 
     try:
         commit_type = argv[2]
