@@ -9,6 +9,16 @@ from collections.abc import Sequence
 from click import secho
 from icecream import ic
 
+commit_types = [
+    'chore',
+    'docs',
+    'feat',
+    'fix',
+    'refactor',
+    'style',
+    'test',
+]
+
 
 def run(argv: Sequence[str] | None = None) -> int:
     """Validate commit messages."""
@@ -27,8 +37,11 @@ def run(argv: Sequence[str] | None = None) -> int:
         pathlib.Path(commit_msg_file).read_text(encoding='utf-8').strip()
     )
 
-    if not commit_msg.startswith('feat') and not commit_msg.startswith('fix'):
-        secho("Erros: Mensagens devem começar com 'feat' ou 'fix'", fg='red')
+    if not any(commit_msg.startswith(msg) for msg in commit_types):
+        secho(
+            f'Erros: As mensagens de commit devem ser de um dos tipos válidos: ({", ".join(commit_types)}).',
+            fg='red',
+        )
         return 1
 
     secho('Mensagem validada com sucesso.', fg='green')
