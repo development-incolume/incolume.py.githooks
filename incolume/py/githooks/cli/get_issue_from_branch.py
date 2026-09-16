@@ -6,8 +6,10 @@ import sys
 import click
 from icecream import ic
 
+from incolume.py.githooks.core import CONTEXT_SETTINGS_CLICK
 
-@click.command()
+
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
 @click.argument(
     'commit_msg_filepath',
     default='.git/COMMIT_EDITMSG',
