@@ -145,7 +145,7 @@ def check_type_commit_msg_cli(
 
 
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
+def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     """Check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -197,12 +197,14 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return Status.SUCCESS.value
+        return int(Status.SUCCESS.value)
 
-    return ValidateBranchname().is_valid(
-        protected_dev=args.protected_dev,
-        protected_tags=args.protected_tags,
-        protected_main=args.protected_main,
+    return int(
+        ValidateBranchname().is_valid(
+            protected_dev=args.protected_dev,
+            protected_tags=args.protected_tags,
+            protected_main=args.protected_main,
+        )
     )
 
 
