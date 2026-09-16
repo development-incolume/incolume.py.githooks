@@ -27,7 +27,7 @@ commit_types = [
 )
 def run(commit_msg_file: str) -> int:
     """Validate commit messages."""
-    ic(f'{inspect.currentframe().f_code.co_name}: {sys.argv=}')
+    ic(f'{inspect.currentframe().f_code.co_name!s}: {sys.argv=}')  # type: ignore[union-attr]
 
     commit_msg = (
         pathlib.Path(commit_msg_file).read_text(encoding='utf-8').strip()
@@ -35,7 +35,8 @@ def run(commit_msg_file: str) -> int:
 
     if not any(commit_msg.startswith(msg) for msg in commit_types):
         click.secho(
-            f'Erros: As mensagens de commit devem ser de um dos tipos válidos: ({", ".join(commit_types)}).',
+            'Erros: As mensagens de commit devem ser de um dos tipos válidos: '
+            f'({", ".join(commit_types)}).',
             fg='red',
         )
         return 1

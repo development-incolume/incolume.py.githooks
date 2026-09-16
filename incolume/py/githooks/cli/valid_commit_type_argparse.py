@@ -22,7 +22,7 @@ commit_types = [
 
 def run(argv: Sequence[str] | None = None) -> int:
     """Validate commit messages."""
-    ic(f'{inspect.currentframe().f_code.co_name}: {sys.argv=}, {argv=}')
+    ic(f'{inspect.currentframe().f_code.co_name!s}: {sys.argv=}, {argv=}')  # type: ignore[union-attr]
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -39,7 +39,8 @@ def run(argv: Sequence[str] | None = None) -> int:
 
     if not any(commit_msg.startswith(msg) for msg in commit_types):
         secho(
-            f'Erros: As mensagens de commit devem ser de um dos tipos válidos: ({", ".join(commit_types)}).',
+            'Erros: As mensagens de commit devem ser de um dos tipos válidos: '
+            f'({", ".join(commit_types)}).',
             fg='red',
         )
         return 1
