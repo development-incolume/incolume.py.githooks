@@ -4,12 +4,19 @@
 import pathlib
 import sys
 from collections.abc import Sequence
-
+import click
 from icecream import ic
 
 from incolume.py.githooks.core import get_issue_from_branch
 
 
+@click.command()
+@click.argument(
+    'commit_msg_filepath',
+    default=None,
+    type=click.Path(exists=True),
+    help='Caminho para o arquivo de mensagem de commit',
+)
 def main(argv: Sequence[str] | None = None) -> None:
     """Extrair o número do ticket do branchname e adicioná-lo à commit-msg.
 
