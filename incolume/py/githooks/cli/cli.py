@@ -91,8 +91,8 @@ def check_len_first_line_commit_msg_cli(
         help='Não executar hook.',
     )
 
-    logging.debug('argv: %s', argv)
     ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
+    logging.debug('argv: %s', argv)
 
     args = parser.parse_args(argv)
 
@@ -113,7 +113,7 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
     for result in results:
-        secho(result.message)
+        secho(result.message, fg='red')
         result_code |= result.code
 
     return int(result_code.value)  # Validation passed, allow commit
