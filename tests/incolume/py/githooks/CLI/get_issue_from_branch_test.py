@@ -3,7 +3,7 @@
 from collections.abc import Generator
 import shutil
 
-from incolume.py.githooks.cli.get_issue_from_branch import main
+from incolume.py.githooks.cli.get_issue_from_branch import run
 import pytest
 from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
@@ -50,5 +50,5 @@ class TestCaseGetIssueFromBranch:
             flin.parent.mkdir(parents=True, exist_ok=True)
             flin.touch(exist_ok=True)
         entrance[1] = str(flin)
-        main(entrance)
+        run(entrance)
         assert flin.read_text(encoding='utf-8') == expected
