@@ -89,7 +89,8 @@ def check_len_first_line_commit_msg_cli(
     )
 
     logging.debug('argv: %s', argv)
-    ic(argv)
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
+
     args = parser.parse_args(argv)
 
     logging.info(inspect.stack()[0][3])
@@ -129,6 +130,8 @@ def check_type_commit_msg_cli(
         action='store_true',
         help='Não executar hook.',
     )
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
+
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
@@ -191,6 +194,8 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
         action='store_true',
         help='Not run hook, ignore adding Signed-off-by',
     )
+
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
 
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
