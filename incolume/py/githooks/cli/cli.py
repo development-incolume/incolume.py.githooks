@@ -64,7 +64,10 @@ def check_len_first_line_commit_msg_cli(
         'commit_source', default='', help='Origem do commit (ex.: template)'
     )
     parser.add_argument(
-        'commit_hash', default='', help='Hash do commit ou vazio'
+        'commit_hash',
+        default='',
+        type=str,
+        help='Hash do commit ou vazio',
     )
     parser.add_argument(
         '--min-first-line',
