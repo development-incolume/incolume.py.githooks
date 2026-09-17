@@ -34,7 +34,7 @@ debug_enable()
     is_flag=True,
     help='Não executar este hook.',
 )
-def main(
+def run(
     commit_msg_filepath: str = '.git/COMMIT_EDITMSG',
     commit_type: str = '',
     *,
@@ -81,4 +81,4 @@ def main(
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(run(sys.argv[1:]))
