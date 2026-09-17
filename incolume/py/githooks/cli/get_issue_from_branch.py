@@ -20,7 +20,7 @@ from incolume.py.githooks.core import CONTEXT_SETTINGS_CLICK
     'commit_type',
     default='',
     type=str,
-    helf='---',
+    help='---',
 )
 @click.option(
     '--nonexequi',
