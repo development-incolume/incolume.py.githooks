@@ -1,7 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
-
-default_install_hook_types: [pre-commit, pre-push]
+minimum_pre_commit_version: '4.6.2'
+default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg]
+fail_fast: false
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -29,14 +30,14 @@ repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
-  rev: v0.13.0
+  rev: v0.16.6
   hooks:
     # Run the linter.
     - id: ruff-check
-      args: [--config, ruff.toml, --fix ]
+      args: [--config, .ruff.toml, --fix ]
     # Run the formatter.
     - id: ruff-format
-      args: [--config, ruff.toml]
+      args: [--config, .ruff.toml]
 
 # - repo: https://github.com/development-incolume/incolume.py.githooks
 #   rev: 1.7.0
@@ -57,22 +58,22 @@ repos:
 
 - repo: local
   hooks:
-    - id: check-len-first-line
-      name: Incolume - check length of first line in commit message
-      description: Guarantees that the first line of the commit message does not exceed a specified length.
-      entry: check-len-first-line
-      language: python
-      stages: [prepare-commit-msg, manual]
-      args: []
+    # - id: check-len-first-line
+    #   name: Incolume - check length of first line in commit message
+    #   description: Guarantees that the first line of the commit message does not exceed a specified length.
+    #   entry: check-len-first-line
+    #   language: python
+    #   stages: [prepare-commit-msg, manual]
+    #   args: []
 
-    - id: check-precommit-installed
-      name: Incolume - check if pre-commit is installed
-      description: Guarantees pre-commit instalation for project.
-      entry: is-precommit-installed
-      language: python
-      types: [python]
-      stages: [pre-commit, pre-push, manual]
-      args: []
+    # - id: check-precommit-installed
+    #   name: Incolume - check if pre-commit is installed
+    #   description: Guarantees pre-commit instalation for project.
+    #   entry: is-precommit-installed
+    #   language: python
+    #   types: [python]
+    #   stages: [pre-commit, pre-push, manual]
+    #   args: [--nonexequi]
 
     - id: check-valid-branchname
       name: Incolume - check if is valid branchnames
@@ -92,17 +93,17 @@ repos:
       stages: [pre-commit, pre-push, manual]
       args: []
 
-    - id: clean-commit-message
-      name: Incolume - Clean Commit message
-      entry: clean-commit-msg
-      language: python  # script requires the Python interpreter
-    #   require_serial: false  # don't run in parallel
-    #   additional_dependencies: []  # Python dependency for the script
-    #   # files: ^*$  # this catches all .ipynb under examples/
-    #   types: [python]  # jupyter is alias for .ipynb files
-      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      args: []
-      verbose: false
+    # - id: clean-commit-message
+    #   name: Incolume - Clean Commit message
+    #   entry: clean-commit-msg
+    #   language: python  # script requires the Python interpreter
+    # #   require_serial: false  # don't run in parallel
+    # #   additional_dependencies: []  # Python dependency for the script
+    # #   # files: ^*$  # this catches all .ipynb under examples/
+    # #   types: [python]  # jupyter is alias for .ipynb files
+    #   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+    #   args: []
+    #   verbose: false
 
     - id: detect-key
       verbose: false
@@ -124,18 +125,18 @@ repos:
       stages: [post-commit, manual]  # this hook is run at commit time
       args: []
 
-    - id: footer-signed-off-by
-      name: Incolume - Seting footer with Signed-off-by
-      entry: set-footer-signed-off-by  # script is called from root directory
-      language: python  # script requires the Python interpreter
-    #   require_serial: true  # don't run in parallel because one call of the script parses all files
-      additional_dependencies: []  # Python dependency for the script
-    #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
-      # types: []  # jupyter is alias for .ipynb files
-      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      args: []
-      always_run: true
-      verbose: true
+    # - id: footer-signed-off-by
+    #   name: Incolume - Seting footer with Signed-off-by
+    #   entry: set-footer-signed-off-by  # script is called from root directory
+    #   language: python  # script requires the Python interpreter
+    # #   require_serial: true  # don't run in parallel because one call of the script parses all files
+    #   additional_dependencies: []  # Python dependency for the script
+    # #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
+    #   # types: []  # jupyter is alias for .ipynb files
+    #   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+    #   args: []
+    #   always_run: true
+    #   verbose: true
 
     - id: insert-diff-commit
       name: Incolume - Insert Git Diff into Commit Message
@@ -145,6 +146,17 @@ repos:
       stages: [commit-msg, manual]  # this hook is run at commit time
       args: []
       verbose: false
+
+    - id: set-issue-from-branch-cli
+      name: Incolume - Set Issue from Branch Name
+      description: Extracts the issue number from the branch name and sets it in the commit message.
+      entry: set-issue-from-branch
+      language: python
+      additional_dependencies: []  # Python dependency for the script
+      pass_filenames: true
+      stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+      args: [--nonexequi]
+      verbose: true
 
     - id: validate-message-commit
       name: Incolume - validate message Commit agree with Conventional Commits
