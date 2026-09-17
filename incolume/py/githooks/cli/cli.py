@@ -649,3 +649,7 @@ def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
             if not content.startswith(header):
                 f.seek(0, 0)
                 f.write(header + content)
+
+
+if __name__ == '__main__':
+    sys.exit(check_len_first_line_commit_msg_cli(sys.argv[1:]))
