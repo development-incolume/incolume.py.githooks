@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from click import secho
+import click
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
@@ -113,7 +113,7 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
     for result in results:
-        secho(result.message, fg='red')
+        click.secho(result.message, fg='red')
         result_code |= result.code
 
     return int(result_code.value)  # Validation passed, allow commit
@@ -144,7 +144,7 @@ def check_type_commit_msg_cli(
     if args.nonexequi:
         sys.exit(0)
 
-    secho(
+    click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
     sys.exit(result.code)  # Validation passed or failure, allowing commit
@@ -272,7 +272,7 @@ def check_valid_filenames_cli(
     for result in results:
         codes |= result.code
         for message in result.messages:
-            secho(
+            click.secho(
                 message, fg='green' if result.code == Status.SUCCESS else 'red'
             )
 
@@ -310,7 +310,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
 
     ic(args)
     result: Result = has_private_key(*args.filenames)
-    secho(result.message, fg='red')
+    click.secho(result.message, fg='red')
     return int(result.code.value)
 
 
@@ -393,7 +393,7 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    secho(effort_msg(), fg='green')
+    click.secho(effort_msg(), fg='green')
     return 0
 
 
@@ -499,7 +499,7 @@ def validate_format_commit_msg_cli(
 
     result = validate_format_commit_msg(*args.filenames)
 
-    secho(
+    click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
     return result.code.value
@@ -532,7 +532,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
     if not files:
-        secho(
+        click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
             fg='red',
@@ -568,7 +568,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
 
     if not args.nonexequi:
-        secho(get_msg(fixed=args.fixed), fg='green')
+        click.secho(get_msg(fixed=args.fixed), fg='green')
 
     return Status.SUCCESS.value
 
