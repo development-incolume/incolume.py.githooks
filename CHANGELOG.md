@@ -10,7 +10,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-09-14:
+## [1.12.0]	 &#8212; 	2026-09-16:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
   - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
@@ -202,4 +202,4 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.9.0
 [1.10.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.9.0...1.10.0
 [1.11.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...1.11.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...Unreleased
+[1.12.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...1.12.0
