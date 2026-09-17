@@ -263,3 +263,6 @@ MESSAGES: Final[list[str]] = [
     'Boa! Continue trabalhando campeão!',
     'Executado com sucesso.',
 ]
+CONTEXT_SETTINGS_CLICK: dict[str, list[str]] = {
+    'help_option_names': ['-h', '--help']
+}

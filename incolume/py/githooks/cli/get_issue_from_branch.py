@@ -1,41 +1,64 @@
 """Module."""
 
-# !/usr/bin/env python
 import pathlib
 import sys
-from collections.abc import Sequence
 
+import click
 from icecream import ic
 
-from incolume.py.githooks.core import get_issue_from_branch
+from incolume.py.githooks.core import (
+    CONTEXT_SETTINGS_CLICK,
+    debug_enable,
+    get_issue_from_branch,
+)
+
+debug_enable()
 
 
-def main(argv: Sequence[str] | None = None) -> None:
-    """Extrair o número do ticket do branchname e adicioná-lo à commit-msg.
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.argument(
+    'commit_msg_filepath',
+    default='.git/COMMIT_EDITMSG',
+    type=click.Path(exists=True),
+    help='Caminho para o arquivo de mensagem de commit',
+)
+@click.argument(
+    'commit_type',
+    default='',
+    type=str,
+    help='---',
+)
+@click.option(
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Não executar este hook.',
+)
+def main(
+    commit_msg_filepath: str = '.git/COMMIT_EDITMSG',
+    commit_type: str = '',
+    *,
+    nonexequi: bool = False,
+) -> int:
+    """Extrair o número do ticket do branchname e adicioná-lo à commit-msg."""
+    ic(f'{commit_msg_filepath=}, {commit_type=}, {nonexequi=}')
+    if nonexequi:
+        click.secho(
+            'Hook não executado devido à opção `--nonexequi`.',
+            fg='yellow',
+        )
+        return 0
 
-    Verifica se o hook foi chamado
-    com a opção -m (mensagem fornecida pelo usuário)
-    Se sim, evita sobrescrever a mensagem manualmente inserida
-    """
-    ic(f'{sys.argv=}, {argv=}')
-    argv = sys.argv or argv or []
+    # Verifica se o hook foi chamado
+    # com a opção -m (mensagem fornecida pelo usuário)
+    # Se sim, evita sobrescrever a mensagem manualmente inserida
+    if commit_type == 'message':
+        click.secho(
+            'Hook não executado devido ao commit_type=message.',
+            fg='yellow',
+        )
+        return 0
 
-    ic(f'{argv=}')
-
-    try:
-        commit_type = argv[2]
-    except IndexError:
-        commit_type = ''
-    ic(f'{commit_type=}')
-
-    if '--nonexequi' in argv or commit_type == 'message':
-        return
-
-    try:
-        commit_msg_filepath = sys.argv[1]
-    except IndexError:
-        commit_msg_filepath = '.git/COMMIT_EDITMSG'
-    ic(f'{commit_msg_filepath=}')
     flin: pathlib.Path = pathlib.Path(commit_msg_filepath)
     issue_number = get_issue_from_branch()
     ic(f'{issue_number=}')
@@ -49,7 +72,13 @@ def main(argv: Sequence[str] | None = None) -> None:
             if not content.startswith(header):
                 f.seek(0, 0)
                 f.write(header + content)
+                click.secho(
+                    f'Adicionado o número do ticket {issue_number}'
+                    ' à mensagem de commit.',
+                    fg='green',
+                )
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main(sys.argv[1:]))

@@ -12,8 +12,10 @@ from incolume.py.githooks.core.__main__ import (
     remove_color_tags,
     subprocess,
 )
+from incolume.py.githooks.core.rules import CONTEXT_SETTINGS_CLICK
 
 __all__ = [
+    'CONTEXT_SETTINGS_CLICK',
     '__version__',
     'debug_enable',
     'debug_var_active',
