@@ -155,7 +155,7 @@ repos:
       additional_dependencies: []  # Python dependency for the script
       pass_filenames: true
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      args: []
+      args: [--nonexequi]
       verbose: true
 
     - id: validate-message-commit
