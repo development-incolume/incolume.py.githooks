@@ -17,6 +17,7 @@ from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
     debug_enable,
     get_git_diff,
+    get_issue_from_branch,
 )
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
@@ -86,6 +87,9 @@ def check_len_first_line_commit_msg_cli(
         action='store_true',
         help='Não executar hook.',
     )
+
+    logging.debug('argv: %s', argv)
+    ic(argv)
     args = parser.parse_args(argv)
 
     logging.info(inspect.stack()[0][3])
@@ -203,7 +207,9 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
-def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
+def check_valid_filenames_cli(
+    argv: Sequence[str] | None = None,
+) -> int:
     """Maint entry point for the script.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -245,7 +251,7 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
     codes = Status.SUCCESS
 
     if args.nonexequi:
-        return Status.SUCCESS
+        return int(Status.SUCCESS.value)
 
     results: list[RequestFl] = [
         validate_filename(
@@ -260,11 +266,11 @@ def check_valid_filenames_cli(argv: Sequence[str] | None = None) -> RequestFl:
                 message, fg='green' if result.code == Status.SUCCESS else 'red'
             )
 
-    return codes
+    return int(codes.value)
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
-def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
+def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
@@ -295,7 +301,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
     result: Result = has_private_key(*args.filenames)
     secho(result.message, fg='red')
-    return result.code
+    return int(result.code.value)
 
 
 @logging_call(
@@ -490,7 +496,7 @@ def validate_format_commit_msg_cli(
 
 
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
+def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     """Run pre-commit-installed hook.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -522,7 +528,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> Status:
             fg='red',
         )
         result |= Status.FAILURE
-    return result.value
+    return int(result.value)
 
 
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
@@ -592,3 +598,35 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     insert_git_diff(args.commit_msg_file, diff_output)
 
     return Status.SUCCESS.value
+
+
+def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
+    """CLI para extrair o número do ticket do nome do branch.
+
+    Verifica se o hook foi chamado com a opção
+    -m (mensagem fornecida pelo usuário)
+    Se sim, evita sobrescrever a mensagem manualmente inserida
+    """
+    ic(f'{sys.argv=}, {argv=}')
+    argv = sys.argv or argv or []
+
+    try:
+        commit_type = argv[2]
+    except IndexError:
+        commit_type = ''
+
+    if commit_type == 'message':
+        return
+
+    commit_msg_filepath = sys.argv[1] if sys.argv else ''
+    issue_number = get_issue_from_branch()
+
+    if issue_number:
+        header = f'[ISSUE-{issue_number}] '
+
+        with Path(commit_msg_filepath).open('r+', encoding='utf-8') as f:
+            content = f.read()
+            # Prependa o header se não existir já
+            if not content.startswith(header):
+                f.seek(0, 0)
+                f.write(header + content)

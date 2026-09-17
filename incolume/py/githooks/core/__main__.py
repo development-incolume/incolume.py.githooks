@@ -40,7 +40,9 @@ def debug_var_active() -> bool:
         for x in ('INCOLUME_DEBUG_MODE', 'DEBUG_MODE', 'DEBUG')
     )
 
-    logging.debug(ic(f'Debug mode {"enabled" if debug else "disabled"}.'))
+    msg: str = f'Debug mode {"enabled" if debug else "disabled"}.'
+    ic(msg)
+    logging.debug(msg=msg)
 
     return debug
 
@@ -93,6 +95,37 @@ def get_branchname() -> str:
     )
     logging.debug(ic(branch))
     return branch
+
+
+def get_commit_hash() -> str:
+    """Get current commit hash."""
+    commit_hash = (
+        subprocess
+        .check_output(
+            ['git', 'rev-parse', 'HEAD'],
+        )
+        .strip()
+        .decode('utf-8')
+    )
+    logging.debug(ic(commit_hash))
+    return commit_hash
+
+
+def get_issue_from_branch() -> str:
+    """Extrai o número do ticket do nome do branch."""
+    # Obtém o nome do branch atual
+    branch = (
+        subprocess
+        .check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
+        .strip()
+        .decode('utf-8')
+    )
+
+    # Exemplo: branch '195-check-len-first' -> '195'
+    match = re.match(r'^(\d+)\-.+$', branch)
+    if match:
+        return match.group(1)
+    return ''  # Retorna string vazia se não houver correspondência
 
 
 def get_git_diff() -> str:

@@ -198,7 +198,6 @@ class RequestFl:
     def __post_init__(self) -> None:
         """Post init."""
         self.filename = Path(self.filename)
-        self.messages.append('')
         self.audit_log.append('')
 
     @property
@@ -214,6 +213,11 @@ class RequestFl:
     def has_filename(self) -> bool:
         """Check if filename is null."""
         return bool(self.filename.name)
+
+    @property
+    def is_conf_test(self) -> bool:
+        """Check if filename is conftest.py."""
+        return bool(re.match(r'^conftest.py$', self.filename.name))
 
     @property
     def is_dundle_init(self) -> bool:
