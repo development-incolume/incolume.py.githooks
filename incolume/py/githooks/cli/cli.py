@@ -21,6 +21,7 @@ from incolume.py.githooks.core import (
 )
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
+    CONTEXT_SETTINGS_CLICK,
     RequestFl,
     Result,
     Status,
@@ -52,64 +53,72 @@ logging.debug('Python %s', platform.python_version())
 
 
 @logging_call(logging.INFO, 'Checking length of first line in commit message.')
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=True),
+    help='Filenames to check',
+)
+@click.argument(
+    'commit_source',
+    default='',
+    type=str,
+    help='Origem do commit (ex.: template)',
+)
+@click.argument(
+    'commit_hash',
+    default='',
+    type=str,
+    help='Hash do commit ou vazio',
+)
+@click.option(
+    '--min-first-line',
+    default=10,
+    type=int,
+    required=False,
+    help='Minimum Length of line for first line',
+)
+@click.option(
+    '--max-first-line',
+    default=50,
+    type=int,
+    required=False,
+    help='Maximum Length of line for first line',
+)
+@click.option(
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Não executar hook.',
+)
 def check_len_first_line_commit_msg_cli(
-    argv: Sequence[str] | None = None,
+    filenames: list[str],
+    commit_source: str = '',
+    commit_hash: str = '',
+    min_first_line: int = 10,
+    max_first_line: int = 50,
+    *,
+    nonexequi: bool,
 ) -> int:
     """Check commit message."""
     results: list[Result] = []
     result_code: Status = Status.SUCCESS
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (ex.: template)'
-    )
-    parser.add_argument(
-        'commit_hash',
-        default='',
-        type=str,
-        help='Hash do commit ou vazio',
-    )
-    parser.add_argument(
-        '--min-first-line',
-        default=10,
-        type=int,
-        required=False,
-        help='Minimum Length of line for first line',
-    )
-    parser.add_argument(
-        '--max-first-line',
-        default=50,
-        type=int,
-        required=False,
-        help='Maximum Length of line for first line',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
 
-    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
-    logging.debug('argv: %s', argv)
-
-    args = parser.parse_args(argv)
-
+    ic(f'{inspect.stack()[0][3]}')
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         return int(result_code.value)
 
-    for filename in args.filenames:
+    for filename in filenames:
         ic(filename)
         results.extend((
             check_min_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=args.min_first_line
+                commit_msg_filepath=filename, len_line=min_first_line
             ),
             check_max_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=args.max_first_line
+                commit_msg_filepath=filename, len_line=max_first_line
             ),
         ))
     for result in results:
