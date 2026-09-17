@@ -37,6 +37,7 @@ debug_enable()
 def main(
     commit_msg_filepath: str = '.git/COMMIT_EDITMSG',
     commit_type: str = '',
+    *,
     nonexequi: bool = False,
 ) -> int:
     """Extrair o número do ticket do branchname e adicioná-lo à commit-msg."""
@@ -72,7 +73,8 @@ def main(
                 f.seek(0, 0)
                 f.write(header + content)
                 click.secho(
-                    f'Adicionado o número do ticket {issue_number} à mensagem de commit.',
+                    f'Adicionado o número do ticket {issue_number}'
+                    ' à mensagem de commit.',
                     fg='green',
                 )
     return 0
