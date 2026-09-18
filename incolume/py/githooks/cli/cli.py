@@ -107,7 +107,7 @@ def check_len_first_line_commit_msg_cli(
     results: list[Result] = []
     result_code: Status = Status.SUCCESS
 
-    ic(f'{inspect.stack()[0][3]}')
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {filenames=}, {commit_source=}, {commit_hash=}, {min_first_line=}, {max_first_line=}, {nonexequi=}')
     logging.info(inspect.stack()[0][3])
 
     if nonexequi:
@@ -124,7 +124,7 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
     for result in results:
-        click.secho(result.message, fg='red')
+        click.secho(result.message, fg='green' if result.code == Status.SUCCESS else 'red')
         result_code |= result.code
 
     return int(result_code.value)  # Validation passed, allow commit
