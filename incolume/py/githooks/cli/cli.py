@@ -56,7 +56,7 @@ logging.debug('Python %s', platform.python_version())
 @click.argument(
     'filenames',
     nargs=-1,
-    type=click.Path(exists=True),
+    type=click.File('r', encoding='utf-8'),
     help='Filenames to check',
 )
 @click.argument(
