@@ -175,15 +175,6 @@ class TestCaseAllCLI:
         print(result)
 
         assert result.exit_code == entrance.expected.code.value
-        assert captured.out.split('\n')
-        # assert sum(
-        #     m in n
-        #     for m in entrance.expected.message
-        #     for n in captured.out.split('\n')
-        # ) == len(entrance.expected.message)
-        assert entrance.expected.message == ['Commit minimum length for message is validated [OK]', 'Commit maximum length for message is validated [OK]']
-        # assert captured.out.split('\n') == ['Commit minimum length for message is validated [OK]', 'Commit maximum length for message is validated [OK]']
-        # assert captured.err.split('\n') == ['Commit minimum length for message is validated [OK]', 'Commit maximum length for message is validated [OK]']
 
     @pytest.mark.parametrize(
         'args',
