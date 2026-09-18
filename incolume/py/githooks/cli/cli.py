@@ -6,6 +6,7 @@ import argparse
 import inspect
 import logging
 import platform
+import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -133,11 +134,11 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
     for result in results:
-        click.secho(
-            result.message,
-            fg='green' if result.code == Status.SUCCESS else 'red',
-        )
         result_code |= result.code
+        if result.code == Status.SUCCESS:
+            click.secho(result.message, fg='green')
+        elif result.code == Status.FAILURE and re.match(r'^(?:(?![OK]).)*$', result.message):
+            click.secho(result.message, fg='red')
 
     return int(result_code.value)  # Validation passed, allow commit
 
