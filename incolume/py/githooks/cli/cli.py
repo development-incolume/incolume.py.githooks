@@ -133,14 +133,16 @@ def check_len_first_line_commit_msg_cli(
                 commit_msg_filepath=filename, len_line=max_first_line
             ),
         ))
+
+    result_code = all(result.code == Status.SUCCESS for result in results)
+
     for result in results:
-        result_code |= result.code
-        if result.code == Status.SUCCESS:
+        if result_code:
             click.secho(result.message, fg='green')
-        elif result.code == Status.FAILURE and re.match(r'^(?:(?![OK]).)*$', result.message):
+        elif re.match(r'^(?:(?![OK]).)*$', result.message):
             click.secho(result.message, fg='red')
 
-    return int(result_code.value)  # Validation passed, allow commit
+    return int(not result_code)  # Validation passed, allow commit
 
 
 @logging_call(logging.INFO, 'Checking type of commit message.')
