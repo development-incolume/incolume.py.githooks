@@ -74,12 +74,12 @@ class TestCaseAllCLI:
                     msg_commit='docs: #85 Atualizado README.md\nacrescentado os hooks padrões para pre-commit pertinentes ao ecossistema incolume',
                     expected=Result(
                         message=[
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ]
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -87,12 +87,12 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.SUCCESS,
                         [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ],
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -126,12 +126,12 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.SUCCESS,
                         [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ],
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -155,10 +155,9 @@ class TestCaseAllCLI:
         entrance: Entrance,
     ) -> None:
         """Test CLI for check len first line commit messages."""
-        result = None
-
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
+
         test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
         ic(test_file)
 
@@ -174,13 +173,17 @@ class TestCaseAllCLI:
         captured = capsys.readouterr()
         print(captured)
         print(result)
-        # assert result == entrance.expected.code.value
-        # assert captured.out.split('\n')
+
+        assert result.exit_code == entrance.expected.code.value
+        assert captured.out.split('\n')
         # assert sum(
         #     m in n
         #     for m in entrance.expected.message
         #     for n in captured.out.split('\n')
         # ) == len(entrance.expected.message)
+        assert entrance.expected.message == ['Commit minimum length for message is validated [OK]', 'Commit maximum length for message is validated [OK]']
+        # assert captured.out.split('\n') == ['Commit minimum length for message is validated [OK]', 'Commit maximum length for message is validated [OK]']
+        # assert captured.err.split('\n') == ['Commit minimum length for message is validated [OK]', 'Commit maximum length for message is validated [OK]']
 
     @pytest.mark.parametrize(
         'args',
