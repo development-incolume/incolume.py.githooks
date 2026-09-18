@@ -15,6 +15,8 @@ from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
+    __package_name__,
+    __version__,
     debug_enable,
     get_git_diff,
     get_issue_from_branch,
@@ -53,6 +55,11 @@ logging.debug('Python %s', platform.python_version())
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.version_option(
+    package_name=__package_name__,
+    version=__version__,
+    prog_name='check_len_first_line_commit_msg_cli',
+)
 @click.argument(
     'filenames',
     nargs=-1,
