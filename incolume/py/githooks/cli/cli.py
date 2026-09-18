@@ -62,26 +62,28 @@ logging.debug('Python %s', platform.python_version())
 @click.argument(
     'commit_source',
     default='',
-    type=str,
+    required=False,
+    type=click.STRING,
     help='Origem do commit (ex.: template)',
 )
 @click.argument(
     'commit_hash',
     default='',
-    type=str,
+    required=False,
+    type=click.STRING,
     help='Hash do commit ou vazio',
 )
 @click.option(
     '--min-first-line',
     default=10,
-    type=int,
+    type=click.INT,
     required=False,
     help='Minimum Length of line for first line',
 )
 @click.option(
     '--max-first-line',
     default=50,
-    type=int,
+    type=click.INT,
     required=False,
     help='Maximum Length of line for first line',
 )
