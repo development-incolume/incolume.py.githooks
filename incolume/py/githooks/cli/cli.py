@@ -101,7 +101,7 @@ def check_len_first_line_commit_msg_cli(
     min_first_line: int = 10,
     max_first_line: int = 50,
     *,
-    nonexequi: bool,
+    nonexequi: bool = False,
 ) -> int:
     """Check commit message."""
     results: list[Result] = []
