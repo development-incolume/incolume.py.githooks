@@ -7,7 +7,11 @@ import sys
 import click
 from icecream import ic
 
-from incolume.py.githooks.core import CONTEXT_SETTINGS_CLICK
+from incolume.py.githooks.core import (
+    CONTEXT_SETTINGS_CLICK,
+    __package_name__,
+    __version__,
+)
 
 commit_types = [
     'chore',
@@ -21,6 +25,11 @@ commit_types = [
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.version_option(
+    package_name=__package_name__,
+    version=__version__,
+    prog_name='validate_commit_type_click',
+)
 @click.argument(
     'commit_msg_file',
     default='',
