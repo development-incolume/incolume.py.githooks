@@ -160,7 +160,7 @@ class Result:
     """Result dataclass for hooks this project."""
 
     code: Status = Status.SUCCESS
-    message: str = ''
+    message: str|list[str] = ''
 
 
 @dataclass

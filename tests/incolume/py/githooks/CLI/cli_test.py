@@ -104,7 +104,7 @@ class TestCaseAllCLI:
                         ],
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -117,7 +117,7 @@ class TestCaseAllCLI:
                         ],
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
