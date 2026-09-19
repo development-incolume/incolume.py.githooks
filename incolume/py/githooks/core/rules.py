@@ -264,5 +264,5 @@ MESSAGES: Final[list[str]] = [
     'Executado com sucesso.',
 ]
 CONTEXT_SETTINGS_CLICK: dict[str, list[str]] = {
-    'help_option_names': ['-h', '--help']
+    'help_option_names': ['-h', '--help'],
 }

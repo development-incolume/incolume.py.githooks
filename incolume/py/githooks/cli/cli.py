@@ -57,8 +57,10 @@ logging.debug('Python %s', platform.python_version())
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK)
 @click.version_option(
+    __version__,
+    '-V',
+    '--version',
     package_name=__package_name__,
-    version=__version__,
     prog_name='check_len_first_line_commit_msg_cli',
 )
 @click.argument(
