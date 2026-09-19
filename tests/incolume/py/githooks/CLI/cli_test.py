@@ -150,7 +150,8 @@ class TestCaseAllCLI:
     )
     def test_check_len_first_line_commit_msg_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
+        capfd: pytest.CaptureFixture,
+        # capsys: pytest.CaptureFixture[Any],
         isolated_cli_runner: CliRunner,
         entrance: Entrance,
     ) -> None:
@@ -170,11 +171,11 @@ class TestCaseAllCLI:
                 *entrance.params,
             ],
         )
-        captured = capsys.readouterr()
-        print(captured)
-        print(result)
+        # captured = capsys.readouterr()
+        captured = capfd.readouterr()
 
         assert result.exit_code == entrance.expected.code.value
+        assert captured.err == 'abc'
 
     @pytest.mark.parametrize(
         'args',
