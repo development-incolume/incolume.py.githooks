@@ -136,14 +136,18 @@ def check_len_first_line_commit_msg_cli(
             ),
         ))
 
-    result_code = Status(not all(result.code == Status.SUCCESS for result in results))
+    result_code = Status(
+        not all(result.code == Status.SUCCESS for result in results)
+    )
 
     for result in results:
         if result_code == Status.SUCCESS:
-            click.secho(result.message, fg='green')
+            click.secho(result.message, fg='green', file=sys.stdout)
         elif re.match(r'^(?:(?![OK]).)*$', result.message):
             click.secho(result.message, fg='red', err=True)
-            raise click.ClickException(f'The first line of the commit violates the defined limits between {min_first_line}–{max_first_line}.')
+            raise click.ClickException(
+                f'The first line of the commit violates the defined limits between {min_first_line}–{max_first_line}.'
+            )
 
     return result_code.value
 
