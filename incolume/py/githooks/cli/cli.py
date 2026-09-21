@@ -392,7 +392,7 @@ def footer_signedoffby_cli(
     click.secho(
         'Added the "Signed-off-by" line to the commit message', fg='green'
     )
-    add_blank_line_if_needed(commit_msg_filename, commit_source)
+    add_blank_line_if_needed(commit_msg_filename)
     return int(Status.SUCCESS.value)
 
 
