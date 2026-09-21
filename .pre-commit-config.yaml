@@ -65,7 +65,7 @@ repos:
       entry: check-len-first-line
       language: python
       stages: [prepare-commit-msg, manual]
-      args: []
+      args: [--min-first-line=10, --max-first-line=256]
 
     # - id: check-precommit-installed
     #   name: Incolume - check if pre-commit is installed
@@ -149,6 +149,7 @@ repos:
       verbose: false
 
     - id: set-issue-from-branch-cli
+      verbose: true
       name: Incolume - Set Issue from Branch Name
       description: Extracts the issue number from the branch name and sets it in the commit message.
       entry: set-issue-from-branch
@@ -157,7 +158,6 @@ repos:
       pass_filenames: true
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
       args: [--nonexequi]
-      verbose: true
 
     - id: validate-message-commit
       name: Incolume - validate message Commit agree with Conventional Commits

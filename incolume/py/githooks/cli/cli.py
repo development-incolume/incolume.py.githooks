@@ -630,28 +630,64 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     return Status.SUCCESS.value
 
 
-def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='set_issue_from_branch_cli',
+)
+@click.argument(
+    'commit_msg_filepath',
+    default='.git/COMMIT_EDITMSG',
+    type=click.Path(exists=True),
+    help='Caminho para o arquivo de mensagem de commit',
+)
+@click.argument(
+    'commit_type',
+    default='',
+    type=str,
+    help='---',
+)
+@click.option(
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Não executar este hook.',
+)
+def set_issue_from_branch_cli(
+    commit_msg_filepath: str, commit_type: str, *, nonexequi: bool = False
+) -> int:
     """CLI para extrair o número do ticket do nome do branch.
 
     Verifica se o hook foi chamado com a opção
     -m (mensagem fornecida pelo usuário)
     Se sim, evita sobrescrever a mensagem manualmente inserida
     """
-    ic(f'{sys.argv=}, {argv=}')
-    argv = sys.argv or argv or []
+    ic(f'{commit_msg_filepath=}, {commit_type=}, {nonexequi=}')
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
-    try:
-        commit_type = argv[2]
-    except IndexError:
-        commit_type = ''
-
+    # Verifica se o hook foi chamado
+    # com a opção -m (mensagem fornecida pelo usuário)
+    # Se sim, evita sobrescrever a mensagem manualmente inserida
     if commit_type == 'message':
-        return
+        click.secho(
+            'Hook não executado devido ao commit_type=message.',
+            fg='yellow',
+        )
+        return 0
 
-    commit_msg_filepath = sys.argv[1] if sys.argv else ''
+    flin: Path = Path(commit_msg_filepath)
     issue_number = get_issue_from_branch()
+    ic(f'{issue_number=}')
 
-    if issue_number:
+    if issue_number and flin.is_file():
         header = f'[ISSUE-{issue_number}] '
 
         with Path(commit_msg_filepath).open('r+', encoding='utf-8') as f:
@@ -660,7 +696,13 @@ def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
             if not content.startswith(header):
                 f.seek(0, 0)
                 f.write(header + content)
+                click.secho(
+                    'Added ticket number '
+                    f'{issue_number} to the commit message.',
+                    fg='green',
+                )
+    return 0
 
 
 if __name__ == '__main__':
-    sys.exit(check_len_first_line_commit_msg_cli(sys.argv[1:]))
+    sys.exit(set_issue_from_branch_cli(sys.argv[1:]))
