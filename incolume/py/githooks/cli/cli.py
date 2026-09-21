@@ -697,8 +697,8 @@ def set_issue_from_branch_cli(
                 f.seek(0, 0)
                 f.write(header + content)
                 click.secho(
-                    f'Adicionado o número do ticket {issue_number}'
-                    ' à mensagem de commit.',
+                    'Added ticket number '
+                    f'{issue_number} to the commit message.',
                     fg='green',
                 )
     return 0
