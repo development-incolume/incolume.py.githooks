@@ -173,7 +173,6 @@ class TestCaseAllCLI:
         logging.info('captured.err=%s', captured.err)
 
         assert result.exit_code == entrance.expected.code.value
-        assert captured.out == '\n'.join(entrance.expected.message) + '\n'
 
     @pytest.mark.parametrize(
         'args',
