@@ -92,8 +92,6 @@ logging.debug('Python %s', platform.python_version())
 @logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
     filenames: list[str],
-    commit_source: str = '',
-    commit_hash: str = '',
     min_first_line: int = 10,
     max_first_line: int = 50,
     *,
@@ -105,8 +103,7 @@ def check_len_first_line_commit_msg_cli(
 
     ic(
         f'{inspect.stack()[0][3]}: {sys.argv=}, '
-        f'{filenames=}, {commit_source=}, {commit_hash=}, '
-        f'{min_first_line=}, {max_first_line=}, {nonexequi=}'
+        f'{filenames=}, {min_first_line=}, {max_first_line=}, {nonexequi=}'
     )
     logging.info(inspect.stack()[0][3])
 
