@@ -165,8 +165,6 @@ class TestCaseAllCLI:
             cli.check_len_first_line_commit_msg_cli,
             [
                 test_file.as_posix(),
-                '',
-                '',
                 *entrance.params,
             ],
         )
