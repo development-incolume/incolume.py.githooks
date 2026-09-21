@@ -364,8 +364,11 @@ def footer_signedoffby_cli(
     Hook designed for stages: pre-commit, pre-push, manual
 
     Fluxo:
+
       1. Remove linhas desnecessárias do template de commit.
+
       2. Adiciona 'Signed-off-by' do committer atual.
+
       3. Adiciona linha em branco no topo se necessário.
 
     Returns:
