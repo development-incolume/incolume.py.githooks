@@ -149,6 +149,7 @@ repos:
       verbose: false
 
     - id: set-issue-from-branch-cli
+      verbose: true
       name: Incolume - Set Issue from Branch Name
       description: Extracts the issue number from the branch name and sets it in the commit message.
       entry: set-issue-from-branch
@@ -156,8 +157,7 @@ repos:
       additional_dependencies: []  # Python dependency for the script
       pass_filenames: true
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      args: [--nonexequi]
-      verbose: true
+      args: []
 
     - id: validate-message-commit
       name: Incolume - validate message Commit agree with Conventional Commits
