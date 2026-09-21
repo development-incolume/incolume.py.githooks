@@ -103,7 +103,7 @@ logging.debug('Python %s', platform.python_version())
     is_flag=True,
     help='Não executar hook.',
 )
-@logging_call(logging.INFO, 'Checking length of first line in commit message.')
+# @logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
     filenames: list[str],
     commit_source: str = '',
