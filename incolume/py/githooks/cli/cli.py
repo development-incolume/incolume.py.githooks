@@ -6,21 +6,25 @@ import argparse
 import inspect
 import logging
 import platform
+import re
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from click import secho
+import click
 from icecream import ic
 
 from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
+    __package_name__,
+    __version__,
     debug_enable,
     get_git_diff,
     get_issue_from_branch,
 )
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
+    CONTEXT_SETTINGS_CLICK,
     RequestFl,
     Result,
     Status,
@@ -51,68 +55,101 @@ if TYPE_CHECKING:
 logging.debug('Python %s', platform.python_version())
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check_len_first_line_commit_msg_cli',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=True),
+    help='Filenames to check',
+)
+@click.argument(
+    'commit_source',
+    default='',
+    required=False,
+    type=click.STRING,
+    help='Origem do commit (ex.: template)',
+)
+@click.argument(
+    'commit_hash',
+    default='',
+    required=False,
+    type=click.STRING,
+    help='Hash do commit ou vazio',
+)
+@click.option(
+    '--min-first-line',
+    default=10,
+    type=click.INT,
+    required=False,
+    help='Minimum Length of line for first line',
+)
+@click.option(
+    '--max-first-line',
+    default=50,
+    type=click.INT,
+    required=False,
+    help='Maximum Length of line for first line',
+)
+@click.option(
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Não executar hook.',
+)
 @logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
-    argv: Sequence[str] | None = None,
+    filenames: list[str],
+    commit_source: str = '',
+    commit_hash: str = '',
+    min_first_line: int = 10,
+    max_first_line: int = 50,
+    *,
+    nonexequi: bool = False,
 ) -> int:
     """Check commit message."""
     results: list[Result] = []
     result_code: Status = Status.SUCCESS
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (ex.: template)'
-    )
-    parser.add_argument(
-        'commit_hash', default='', help='Hash do commit ou vazio'
-    )
-    parser.add_argument(
-        '--min-first-line',
-        default=10,
-        type=int,
-        required=False,
-        help='Minimum Length of line for first line',
-    )
-    parser.add_argument(
-        '--max-first-line',
-        default=50,
-        type=int,
-        required=False,
-        help='Maximum Length of line for first line',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
 
-    logging.debug('argv: %s', argv)
-    ic(argv)
-    args = parser.parse_args(argv)
-
+    ic(
+        f'{inspect.stack()[0][3]}: {sys.argv=}, {filenames=}, {commit_source=}, {commit_hash=}, {min_first_line=}, {max_first_line=}, {nonexequi=}'
+    )
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         return int(result_code.value)
 
-    for filename in args.filenames:
+    for filename in filenames:
         ic(filename)
         results.extend((
             check_min_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=args.min_first_line
+                commit_msg_filepath=filename, len_line=min_first_line
             ),
             check_max_len_first_line_commit_msg(
-                commit_msg_filepath=filename, len_line=args.max_first_line
+                commit_msg_filepath=filename, len_line=max_first_line
             ),
         ))
-    for result in results:
-        secho(result.message)
-        result_code |= result.code
 
-    return int(result_code.value)  # Validation passed, allow commit
+    result_code = Status(
+        not all(result.code == Status.SUCCESS for result in results)
+    )
+
+    for result in results:
+        if result_code == Status.SUCCESS:
+            click.secho(result.message, fg='green', file=sys.stdout)
+        elif re.match(r'^(?:(?![OK]).)*$', result.message):
+            click.secho(result.message, fg='red', err=True)
+            raise click.ClickException(
+                f'The first line of the commit violates the defined limits between {min_first_line}–{max_first_line}.'
+            )
+
+    return result_code.value
 
 
 @logging_call(logging.INFO, 'Checking type of commit message.')
@@ -129,6 +166,8 @@ def check_type_commit_msg_cli(
         action='store_true',
         help='Não executar hook.',
     )
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
+
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
@@ -138,14 +177,14 @@ def check_type_commit_msg_cli(
     if args.nonexequi:
         sys.exit(0)
 
-    secho(
+    click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
+def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     """Check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -192,17 +231,21 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> Status:
         help='Not run hook, ignore adding Signed-off-by',
     )
 
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
+
     args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
-        return Status.SUCCESS.value
+        return int(Status.SUCCESS.value)
 
-    return ValidateBranchname().is_valid(
-        protected_dev=args.protected_dev,
-        protected_tags=args.protected_tags,
-        protected_main=args.protected_main,
+    return int(
+        ValidateBranchname().is_valid(
+            protected_dev=args.protected_dev,
+            protected_tags=args.protected_tags,
+            protected_main=args.protected_main,
+        )
     )
 
 
@@ -262,7 +305,7 @@ def check_valid_filenames_cli(
     for result in results:
         codes |= result.code
         for message in result.messages:
-            secho(
+            click.secho(
                 message, fg='green' if result.code == Status.SUCCESS else 'red'
             )
 
@@ -300,7 +343,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
 
     ic(args)
     result: Result = has_private_key(*args.filenames)
-    secho(result.message, fg='red')
+    click.secho(result.message, fg='red')
     return int(result.code.value)
 
 
@@ -383,7 +426,7 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     if args.nonexequi:
         return 0
 
-    secho(effort_msg(), fg='green')
+    click.secho(effort_msg(), fg='green')
     return 0
 
 
@@ -489,7 +532,7 @@ def validate_format_commit_msg_cli(
 
     result = validate_format_commit_msg(*args.filenames)
 
-    secho(
+    click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
     return result.code.value
@@ -522,7 +565,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
     ic(files)
     if not files:
-        secho(
+        click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
             fg='red',
@@ -558,7 +601,7 @@ def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
 
     if not args.nonexequi:
-        secho(get_msg(fixed=args.fixed), fg='green')
+        click.secho(get_msg(fixed=args.fixed), fg='green')
 
     return Status.SUCCESS.value
 
@@ -630,3 +673,7 @@ def set_issue_from_branch_cli(argv: Sequence[str] | None = None) -> None:
             if not content.startswith(header):
                 f.seek(0, 0)
                 f.write(header + content)
+
+
+if __name__ == '__main__':
+    sys.exit(check_len_first_line_commit_msg_cli(sys.argv[1:]))

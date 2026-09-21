@@ -100,7 +100,7 @@ def check_min_len_first_line_commit_msg(
     len_line = min(10, len_line)
     result = Result(
         Status.SUCCESS,
-        '[green]Commit minimum length for message is validated [OK][/green]',
+        'Commit minimum length for message is validated [OK]',
     )
 
     commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
@@ -126,7 +126,7 @@ def check_max_len_first_line_commit_msg(
     len_line = min(50, len_line)
     result = Result(
         Status.SUCCESS,
-        '[green]Commit maximum length for message is validated [OK][/green]',
+        'Commit maximum length for message is validated [OK]',
     )
 
     commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()

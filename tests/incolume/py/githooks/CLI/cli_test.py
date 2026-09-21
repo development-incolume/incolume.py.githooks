@@ -12,6 +12,7 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
+from click.testing import CliRunner
 
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
@@ -73,8 +74,8 @@ class TestCaseAllCLI:
                     msg_commit='docs: #85 Atualizado README.md\nacrescentado os hooks padrões para pre-commit pertinentes ao ecossistema incolume',
                     expected=Result(
                         message=[
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ]
                     ),
                 ),
@@ -86,8 +87,8 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.SUCCESS,
                         [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ],
                     ),
                 ),
@@ -125,8 +126,8 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.SUCCESS,
                         [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ],
                     ),
                 ),
@@ -148,28 +149,33 @@ class TestCaseAllCLI:
         ],
     )
     def test_check_len_first_line_commit_msg_cli(
-        self, capsys: pytest.CaptureFixture[Any], entrance: Entrance
+        self,
+        capfd: pytest.CaptureFixture,
+        # capsys: pytest.CaptureFixture[Any],
+        isolated_cli_runner: CliRunner,
+        entrance: Entrance,
     ) -> None:
         """Test CLI for check len first line commit messages."""
-        result = None
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
 
         test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
-        result = cli.check_len_first_line_commit_msg_cli([
-            test_file.as_posix(),
-            '',
-            '',
-            *entrance.params,
-        ])
-        captured = capsys.readouterr()
-        assert result == entrance.expected.code.value
-        assert captured.out.split('\n')
-        assert sum(
-            m in n
-            for m in entrance.expected.message
-            for n in captured.out.split('\n')
-        ) == len(entrance.expected.message)
+        ic(test_file)
+
+        result = isolated_cli_runner.invoke(
+            cli.check_len_first_line_commit_msg_cli,
+            [
+                test_file.as_posix(),
+                '',
+                '',
+                *entrance.params,
+            ],
+        )
+        # captured = capsys.readouterr()
+        captured = capfd.readouterr()
+
+        assert result.exit_code == entrance.expected.code.value
+        assert captured.err == 'abc'
 
     @pytest.mark.parametrize(
         'args',
