@@ -97,7 +97,7 @@ def check_min_len_first_line_commit_msg(
 
     """
     commit_msg_filepath = Path(commit_msg_filepath)
-    len_line = min(10, len_line)
+    len_line = max(10, len_line)
     result = Result(
         Status.SUCCESS,
         'Commit minimum length for message is validated [OK]',
@@ -123,7 +123,7 @@ def check_max_len_first_line_commit_msg(
 
     """
     commit_msg_filepath = Path(commit_msg_filepath)
-    len_line = min(50, len_line)
+    len_line = max(50, len_line)
     result = Result(
         Status.SUCCESS,
         'Commit maximum length for message is validated [OK]',

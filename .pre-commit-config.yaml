@@ -65,7 +65,7 @@ repos:
       entry: check-len-first-line
       language: python
       stages: [prepare-commit-msg, manual]
-      args: []
+      args: [--min-first-line=10, --max-first-line=256]
 
     # - id: check-precommit-installed
     #   name: Incolume - check if pre-commit is installed
