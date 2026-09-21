@@ -59,6 +59,7 @@ repos:
 - repo: local
   hooks:
     - id: check-len-first-line
+      verbose: true
       name: Incolume - check length of first line in commit message
       description: Guarantees that the first line of the commit message does not exceed a specified length.
       entry: check-len-first-line
