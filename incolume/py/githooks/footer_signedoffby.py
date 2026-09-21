@@ -3,6 +3,7 @@
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 from __future__ import annotations
 
+import itertools
 import re
 import shutil
 import subprocess
@@ -31,7 +32,12 @@ def clean_commit_msg(path: Path) -> bool:
         True, se o arquivo foi modificado; caso contrário, False.
 
     """
-    backup: Path = path.with_suffix(path.suffix + '.bak')
+    count = itertools.count(start=1)
+    backup: Path = path.with_suffix(path.suffix + '.bkp')
+
+    while backup.is_file():
+        backup = path.with_suffix(path.suffix + f'.bkp.{next(count)}')
+
     shutil.copy(path, backup)
 
     result: list[str] = []
