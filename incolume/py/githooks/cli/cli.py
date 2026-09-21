@@ -334,10 +334,29 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     return int(result.code.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='footer_signedoffby_cli',
+)
+@click.argument(
+    'commit_msg_filename', type=Path, help='Arquivo de mensagem de commit'
+)
+@click.option(
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(
     logging.INFO, 'Processing footer signed-off-by in commit message.'
 )
-def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> Status:
+def footer_signedoffby_cli(
+    commit_msg_filename: Path, *, nonexequi: bool = False
+) -> int:
     """Função principal que processa os argumentos.
 
     E aplica as transformações no arquivo de commit.
@@ -345,47 +364,27 @@ def footer_signedoffby_cli(argv: Sequence[str] | None = None) -> Status:
     Hook designed for stages: pre-commit, pre-push, manual
 
     Fluxo:
-    1. Remove linhas desnecessárias do template de commit.
-    2. Adiciona 'Signed-off-by' do committer atual.
-    3. Adiciona linha em branco no topo se necessário.
+      1. Remove linhas desnecessárias do template de commit.
+      2. Adiciona 'Signed-off-by' do committer atual.
+      3. Adiciona linha em branco no topo se necessário.
 
     Returns:
         None
 
     """
-    parser = argparse.ArgumentParser(
-        description=(
-            'Hook Git em Python equivalente ao script original em Perl/Shell.'
-        )
-    )
-    parser.add_argument(
-        'commit_msg_filename', type=Path, help='Arquivo de mensagem de commit'
-    )
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (pode ser vazio)'
-    )
-    parser.add_argument(
-        'commit_hash', default='', help='Hash do commit (pode ser vazio)'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Not run hook, ignore adding Signed-off-by',
-    )
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-    commit_source = '' or args.commit_source
 
-    ic(args)
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
-    clean_commit_msg(args.commit_msg_filename)
-    if not args.nonexequi:
-        add_signed_off_by(args.commit_msg_filename)
-    add_blank_line_if_needed(args.commit_msg_filename, commit_source)
+    commit_source = commit_msg_filename.read_text(encoding='utf-8')
+    clean_commit_msg(commit_msg_filename)
+    add_signed_off_by(commit_msg_filename)
+    add_blank_line_if_needed(commit_msg_filename, commit_source)
     return Status.SUCCESS.value
 
 
@@ -705,4 +704,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(set_issue_from_branch_cli(sys.argv[1:]))
+    sys.exit(footer_signedoffby_cli(sys.argv[1:]))
