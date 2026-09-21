@@ -385,7 +385,7 @@ def footer_signedoffby_cli(
     clean_commit_msg(commit_msg_filename)
     add_signed_off_by(commit_msg_filename)
     add_blank_line_if_needed(commit_msg_filename, commit_source)
-    return Status.SUCCESS.value
+    return int(Status.SUCCESS.value)
 
 
 @logging_call(logging.INFO, 'Displaying effort message after commit.')
