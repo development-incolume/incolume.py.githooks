@@ -4,7 +4,7 @@ from collections.abc import Generator
 import shutil
 from incolume.py.githooks.core import subprocess
 from unittest.mock import patch
-from incolume.py.githooks.cli.get_issue_from_branch import run
+from incolume.py.githooks.cli.cli import set_issue_from_branch_cli
 import pytest
 from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
@@ -73,7 +73,9 @@ class TestCaseGetIssueFromBranch:
             'check_output',
             return_value=bytes('123-fake-commit-message', 'utf-8'),
         ):
-            result = isolated_cli_runner.invoke(run, entrance)
+            result = isolated_cli_runner.invoke(
+                set_issue_from_branch_cli, entrance
+            )
             assert result.exit_code == 0
             # assert 'Adicionado o número do ticket 123 à mensagem de commit.' in result.output
             assert flin.read_text(encoding='utf-8') == expected
