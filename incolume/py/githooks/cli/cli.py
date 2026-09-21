@@ -69,20 +69,6 @@ logging.debug('Python %s', platform.python_version())
     type=click.Path(exists=True),
     help='Filenames to check',
 )
-@click.argument(
-    'commit_source',
-    default='',
-    required=False,
-    type=click.STRING,
-    help='Origem do commit (ex.: template)',
-)
-@click.argument(
-    'commit_hash',
-    default='',
-    required=False,
-    type=click.STRING,
-    help='Hash do commit ou vazio',
-)
 @click.option(
     '--min-first-line',
     default=10,
