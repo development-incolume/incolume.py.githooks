@@ -385,8 +385,13 @@ def footer_signedoffby_cli(
         return 0
 
     commit_source = commit_msg_filename.read_text(encoding='utf-8')
+    logging.info(commit_source)
+
     clean_commit_msg(commit_msg_filename)
     add_signed_off_by(commit_msg_filename)
+    click.secho(
+        'Added the "Signed-off-by" line to the commit message', fg='green'
+    )
     add_blank_line_if_needed(commit_msg_filename, commit_source)
     return int(Status.SUCCESS.value)
 
