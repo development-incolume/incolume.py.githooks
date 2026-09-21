@@ -175,7 +175,7 @@ class TestCaseAllCLI:
         captured = capfd.readouterr()
 
         assert result.exit_code == entrance.expected.code.value
-        assert captured.err == 'abc'
+        assert captured.out == 'abc'
 
     @pytest.mark.parametrize(
         'args',
