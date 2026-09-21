@@ -12,7 +12,7 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
-
+import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
@@ -171,6 +171,8 @@ class TestCaseAllCLI:
             ],
         )
         captured = capsys.readouterr()
+        logging.info('captured.out=%s', captured.out)
+        logging.info('captured.err=%s', captured.err)
 
         assert result.exit_code == entrance.expected.code.value
         assert captured.out == '\n'.join(entrance.expected.message) + '\n'
