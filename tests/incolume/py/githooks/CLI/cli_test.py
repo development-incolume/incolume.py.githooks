@@ -124,10 +124,10 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
-                        Status.SUCCESS,
+                        Status.FAILURE,
                         [
-                            'Commit minimum length for message is validated [OK]',
-                            'Commit maximum length for message is validated [OK]',
+                            'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
+                            'Error: The first line of the commit violates the defined limits between 4 and 5.',
                         ],
                     ),
                 ),
