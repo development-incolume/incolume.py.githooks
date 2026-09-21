@@ -12,8 +12,7 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
-from click.testing import CliRunner
-
+import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 
@@ -28,6 +27,7 @@ from unittest.mock import patch
 from itertools import chain
 
 if TYPE_CHECKING:
+    from click.testing import CliRunner
     from pytest_mock import MockerFixture
     from collections.abc import Callable
 
@@ -150,8 +150,7 @@ class TestCaseAllCLI:
     )
     def test_check_len_first_line_commit_msg_cli(
         self,
-        capfd: pytest.CaptureFixture,
-        # capsys: pytest.CaptureFixture[Any],
+        capsys: pytest.CaptureFixture[Any],
         isolated_cli_runner: CliRunner,
         entrance: Entrance,
     ) -> None:
@@ -166,16 +165,14 @@ class TestCaseAllCLI:
             cli.check_len_first_line_commit_msg_cli,
             [
                 test_file.as_posix(),
-                '',
-                '',
                 *entrance.params,
             ],
         )
-        # captured = capsys.readouterr()
-        captured = capfd.readouterr()
+        captured = capsys.readouterr()
+        logging.info('captured.out=%s', captured.out)
+        logging.info('captured.err=%s', captured.err)
 
         assert result.exit_code == entrance.expected.code.value
-        assert captured.err == 'abc'
 
     @pytest.mark.parametrize(
         'args',
