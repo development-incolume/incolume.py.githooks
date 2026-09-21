@@ -118,7 +118,9 @@ def check_len_first_line_commit_msg_cli(
     result_code: Status = Status.SUCCESS
 
     ic(
-        f'{inspect.stack()[0][3]}: {sys.argv=}, {filenames=}, {commit_source=}, {commit_hash=}, {min_first_line=}, {max_first_line=}, {nonexequi=}'
+        f'{inspect.stack()[0][3]}: {sys.argv=}, '
+        f'{filenames=}, {commit_source=}, {commit_hash=}, '
+        f'{min_first_line=}, {max_first_line=}, {nonexequi=}'
     )
     logging.info(inspect.stack()[0][3])
 
@@ -145,11 +147,13 @@ def check_len_first_line_commit_msg_cli(
             click.secho(result.message, fg='green', file=sys.stdout)
         elif re.match(r'^(?:(?![OK]).)*$', result.message):
             click.secho(result.message, fg='red', err=True)
-            raise click.ClickException(
-                f'The first line of the commit violates the defined limits between {min_first_line}–{max_first_line}.'
+            ermsg = (
+                'The first line of the commit violates the defined'
+                f' limits between {min_first_line} and {max_first_line}.'
             )
+            raise click.ClickException(ermsg)
 
-    return result_code.value
+    return int(result_code.value)
 
 
 @logging_call(logging.INFO, 'Checking type of commit message.')

@@ -12,7 +12,6 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
-from click.testing import CliRunner
 
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
@@ -28,6 +27,7 @@ from unittest.mock import patch
 from itertools import chain
 
 if TYPE_CHECKING:
+    from click.testing import CliRunner
     from pytest_mock import MockerFixture
     from collections.abc import Callable
 
@@ -150,7 +150,7 @@ class TestCaseAllCLI:
     )
     def test_check_len_first_line_commit_msg_cli(
         self,
-        capfd: pytest.CaptureFixture,
+        capfd: pytest.CaptureFixture[Any],
         # capsys: pytest.CaptureFixture[Any],
         isolated_cli_runner: CliRunner,
         entrance: Entrance,
