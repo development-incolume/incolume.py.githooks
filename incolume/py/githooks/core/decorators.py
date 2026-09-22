@@ -93,11 +93,11 @@ def logging_call(
 
             if debug:
                 ic.enable()
-                m1 = (
+                executable = (
                     f'Calling function: {func.__name__},',
                     f' Arguments: {args}, {kwargs}',
                 )
-                ic(m1)
+                ic(executable)
 
             result = func(*args, **kwargs)
 

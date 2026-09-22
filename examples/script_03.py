@@ -9,7 +9,9 @@ by Roman Gorbatenko
 import re
 import sys
 from pathlib import Path
-from subprocess import check_output  # ruff: ignore[suspicious-subprocess-import]
+from subprocess import (
+    check_output,
+)
 
 commit_msg_filepath = sys.argv[1]
 branch = (

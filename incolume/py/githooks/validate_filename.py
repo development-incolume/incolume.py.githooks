@@ -194,7 +194,7 @@ def validate_filename(
         Result: The result of the check.
 
     Examples:
-        >>> validate_filename('module/valid_name.py')
+        >> validate_filename('module/valid_name.py')
         RequestFl(filename=WindowsPath('module/valid_name.py'), min_len=3, max_len=256, requires_audit=False, required_role=None, action='rule_has_filename_ends_with_test', code=<Status.SUCCESS: 0>)
 
     """  # ruff:ignore[line-too-long]
