@@ -154,9 +154,7 @@ def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
     backup: Path = filename.with_suffix(filename.suffix + ext)
 
     while backup.is_file():
-        backup = filename.with_suffix(
-            filename.suffix + f'.{ext}.{next(count)}'
-        )
+        backup = filename.with_suffix(filename.suffix + f'{ext}.{next(count)}')
 
     shutil.copy(filename, backup)
 
