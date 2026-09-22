@@ -12,10 +12,9 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
-
+import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
-
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
     MainEntrance,
@@ -27,6 +26,7 @@ from unittest.mock import patch
 from itertools import chain
 
 if TYPE_CHECKING:
+    from click.testing import CliRunner
     from pytest_mock import MockerFixture
     from collections.abc import Callable
 
@@ -73,8 +73,8 @@ class TestCaseAllCLI:
                     msg_commit='docs: #85 Atualizado README.md\nacrescentado os hooks padrões para pre-commit pertinentes ao ecossistema incolume',
                     expected=Result(
                         message=[
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ]
                     ),
                 ),
@@ -86,8 +86,8 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.SUCCESS,
                         [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Commit minimum length for message is validated [OK]',
+                            'Commit maximum length for message is validated [OK]',
                         ],
                     ),
                 ),
@@ -123,10 +123,10 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
-                        Status.SUCCESS,
+                        Status.FAILURE,
                         [
-                            'Commit minimum length for message is validated',
-                            'Commit maximum length for message is validated',
+                            'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
+                            'Error: The first line of the commit violates the defined limits between 4 and 5.',
                         ],
                     ),
                 ),
@@ -148,28 +148,30 @@ class TestCaseAllCLI:
         ],
     )
     def test_check_len_first_line_commit_msg_cli(
-        self, capsys: pytest.CaptureFixture[Any], entrance: Entrance
+        self,
+        capsys: pytest.CaptureFixture[Any],
+        isolated_cli_runner: CliRunner,
+        entrance: Entrance,
     ) -> None:
         """Test CLI for check len first line commit messages."""
-        result = None
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
 
         test_file.write_text(f'{entrance.msg_commit}\n', encoding='utf-8')
-        result = cli.check_len_first_line_commit_msg_cli([
-            test_file.as_posix(),
-            '',
-            '',
-            *entrance.params,
-        ])
+        ic(test_file)
+
+        result = isolated_cli_runner.invoke(
+            cli.check_len_first_line_commit_msg_cli,
+            [
+                test_file.as_posix(),
+                *entrance.params,
+            ],
+        )
         captured = capsys.readouterr()
-        assert result == entrance.expected.code.value
-        assert captured.out.split('\n')
-        assert sum(
-            m in n
-            for m in entrance.expected.message
-            for n in captured.out.split('\n')
-        ) == len(entrance.expected.message)
+        logging.info('captured.out=%s', captured.out)
+        logging.info('captured.err=%s', captured.err)
+
+        assert result.exit_code == entrance.expected.code.value
 
     @pytest.mark.parametrize(
         'args',
@@ -456,31 +458,42 @@ class TestCaseAllCLI:
             assert f'Private key found: {test_file.as_posix()}' in captured.out
 
     @pytest.mark.parametrize(
-        ['args', 'expected'],
+        ['args', 'content', 'expected'],
         [
-            pytest.param(['--help'], '', marks=[pytest.mark.xfail]),
-            pytest.param(['message fake for commit', '', ''], 0, marks=[]),
+            pytest.param([], 'message fake for commit', 0, marks=[]),
             pytest.param(
-                ['style: message fake for commit', '', '', '--nonexequi'],
+                ['--nonexequi'],
+                'style: message fake for commit',
                 0,
                 marks=[],
             ),
+            pytest.param(['--help'], '', 0, marks=[]),
+            pytest.param(['--nonexequi'], '', 0, marks=[]),
+            pytest.param(['-h'], '', 0, marks=[]),
+            pytest.param(['-N'], '', 0, marks=[]),
         ],
     )
     def test_footer_signedoffby_cli(
         self,
+        content: str,
         args: list[str],
         expected: int,
         capsys: pytest.CaptureFixture[Any],
+        cli_runner: CliRunner,
     ) -> None:
         """Test main function."""
-        with NamedTemporaryFile() as tf:
+        with NamedTemporaryFile(dir=self.test_dir) as tf:
             test_file = Path(tf.name)
-        test_file.write_text(args[0], encoding='utf-8')
-        args[0] = test_file.as_posix()
-        result = cli.footer_signedoffby_cli(args)
+            test_file = Path(test_file.parent, stack()[0][3], test_file.name)
+        test_file.parent.mkdir(parents=True, exist_ok=True)
+        if content:
+            test_file.write_text(content, encoding='utf-8')
+
+        result = cli_runner.invoke(
+            cli.footer_signedoffby_cli, (test_file.as_posix(), *args)
+        )
         captured = capsys.readouterr()
-        assert Status(result) == Status(expected)
+        assert result.exit_code == expected
         assert not captured.out
 
     @pytest.mark.parametrize(

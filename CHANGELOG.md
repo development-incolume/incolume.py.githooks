@@ -10,6 +10,36 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
+## [Unreleased]	 &#8212; 	2026-09-22:
+### Deprecated
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Added
+  - Compatibilidade com Python 3.14;
+### Changed
+  - Atualizado pyproject.toml com diretivas gui-script, all, cli, keywords, e lincese-files;
+  - Reativado hook check-len-first-line;
+  - Reativado hook check-valid-filenames;
+  - Reativado hook footer-signed-off-by;
+  - Configurado CLI com opção de help (-h, --help), versão (-V --version) e nonexequi (-N, --nonexequi);
+### Security
+  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
+  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
+## [1.13.0]	 &#8212; 	2026-09-22:
+### Deprecated
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Changed
+  - Atualizado pyproject.toml com diretivas gui-script, all, cli, keywords, e lincese-files;
+  - Reativado hook check-len-first-line;
+  - Reativado hook check-valid-filenames;
+  - Reativado hook footer-signed-off-by;
+  - Configurado CLI com opção de help (-h, --help), versão (-V --version) e nonexequi (-N, --nonexequi);
+### Security
+  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
+  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
 ## [1.12.0]	 &#8212; 	2026-09-16:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
@@ -203,3 +233,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.10.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.9.0...1.10.0
 [1.11.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...1.11.0
 [1.12.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...1.12.0
+[1.13.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.12.0...1.13.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.13.0...Unreleased

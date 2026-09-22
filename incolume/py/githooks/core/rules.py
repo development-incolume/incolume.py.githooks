@@ -160,7 +160,7 @@ class Result:
     """Result dataclass for hooks this project."""
 
     code: Status = Status.SUCCESS
-    message: str = ''
+    message: str | list[str] = ''
 
 
 @dataclass
@@ -263,3 +263,6 @@ MESSAGES: Final[list[str]] = [
     'Boa! Continue trabalhando campeão!',
     'Executado com sucesso.',
 ]
+CONTEXT_SETTINGS_CLICK: dict[str, list[str]] = {
+    'help_option_names': ['-h', '--help'],
+}

@@ -1,6 +1,7 @@
 """Module core for project."""
 
 from incolume.py.githooks.core.__main__ import (
+    __package_name__,
     __version__,
     debug_enable,
     debug_var_active,
@@ -12,8 +13,11 @@ from incolume.py.githooks.core.__main__ import (
     remove_color_tags,
     subprocess,
 )
+from incolume.py.githooks.core.rules import CONTEXT_SETTINGS_CLICK
 
 __all__ = [
+    'CONTEXT_SETTINGS_CLICK',
+    '__package_name__',
     '__version__',
     'debug_enable',
     'debug_var_active',

@@ -31,6 +31,7 @@ with suppress(FileNotFoundError), confproject.open('rb') as f:
     )
 
 __version__ = fileversion.read_text().strip()
+__package_name__ = 'incolume.py.githooks'
 
 
 def debug_var_active() -> bool:

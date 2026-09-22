@@ -97,10 +97,10 @@ def check_min_len_first_line_commit_msg(
 
     """
     commit_msg_filepath = Path(commit_msg_filepath)
-    len_line = min(10, len_line)
+    len_line = max(10, len_line)
     result = Result(
         Status.SUCCESS,
-        '[green]Commit minimum length for message is validated [OK][/green]',
+        'Commit minimum length for message is validated [OK]',
     )
 
     commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
@@ -109,7 +109,7 @@ def check_min_len_first_line_commit_msg(
     first_line = commit_message.split('\n')[0]
     if len(first_line) < len_line:
         result.code = Status.FAILURE
-        result.message = f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)} - {commit_message}).'
+        result.message = f'Error: Commit subject line has an insufficient number of {len_line} characters allowed ({len(first_line)} of {len_line}).'
     return result
 
 
@@ -123,10 +123,10 @@ def check_max_len_first_line_commit_msg(
 
     """
     commit_msg_filepath = Path(commit_msg_filepath)
-    len_line = min(50, len_line)
+    len_line = max(50, len_line)
     result = Result(
         Status.SUCCESS,
-        '[green]Commit maximum length for message is validated [OK][/green]',
+        'Commit maximum length for message is validated [OK]',
     )
 
     commit_message = commit_msg_filepath.read_text(encoding='utf-8').strip()
