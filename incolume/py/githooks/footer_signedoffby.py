@@ -23,7 +23,7 @@ def clean_commit_msg(path: Path) -> bool:
     - A linha que começa com 'Please enter the commit message'
     - Até a linha contendo apenas '#'
 
-    Cria um backup `.bak` antes de sobrescrever.
+    Cria um backup `.bkp` antes de sobrescrever.
 
     Args:
         path (Path): Caminho para o arquivo de mensagem de commit.

@@ -15,7 +15,6 @@ from icecream import ic
 import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
-
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
     MainEntrance,
@@ -124,10 +123,10 @@ class TestCaseAllCLI:
                     msg_commit='feat',
                     params=['--min-first-line=4', '--max-first-line=5'],
                     expected=Result(
-                        Status.SUCCESS,
+                        Status.FAILURE,
                         [
-                            'Commit minimum length for message is validated [OK]',
-                            'Commit maximum length for message is validated [OK]',
+                            'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
+                            'Error: The first line of the commit violates the defined limits between 4 and 5.',
                         ],
                     ),
                 ),
@@ -459,31 +458,42 @@ class TestCaseAllCLI:
             assert f'Private key found: {test_file.as_posix()}' in captured.out
 
     @pytest.mark.parametrize(
-        ['args', 'expected'],
+        ['args', 'content', 'expected'],
         [
-            pytest.param(['--help'], '', marks=[pytest.mark.xfail]),
-            pytest.param(['message fake for commit', '', ''], 0, marks=[]),
+            pytest.param([], 'message fake for commit', 0, marks=[]),
             pytest.param(
-                ['style: message fake for commit', '', '', '--nonexequi'],
+                ['--nonexequi'],
+                'style: message fake for commit',
                 0,
                 marks=[],
             ),
+            pytest.param(['--help'], '', 0, marks=[]),
+            pytest.param(['--nonexequi'], '', 0, marks=[]),
+            pytest.param(['-h'], '', 0, marks=[]),
+            pytest.param(['-N'], '', 0, marks=[]),
         ],
     )
     def test_footer_signedoffby_cli(
         self,
+        content: str,
         args: list[str],
         expected: int,
         capsys: pytest.CaptureFixture[Any],
+        cli_runner: CliRunner,
     ) -> None:
         """Test main function."""
-        with NamedTemporaryFile() as tf:
+        with NamedTemporaryFile(dir=self.test_dir) as tf:
             test_file = Path(tf.name)
-        test_file.write_text(args[0], encoding='utf-8')
-        args[0] = test_file.as_posix()
-        result = cli.footer_signedoffby_cli(args)
+            test_file = Path(test_file.parent, stack()[0][3], test_file.name)
+        test_file.parent.mkdir(parents=True, exist_ok=True)
+        if content:
+            test_file.write_text(content, encoding='utf-8')
+
+        result = cli_runner.invoke(
+            cli.footer_signedoffby_cli, (test_file.as_posix(), *args)
+        )
         captured = capsys.readouterr()
-        assert Status(result) == Status(expected)
+        assert result.exit_code == expected
         assert not captured.out
 
     @pytest.mark.parametrize(
