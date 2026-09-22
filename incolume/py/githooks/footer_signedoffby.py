@@ -3,7 +3,6 @@
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 from __future__ import annotations
 
-import itertools
 import re
 import shutil
 import subprocess

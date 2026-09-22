@@ -18,6 +18,7 @@ from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
+    backup_file,
     debug_enable,
     get_git_diff,
     get_issue_from_branch,
@@ -427,9 +428,33 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='footer_signedoffby_cli',
+)
+@click.argument(
+    'commit_msg_file', required=False, help='Filename for commit message'
+)
+@click.argument('commit_source', required=False, help='Commit source')
+@click.argument('commit_hash', required=False, help='Commit hash')
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
-    argv: Sequence[str] | None = None,
+    commit_msg_file: Path,
+    commit_source: str,
+    commit_hash: str,
+    *,
+    nonexequi: bool = False,
 ) -> Status:
     """Remove the help message.
 
@@ -438,43 +463,30 @@ def clean_commit_msg_cli(
     Hook designed for stages: pre-commit, pre-push, manual
 
     Args:
-        argv: Arguments values sequence:
-          - commit_msg_file (Path or str): The path to the commit message file.
-          - commit_source (str): The source of the commit message.
-          - commit_hash (str): The commit hash.
+        commit_msg_file (Path or str): The path to the commit message file.
+        commit_source (str): The source of the commit message.
+        commit_hash (str): The commit hash.
+        nonexequi (bool): if run hook.
 
     Returns:
         int: SUCCESS code if the operation completes.
 
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('commit_msg_file', help='Filename for commit message')
-    parser.add_argument('commit_source', help='Commit source')
-    parser.add_argument('commit_hash', help='Commit hash')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Do not run this hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
-        return Status.SUCCESS
-
-    commit_msg_file = args.commit_msg_file
-    commit_source = args.commit_source
-    commit_hash = args.commit_hash
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
     ic(commit_msg_file, commit_source, commit_hash)
 
     commit_msg_file = Path(commit_msg_file)
 
-    backup = commit_msg_file.with_suffix(commit_msg_file.suffix + '.bak')
-    backup.write_bytes(commit_msg_file.read_bytes())
+    backup = backup_file(commit_msg_file, '.bak')
+    logging.debug(backup)
 
     result = []
     skipping = False
@@ -661,10 +673,11 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     help='---',
 )
 @click.option(
+    '-N',
     '--nonexequi',
     default=False,
     is_flag=True,
-    help='Não executar este hook.',
+    help='Do not run this hook.',
 )
 def set_issue_from_branch_cli(
     commit_msg_filepath: str, commit_type: str, *, nonexequi: bool = False
@@ -715,4 +728,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(footer_signedoffby_cli(sys.argv[1:]))
+    sys.exit(clean_commit_msg_cli(sys.argv[1:]))
