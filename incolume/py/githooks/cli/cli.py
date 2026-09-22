@@ -428,13 +428,13 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
 @click.version_option(
     __version__,
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='footer_signedoffby_cli',
+    prog_name='clean-commit-msg',
 )
 @click.argument(
     'commit_msg_file', required=False, help='Filename for commit message'
