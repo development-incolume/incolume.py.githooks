@@ -53,6 +53,7 @@ if TYPE_CHECKING:
 
 
 logging.debug('Python %s', platform.python_version())
+msg_commit_file: Path = Path('.git', 'COMMIT_EDITMSG')
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK)
@@ -357,7 +358,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     logging.INFO, 'Processing footer signed-off-by in commit message.'
 )
 def footer_signedoffby_cli(
-    commit_msg_filename: Path, *, nonexequi: bool = False
+    commit_msg_filename: Path = msg_commit_file, *, nonexequi: bool = False
 ) -> int:
     """Função principal que processa os argumentos.
 
@@ -521,7 +522,7 @@ def validate_format_commit_msg_cli(
     if args.nonexequi:
         return 0
 
-    ic(fl := Path('.git/COMMIT_EDITMSG'))
+    ic(fl := msg_commit_file)
     ic(fl.is_file())
 
     logging.debug('msgfile: %s', args)
@@ -649,7 +650,7 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
 )
 @click.argument(
     'commit_msg_filepath',
-    default='.git/COMMIT_EDITMSG',
+    default=msg_commit_file.as_posix(),
     type=click.Path(exists=True),
     help='Caminho para o arquivo de mensagem de commit',
 )

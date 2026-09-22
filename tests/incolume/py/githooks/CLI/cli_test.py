@@ -15,7 +15,6 @@ from icecream import ic
 import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
-
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
     MainEntrance,
