@@ -84,6 +84,7 @@ logging.debug('Python %s', platform.python_version())
     help='Maximum Length of line for first line',
 )
 @click.option(
+    '-N',
     '--nonexequi',
     default=False,
     is_flag=True,
@@ -346,6 +347,7 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     'commit_msg_filename', type=Path, help='Arquivo de mensagem de commit'
 )
 @click.option(
+    '-N',
     '--nonexequi',
     default=False,
     is_flag=True,
