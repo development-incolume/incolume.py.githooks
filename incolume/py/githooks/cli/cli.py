@@ -173,6 +173,26 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-valid-branchname',
+)
+@click.argument(
+    'commit_msg_file', required=False, help='Filename for commit message'
+)
+@click.argument('commit_source', required=False, help='Commit source')
+@click.argument('commit_hash', required=False, help='Commit hash')
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(logging.INFO, 'Checking valid branchname.')
 def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
     """Check valid branchname.
