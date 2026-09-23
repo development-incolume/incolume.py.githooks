@@ -455,7 +455,7 @@ def clean_commit_msg_cli(
     commit_hash: str,
     *,
     nonexequi: bool = False,
-) -> Status:
+) -> int:
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
@@ -507,7 +507,7 @@ def clean_commit_msg_cli(
 
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
 
-    return Status.SUCCESS
+    return int(Status.SUCCESS.value)
 
 
 @logging_call(logging.INFO, 'Validating commit message format.')
