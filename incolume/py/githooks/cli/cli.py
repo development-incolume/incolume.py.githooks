@@ -182,10 +182,31 @@ def check_type_commit_msg_cli(
     prog_name='is-valid-branchname',
 )
 @click.argument(
-    'commit_msg_file', required=False, help='Filename for commit message'
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    required=False,
+    help='Filename for commit message',
 )
-@click.argument('commit_source', required=False, help='Commit source')
-@click.argument('commit_hash', required=False, help='Commit hash')
+@click.argument(
+    'commit_source', type=str, required=False, help='Commit source'
+)
+@click.argument('commit_hash', type=str, required=False, help='Commit hash')
+@click.option(
+    '--dev/--no-dev',
+    default=False,
+    help='(default: False) Consider `dev` as protected branch. ',
+)
+@click.option(
+    '--tags/--no-tags',
+    default=False,
+    help='(default: False) Consider `tags` as protected branch. ',
+)
+@click.option(
+    '--main/--no-main',
+    default=True,
+    help='(default: True) Consider `main` or `master` as protected branch. ',
+)
 @click.option(
     '-N',
     '--nonexequi',
@@ -194,8 +215,17 @@ def check_type_commit_msg_cli(
     help='Do not run this hook.',
 )
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
-    """Check valid branchname.
+def check_valid_branchname_cli(
+    commit_msg_file: Path,
+    commit_source: str,
+    commit_hash: str,
+    *,
+    dev: bool = False,
+    tags: bool = False,
+    main: bool = True,
+    nonexequi: bool = False,
+) -> int:
+    """Hookgit for check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
 
@@ -203,58 +233,20 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
         int: 0 to SUCCESS or 1 to FAILURE
 
     """
-    parser = argparse.ArgumentParser(
-        description=('Hook Git em Python para validar branchname.')
-    )
-    parser.add_argument(
-        'commit_msg_file',
-        nargs='+',
-        type=Path,
-        help='Arquivo de mensagem de commit',
-    )
-    parser.add_argument(
-        '--dev',
-        default=False,
-        dest='protected_dev',
-        action='store_true',
-        help='Consider dev as protected branch.',
-    )
-    parser.add_argument(
-        '--tags',
-        default=False,
-        dest='protected_tags',
-        action='store_true',
-        help='Consider tags as protected branch.',
-    )
-    parser.add_argument(
-        '--not-main',
-        default=True,
-        dest='protected_main',
-        action='store_false',
-        help='Desconsider main as protected branch.',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Not run hook, ignore adding Signed-off-by',
-    )
-
-    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return int(Status.SUCCESS.value)
 
     return int(
         ValidateBranchname().is_valid(
-            protected_dev=args.protected_dev,
-            protected_tags=args.protected_tags,
-            protected_main=args.protected_main,
+            protected_dev=dev,
+            protected_tags=tags,
+            protected_main=main,
         )
     )
 
