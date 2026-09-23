@@ -248,9 +248,11 @@ def check_valid_branchname_cli(
         protected_main=main,
     )
 
-    click.secho(
-        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
-    )
+    if result.code == Status.SUCCESS:
+        click.secho(result.message, fg='green')
+    else:
+        click.secho(result.message, fg='red', err=True)
+        click.Context.exit(result.message)
 
     return int(result.code.value)
 
