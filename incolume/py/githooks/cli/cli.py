@@ -173,7 +173,7 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
 @click.version_option(
     __version__,
     '-V',
