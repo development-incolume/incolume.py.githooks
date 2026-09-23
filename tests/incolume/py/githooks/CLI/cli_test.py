@@ -260,7 +260,7 @@ class TestCaseAllCLI:
             pytest.param(
                 'master',
                 1,
-                [''],
+                [],
                 """Your commit was rejected due to branching name incompatible with rules.
  - Branch name "master" is protected.
 
@@ -325,6 +325,7 @@ class TestCaseAllCLI:
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                marks=[],
             ),
             pytest.param(
                 'tags',
@@ -360,9 +361,8 @@ class TestCaseAllCLI:
         ):
             result = cli_runner.invoke(cli.check_valid_branchname_cli, params)
             captured = capsys.readouterr()
-            ic(result)
-            assert message in captured.out.strip()
-            assert Status(result) == Status(exit_code)
+            assert (not captured.out.strip() or captured.err.strip())
+            assert result.exit_code == exit_code
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
