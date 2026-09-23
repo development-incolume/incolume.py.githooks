@@ -242,13 +242,17 @@ def check_valid_branchname_cli(
         )
         return int(Status.SUCCESS.value)
 
-    return int(
-        ValidateBranchname().is_valid(
-            protected_dev=dev,
-            protected_tags=tags,
-            protected_main=main,
-        )
+    result = ValidateBranchname().is_valid(
+        protected_dev=dev,
+        protected_tags=tags,
+        protected_main=main,
     )
+
+    click.secho(
+        result.message, fg='green' if result.code == Status.SUCCESS else 'red'
+    )
+
+    return int(result.code.value)
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
