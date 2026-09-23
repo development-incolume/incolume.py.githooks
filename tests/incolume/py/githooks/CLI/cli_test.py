@@ -565,22 +565,42 @@ class TestCaseAllCLI:
                     params=['--nonexequi'],
                 ),
             ),
+            pytest.param(
+                Entrance(
+                    msg_commit='',
+                    expected=Result(Status.SUCCESS, ''),
+                    params=['-h'],
+                )
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='',
+                    expected=Result(Status.SUCCESS, ''),
+                    params=['-N'],
+                )
+            ),
         ],
     )
-    def test_clean_commit_msg_cli(self, entrance: Entrance) -> None:
+    def test_clean_commit_msg_cli(
+        self, cli_runner: CliRunner, entrance: Entrance
+    ) -> None:
         """Test CLI for clean-commit-msg-cli."""
-        with NamedTemporaryFile() as fl:
-            filename = Path(fl.name)
-        filename.write_text(entrance.msg_commit, encoding='utf-8')
-        result = cli.clean_commit_msg_cli([
-            filename.as_posix(),
-            '',
-            '',
-            *entrance.params,
-        ])
-        assert result == entrance.expected.code
+        with NamedTemporaryFile(dir=self.test_dir) as tf:
+            test_file = Path(tf.name)
+            test_file = Path(test_file.parent, stack()[0][3], test_file.name)
+        test_file.parent.mkdir(parents=True, exist_ok=True)
+
+        test_file.write_text(entrance.msg_commit, encoding='utf-8')
+        result = cli_runner.invoke(
+            cli.clean_commit_msg_cli,
+            [
+                test_file.as_posix(),
+                *entrance.params,
+            ],
+        )
+        assert result.exit_code == entrance.expected.code.value
         assert (
-            filename.read_text(encoding='utf-8') == entrance.expected.message
+            test_file.read_text(encoding='utf-8') == entrance.expected.message
         )
 
     @pytest.mark.parametrize(
