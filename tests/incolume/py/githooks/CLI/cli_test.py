@@ -196,8 +196,15 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 'main',
-                1,
-                ['', '--not-main'],
+                0,
+                ['', '--no-main'],
+                '',
+                marks=[],
+            ),
+            pytest.param(
+                'master',
+                0,
+                ['', '--no-main'],
                 '',
                 marks=[],
             ),
@@ -331,6 +338,7 @@ class TestCaseAllCLI:
     )
     def test_check_valid_branchname(
         self,
+        cli_runner: CliRunner,
         capsys: pytest.CaptureFixture[Any],
         entrance: str,
         exit_code: int,
@@ -343,7 +351,7 @@ class TestCaseAllCLI:
         with patch.object(
             subprocess, 'check_output', return_value=bytes(entrance, 'utf-8')
         ):
-            result = cli.check_valid_branchname_cli(params)
+            result = cli_runner.invoke(cli.check_valid_branchname_cli, params)
             captured = capsys.readouterr()
             ic(result)
             assert message in captured.out.strip()
