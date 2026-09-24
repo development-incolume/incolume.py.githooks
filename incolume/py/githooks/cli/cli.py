@@ -364,19 +364,16 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     return int(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
 @click.version_option(
     __version__,
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='set-footer-signed-off-by',
+    prog_name='footer_signedoffby_cli',
 )
 @click.argument(
-    'commit_msg_filename',
-    type=Path,
-    default=msg_commit_file,
-    help='Arquivo de mensagem de commit',
+    'commit_msg_filename', type=Path, help='Arquivo de mensagem de commit'
 )
 @click.option(
     '-N',
