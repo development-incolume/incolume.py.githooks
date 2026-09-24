@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.13.0"
+version = "1.14.0"
 description = "Hooks git for incolume projects"
 readme = "README.md"
 license-files = ["LICEN[CS]E*", "docs/vendored/licenses/*.txt", "docs/AUTHORS.md"]

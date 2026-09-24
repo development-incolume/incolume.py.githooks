@@ -3,13 +3,12 @@
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 from __future__ import annotations
 
-import itertools
 import re
 import shutil
 import subprocess
 from typing import TYPE_CHECKING
 
-from incolume.py.githooks.core import get_signed_off_by
+from incolume.py.githooks.core import backup_file, get_signed_off_by
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -32,11 +31,7 @@ def clean_commit_msg(path: Path) -> bool:
         True, se o arquivo foi modificado; caso contrário, False.
 
     """
-    count = itertools.count(start=1)
-    backup: Path = path.with_suffix(path.suffix + '.bkp')
-
-    while backup.is_file():
-        backup = path.with_suffix(path.suffix + f'.bkp.{next(count)}')
+    backup: Path = backup_file(path)
 
     shutil.copy(path, backup)
 

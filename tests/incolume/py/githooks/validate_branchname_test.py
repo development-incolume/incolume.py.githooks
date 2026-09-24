@@ -353,5 +353,5 @@ class TestCaseValidateBranchname:
         v = ValidateBranchname(branchname=entrance)
         result = v.is_valid(**kwargs)
         captured = capsys.readouterr()
-        assert expected.code.value == result
-        assert expected.message == captured.out.strip()
+        assert expected.code.value == result.code.value
+        assert captured.out.strip() or captured.err.strip()

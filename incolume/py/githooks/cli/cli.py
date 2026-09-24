@@ -18,6 +18,7 @@ from incolume.py.githooks.commit_msg import get_msg
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
+    backup_file,
     debug_enable,
     get_git_diff,
     get_issue_from_branch,
@@ -56,13 +57,13 @@ logging.debug('Python %s', platform.python_version())
 msg_commit_file: Path = Path('.git', 'COMMIT_EDITMSG')
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='check_len_first_line_commit_msg_cli',
+    prog_name='check-len-first-line',
 )
 @click.argument(
     'filenames',
@@ -110,6 +111,10 @@ def check_len_first_line_commit_msg_cli(
     logging.info(inspect.stack()[0][3])
 
     if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return int(result_code.value)
 
     for filename in filenames:
@@ -172,9 +177,59 @@ def check_type_commit_msg_cli(
     sys.exit(result.code)  # Validation passed or failure, allowing commit
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-valid-branchname',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    required=False,
+    help='Filename for commit message',
+)
+@click.argument(
+    'commit_source', type=str, required=False, help='Commit source'
+)
+@click.argument('commit_hash', type=str, required=False, help='Commit hash')
+@click.option(
+    '--dev/--no-dev',
+    default=False,
+    help='(default: False) Consider `dev` as protected branch. ',
+)
+@click.option(
+    '--tags/--no-tags',
+    default=False,
+    help='(default: False) Consider `tags` as protected branch. ',
+)
+@click.option(
+    '--main/--no-main',
+    default=True,
+    help='(default: True) Consider `main` or `master` as protected branch. ',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
-    """Check valid branchname.
+def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
+    commit_msg_file: Path,
+    commit_source: str,
+    commit_hash: str,
+    *,
+    dev: bool = False,
+    tags: bool = False,
+    main: bool = True,
+    nonexequi: bool = False,
+) -> int:
+    """Hookgit for check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
 
@@ -182,60 +237,33 @@ def check_valid_branchname_cli(argv: Sequence[str] | None = None) -> int:
         int: 0 to SUCCESS or 1 to FAILURE
 
     """
-    parser = argparse.ArgumentParser(
-        description=('Hook Git em Python para validar branchname.')
-    )
-    parser.add_argument(
-        'commit_msg_file',
-        nargs='+',
-        type=Path,
-        help='Arquivo de mensagem de commit',
-    )
-    parser.add_argument(
-        '--dev',
-        default=False,
-        dest='protected_dev',
-        action='store_true',
-        help='Consider dev as protected branch.',
-    )
-    parser.add_argument(
-        '--tags',
-        default=False,
-        dest='protected_tags',
-        action='store_true',
-        help='Consider tags as protected branch.',
-    )
-    parser.add_argument(
-        '--not-main',
-        default=True,
-        dest='protected_main',
-        action='store_false',
-        help='Desconsider main as protected branch.',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Not run hook, ignore adding Signed-off-by',
-    )
-
-    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-
-    if args.nonexequi:
+    logging.debug(
+        'commit_msg_file: %s, commit_source: %s, commit_hash: %s',
+        commit_msg_file,
+        commit_source,
+        commit_hash,
+    )
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return int(Status.SUCCESS.value)
 
-    return int(
-        ValidateBranchname().is_valid(
-            protected_dev=args.protected_dev,
-            protected_tags=args.protected_tags,
-            protected_main=args.protected_main,
-        )
+    result = ValidateBranchname().is_valid(
+        protected_dev=dev,
+        protected_tags=tags,
+        protected_main=main,
     )
+
+    if result.code == Status.SUCCESS:
+        click.secho(result.message, fg='green')
+    else:
+        click.secho(result.message, fg='red', err=True)
+        click.ClickException(result.message)
+
+    return int(result.code.value)
 
 
 @logging_call(logging.INFO, 'Checking valid filenames.')
@@ -336,16 +364,19 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     return int(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='footer_signedoffby_cli',
+    prog_name='set-footer-signed-off-by',
 )
 @click.argument(
-    'commit_msg_filename', type=Path, help='Arquivo de mensagem de commit'
+    'commit_msg_filename',
+    type=Path,
+    default=msg_commit_file,
+    help='Arquivo de mensagem de commit',
 )
 @click.option(
     '-N',
@@ -427,10 +458,34 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     return 0
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='clean-commit-msg',
+)
+@click.argument(
+    'commit_msg_file', required=True, help='Filename for commit message'
+)
+@click.argument('commit_source', required=False, help='Commit source')
+@click.argument('commit_hash', required=False, help='Commit hash')
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
-    argv: Sequence[str] | None = None,
-) -> Status:
+    commit_msg_file: Path,
+    commit_source: str,
+    commit_hash: str,
+    *,
+    nonexequi: bool = False,
+) -> int:
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
@@ -438,43 +493,33 @@ def clean_commit_msg_cli(
     Hook designed for stages: pre-commit, pre-push, manual
 
     Args:
-        argv: Arguments values sequence:
-          - commit_msg_file (Path or str): The path to the commit message file.
-          - commit_source (str): The source of the commit message.
-          - commit_hash (str): The commit hash.
+        commit_msg_file (Path or str): The path to the commit message file.
+
+        commit_source (str): The source of the commit message.
+
+        commit_hash (str): The commit hash.
+
+        nonexequi (bool): if run hook.
 
     Returns:
         int: SUCCESS code if the operation completes.
 
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('commit_msg_file', help='Filename for commit message')
-    parser.add_argument('commit_source', help='Commit source')
-    parser.add_argument('commit_hash', help='Commit hash')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Do not run this hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
-        return Status.SUCCESS
-
-    commit_msg_file = args.commit_msg_file
-    commit_source = args.commit_source
-    commit_hash = args.commit_hash
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
     ic(commit_msg_file, commit_source, commit_hash)
 
     commit_msg_file = Path(commit_msg_file)
 
-    backup = commit_msg_file.with_suffix(commit_msg_file.suffix + '.bak')
-    backup.write_bytes(commit_msg_file.read_bytes())
+    backup = backup_file(commit_msg_file, '.bak')
+    logging.debug(backup)
 
     result = []
     skipping = False
@@ -495,7 +540,7 @@ def clean_commit_msg_cli(
 
     commit_msg_file.write_text(''.join(result), encoding='utf-8')
 
-    return Status.SUCCESS
+    return int(Status.SUCCESS.value)
 
 
 @logging_call(logging.INFO, 'Validating commit message format.')
@@ -640,13 +685,13 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     return Status.SUCCESS.value
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='set_issue_from_branch_cli',
+    prog_name='set-issue-from-branch',
 )
 @click.argument(
     'commit_msg_filepath',
@@ -657,14 +702,16 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
 @click.argument(
     'commit_type',
     default='',
+    required=False,
     type=str,
     help='---',
 )
 @click.option(
+    '-N',
     '--nonexequi',
     default=False,
     is_flag=True,
-    help='Não executar este hook.',
+    help='Do not run this hook.',
 )
 def set_issue_from_branch_cli(
     commit_msg_filepath: str, commit_type: str, *, nonexequi: bool = False
@@ -715,4 +762,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(footer_signedoffby_cli(sys.argv[1:]))
+    sys.exit(clean_commit_msg_cli(sys.argv[1:]))

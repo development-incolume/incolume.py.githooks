@@ -10,18 +10,31 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-09-22:
+## [Unreleased]	 &#8212; 	2026-09-24:
+### Deprecated
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Security
+  - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
+  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
+## [1.14.0]	 &#8212; 	2026-09-24:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
   - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Added
   - Compatibilidade com Python 3.14;
 ### Changed
-  - Atualizado pyproject.toml com diretivas gui-script, all, cli, keywords, e lincese-files;
-  - Reativado hook check-len-first-line;
-  - Reativado hook check-valid-filenames;
-  - Reativado hook footer-signed-off-by;
-  - Configurado CLI com opção de help (-h, --help), versão (-V --version) e nonexequi (-N, --nonexequi);
+  - Implementado mensagem nonexequi: check_len_first_line_commit_msg_cli;
+  - Implementado mensagem nonexequi: check_valid_branchname_cli;
+  - Implementado mensagem nonexequi: footer_signedoffby_cli;
+  - Implementado mensagem nonexequi: clean_commit_msg_cli;
+  - Implementado mensagem nonexequi: set_issue_from_branch_cli;
+  - Migrado argparse para click: check_len_first_line_commit_msg_cli;
+  - Migrado argparse para click: check_valid_branchname_cli;
+  - Migrar argparse para click: footer_signedoffby_cli;
+  - Migrado argparse para click: clean_commit_msg_cli;
+  - Migrado argparse para click: set_issue_from_branch_cli;
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
@@ -234,4 +247,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.11.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...1.11.0
 [1.12.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...1.12.0
 [1.13.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.12.0...1.13.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.13.0...Unreleased
+[1.14.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.13.0...1.14.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.14.0...Unreleased
