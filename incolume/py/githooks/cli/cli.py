@@ -57,7 +57,7 @@ logging.debug('Python %s', platform.python_version())
 msg_commit_file: Path = Path('.git', 'COMMIT_EDITMSG')
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
     '-V',
@@ -111,6 +111,10 @@ def check_len_first_line_commit_msg_cli(
     logging.info(inspect.stack()[0][3])
 
     if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return int(result_code.value)
 
     for filename in filenames:
