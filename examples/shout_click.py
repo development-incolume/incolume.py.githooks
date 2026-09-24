@@ -17,7 +17,7 @@ from incolume.py.githooks.core import (
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='clean-commit-msg',
+    prog_name='shoutter',
 )
 @click.option(
     '--shout/--no-shout', '-S', default=False, help='Toggle shouting mode.'

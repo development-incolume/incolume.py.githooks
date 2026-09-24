@@ -1,32 +1,72 @@
-#!/usr/bin/env python
+"""Example.
 
-import sys, os, re
-from subprocess import check_output
+diponível em https://www.atlassian.com/br/git/tutorials/git-hooks
+"""
 
-# Collect the parameters
-commit_msg_filepath = sys.argv[1]
-if len(sys.argv) > 2:
-    commit_type = sys.argv[2]
-else:
-    commit_type = ''
-if len(sys.argv) > 3:
-    commit_hash = sys.argv[3]
-else:
-    commit_hash = ''
+import re
+import sys
+from pathlib import Path
+from subprocess import (  # ruff: ignore[suspicious-subprocess-import]
+    check_output,
+)
 
-print "prepare-commit-msg: File: %s\nType: %s\nHash: %s" % (commit_msg_filepath, commit_type, commit_hash)
+import click
+from icecream import ic
 
-# Figure out which branch we're on
-branch = check_output(['git', 'symbolic-ref', '--short', 'HEAD']).strip()
-print "prepare-commit-msg: On branch '%s'" % branch
+from incolume.py.githooks.core import (
+    CONTEXT_SETTINGS_CLICK,
+    __package_name__,
+    __version__,
+)
 
-# Populate the commit message with the issue #, if there is one
-if branch.startswith('issue-'):
-    print "prepare-commit-msg: Oh hey, it's an issue branch."
-    result = re.match('issue-(.*)', branch)
-    issue_number = result.group(1)
 
-    with open(commit_msg_filepath, 'r+') as f:
-        content = f.read()
-        f.seek(0, 0)
-        f.write("ISSUE-%s %s" % (issue_number, content))
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='populate-issue',
+)
+@click.argument(
+    'commit_msg_filepath',
+    required=True,
+    type=click.Path(exists=True),
+    help='commit message filename',
+)
+@click.argument(
+    'commit_type', required=False, default='', type=str, help='commit type'
+)
+@click.argument(
+    'commit_hash', required=False, default='', type=str, help='commit hash'
+)
+def populate_issue(
+    commit_msg_filepath: Path, commit_type: str, commit_hash: str
+) -> None:
+    """Populate the commit message with the issue #, if there is one."""
+    ic(
+        f'prepare-commit-msg: \n\tFile: {commit_msg_filepath}\n\t'
+        f'Type: {commit_type}\n\tHash: {commit_hash}'
+    )
+
+    # Figure out which branch we're on
+    branch = (
+        check_output(['git', 'symbolic-ref', '--short', 'HEAD'])  # ruff: ignore[start-process-with-partial-path]
+        .strip()
+        .decode(encoding='utf-8')
+    )
+    ic(f"prepare-commit-msg: On branch '{branch}'")
+
+    if branch.startswith('issue-'):
+        ic("prepare-commit-msg: Oh hey, it's an issue branch.")
+        result = re.match(r'issue-(.*)', branch)
+        issue_number = result.group(1)
+
+        with Path(commit_msg_filepath).open('r+', encoding='utf-8') as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(f'ISSUE-{issue_number} {content}')
+
+
+if __name__ == '__main__':
+    sys.exit(populate_issue(sys.argv[1:]))
