@@ -685,13 +685,13 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     return Status.SUCCESS.value
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='set_issue_from_branch_cli',
+    prog_name='set-issue-from-branch',
 )
 @click.argument(
     'commit_msg_filepath',
@@ -702,6 +702,7 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
 @click.argument(
     'commit_type',
     default='',
+    required=False,
     type=str,
     help='---',
 )
