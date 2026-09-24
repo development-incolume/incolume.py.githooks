@@ -7,7 +7,6 @@ import logging
 import re
 from dataclasses import dataclass, field
 
-from click import secho
 from icecream import ic
 
 from incolume.py.githooks.core import debug_enable, get_branchname
@@ -136,7 +135,7 @@ class ValidateBranchname:
             return True
         return False
 
-    def is_valid(self, branchname: str = '', **kwargs: str) -> Status:
+    def is_valid(self, branchname: str = '', **kwargs: str) -> Result:
         """Validate branch name.
 
         Args:
@@ -187,10 +186,11 @@ class ValidateBranchname:
             msg += self.violation_text
 
         if self.result.code == Status.FAILURE:
-            secho(self.msg_refused.format(msg), fg='red')
+            self.result.message = self.msg_refused.format(msg)
         else:
-            secho(self.msg_ok, fg='green')
-        return self.result.code.value
+            self.result.message = self.msg_ok
+
+        return self.result
 
 
 if __name__ == '__main__':
