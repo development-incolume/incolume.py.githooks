@@ -467,7 +467,7 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     prog_name='clean-commit-msg',
 )
 @click.argument(
-    'commit_msg_file', required=False, help='Filename for commit message'
+    'commit_msg_file', required=True, help='Filename for commit message'
 )
 @click.argument('commit_source', required=False, help='Commit source')
 @click.argument('commit_hash', required=False, help='Commit hash')
@@ -494,8 +494,11 @@ def clean_commit_msg_cli(
 
     Args:
         commit_msg_file (Path or str): The path to the commit message file.
+
         commit_source (str): The source of the commit message.
+
         commit_hash (str): The commit hash.
+
         nonexequi (bool): if run hook.
 
     Returns:
