@@ -17,10 +17,9 @@ def find_project_root(
 ) -> Path:
     """Find the project root directory by looking for specific markers."""
     if isinstance(start_dir, str):
-        start_dir = Path(start_dir).resolve()
+        start_dir = Path(start_dir).expanduser().resolve()
 
-    if markers is None:
-        markers = MARKERS[:]
+    markers = markers or MARKERS[:]
     current = start_dir
 
     while current != current.parent:
