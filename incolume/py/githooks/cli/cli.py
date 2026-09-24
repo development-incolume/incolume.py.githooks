@@ -215,7 +215,7 @@ def check_type_commit_msg_cli(
     help='Do not run this hook.',
 )
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(
+def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
     commit_msg_file: Path,
     commit_source: str,
     commit_hash: str,
@@ -234,7 +234,12 @@ def check_valid_branchname_cli(
 
     """
     logging.info(inspect.stack()[0][3])
-
+    logging.debug(
+        'commit_msg_file: %s, commit_source: %s, commit_hash: %s',
+        commit_msg_file,
+        commit_source,
+        commit_hash,
+    )
     if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',

@@ -195,6 +195,13 @@ class TestCaseAllCLI:
         ['entrance', 'exit_code', 'params', 'message'],
         [
             pytest.param(
+                '',
+                0,
+                ['-N'],
+                '',
+                marks=[],
+            ),
+            pytest.param(
                 'xpto-wip',
                 0,
                 ['', '--nonexequi'],
@@ -341,10 +348,9 @@ class TestCaseAllCLI:
                 "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"dev\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
                 marks=[],
             ),
-
         ],
     )
-    def test_check_valid_branchname(
+    def test_check_valid_branchname(  # ruff: ignore[too-many-arguments, too-many-positional-arguments]
         self,
         cli_runner: CliRunner,
         capsys: pytest.CaptureFixture[Any],
@@ -361,7 +367,7 @@ class TestCaseAllCLI:
         ):
             result = cli_runner.invoke(cli.check_valid_branchname_cli, params)
             captured = capsys.readouterr()
-            assert (not captured.out.strip() or captured.err.strip())
+            assert not captured.out.strip() or captured.err.strip()
             assert result.exit_code == exit_code
 
     @pytest.mark.parametrize(
