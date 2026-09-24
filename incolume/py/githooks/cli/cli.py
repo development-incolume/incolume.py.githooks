@@ -63,7 +63,7 @@ msg_commit_file: Path = Path('.git', 'COMMIT_EDITMSG')
     '-V',
     '--version',
     package_name=__package_name__,
-    prog_name='check_len_first_line_commit_msg_cli',
+    prog_name='check-len-first-line',
 )
 @click.argument(
     'filenames',
