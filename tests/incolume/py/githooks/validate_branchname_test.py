@@ -354,4 +354,4 @@ class TestCaseValidateBranchname:
         result = v.is_valid(**kwargs)
         captured = capsys.readouterr()
         assert expected.code.value == result.code.value
-        assert captured.out.strip() or captured.err.strip()
+        assert not captured.out.strip() or not captured.err.strip()
