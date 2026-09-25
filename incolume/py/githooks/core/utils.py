@@ -81,6 +81,18 @@ def get_commit_hash() -> str:
     return commit_hash
 
 
+def get_git_diff() -> str:
+    """Retorna a saída de `git diff --cached --name-status -r`."""
+    try:
+        return subprocess.check_output(
+            ['git', 'diff', '--cached', '--name-status', '-r'],
+            text=True,
+        ).strip()
+    except subprocess.CalledProcessError as e:  # pragma: no cover
+        msg = 'Falha ao executar git diff'
+        raise RuntimeError(msg) from e
+
+
 def get_signed_off_by() -> str:
     """Obtém a linha de assinatura 'Signed-off-by' do committer atual.
 
