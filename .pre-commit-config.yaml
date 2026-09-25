@@ -76,6 +76,15 @@ repos:
     #   stages: [pre-commit, pre-push, manual]
     #   args: [--nonexequi]
 
+    - id: check-type-commit-msg
+      verbose: true
+      name: Incolume - Checking type of commit message
+      description: Guarantees that the type of the commit message is correct.
+      entry: check-type-commit-msg
+      language: python
+      stages: [prepare-commit-msg, manual]
+      args: [-N]
+
     - id: check-valid-branchname
       name: Incolume - check if is valid branchnames
       description: Guarantees valid branchname for project.
