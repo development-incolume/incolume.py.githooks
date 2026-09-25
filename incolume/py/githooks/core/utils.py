@@ -16,8 +16,7 @@ def find_project_root(
     start_dir: Path | str = '', markers: tuple[str, ...] | None = None
 ) -> Path:
     """Find the project root directory by looking for specific markers."""
-    if isinstance(start_dir, str):
-        start_dir = Path(start_dir).expanduser().resolve()
+    start_dir = Path(start_dir).expanduser().resolve()
 
     markers = markers or MARKERS[:]
     current = start_dir
