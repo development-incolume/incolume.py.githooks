@@ -122,17 +122,7 @@ def remove_color_tags(text: str) -> str:
     return re.sub(r'\[.*?\]', '', text)
 
 
-def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
-    """Backup file."""
-    count = itertools.count(start=start)
-    backup: Path = filename.with_suffix(filename.suffix + ext)
 
-    while backup.is_file():
-        backup = filename.with_suffix(filename.suffix + f'{ext}.{next(count)}')
-
-    shutil.copy(filename, backup)
-
-    return backup
 
 
 debug_enable()  # Enable debug mode if environment variable is set

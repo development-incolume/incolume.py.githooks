@@ -2,6 +2,8 @@
 
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 
+import itertools
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Final
@@ -13,6 +15,19 @@ MARKERS: Final[tuple[str, ...]] = (
     'setup.cfg',
     '.venv',
 )
+
+
+def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
+    """Backup file."""
+    count = itertools.count(start=start)
+    backup: Path = filename.with_suffix(filename.suffix + ext)
+
+    while backup.is_file():
+        backup = filename.with_suffix(filename.suffix + f'{ext}.{next(count)}')
+
+    shutil.copy(filename, backup)
+
+    return backup
 
 
 def find_project_root(
