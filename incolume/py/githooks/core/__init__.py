@@ -5,17 +5,17 @@ from incolume.py.githooks.core.__main__ import (
     __version__,
     debug_enable,
     debug_var_active,
-    get_commit_hash,
     get_git_diff,
     get_issue_from_branch,
-    subprocess,
 )
 from incolume.py.githooks.core.rules import CONTEXT_SETTINGS_CLICK
 from incolume.py.githooks.core.utils import (
     backup_file,
     get_branchname,
+    get_commit_hash,
     get_signed_off_by,
     remove_color_tags,
+    subprocess,
 )
 
 __all__ = [
