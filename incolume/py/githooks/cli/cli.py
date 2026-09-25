@@ -180,7 +180,11 @@ def check_type_commit_msg_cli(
     result = check_type_commit_msg(*commit_msg_file)
 
     if nonexequi:
-        sys.exit(0)
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
