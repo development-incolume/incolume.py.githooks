@@ -3,6 +3,7 @@
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 
 import itertools
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -73,3 +74,8 @@ def get_signed_off_by() -> str:
         raise RuntimeError(msg) from e
 
     return f'Signed-off-by: {ident.split(">", maxsplit=1)[0]}>'
+
+
+def remove_color_tags(text: str) -> str:
+    """Remove tags of colors from text."""
+    return re.sub(r'\[.*?\]', '', text)
