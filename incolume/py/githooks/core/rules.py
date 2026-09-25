@@ -76,10 +76,16 @@ def to_list(cls: Self) -> list[str]:
     return sorted(cls._value2member_map_)
 
 
+def to_tuple(cls: Self) -> tuple[str]:
+    """Enum to list."""
+    return tuple(sorted(cls._value2member_map_))
+
+
 @add_class_method_decorator(_generate_next_value_, method_modo=staticmethod)
 @add_class_method_decorator(_missing_)
 @add_class_method_decorator(to_set)
 @add_class_method_decorator(to_list)
+@add_class_method_decorator(to_tuple)
 class AutoName(Enum):
     """Rule for next value."""
 
