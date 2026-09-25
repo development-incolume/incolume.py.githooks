@@ -149,7 +149,7 @@ class TestCasePrepareCommitMsg:
                     msg_commit='a' * 51,
                     expected=Result(
                         Status.FAILURE,
-                        message='Error: Commit message must start with a type',
+                        message='Error: Commit message must start with one of types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test).\n\te.g.: \n\t  git commit -m "feat: commit description;"\n\t  git commit -m "refactor(style)!: commit description;" -m "BREAKING CHANGE: descripton breaking"\n\t  git commit -m "style(lang): adding translation for brazilian portuguese"\n',
                     ),
                 ),
             ),
@@ -165,7 +165,8 @@ class TestCasePrepareCommitMsg:
                 Entrance(
                     msg_commit='added: bcd.txt',
                     expected=Result(
-                        code=Status.FAILURE, message='Error: Commit message'
+                        code=Status.FAILURE,
+                        message='Error: Commit message must start with one of types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test).\n\te.g.: \n\t  git commit -m "feat: commit description;"\n\t  git commit -m "refactor(style)!: commit description;" -m "BREAKING CHANGE: descripton breaking"\n\t  git commit -m "style(lang): adding translation for brazilian portuguese"\n',
                     ),
                 ),
             ),
@@ -251,6 +252,7 @@ class TestCasePrepareCommitMsg:
         result = pkg.check_type_commit_msg(test_file)
         assert result.code == entrance.expected.code
         assert entrance.expected.message in result.message
+        assert result.message == entrance.expected.message
 
     @pytest.mark.parametrize(
         ['entrance', 'len_line'],
