@@ -4,10 +4,8 @@
 
 from __future__ import annotations
 
-import itertools
 import logging
 import re
-import shutil
 import subprocess
 from contextlib import suppress
 from os import getenv
@@ -120,9 +118,6 @@ def get_git_diff() -> str:
 def remove_color_tags(text: str) -> str:
     """Remove tags of colors from text."""
     return re.sub(r'\[.*?\]', '', text)
-
-
-
 
 
 debug_enable()  # Enable debug mode if environment variable is set

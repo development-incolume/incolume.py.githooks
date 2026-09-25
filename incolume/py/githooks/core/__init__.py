@@ -3,7 +3,6 @@
 from incolume.py.githooks.core.__main__ import (
     __package_name__,
     __version__,
-    backup_file,
     debug_enable,
     debug_var_active,
     get_branchname,
@@ -14,7 +13,7 @@ from incolume.py.githooks.core.__main__ import (
     subprocess,
 )
 from incolume.py.githooks.core.rules import CONTEXT_SETTINGS_CLICK
-from incolume.py.githooks.core.utils import get_signed_off_by
+from incolume.py.githooks.core.utils import backup_file, get_signed_off_by
 
 __all__ = [
     'CONTEXT_SETTINGS_CLICK',
