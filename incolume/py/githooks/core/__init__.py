@@ -10,11 +10,11 @@ from incolume.py.githooks.core.__main__ import (
     get_commit_hash,
     get_git_diff,
     get_issue_from_branch,
-    get_signed_off_by,
     remove_color_tags,
     subprocess,
 )
 from incolume.py.githooks.core.rules import CONTEXT_SETTINGS_CLICK
+from incolume.py.githooks.core.utils import get_signed_off_by
 
 __all__ = [
     'CONTEXT_SETTINGS_CLICK',
