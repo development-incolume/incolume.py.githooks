@@ -60,9 +60,6 @@ def debug_enable() -> bool:
     return debug
 
 
-
-
-
 def get_branchname() -> str:
     """Get current branch name."""
     branch = (
