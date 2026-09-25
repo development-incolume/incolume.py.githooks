@@ -188,12 +188,14 @@ def check_type_commit_msg_cli(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return sys.exit(0)
+        return 0
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
-    sys.exit(result.code)  # Validation passed or failure, allowing commit
+    return int(
+        result.code.value
+    )  # Validation passed or failure, allowing commit
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
