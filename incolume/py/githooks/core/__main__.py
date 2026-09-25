@@ -1,12 +1,8 @@
 """Module core.__main__ for project."""
 
-# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
-
 from __future__ import annotations
 
 import logging
-import re
-import subprocess
 from contextlib import suppress
 from os import getenv
 from pathlib import Path
@@ -56,9 +52,6 @@ def debug_enable() -> bool:
     if debug:
         ic.enable()
     return debug
-
-
-
 
 
 debug_enable()  # Enable debug mode if environment variable is set
