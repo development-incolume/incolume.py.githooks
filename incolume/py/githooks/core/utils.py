@@ -1,5 +1,8 @@
 """Module core.utils."""
 
+# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
+
+import subprocess
 from pathlib import Path
 from typing import Final
 
@@ -29,3 +32,29 @@ def find_project_root(
 
     msg = 'Project root not found (no markers detected).'
     raise FileNotFoundError(msg)
+
+
+def get_signed_off_by() -> str:
+    """Obtém a linha de assinatura 'Signed-off-by' do committer atual.
+
+    Usa `git var GIT_COMMITTER_IDENT` para extrair o nome e email do committer.
+
+    Returns:
+        str: Linha formatada no padrão:
+             "Signed-off-by: Nome <email>"
+
+    Raises:
+        RuntimeError: Se a execução do comando git falhar.
+
+    """
+    try:
+        ident: str = subprocess.check_output(
+            ['git', 'var', 'GIT_COMMITTER_IDENT'], text=True
+        ).strip()
+    except (
+        subprocess.CalledProcessError
+    ) as e:  # pragma: no cover; noqa: S110 TODO cover in future
+        msg = 'Falha ao obter GIT_COMMITTER_IDENT'
+        raise RuntimeError(msg) from e
+
+    return f'Signed-off-by: {ident.split(">", maxsplit=1)[0]}>'
