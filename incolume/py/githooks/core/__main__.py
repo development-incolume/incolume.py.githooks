@@ -75,7 +75,4 @@ def get_issue_from_branch() -> str:
     return ''  # Retorna string vazia se não houver correspondência
 
 
-
-
-
 debug_enable()  # Enable debug mode if environment variable is set
