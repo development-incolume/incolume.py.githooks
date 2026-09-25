@@ -467,7 +467,11 @@ def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
     logging.info(inspect.stack()[0][3])
     logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     click.secho(effort_msg(), fg='green')
