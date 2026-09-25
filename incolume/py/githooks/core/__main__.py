@@ -58,20 +58,6 @@ def debug_enable() -> bool:
     return debug
 
 
-def get_commit_hash() -> str:
-    """Get current commit hash."""
-    commit_hash = (
-        subprocess
-        .check_output(
-            ['git', 'rev-parse', 'HEAD'],
-        )
-        .strip()
-        .decode('utf-8')
-    )
-    logging.debug(ic(commit_hash))
-    return commit_hash
-
-
 def get_issue_from_branch() -> str:
     """Extrai o número do ticket do nome do branch."""
     # Obtém o nome do branch atual
