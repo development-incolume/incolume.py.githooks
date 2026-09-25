@@ -67,6 +67,20 @@ def get_branchname() -> str:
     return branch
 
 
+def get_commit_hash() -> str:
+    """Get current commit hash."""
+    commit_hash = (
+        subprocess
+        .check_output(
+            ['git', 'rev-parse', 'HEAD'],
+        )
+        .strip()
+        .decode('utf-8')
+    )
+    logging.debug(ic(commit_hash))
+    return commit_hash
+
+
 def get_signed_off_by() -> str:
     """Obtém a linha de assinatura 'Signed-off-by' do committer atual.
 
