@@ -28,7 +28,6 @@ class TestCaseDecorators:
         environ.pop('DEBUG_MODE')
         debug_enable()
 
-    @pytest.mark.noci
     def test_my_decorator(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:  # pragma: no cover
@@ -47,7 +46,6 @@ class TestCaseDecorators:
         capture = capsys.readouterr()
         assert all(e in capture.err for e in expected)
 
-    @pytest.mark.noci
     def test_simple_decorator(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:  # pragma: no cover
