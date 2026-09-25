@@ -3,11 +3,14 @@
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 
 import itertools
+import logging
 import re
 import shutil
 import subprocess
 from pathlib import Path
 from typing import Final
+
+from icecream import ic
 
 MARKERS: Final[tuple[str, ...]] = (
     'pyproject.toml',
@@ -48,6 +51,20 @@ def find_project_root(
 
     msg = 'Project root not found (no markers detected).'
     raise FileNotFoundError(msg)
+
+
+def get_branchname() -> str:
+    """Get current branch name."""
+    branch = (
+        subprocess
+        .check_output(
+            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
+        )
+        .strip()
+        .decode('utf-8')
+    )
+    logging.debug(ic(branch))
+    return branch
 
 
 def get_signed_off_by() -> str:

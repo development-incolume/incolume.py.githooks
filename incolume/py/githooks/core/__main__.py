@@ -58,19 +58,6 @@ def debug_enable() -> bool:
     return debug
 
 
-def get_branchname() -> str:
-    """Get current branch name."""
-    branch = (
-        subprocess
-        .check_output(
-            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
-        )
-        .strip()
-        .decode('utf-8')
-    )
-    logging.debug(ic(branch))
-    return branch
-
 
 def get_commit_hash() -> str:
     """Get current commit hash."""
