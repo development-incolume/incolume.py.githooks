@@ -446,28 +446,34 @@ def footer_signedoffby_cli(
     return int(Status.SUCCESS.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='effort-msg',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(logging.INFO, 'Displaying effort message after commit.')
-def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
+def effort_msg_cli(*, nonexequi: bool) -> int:
     """Run it.
 
-    Hook designed for stages: pre-commit, pre-push, manual
+    Hook designed for stages: post-commit, manual
     """
-    parser = argparse.ArgumentParser(
-        description='Exibe mensagem de esforço após exito do commit.'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     click.secho(effort_msg(), fg='green')
