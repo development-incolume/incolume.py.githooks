@@ -38,7 +38,9 @@ def find_project_root(
     start_dir: Path | str = '', markers: tuple[str, ...] | None = None
 ) -> Path:
     """Find the project root directory by looking for specific markers."""
-    start_dir = Path(start_dir).expanduser().resolve()
+    start_dir = Path(start_dir)
+    start_dir = start_dir.parent if start_dir.is_file() else start_dir
+    start_dir = start_dir.expanduser().resolve()
 
     markers = markers or MARKERS[:]
     current = start_dir

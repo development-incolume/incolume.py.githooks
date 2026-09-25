@@ -30,6 +30,7 @@ from incolume.py.githooks.core.rules import (
     Result,
     Status,
 )
+from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg
 from incolume.py.githooks.footer_signedoffby import (
@@ -54,7 +55,9 @@ if TYPE_CHECKING:
 
 
 logging.debug('Python %s', platform.python_version())
-msg_commit_file: Path = Path('.git', 'COMMIT_EDITMSG')
+msg_commit_file: Path = find_project_root(__file__).joinpath(
+    '.git', 'COMMIT_EDITMSG'
+)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
