@@ -58,7 +58,6 @@ def debug_enable() -> bool:
     return debug
 
 
-
 def get_commit_hash() -> str:
     """Get current commit hash."""
     commit_hash = (
