@@ -73,7 +73,10 @@ def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
-    regex = re.compile(rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?:')
+    regex = re.compile(
+        rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?\!?:'
+    )
+    print(regex)
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     commit_message = commit_msg_filepath.read_bytes().decode().strip()
