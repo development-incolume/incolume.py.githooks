@@ -90,7 +90,8 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
                 f'Error: Commit message must start with one of types: {", ".join(TypeCommit.to_tuple())}).\n'
                 '\te.g.: \n'
                 '\t  git commit -m "feat: commit description;"\n'
-                '\t  git commit -m "refactor(style)!: commit description;"\n'
+                '\t  git commit -m "refactor(style)!: commit description;" -m "BREAKING CHANGE: descripton breaking"\n'
+                '\t  git commit -m "style(lang): adding translation for brazilian portuguese"\n'
             ),
         )
     return result
