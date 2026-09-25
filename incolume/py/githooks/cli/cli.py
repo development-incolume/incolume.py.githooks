@@ -145,6 +145,7 @@ def check_len_first_line_commit_msg_cli(
 
     return int(result_code.value)
 
+
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
@@ -164,7 +165,7 @@ def check_len_first_line_commit_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=msg_commit_file,
+    default=(msg_commit_file,),
     required=False,
     help='Filename for commit message',
 )
