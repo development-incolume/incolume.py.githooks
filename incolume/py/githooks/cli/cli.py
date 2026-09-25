@@ -145,30 +145,41 @@ def check_len_first_line_commit_msg_cli(
 
     return int(result_code.value)
 
-
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-type-commit-msg',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=msg_commit_file,
+    required=False,
+    help='Filename for commit message',
+)
 @logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
-    argv: Sequence[str] | None = None,
+    commit_msg_file: list[Path],
+    *,
+    nonexequi: bool = False,
 ) -> int:
     """Check commit message."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    result = check_type_commit_msg(*args.filenames)
+    result = check_type_commit_msg(*commit_msg_file)
 
-    if args.nonexequi:
+    if nonexequi:
         sys.exit(0)
 
     click.secho(
@@ -762,4 +773,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(clean_commit_msg_cli(sys.argv[1:]))
+    sys.exit(check_type_commit_msg_cli(sys.argv[1:]))
