@@ -76,7 +76,8 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     regex = re.compile(
         rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?\!?:'
     )
-    print(regex)
+    logging.info('active type commit regex: %s', regex)
+
     commit_msg_filepath = Path(commit_msg_filepath)
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     commit_message = commit_msg_filepath.read_bytes().decode().strip()
@@ -85,7 +86,12 @@ def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     if not regex.match(commit_message):
         result = Result(
             code=Status.FAILURE,
-            message='Error: Commit message must start with a type (e.g., feat:, fix:).',
+            message=(
+                f'Error: Commit message must start with one of types: {", ".join(TypeCommit.to_tuple())}).\n'
+                '\te.g.: \n'
+                '\t  git commit -m "feat: commit description;"\n'
+                '\t  git commit -m "refactor(style)!: commit description;"\n'
+            ),
         )
     return result
 
