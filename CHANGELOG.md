@@ -18,6 +18,20 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%23006400?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.15.0]	 &#8212; 	2026-09-25:
+### Deprecated
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Added
+  - Novo módulo utils;
+  - Adicionado gadgets de versão segura de python;
+  - Adicionado gadget de validação dos testes unitários;
+### Changed
+  - Funções comuns centralizadas no modulo utils;
+### Security
+  - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%23006400?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
+  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
 ## [1.14.0]	 &#8212; 	2026-09-24:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
@@ -248,4 +262,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.12.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...1.12.0
 [1.13.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.12.0...1.13.0
 [1.14.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.13.0...1.14.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.14.0...Unreleased
+[1.15.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.14.0...1.15.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.15.0...Unreleased
