@@ -30,6 +30,7 @@ from incolume.py.githooks.core.rules import (
     Result,
     Status,
 )
+from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg
 from incolume.py.githooks.footer_signedoffby import (
@@ -54,7 +55,9 @@ if TYPE_CHECKING:
 
 
 logging.debug('Python %s', platform.python_version())
-msg_commit_file: Path = Path('.git', 'COMMIT_EDITMSG')
+msg_commit_file: Path = find_project_root(__file__).joinpath(
+    '.git', 'COMMIT_EDITMSG'
+)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
@@ -146,35 +149,53 @@ def check_len_first_line_commit_msg_cli(
     return int(result_code.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-type-commit-msg',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=(msg_commit_file,),
+    required=False,
+    help='Filename for commit message',
+)
 @logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
-    argv: Sequence[str] | None = None,
+    commit_msg_file: list[Path],
+    *,
+    nonexequi: bool = False,
 ) -> int:
     """Check commit message."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {argv=}')
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    result = check_type_commit_msg(*args.filenames)
+    result = check_type_commit_msg(*commit_msg_file)
 
-    if args.nonexequi:
-        sys.exit(0)
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
-    sys.exit(result.code)  # Validation passed or failure, allowing commit
+    return int(
+        result.code.value
+    )  # Validation passed or failure, allowing commit
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
@@ -430,28 +451,34 @@ def footer_signedoffby_cli(
     return int(Status.SUCCESS.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='effort-msg',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
 @logging_call(logging.INFO, 'Displaying effort message after commit.')
-def effort_msg_cli(argv: Sequence[str] | None = None) -> int:
+def effort_msg_cli(*, nonexequi: bool) -> int:
     """Run it.
 
-    Hook designed for stages: pre-commit, pre-push, manual
+    Hook designed for stages: post-commit, manual
     """
-    parser = argparse.ArgumentParser(
-        description='Exibe mensagem de esforço após exito do commit.'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     click.secho(effort_msg(), fg='green')
@@ -762,4 +789,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(clean_commit_msg_cli(sys.argv[1:]))
+    sys.exit(check_type_commit_msg_cli(sys.argv[1:]))

@@ -1,14 +1,8 @@
 """Module core.__main__ for project."""
 
-# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
-
 from __future__ import annotations
 
-import itertools
 import logging
-import re
-import shutil
-import subprocess
 from contextlib import suppress
 from os import getenv
 from pathlib import Path
@@ -58,107 +52,6 @@ def debug_enable() -> bool:
     if debug:
         ic.enable()
     return debug
-
-
-def get_signed_off_by() -> str:
-    """Obtém a linha de assinatura 'Signed-off-by' do committer atual.
-
-    Usa `git var GIT_COMMITTER_IDENT` para extrair o nome e email do committer.
-
-    Returns:
-        str: Linha formatada no padrão:
-             "Signed-off-by: Nome <email>"
-
-    Raises:
-        RuntimeError: Se a execução do comando git falhar.
-
-    """
-    try:
-        ident: str = subprocess.check_output(
-            ['git', 'var', 'GIT_COMMITTER_IDENT'], text=True
-        ).strip()
-    except (
-        subprocess.CalledProcessError
-    ) as e:  # pragma: no cover; noqa: S110 TODO cover in future
-        msg = 'Falha ao obter GIT_COMMITTER_IDENT'
-        raise RuntimeError(msg) from e
-
-    return f'Signed-off-by: {ident.split(">", maxsplit=1)[0]}>'
-
-
-def get_branchname() -> str:
-    """Get current branch name."""
-    branch = (
-        subprocess
-        .check_output(
-            ['git', 'rev-parse', '--abbrev-ref', 'HEAD'],
-        )
-        .strip()
-        .decode('utf-8')
-    )
-    logging.debug(ic(branch))
-    return branch
-
-
-def get_commit_hash() -> str:
-    """Get current commit hash."""
-    commit_hash = (
-        subprocess
-        .check_output(
-            ['git', 'rev-parse', 'HEAD'],
-        )
-        .strip()
-        .decode('utf-8')
-    )
-    logging.debug(ic(commit_hash))
-    return commit_hash
-
-
-def get_issue_from_branch() -> str:
-    """Extrai o número do ticket do nome do branch."""
-    # Obtém o nome do branch atual
-    branch = (
-        subprocess
-        .check_output(['git', 'symbolic-ref', '--short', 'HEAD'])
-        .strip()
-        .decode('utf-8')
-    )
-
-    # Exemplo: branch '195-check-len-first' -> '195'
-    match = re.match(r'^(\d+)\-.+$', branch)
-    if match:
-        return match.group(1)
-    return ''  # Retorna string vazia se não houver correspondência
-
-
-def get_git_diff() -> str:
-    """Retorna a saída de `git diff --cached --name-status -r`."""
-    try:
-        return subprocess.check_output(
-            ['git', 'diff', '--cached', '--name-status', '-r'],
-            text=True,
-        ).strip()
-    except subprocess.CalledProcessError as e:  # pragma: no cover
-        msg = 'Falha ao executar git diff'
-        raise RuntimeError(msg) from e
-
-
-def remove_color_tags(text: str) -> str:
-    """Remove tags of colors from text."""
-    return re.sub(r'\[.*?\]', '', text)
-
-
-def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
-    """Backup file."""
-    count = itertools.count(start=start)
-    backup: Path = filename.with_suffix(filename.suffix + ext)
-
-    while backup.is_file():
-        backup = filename.with_suffix(filename.suffix + f'{ext}.{next(count)}')
-
-    shutil.copy(filename, backup)
-
-    return backup
 
 
 debug_enable()  # Enable debug mode if environment variable is set

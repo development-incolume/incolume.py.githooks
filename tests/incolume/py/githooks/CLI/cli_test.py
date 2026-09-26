@@ -533,12 +533,16 @@ class TestCaseAllCLI:
         ],
     )
     def test_effort_msg_cli(
-        self, capsys: pytest.CaptureFixture[str], entrance: str, expected: str
+        self,
+        cli_runner: CliRunner,
+        capsys: pytest.CaptureFixture[str],
+        entrance: str,
+        expected: str,
     ) -> None:
         """Teste CLI."""
-        result = cli.effort_msg_cli(entrance)
+        result = cli_runner.invoke(cli.effort_msg_cli, entrance)
         captured = capsys.readouterr()
-        assert result == 0
+        assert result.exit_code == 0
         assert expected in captured.out
         if not entrance:
             assert '\033[32m' in captured.out  # Fore.GREEN
