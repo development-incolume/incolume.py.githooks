@@ -8,7 +8,6 @@ import logging
 import platform
 import re
 import sys
-from collections.abc import Container
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -325,7 +324,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
 )
 @logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
-    filenames: Container[Path],
+    filenames: Sequence[Path],
     min_len: int = 3,
     max_len: int = 256,
     *,
@@ -356,9 +355,12 @@ def check_valid_filenames_cli(
         codes |= result.code
         for message in result.messages:
             click.secho(
-                message, fg='green' if result.code == Status.SUCCESS else 'red'
+                message,
+                fg='green' if result.code == Status.SUCCESS else 'red',
+                err=True,
             )
-
+    if codes.value == Status.FAILURE:
+        raise click.ClickException
     return int(codes.value)
 
 
