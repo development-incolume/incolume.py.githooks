@@ -724,6 +724,10 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
 
     if not args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return Status.SUCCESS.value
 
     diff_output = get_git_diff()
