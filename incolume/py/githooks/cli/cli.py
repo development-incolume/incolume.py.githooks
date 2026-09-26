@@ -381,6 +381,10 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     ic(args)
