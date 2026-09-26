@@ -673,6 +673,10 @@ def effort_random_msg_cli(*,fixed: bool = False, nonexequi: bool = False) -> int
     logging.info(inspect.stack()[0][3])
 
     if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     click.secho(effort_random_msg(fixed=fixed), fg='green')
