@@ -332,6 +332,10 @@ def check_valid_filenames_cli(
     codes = Status.SUCCESS
 
     if args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return int(Status.SUCCESS.value)
 
     results: list[RequestFl] = [
