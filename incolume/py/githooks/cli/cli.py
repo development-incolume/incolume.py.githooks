@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 import click
 from icecream import ic
 
-from incolume.py.githooks.commit_msg import get_msg
+from incolume.py.githooks.commit_msg import effort_random_msg
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
@@ -665,7 +665,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     help='Pin a hook message.',
 )
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
-def get_msg_cli(*,fixed: bool = False, nonexequi: bool = False) -> int:
+def effort_random_msg_cli(*,fixed: bool = False, nonexequi: bool = False) -> int:
     """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
@@ -675,7 +675,7 @@ def get_msg_cli(*,fixed: bool = False, nonexequi: bool = False) -> int:
     if nonexequi:
         return 0
 
-    click.secho(get_msg(fixed=fixed), fg='green')
+    click.secho(effort_random_msg(fixed=fixed), fg='green')
 
     return 0
 
@@ -794,4 +794,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(get_msg_cli(sys.argv[1:]))
+    sys.exit(effort_random_msg_cli(sys.argv[1:]))

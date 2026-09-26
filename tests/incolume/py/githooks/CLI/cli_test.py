@@ -693,7 +693,7 @@ class TestCaseAllCLI:
         self, capsys: pytest.CaptureFixture[Any], entrance: list[str]
     ) -> None:
         """Test get_msg function."""
-        cli.get_msg_cli(entrance)
+        cli.effort_random_msg_cli(entrance)
         captured = capsys.readouterr()
         assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 
