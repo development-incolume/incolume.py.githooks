@@ -493,11 +493,6 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     package_name=__package_name__,
     prog_name='clean-commit-msg',
 )
-@click.argument(
-    'commit_msg_file', required=True, help='Filename for commit message'
-)
-@click.argument('commit_source', required=False, help='Commit source')
-@click.argument('commit_hash', required=False, help='Commit hash')
 @click.option(
     '-N',
     '--nonexequi',
@@ -505,6 +500,11 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.argument(
+    'commit_msg_file', required=True, help='Filename for commit message'
+)
+@click.argument('commit_source', required=False, help='Commit source')
+@click.argument('commit_hash', required=False, help='Commit hash')
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
     commit_msg_file: Path,
@@ -642,37 +642,42 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
         result |= Status.FAILURE
     return int(result.value)
 
-
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='effort-random-msg',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.option(
+    '--fixed',
+    '-F',
+    default=False,
+    is_flag=True,
+    help='Pin a hook message.',
+)
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
-def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
-    """Run it."""
-    parser = argparse.ArgumentParser(
-        description='Exibe mensagens de sucesso após exito do commit.'
-    )
-    parser.add_argument(
-        '--fixed',
-        default=False,
-        dest='fixed',
-        action='store_true',
-        help='Fixar messagem de hook.',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
+def get_msg_cli(*,fixed: bool = False, nonexequi: bool = False) -> int:
+    """Display success messages after a successful commit.
 
-    args = parser.parse_args(argv)
+    Hook designed for stages: post-commit, manual
+    """
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-    ic(args)
 
-    if not args.nonexequi:
-        click.secho(get_msg(fixed=args.fixed), fg='green')
+    if nonexequi:
+        return 0
 
-    return Status.SUCCESS.value
+    click.secho(get_msg(fixed=fixed), fg='green')
+
+    return 0
 
 
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
@@ -789,4 +794,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(check_type_commit_msg_cli(sys.argv[1:]))
+    sys.exit(get_msg_cli(sys.argv[1:]))
