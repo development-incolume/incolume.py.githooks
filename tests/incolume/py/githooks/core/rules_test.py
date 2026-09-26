@@ -153,6 +153,22 @@ class TestCaseRules:
             'fix',
         }
 
+    def test_type_commit_totuple(self) -> None:
+        """Test TypeCommit enum."""
+        assert pkg.TypeCommit.to_tuple() == (
+            'build',
+            'chore',
+            'ci',
+            'docs',
+            'feat',
+            'fix',
+            'perf',
+            'refactor',
+            'revert',
+            'style',
+            'test',
+        )
+
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [

@@ -1,7 +1,7 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 minimum_pre_commit_version: '4.6.2'
-default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg]
+default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, post-commit]
 fail_fast: false
 
 repos:
@@ -76,6 +76,15 @@ repos:
     #   stages: [pre-commit, pre-push, manual]
     #   args: [--nonexequi]
 
+    - id: check-type-commit-msg
+      verbose: true
+      name: Incolume - Checking type of commit message
+      description: Guarantees that the type of the commit message is correct.
+      entry: check-type-commit-msg
+      language: python
+      stages: [prepare-commit-msg, manual]
+      args: [-N]
+
     - id: check-valid-branchname
       name: Incolume - check if is valid branchnames
       description: Guarantees valid branchname for project.
@@ -118,6 +127,7 @@ repos:
       args: []
 
     - id: effort-message
+      verbose: true
       name: Incolume - Commit Message Effort Hook
       language: python
       entry: effort-msg

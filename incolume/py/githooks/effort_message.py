@@ -12,5 +12,5 @@ from colorama import Fore, Style
 
 def effort_msg(message: str = '') -> str:
     """Effort message."""
-    message = message or 'Boa! Continue trabalhando com dedicação!'
+    message = message or 'Great. Keep up the hard work!!'
     return f'{Fore.GREEN}{message}{Style.NORMAL}'
