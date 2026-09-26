@@ -689,11 +689,14 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], marks=[]),
         ],
     )
-    def test_get_msg_cli(
-        self, capsys: pytest.CaptureFixture[Any], entrance: list[str]
+    def test_effort_random_msg_cli(
+        self,
+        cli_runner: CliRunner,
+        capsys: pytest.CaptureFixture[Any],
+        entrance: list[str],
     ) -> None:
         """Test get_msg function."""
-        cli.effort_random_msg_cli(entrance)
+        cli_runner.invoke(cli.effort_random_msg_cli, entrance)
         captured = capsys.readouterr()
         assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 

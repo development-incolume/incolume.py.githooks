@@ -642,6 +642,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
         result |= Status.FAILURE
     return int(result.value)
 
+
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
 @click.version_option(
     __version__,
@@ -665,7 +666,9 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     help='Pin a hook message.',
 )
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
-def effort_random_msg_cli(*,fixed: bool = False, nonexequi: bool = False) -> int:
+def effort_random_msg_cli(
+    *, fixed: bool = False, nonexequi: bool = False
+) -> int:
     """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
