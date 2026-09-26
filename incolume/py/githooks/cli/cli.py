@@ -493,11 +493,6 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     package_name=__package_name__,
     prog_name='clean-commit-msg',
 )
-@click.argument(
-    'commit_msg_file', required=True, help='Filename for commit message'
-)
-@click.argument('commit_source', required=False, help='Commit source')
-@click.argument('commit_hash', required=False, help='Commit hash')
 @click.option(
     '-N',
     '--nonexequi',
@@ -505,6 +500,11 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.argument(
+    'commit_msg_file', required=True, help='Filename for commit message'
+)
+@click.argument('commit_source', required=False, help='Commit source')
+@click.argument('commit_hash', required=False, help='Commit hash')
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
     commit_msg_file: Path,
