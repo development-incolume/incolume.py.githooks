@@ -111,8 +111,8 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.FAILURE,
                         [
-                            'Error: Commit subject line has an insufficient number of',
-                            'Commit maximum length for message is validated',
+                            'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
+                            'Error: The first line of the commit violates the defined minimum limits. (min: 10 and max: 50)',
                         ],
                     ),
                 ),
@@ -126,7 +126,7 @@ class TestCaseAllCLI:
                         Status.FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
-                            'Error: The first line of the commit violates the defined limits between 4 and 5.',
+                            'Error: The first line of the commit violates the defined minimum limits. (min: 10 and max: 50)',
                         ],
                     ),
                 ),
@@ -172,6 +172,7 @@ class TestCaseAllCLI:
         logging.info('captured.err=%s', captured.err)
 
         assert result.exit_code == entrance.expected.code.value
+        assert all(msg in result.output for msg in entrance.expected.message)
 
     @pytest.mark.parametrize(
         'args',
