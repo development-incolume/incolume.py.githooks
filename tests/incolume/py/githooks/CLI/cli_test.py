@@ -12,7 +12,6 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
-import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
@@ -149,7 +148,6 @@ class TestCaseAllCLI:
     )
     def test_check_len_first_line_commit_msg_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
         isolated_cli_runner: CliRunner,
         entrance: Entrance,
     ) -> None:
@@ -167,9 +165,6 @@ class TestCaseAllCLI:
                 *entrance.params,
             ],
         )
-        captured = capsys.readouterr()
-        logging.info('captured.out=%s', captured.out)
-        logging.info('captured.err=%s', captured.err)
 
         assert result.exit_code == entrance.expected.code.value
         assert all(msg in result.output for msg in entrance.expected.message)
@@ -351,10 +346,9 @@ class TestCaseAllCLI:
             ),
         ],
     )
-    def test_check_valid_branchname(  # ruff: ignore[too-many-arguments, too-many-positional-arguments]
+    def test_check_valid_branchname(
         self,
         cli_runner: CliRunner,
-        capsys: pytest.CaptureFixture[Any],
         entrance: str,
         exit_code: int,
         params: list[str],
@@ -367,9 +361,8 @@ class TestCaseAllCLI:
             subprocess, 'check_output', return_value=bytes(entrance, 'utf-8')
         ):
             result = cli_runner.invoke(cli.check_valid_branchname_cli, params)
-            captured = capsys.readouterr()
-            assert not captured.out.strip() or captured.err.strip()
             assert result.exit_code == exit_code
+            assert message in result.output
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
