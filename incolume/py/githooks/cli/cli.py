@@ -361,9 +361,8 @@ def check_valid_filenames_cli(
                 fg='green' if result.code == Status.SUCCESS else 'red',
                 err=True,
             )
-    if codes.value == Status.FAILURE:
-        raise click.ClickException
-    ctx.exit(int(codes.value))
+    ic(ctx)
+    ctx.exit(codes.value)
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
