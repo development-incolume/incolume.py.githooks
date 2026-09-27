@@ -382,13 +382,13 @@ class TestCaseAllCLI:
                 ['Jürgen.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case:',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 ['Jürgen'],
-                Status.SUCCESS,
-                'ok',
-                marks=[pytest.mark.xfail],
+                Status.FAILURE,
+                'Filename structure is invalid.',
+                marks=[],
             ),
             pytest.param(
                 ['x' * 257 + '.py'],
@@ -438,16 +438,14 @@ class TestCaseAllCLI:
     def test_check_valid_filenames_cli(
         self,
         cli_runner: CliRunner,
-        capsys: pytest.CaptureFixture[Any],
         entrance: set[str],
         result_expected: Status,
         expected: str,
     ) -> None:
         """Test CLI."""
         result = cli_runner.invoke(cli.check_valid_filenames_cli, entrance)
-        captured = capsys.readouterr()
         assert result.exit_code == result_expected.value
-        assert captured
+        assert expected in result.output
 
     @pytest.mark.parametrize(
         ['entrance', 'args'],
