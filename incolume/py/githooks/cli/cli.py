@@ -239,8 +239,10 @@ def check_type_commit_msg_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking valid branchname.')
 def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
+    ctx: click.Context,
     commit_msg_file: Path,
     commit_source: str,
     commit_hash: str,
@@ -249,7 +251,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
     tags: bool = False,
     main: bool = True,
     nonexequi: bool = False,
-) -> int:
+) -> click.Context:
     """Hookgit for check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -270,7 +272,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return int(Status.SUCCESS.value)
+        ctx.exit(Status.SUCCESS.value)
 
     result = ValidateBranchname().is_valid(
         protected_dev=dev,
@@ -284,7 +286,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
         click.secho(result.message, fg='red', err=True)
         click.ClickException(result.message)
 
-    return int(result.code.value)
+    ctx.exit(result.code.value)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
