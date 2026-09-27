@@ -19,7 +19,7 @@ from incolume.py.githooks.core import CONTEXT_SETTINGS_CLICK
     }
 )
 @click.pass_context
-def cli(ctx: dict) -> None:
+def cli(ctx: click.Context) -> None:
     """Principal CLI."""
     # Parse extra args into a dictionary
     # Assumes pairs like --key value
