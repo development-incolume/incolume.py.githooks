@@ -438,7 +438,7 @@ class TestCaseAllCLI:
     def test_check_valid_filenames_cli(
         self,
         cli_runner: CliRunner,
-        entrance: set[str],
+        entrance: list[str],
         result_expected: Status,
         expected: str,
     ) -> None:

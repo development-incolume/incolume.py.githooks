@@ -51,7 +51,7 @@ from incolume.py.githooks.validate_filename import validate_filename
 debug_enable()
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Sequence
 
 
 logging.debug('Python %s', platform.python_version())
@@ -325,13 +325,13 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
 @click.pass_context
 @logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
-    ctx: Mapping,
+    ctx: click.Context,
     filenames: Sequence[Path],
     min_len: int = 3,
     max_len: int = 256,
     *,
     nonexequi: bool = False,
-) -> int:
+) -> click.Context:
     """Validate Filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -347,7 +347,7 @@ def check_valid_filenames_cli(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        ctx.exit(int(Status.SUCCESS.value))
+        ctx.exit(Status.SUCCESS.value)
 
     results: list[RequestFl] = [
         validate_filename(filename=filename, min_len=min_len, max_len=max_len)
