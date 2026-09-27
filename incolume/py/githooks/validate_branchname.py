@@ -156,6 +156,9 @@ class ValidateBranchname:
         protected_main = kwargs.get('protected_main', True)
 
         logging.debug('detected: %s', ic(branchname))
+        logging.debug('protected dev: %s', ic(protected_dev))
+        logging.debug('protected tags: %s', ic(protected_tags))
+        logging.debug('protected main/master: %s', ic(protected_main))
 
         ic(self.result)
         msg: str = ''

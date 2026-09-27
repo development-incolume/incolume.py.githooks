@@ -212,20 +212,6 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                'main',
-                0,
-                ['', '--no-main'],
-                '',
-                marks=[pytest.mark.xfail],
-            ),
-            pytest.param(
-                'master',
-                0,
-                ['', '--no-main'],
-                '',
-                marks=[pytest.mark.xfail],
-            ),
-            pytest.param(
                 '123-jesus-loves-you',
                 0,
                 [''],
@@ -343,6 +329,34 @@ class TestCaseAllCLI:
                 ['--dev'],
                 ' Branch name "dev" is protected.',
                 marks=[],
+            ),
+            pytest.param(
+                'dev',
+                0,
+                ['--no-dev'],
+                '',
+                marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'tags',
+                0,
+                ['--no-tags'],
+                '',
+                marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'main',
+                0,
+                ['', '--no-main'],
+                '',
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                'master',
+                0,
+                ['', '--no-main'],
+                '',
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
