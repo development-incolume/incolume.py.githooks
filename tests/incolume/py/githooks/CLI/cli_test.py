@@ -374,78 +374,78 @@ class TestCaseAllCLI:
         ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
-                {'4File.py'},
+                ['4File.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case:',
             ),
             pytest.param(
-                {'Jürgen.py'},
+                ['Jürgen.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case:',
+                marks=[],
             ),
             pytest.param(
-                {'Jürgen'},
-                Status.SUCCESS,
-                'ok',
-                marks=[pytest.mark.xfail(reason='False positive')],
+                ['Jürgen'],
+                Status.FAILURE,
+                'Filename structure is invalid.',
+                marks=[],
             ),
             pytest.param(
-                {f'{"x" * 257}.py'},
+                ['x' * 257 + '.py'],
                 Status.FAILURE,
                 'Filename too long',
                 marks=[],
             ),
             pytest.param(
-                {'x.py'}, Status.FAILURE, 'Filename too short', marks=[]
+                ['x.py'], Status.FAILURE, 'Filename too short', marks=[]
             ),
             pytest.param(
-                {'x.py', '--nonexequi'}, Status.SUCCESS, '', marks=[]
+                ['x.py', '--nonexequi'], Status.SUCCESS, '', marks=[]
             ),
             pytest.param(
-                {'xVar.py'},
+                ['xVar.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case',
                 marks=[],
             ),
             pytest.param(
-                {'xVar.toml'},
+                ['xVar.toml'],
                 Status.SUCCESS,
                 '',
                 marks=[],
             ),
             pytest.param(
-                {'x.py', '--min-len=5'},
+                ['x.py', '--min-len=5'],
                 Status.FAILURE,
                 'Filename too short',
                 marks=[],
             ),
             pytest.param(
-                {'abc_defg.py', '--min-len=10'},
+                ['abc_defg.py', '--min-len=10'],
                 Status.FAILURE,
                 'Filename too short',
                 marks=[],
             ),
             pytest.param(
-                {'abcdefghijklm.py', '--max-len=10'},
+                ['abcdefghijklm.py', '--max-len=10'],
                 Status.FAILURE,
                 'Filename too long',
                 marks=[],
             ),
-            pytest.param({'__main__.py'}, Status.SUCCESS, '', marks=[]),
+            pytest.param(['__main__.py'], Status.SUCCESS, '', marks=[]),
         ],
     )
     def test_check_valid_filenames_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
-        entrance: set[str],
+        cli_runner: CliRunner,
+        entrance: list[str],
         result_expected: Status,
         expected: str,
     ) -> None:
         """Test CLI."""
-        result = cli.check_valid_filenames_cli([*entrance])
-        captured = capsys.readouterr()
-        assert result == result_expected.value
-        assert expected in captured.out
+        result = cli_runner.invoke(cli.check_valid_filenames_cli, entrance)
+        assert result.exit_code == result_expected.value
+        assert expected in result.output
 
     @pytest.mark.parametrize(
         ['entrance', 'args'],
