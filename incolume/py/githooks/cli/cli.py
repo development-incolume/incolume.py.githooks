@@ -305,7 +305,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
 @click.argument(
     'filenames',
     nargs=-1,
-    type=click.Path(exists=True),
+    type=click.Path(exists=False),
     help='Filenames to check',
 )
 @click.option(
