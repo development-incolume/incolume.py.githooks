@@ -51,7 +51,7 @@ from incolume.py.githooks.validate_filename import validate_filename
 debug_enable()
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Mapping, Sequence
 
 
 logging.debug('Python %s', platform.python_version())
@@ -322,8 +322,10 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
     required=False,
     help='Maximum Length of line for filename',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
+    ctx: Mapping,
     filenames: Sequence[Path],
     min_len: int = 3,
     max_len: int = 256,
@@ -345,7 +347,7 @@ def check_valid_filenames_cli(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return int(Status.SUCCESS.value)
+        ctx.exit(int(Status.SUCCESS.value))
 
     results: list[RequestFl] = [
         validate_filename(filename=filename, min_len=min_len, max_len=max_len)
@@ -361,7 +363,7 @@ def check_valid_filenames_cli(
             )
     if codes.value == Status.FAILURE:
         raise click.ClickException
-    return int(codes.value)
+    ctx.exit(int(codes.value))
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
