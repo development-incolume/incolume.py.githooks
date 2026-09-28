@@ -10,10 +10,15 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-09-25:
+## [Unreleased]	 &#8212; 	2026-09-28:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
   - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+### Added
+  - Novo hook implementado: effort-ramdon-msg-cli;
+### Changed
+  - Mensagem para nonexequi acrescentada em todos os hooks;
+  - Migração para CLICK em andamento;
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
