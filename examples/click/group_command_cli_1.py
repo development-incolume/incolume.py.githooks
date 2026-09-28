@@ -8,23 +8,7 @@ from incolume.py.githooks import __package_name__, __version__
 from incolume.py.githooks.core.rules import CONTEXT_SETTINGS_CLICK
 
 
-@click.group(
-    'printer_group',
-    no_args_is_help=True,
-    context_settings=CONTEXT_SETTINGS_CLICK,
-)
-@click.version_option(
-    __version__,
-    '-V',
-    '--version',
-    package_name=__package_name__,
-    prog_name='command-group',
-)
-def command_group() -> None:
-    """Command group."""
-
-
-@command_group.command('printer', context_settings=CONTEXT_SETTINGS_CLICK)
+@click.command('printer', context_settings=CONTEXT_SETTINGS_CLICK)
 @click.version_option(
     __version__,
     '-V',
@@ -39,9 +23,7 @@ def printer(this: str) -> None:
         click.echo(this)
 
 
-@command_group.command(
-    context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True
-)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
 @click.version_option(
     __version__,
     '-V',
@@ -56,9 +38,7 @@ def show(this: str) -> None:
         click.secho(this, fg='blue')
 
 
-@command_group.command(
-    context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True
-)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
 @click.version_option(
     __version__,
     '-V',
@@ -73,9 +53,7 @@ def display(this: str) -> None:
         click.secho(this, fg='yellow')
 
 
-@command_group.command(
-    context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True
-)
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
 @click.version_option(
     __version__,
     '-V',
@@ -90,5 +68,27 @@ def pprint(this: str) -> None:
         click.secho(this, fg='magenta')
 
 
+@click.group(
+    'cli_group',
+    no_args_is_help=True,
+    context_settings=CONTEXT_SETTINGS_CLICK,
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='command-group',
+)
+def cli_group() -> None:
+    """Command group."""
+
+
+cli_group.add_command(printer)
+cli_group.add_command(show)
+cli_group.add_command(display)
+cli_group.add_command(pprint)
+
+
 if __name__ == '__main__':
-    sys.exit(command_group(sys.argv[1:]))
+    sys.exit(cli_group(sys.argv[1:]))
