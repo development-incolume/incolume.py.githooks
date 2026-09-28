@@ -849,5 +849,15 @@ def cli_group() -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
 
 
+cli_group.add_command(check_len_first_line_commit_msg_cli)
+cli_group.add_command(check_type_commit_msg_cli)
+cli_group.add_command(check_valid_branchname_cli)
+cli_group.add_command(check_valid_filenames_cli)
+cli_group.add_command(footer_signedoffby_cli)
+cli_group.add_command(effort_msg_cli)
+cli_group.add_command(clean_commit_msg_cli)
+cli_group.add_command(effort_random_msg_cli)
+cli_group.add_command(set_issue_from_branch_cli)
+
 if __name__ == '__main__':
     sys.exit(cli_group(sys.argv[1:]))
