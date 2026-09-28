@@ -8,6 +8,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Tests CI/CD](https://github.com/development-incolume/incolume.py.githooks/actions/workflows/python-package.yml/badge.svg)](https://github.com/development-incolume/incolume.py.githooks/actions/workflows/python-package.yml)
+[![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
 ---
 
 Hooks git for incolume projects.
