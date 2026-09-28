@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 import click
 from icecream import ic
 
-from incolume.py.githooks.commit_msg import get_msg
+from incolume.py.githooks.commit_msg import effort_random_msg
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
@@ -239,8 +239,10 @@ def check_type_commit_msg_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking valid branchname.')
 def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
+    ctx: click.Context,
     commit_msg_file: Path,
     commit_source: str,
     commit_hash: str,
@@ -249,7 +251,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
     tags: bool = False,
     main: bool = True,
     nonexequi: bool = False,
-) -> int:
+) -> click.Context:
     """Hookgit for check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
@@ -270,7 +272,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return int(Status.SUCCESS.value)
+        ctx.exit(Status.SUCCESS.value)
 
     result = ValidateBranchname().is_valid(
         protected_dev=dev,
@@ -284,70 +286,85 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
         click.secho(result.message, fg='red', err=True)
         click.ClickException(result.message)
 
-    return int(result.code.value)
+    ctx.exit(result.code.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-valid-filename',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.option(
+    '--min-len',
+    default=3,
+    type=click.INT,
+    required=False,
+    help='Minimum Length of line for filename',
+)
+@click.option(
+    '--max-len',
+    default=256,
+    type=click.INT,
+    required=False,
+    help='Maximum Length of line for filename',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
-    argv: Sequence[str] | None = None,
-) -> int:
-    """Maint entry point for the script.
+    ctx: click.Context,
+    filenames: Sequence[Path],
+    min_len: int = 3,
+    max_len: int = 256,
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
+    """Validate Filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
     codes: Status = Status.SUCCESS
-    parser = argparse.ArgumentParser(
-        prog='validate-filename',
-    )
-    parser.add_argument(
-        'filenames',
-        nargs='+',
-        help='Filenames to process.',
-    )
-    parser.add_argument(
-        '--min-len',
-        default=3,
-        type=int,
-        required=False,
-        help='Minimum length for a filename.',
-    )
-    parser.add_argument(
-        '--max-len',
-        default=256,
-        type=int,
-        required=False,
-        help='Maximum length for a filename.',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
 
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-    codes = Status.SUCCESS
+    msg = f'{filenames=} {min_len=} {max_len=} {nonexequi=}'
+    logging.debug(msg)
 
-    if args.nonexequi:
-        return int(Status.SUCCESS.value)
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        ctx.exit(Status.SUCCESS.value)
 
     results: list[RequestFl] = [
-        validate_filename(
-            filename=filename, min_len=args.min_len, max_len=args.max_len
-        )
-        for filename in args.filenames
+        validate_filename(filename=filename, min_len=min_len, max_len=max_len)
+        for filename in filenames
     ]
     for result in results:
         codes |= result.code
         for message in result.messages:
             click.secho(
-                message, fg='green' if result.code == Status.SUCCESS else 'red'
+                message,
+                fg='green' if result.code == Status.SUCCESS else 'red',
+                err=True,
             )
-
-    return int(codes.value)
+    ic(ctx)
+    ctx.exit(codes.value)
 
 
 @logging_call(logging.INFO, 'Checking private keys in files.')
@@ -377,6 +394,10 @@ def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     ic(args)
@@ -493,11 +514,6 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     package_name=__package_name__,
     prog_name='clean-commit-msg',
 )
-@click.argument(
-    'commit_msg_file', required=True, help='Filename for commit message'
-)
-@click.argument('commit_source', required=False, help='Commit source')
-@click.argument('commit_hash', required=False, help='Commit hash')
 @click.option(
     '-N',
     '--nonexequi',
@@ -505,6 +521,11 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.argument(
+    'commit_msg_file', required=True, help='Filename for commit message'
+)
+@click.argument('commit_source', required=False, help='Commit source')
+@click.argument('commit_hash', required=False, help='Commit hash')
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(
     commit_msg_file: Path,
@@ -592,6 +613,10 @@ def validate_format_commit_msg_cli(
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     ic(fl := msg_commit_file)
@@ -628,6 +653,10 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     logging.debug('msgfile: %s', args)
 
     if args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return 0
 
     result = Status.SUCCESS
@@ -643,36 +672,48 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
     return int(result.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='effort-random-msg',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.option(
+    '--fixed',
+    '-F',
+    default=False,
+    is_flag=True,
+    help='Pin a hook message.',
+)
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
-def get_msg_cli(argv: Sequence[str] | None = None) -> Status:
-    """Run it."""
-    parser = argparse.ArgumentParser(
-        description='Exibe mensagens de sucesso após exito do commit.'
-    )
-    parser.add_argument(
-        '--fixed',
-        default=False,
-        dest='fixed',
-        action='store_true',
-        help='Fixar messagem de hook.',
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
+def effort_random_msg_cli(
+    *, fixed: bool = False, nonexequi: bool = False
+) -> int:
+    """Display success messages after a successful commit.
 
-    args = parser.parse_args(argv)
+    Hook designed for stages: post-commit, manual
+    """
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-    ic(args)
 
-    if not args.nonexequi:
-        click.secho(get_msg(fixed=args.fixed), fg='green')
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
 
-    return Status.SUCCESS.value
+    click.secho(effort_random_msg(fixed=fixed), fg='green')
+
+    return 0
 
 
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
@@ -704,6 +745,10 @@ def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
     ic(args)
 
     if not args.nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
         return Status.SUCCESS.value
 
     diff_output = get_git_diff()
@@ -789,4 +834,4 @@ def set_issue_from_branch_cli(
 
 
 if __name__ == '__main__':
-    sys.exit(check_type_commit_msg_cli(sys.argv[1:]))
+    sys.exit(effort_random_msg_cli(sys.argv[1:]))

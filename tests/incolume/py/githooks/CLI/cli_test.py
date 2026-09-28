@@ -12,7 +12,6 @@ from incolume.py.githooks.core import remove_color_tags
 import pytest
 from incolume.py.githooks import cli
 from icecream import ic
-import logging
 from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
@@ -111,8 +110,8 @@ class TestCaseAllCLI:
                     expected=Result(
                         Status.FAILURE,
                         [
-                            'Error: Commit subject line has an insufficient number of',
-                            'Commit maximum length for message is validated',
+                            'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
+                            'Error: The first line of the commit violates the defined minimum limits. (min: 10 and max: 50)',
                         ],
                     ),
                 ),
@@ -126,7 +125,7 @@ class TestCaseAllCLI:
                         Status.FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
-                            'Error: The first line of the commit violates the defined limits between 4 and 5.',
+                            'Error: The first line of the commit violates the defined minimum limits. (min: 10 and max: 50)',
                         ],
                     ),
                 ),
@@ -149,7 +148,6 @@ class TestCaseAllCLI:
     )
     def test_check_len_first_line_commit_msg_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
         isolated_cli_runner: CliRunner,
         entrance: Entrance,
     ) -> None:
@@ -167,11 +165,9 @@ class TestCaseAllCLI:
                 *entrance.params,
             ],
         )
-        captured = capsys.readouterr()
-        logging.info('captured.out=%s', captured.out)
-        logging.info('captured.err=%s', captured.err)
 
         assert result.exit_code == entrance.expected.code.value
+        assert all(msg in result.output for msg in entrance.expected.message)
 
     @pytest.mark.parametrize(
         'args',
@@ -212,20 +208,6 @@ class TestCaseAllCLI:
                 'xpto-wip',
                 0,
                 ['-N'],
-                '',
-                marks=[],
-            ),
-            pytest.param(
-                'main',
-                0,
-                ['', '--no-main'],
-                '',
-                marks=[],
-            ),
-            pytest.param(
-                'master',
-                0,
-                ['', '--no-main'],
                 '',
                 marks=[],
             ),
@@ -276,84 +258,111 @@ class TestCaseAllCLI:
  - #2: '<issue-id>-issue-description'; or
  - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or
  - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'""",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'main',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"main\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'Wip',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'wip',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'WIP',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'template-Wip',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'Wip-test-for-branch',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Can not be WIP (Work in Progress)\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'todo-test-for-branch',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'jesus-loves-you',
                 1,
                 [''],
                 "Your commit was rejected due to branching name incompatible with rules.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'tags',
                 1,
                 ['--tags'],
                 "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"tags\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'dev',
                 1,
                 ['--dev'],
-                "Your commit was rejected due to branching name incompatible with rules.\n - Branch name \"dev\" is protected.\n\n:: These syntaxes are allowed for branchname:\n - #1: 'enhancement-<epoch-timestamp>'; or\n - #2: '<issue-id>-issue-description'; or\n - #3: '<(feature|feat|bug|bugfix|fix)>/issue#<issue-id>'; or\n - #4: '<(feature|feat|bug|bugfix|fix)>/epoch#<epoch-timestamp>'",
+                ' Branch name "dev" is protected.',
+                marks=[],
+            ),
+            pytest.param(
+                'dev',
+                0,
+                ['--no-dev'],
+                '',
+                marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'tags',
+                0,
+                ['--no-tags'],
+                '',
+                marks=[pytest.mark.xfail]
+            ),
+            pytest.param(
+                'main',
+                0,
+                ['', '--no-main'],
+                '',
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                'master',
+                0,
+                ['', '--no-main'],
+                '',
                 marks=[pytest.mark.xfail],
             ),
         ],
     )
-    def test_check_valid_branchname(  # ruff: ignore[too-many-arguments, too-many-positional-arguments]
+    def test_check_valid_branchname(
         self,
         cli_runner: CliRunner,
-        capsys: pytest.CaptureFixture[Any],
         entrance: str,
         exit_code: int,
         params: list[str],
@@ -366,86 +375,85 @@ class TestCaseAllCLI:
             subprocess, 'check_output', return_value=bytes(entrance, 'utf-8')
         ):
             result = cli_runner.invoke(cli.check_valid_branchname_cli, params)
-            captured = capsys.readouterr()
-            assert not captured.out.strip() or captured.err.strip()
             assert result.exit_code == exit_code
+            assert message in result.output
 
     @pytest.mark.parametrize(
         ['entrance', 'result_expected', 'expected'],
         [
             pytest.param(
-                {'4File.py'},
+                ['4File.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case:',
             ),
             pytest.param(
-                {'Jürgen.py'},
+                ['Jürgen.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case:',
+                marks=[],
             ),
             pytest.param(
-                {'Jürgen'},
-                Status.SUCCESS,
-                'ok',
-                marks=[pytest.mark.xfail(reason='False positive')],
+                ['Jürgen'],
+                Status.FAILURE,
+                'Filename structure is invalid.',
+                marks=[],
             ),
             pytest.param(
-                {f'{"x" * 257}.py'},
+                ['x' * 257 + '.py'],
                 Status.FAILURE,
                 'Filename too long',
                 marks=[],
             ),
             pytest.param(
-                {'x.py'}, Status.FAILURE, 'Filename too short', marks=[]
+                ['x.py'], Status.FAILURE, 'Filename too short', marks=[]
             ),
             pytest.param(
-                {'x.py', '--nonexequi'}, Status.SUCCESS, '', marks=[]
+                ['x.py', '--nonexequi'], Status.SUCCESS, '', marks=[]
             ),
             pytest.param(
-                {'xVar.py'},
+                ['xVar.py'],
                 Status.FAILURE,
                 'Filename is not in snake_case',
                 marks=[],
             ),
             pytest.param(
-                {'xVar.toml'},
+                ['xVar.toml'],
                 Status.SUCCESS,
                 '',
                 marks=[],
             ),
             pytest.param(
-                {'x.py', '--min-len=5'},
+                ['x.py', '--min-len=5'],
                 Status.FAILURE,
                 'Filename too short',
                 marks=[],
             ),
             pytest.param(
-                {'abc_defg.py', '--min-len=10'},
+                ['abc_defg.py', '--min-len=10'],
                 Status.FAILURE,
                 'Filename too short',
                 marks=[],
             ),
             pytest.param(
-                {'abcdefghijklm.py', '--max-len=10'},
+                ['abcdefghijklm.py', '--max-len=10'],
                 Status.FAILURE,
                 'Filename too long',
                 marks=[],
             ),
-            pytest.param({'__main__.py'}, Status.SUCCESS, '', marks=[]),
+            pytest.param(['__main__.py'], Status.SUCCESS, '', marks=[]),
         ],
     )
     def test_check_valid_filenames_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
-        entrance: set[str],
+        cli_runner: CliRunner,
+        entrance: list[str],
         result_expected: Status,
         expected: str,
     ) -> None:
         """Test CLI."""
-        result = cli.check_valid_filenames_cli([*entrance])
-        captured = capsys.readouterr()
-        assert result == result_expected.value
-        assert expected in captured.out
+        result = cli_runner.invoke(cli.check_valid_filenames_cli, entrance)
+        assert result.exit_code == result_expected.value
+        assert expected in result.output
 
     @pytest.mark.parametrize(
         ['entrance', 'args'],
@@ -689,11 +697,14 @@ class TestCaseAllCLI:
             pytest.param(['--nonexequi'], marks=[]),
         ],
     )
-    def test_get_msg_cli(
-        self, capsys: pytest.CaptureFixture[Any], entrance: list[str]
+    def test_effort_random_msg_cli(
+        self,
+        cli_runner: CliRunner,
+        capsys: pytest.CaptureFixture[Any],
+        entrance: list[str],
     ) -> None:
         """Test get_msg function."""
-        cli.get_msg_cli(entrance)
+        cli_runner.invoke(cli.effort_random_msg_cli, entrance)
         captured = capsys.readouterr()
         assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 
@@ -737,9 +748,7 @@ class TestCaseAllCLI:
             pytest.param(
                 MainEntrance(args=['--nonexequi']),
                 Result(Status.SUCCESS, ''),
-                marks=[
-                    # pytest.mark.xfail
-                ],
+                marks=[],
             ),
             pytest.param(
                 MainEntrance(
