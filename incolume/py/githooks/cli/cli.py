@@ -833,5 +833,21 @@ def set_issue_from_branch_cli(
     return 0
 
 
+@click.group(
+    'githooks-cli',
+    no_args_is_help=True,
+    context_settings=CONTEXT_SETTINGS_CLICK,
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='githooks-cli',
+)
+def cli_group() -> None:
+    """Unifier Grouped for CLI - Command Line Interface."""
+
+
 if __name__ == '__main__':
-    sys.exit(effort_random_msg_cli(sys.argv[1:]))
+    sys.exit(cli_group(sys.argv[1:]))
