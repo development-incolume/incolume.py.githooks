@@ -16,7 +16,11 @@ def cli(ctx: click.Context) -> click.Context:
 @cli.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
 @click.pass_context
 @click.option(
-    '--success/--failure', '-s/-f', 'success', default=False, help='Success or Failure.'
+    '--success/--failure',
+    '-s/-f',
+    'success',
+    default=False,
+    help='Success or Failure.',
 )
 def task0(ctx: click.Context, *, success: bool) -> click.Context:
     """Perform task logic."""
@@ -31,7 +35,11 @@ def task0(ctx: click.Context, *, success: bool) -> click.Context:
 @cli.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
 @click.pass_context
 @click.option(
-    '--success/--failure', '-s/-f', 'success', default=False, help='Success or Failure.'
+    '--success/--failure',
+    '-s/-f',
+    'success',
+    default=False,
+    help='Success or Failure.',
 )
 def task1(ctx: click.Context, *, success: bool) -> click.Context:
     """Perform task logic."""
