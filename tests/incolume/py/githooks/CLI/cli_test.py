@@ -331,18 +331,10 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                'dev',
-                0,
-                ['--no-dev'],
-                '',
-                marks=[pytest.mark.xfail]
+                'dev', 0, ['--no-dev'], '', marks=[pytest.mark.xfail]
             ),
             pytest.param(
-                'tags',
-                0,
-                ['--no-tags'],
-                '',
-                marks=[pytest.mark.xfail]
+                'tags', 0, ['--no-tags'], '', marks=[pytest.mark.xfail]
             ),
             pytest.param(
                 'main',
