@@ -15,7 +15,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
   - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
-  - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%23006400?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
+  - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
 ## [1.15.0]	 &#8212; 	2026-09-25:
