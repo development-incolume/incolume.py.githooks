@@ -452,14 +452,27 @@ class TestCaseAllCLI:
         chain.from_iterable(
             [
                 (
-                    pytest.param(line, ['--nonexequi'], 'Hook not executed due to the `--nonexequi` option.\n', marks=[])
+                    pytest.param(
+                        line,
+                        ['--nonexequi'],
+                        'Hook not executed due to the `--nonexequi` option.\n',
+                        marks=[],
+                    )
                     for line in BLACKLIST
                 ),
                 (
-                    pytest.param(line, ['-N'], 'Hook not executed due to the `--nonexequi` option.\n', marks=[])
+                    pytest.param(
+                        line,
+                        ['-N'],
+                        'Hook not executed due to the `--nonexequi` option.\n',
+                        marks=[],
+                    )
                     for line in BLACKLIST
                 ),
-                (pytest.param(line, [], 'Private key found: {}', marks=[]) for line in BLACKLIST),
+                (
+                    pytest.param(line, [], 'Private key found: {}', marks=[])
+                    for line in BLACKLIST
+                ),
             ],
         ),
     )

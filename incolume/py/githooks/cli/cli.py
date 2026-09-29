@@ -871,7 +871,9 @@ def cli_group(ctx: click.Context, *, nonexequi: bool = False) -> None:
         ctx.exit(0)
 
 
-cli_group.add_command(check_len_first_line_commit_msg_cli, name='check-len-first-line')
+cli_group.add_command(
+    check_len_first_line_commit_msg_cli, name='check-len-first-line'
+)
 cli_group.add_command(check_type_commit_msg_cli, name='check-type-commit-msg')
 cli_group.add_command(check_valid_branchname_cli, name='is-valid-branchname')
 cli_group.add_command(check_valid_filenames_cli, name='is-valid-filename')
