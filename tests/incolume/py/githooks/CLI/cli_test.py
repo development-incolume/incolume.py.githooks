@@ -861,12 +861,14 @@ class TestCaseAllCLI:
         test_file.parent.mkdir(parents=True, exist_ok=True)
         test_file.write_text(entrance.commit_msg_file, encoding='utf-8')
         entries = [
-            test_file.as_posix(),
-            entrance.commit_source,
-            entrance.commit_hash,
             *entrance.args,
+            test_file.as_posix(),
+            # entrance.commit_source,
+            # entrance.commit_hash,
         ]
         ic(entries)
         result = cli_runner.invoke(cli.insert_diff_cli, entries)
+        assert test_file.is_file()
+        assert result.output == 'a'
         assert result.exit_code == expected.code.value
         assert test_file.read_text(encoding='utf-8') == expected.message

@@ -757,7 +757,6 @@ def effort_random_msg_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
-@click.pass_context
 @click.argument(
     'commit_msg_file',
     nargs=-1,
@@ -766,16 +765,17 @@ def effort_random_msg_cli(
     required=True,
     help='Filename for commit message',
 )
-@click.argument(
-    'commit_source', default='', required=False, help='Commit source'
-)
-@click.argument('commit_hash', default='', required=False, help='Commit hash')
+# @click.argument(
+#     'commit_source', default='', required=False, help='Commit source'
+# )
+# @click.argument('commit_hash', default='', required=False, help='Commit hash')
+@click.pass_context
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
     commit_msg_file: Sequence[Path],
-    commit_source: str,
-    commit_hash: str,
+    # commit_source: str,
+    # commit_hash: str,
     *,
     nonexequi: bool = False,
 ) -> click.Context:
@@ -784,8 +784,8 @@ def insert_diff_cli(
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
         commit_msg_file,
-        commit_source,
-        commit_hash,
+        # commit_source,
+        # commit_hash,
     )
 
     if nonexequi:
