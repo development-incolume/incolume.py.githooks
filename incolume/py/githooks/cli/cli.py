@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import argparse
 import inspect
 import logging
 import platform
@@ -932,7 +931,7 @@ cli_group.add_command(effort_msg_cli, name='effort-msg')
 cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
 cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
 cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
-# cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
+cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
 cli_group.add_command(
     validate_format_commit_msg_cli, name='is-valid-msg-commit'
