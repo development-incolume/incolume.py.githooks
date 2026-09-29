@@ -367,43 +367,51 @@ def check_valid_filenames_cli(
     ctx.exit(codes.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='detect-key',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Checking private keys in files.')
-def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
+def detect_private_key_cli(
+    ctx: click.Context,
+    filenames: Sequence[Path],
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
     """CLI to check private key.
 
     Hook designed for stages: all
-
-    Args:
-        argv (Sequence[str] | None, optional): _description_. Defaults to None.
-
-    Returns:
-        int: _description_
-
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        return ctx.exit(0)
 
-    ic(args)
-    result: Result = has_private_key(*args.filenames)
+    result: Result = has_private_key(*filenames)
     click.secho(result.message, fg='red')
-    return int(result.code.value)
+    return ctx.exit(result.code.value)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
@@ -863,13 +871,12 @@ def cli_group(ctx: click.Context, *, nonexequi: bool = False) -> None:
         ctx.exit(0)
 
 
-
 cli_group.add_command(check_len_first_line_commit_msg_cli)
 cli_group.add_command(check_type_commit_msg_cli)
 cli_group.add_command(check_valid_branchname_cli)
 cli_group.add_command(check_valid_filenames_cli)
 cli_group.add_command(clean_commit_msg_cli)
-# cli_group.add_command(detect_private_key_cli)
+cli_group.add_command(detect_private_key_cli)
 cli_group.add_command(effort_msg_cli)
 cli_group.add_command(effort_random_msg_cli)
 cli_group.add_command(footer_signedoffby_cli)
