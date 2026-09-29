@@ -448,22 +448,27 @@ class TestCaseAllCLI:
         assert expected in result.output
 
     @pytest.mark.parametrize(
-        ['entrance', 'args'],
+        ['entrance', 'args', 'msg_output'],
         chain.from_iterable(
             [
                 (
-                    pytest.param(line, ['--nonexequi'], marks=[])
+                    pytest.param(line, ['--nonexequi'], 'Hook not executed due to the `--nonexequi` option.\n', marks=[])
                     for line in BLACKLIST
                 ),
-                (pytest.param(line, [], marks=[]) for line in BLACKLIST),
+                (
+                    pytest.param(line, ['-N'], 'Hook not executed due to the `--nonexequi` option.\n', marks=[])
+                    for line in BLACKLIST
+                ),
+                (pytest.param(line, [], 'Private key found: {}', marks=[]) for line in BLACKLIST),
             ],
         ),
     )
     def test_detect_private_key_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
+        cli_runner: CliRunner,
         entrance: str,
         args: list[str],
+        msg_output: str,
     ) -> None:
         """Test CLI."""
         dout = self.test_dir / stack()[0][3]
@@ -473,10 +478,13 @@ class TestCaseAllCLI:
 
         ic(test_file, type(test_file))
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
-        cli.detect_private_key_cli([test_file.as_posix(), *args])
-        captured = capsys.readouterr()
-        if not args:
-            assert f'Private key found: {test_file.as_posix()}' in captured.out
+        result = cli_runner.invoke(
+            cli.detect_private_key_cli, [test_file.as_posix(), *args]
+        )
+        if args:
+            assert msg_output == result.output
+        else:
+            assert msg_output.format(test_file.as_posix()) in result.output
 
     @pytest.mark.parametrize(
         ['args', 'content', 'expected'],
