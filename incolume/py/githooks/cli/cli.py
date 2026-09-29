@@ -778,7 +778,7 @@ def insert_diff_cli(
     commit_hash: str,
     *,
     nonexequi: bool = False,
-) -> Status:
+) -> click.Context:
     """Proccess commit messages adding git-diff."""
     logging.info(inspect.stack()[0][3])
     logging.debug(
@@ -793,12 +793,13 @@ def insert_diff_cli(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return ctx.exit(Status.SUCCESS.value)
+        ctx.exit(Status.SUCCESS.value)
 
     diff_output = get_git_diff()
+    logging.debug(diff_output)
     insert_git_diff(commit_msg_file, diff_output)
 
-    return ctx.exit(Status.SUCCESS.value)
+    ctx.exit(Status.SUCCESS.value)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)

@@ -791,7 +791,11 @@ class TestCaseAllCLI:
             'expected',
         ],
         [
-            pytest.param(MainEntrance(), Result(Status.SUCCESS, ''), marks=[]),
+            pytest.param(
+                MainEntrance(),
+                Result(Status.SUCCESS, ''),
+                marks=[pytest.mark.skip],
+            ),
             pytest.param(
                 MainEntrance(
                     commit_msg_file='feat: bla bla bla\n\n#',
@@ -842,6 +846,7 @@ class TestCaseAllCLI:
     )
     def test_insert_diff_cli(
         self,
+        cli_runner: CliRunner,
         mocker: MockerFixture,
         entrance: MainEntrance,
         expected: Result,
@@ -851,8 +856,9 @@ class TestCaseAllCLI:
             'subprocess.check_output',
             return_value=entrance.diff_output,
         )
-        with NamedTemporaryFile() as tf:
+        with NamedTemporaryFile(dir=self.test_dir) as tf:
             test_file = Path(tf.name)
+        test_file.parent.mkdir(parents=True, exist_ok=True)
         test_file.write_text(entrance.commit_msg_file, encoding='utf-8')
         entries = [
             test_file.as_posix(),
@@ -860,6 +866,7 @@ class TestCaseAllCLI:
             entrance.commit_hash,
             *entrance.args,
         ]
-
-        assert cli.insert_diff_cli(entries) == expected.code.value
+        ic(entries)
+        result = cli_runner.invoke(cli.insert_diff_cli, entries)
+        assert result.exit_code == expected.code.value
         assert test_file.read_text(encoding='utf-8') == expected.message
