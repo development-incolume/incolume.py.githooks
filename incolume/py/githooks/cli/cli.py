@@ -658,32 +658,40 @@ def validate_format_commit_msg_cli(
     ctx.exit(result.code.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-precommit-installed',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
-    """Run pre-commit-installed hook.
+def pre_commit_installed_cli(
+    ctx: click.Context,
+    *,
+    nonexequi: bool = False,
+) -> None:
+    """Validade pre-commit binary instalation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    parser = argparse.ArgumentParser(
-        description='Validade pre-commit binary instalation.'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        ctx.exit(0)
 
     result = Status.SUCCESS
     files = list(Path.cwd().glob('.pre-commit-config.yaml'))
@@ -695,7 +703,7 @@ def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
             fg='red',
         )
         result |= Status.FAILURE
-    return int(result.value)
+    ctx.exit(result.value)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
