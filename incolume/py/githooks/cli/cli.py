@@ -845,8 +845,23 @@ def set_issue_from_branch_cli(
     package_name=__package_name__,
     prog_name='githooks-cli',
 )
-def cli_group() -> None:
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+def cli_group(ctx: click.Context, *, nonexequi: bool = False) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        ctx.exit(0)
+
 
 
 cli_group.add_command(check_len_first_line_commit_msg_cli)
