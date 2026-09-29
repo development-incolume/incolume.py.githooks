@@ -749,6 +749,12 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 '',
+                ['-N'],
+                Status.SUCCESS,
+                marks=[],
+            ),
+            pytest.param(
+                '',
                 ['--nonexequi'],
                 Status.SUCCESS,
                 marks=[],
@@ -756,7 +762,11 @@ class TestCaseAllCLI:
         ],
     )
     def test_precommit_installed(
-        self, entrance: str, args: list[str], expected: Status
+        self,
+        cli_runner: CliRunner,
+        entrance: str,
+        args: list[str],
+        expected: Status,
     ) -> None:
         """Test for pre-commit installed."""
         result = Status.FAILURE
@@ -764,8 +774,8 @@ class TestCaseAllCLI:
             m.return_value.glob.return_value = (
                 [Path(entrance)] if entrance else []
             )
-            result = cli.pre_commit_installed_cli([*args])
-        assert Status(result) == Status(expected)
+            result = cli_runner.invoke(cli.pre_commit_installed_cli, args)
+        assert result.exit_code == expected.value
 
     @pytest.mark.parametrize(
         'entrance',
