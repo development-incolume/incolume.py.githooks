@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 import logging
+import os
 import platform
 import re
 import sys
@@ -693,9 +694,18 @@ def pre_commit_installed_cli(
         ctx.exit(0)
 
     result = Status.SUCCESS
-    files = list(Path.cwd().glob('.pre-commit-config.yaml'))
+    files = list(find_project_root().glob('.pre-commit-config.yaml'))
+    bins = tuple(
+        find_project_root().joinpath('.git', 'hooks', x)
+        for x in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'post-commit',
+        )
+    )
     ic(files)
-    if not files:
+    if files and not all(os.access(x.os.X_OK) for x in bins):
         click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
