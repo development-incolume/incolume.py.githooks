@@ -705,7 +705,7 @@ def pre_commit_installed_cli(
         )
     )
     ic(files)
-    if files and not all(os.access(x.os.X_OK) for x in bins):
+    if files and not all(os.access(x, os.X_OK) for x in bins):
         click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
