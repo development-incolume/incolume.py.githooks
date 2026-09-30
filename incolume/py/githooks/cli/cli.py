@@ -599,45 +599,63 @@ def clean_commit_msg_cli(
     return int(Status.SUCCESS.value)
 
 
+@click.command(
+    name='is-valid-msg-commit',
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-valid-msg-commit',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=(msg_commit_file,),
+    required=False,
+    help='Filename for commit message',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
-    argv: Sequence[str] | None = None,
-) -> Status:
-    """Run CLI for prepare-commit-msg hook.
+    ctx: click.Context,
+    commit_msg_file: Path,
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
+    """Validate commit message.
 
-    Hook designed for stages: pre-commit, pre-push, manual
+    Hook designed for stages: prepare-commit-msg, manual
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Do not run this hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        ctx.exit(0)
 
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    logging.debug('msgfile: %s', args)
-
-    result = validate_format_commit_msg(*args.filenames)
+    result = validate_format_commit_msg(*commit_msg_file)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
-    return result.code.value
+    ctx.exit(result.code.value)
 
 
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
@@ -871,7 +889,9 @@ def cli_group(ctx: click.Context, *, nonexequi: bool = False) -> None:
         ctx.exit(0)
 
 
-cli_group.add_command(check_len_first_line_commit_msg_cli, name='check-len-first-line')
+cli_group.add_command(
+    check_len_first_line_commit_msg_cli, name='check-len-first-line'
+)
 cli_group.add_command(check_type_commit_msg_cli, name='check-type-commit-msg')
 cli_group.add_command(check_valid_branchname_cli, name='is-valid-branchname')
 cli_group.add_command(check_valid_filenames_cli, name='is-valid-filename')
@@ -883,7 +903,9 @@ cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
 # cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
 # cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
-# cli_group.add_command(validate_format_commit_msg_cli, name='is-valid-msg-commit')
+cli_group.add_command(
+    validate_format_commit_msg_cli, name='is-valid-msg-commit'
+)
 
 if __name__ == '__main__':
     sys.exit(cli_group(sys.argv[1:]))

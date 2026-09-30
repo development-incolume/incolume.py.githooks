@@ -452,14 +452,27 @@ class TestCaseAllCLI:
         chain.from_iterable(
             [
                 (
-                    pytest.param(line, ['--nonexequi'], 'Hook not executed due to the `--nonexequi` option.\n', marks=[])
+                    pytest.param(
+                        line,
+                        ['--nonexequi'],
+                        'Hook not executed due to the `--nonexequi` option.\n',
+                        marks=[],
+                    )
                     for line in BLACKLIST
                 ),
                 (
-                    pytest.param(line, ['-N'], 'Hook not executed due to the `--nonexequi` option.\n', marks=[])
+                    pytest.param(
+                        line,
+                        ['-N'],
+                        'Hook not executed due to the `--nonexequi` option.\n',
+                        marks=[],
+                    )
                     for line in BLACKLIST
                 ),
-                (pytest.param(line, [], 'Private key found: {}', marks=[]) for line in BLACKLIST),
+                (
+                    pytest.param(line, [], 'Private key found: {}', marks=[])
+                    for line in BLACKLIST
+                ),
             ],
         ),
     )
@@ -637,22 +650,86 @@ class TestCaseAllCLI:
         )
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        'entrance',
         [
-            pytest.param([], 1, marks=[]),
-            pytest.param(['--nonexequi'], 0, marks=[]),
+            pytest.param(
+                Entrance(
+                    params=['-V'],
+                    expected=Result(0, 'is-valid-msg-commit, version'),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['-h'],
+                    expected=Result(
+                        0,
+                        'Usage: is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]...',
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(
+                        0, 'Hook not executed due to the `--nonexequi` option.'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['-N'],
+                    expected=Result(
+                        0, 'Hook not executed due to the `--nonexequi` option.'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[], msg_commit='', expected=Result(1, message='')
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='fake commit',
+                    expected=Result(
+                        code=1, message='Please use the following format'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='feat: #123 fake commit',
+                    expected=Result(
+                        code=0, message='Commit message is validated'
+                    ),
+                ),
+                marks=[],
+            ),
         ],
     )
     def test_validate_format_commit_msg_cli(
-        self, entrance: list[str], expected: int
+        self, cli_runner: CliRunner, entrance: Entrance
     ) -> None:
         """Test CLI prepend commit message."""
-        with NamedTemporaryFile(dir=self.test_dir) as fl:
+        dout: Path = self.test_dir.joinpath(stack()[0][3])
+        dout.mkdir(parents=True, exist_ok=True)
+        with NamedTemporaryFile(dir=dout) as fl:
             test_file = Path(fl.name)
-        test_file.write_bytes(b'xpto: abc')
-        entrance.insert(0, test_file.as_posix())
+        test_file.write_bytes(entrance.msg_commit.encode(encoding='utf-8'))
 
-        assert cli.validate_format_commit_msg_cli(entrance) == expected
+        entry: list[str] = [test_file.as_posix(), *entrance.params]
+
+        result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
+        assert result.exit_code == entrance.expected.code
+        assert entrance.expected.message in result.output
 
     @pytest.mark.parametrize(
         ['entrance', 'args', 'expected'],
