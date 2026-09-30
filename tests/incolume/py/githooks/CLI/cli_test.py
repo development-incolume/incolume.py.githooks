@@ -657,15 +657,17 @@ class TestCaseAllCLI:
         ],
     )
     def test_validate_format_commit_msg_cli(
-        self, entrance: list[str], expected: int
+        self, cli_runner: CliRunner, entrance: list[str], expected: int
     ) -> None:
         """Test CLI prepend commit message."""
         with NamedTemporaryFile(dir=self.test_dir) as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(b'xpto: abc')
         entrance.insert(0, test_file.as_posix())
-
-        assert cli.validate_format_commit_msg_cli(entrance) == expected
+        result = cli_runner.invoke(
+            cli.validate_format_commit_msg_cli, entrance
+        )
+        assert result.exit_code == expected
 
     @pytest.mark.parametrize(
         ['entrance', 'args', 'expected'],
