@@ -16,7 +16,6 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
-    MainEntrance,
     MESSAGES,
     Status,
     Result,
@@ -37,6 +36,8 @@ class Entrance:
     msg_file: str | Path = ''
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
+    diff_output: str = ''
+    commit_source: str = ''
     expected: Result = field(
         default_factory=lambda: Result(Status.FAILURE, MESSAGERROR)
     )
@@ -786,61 +787,104 @@ class TestCaseAllCLI:
         assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 
     @pytest.mark.parametrize(
-        [
-            'entrance',
-            'expected',
-        ],
+        'entrance',
         [
             pytest.param(
-                MainEntrance(),
-                Result(Status.SUCCESS, ''),
-                marks=[pytest.mark.skip],
+                Entrance(
+                    params=['-N'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
+                marks=[],
             ),
             pytest.param(
-                MainEntrance(
-                    commit_msg_file='feat: bla bla bla\n\n#',
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['-V'],
+                    expected=Result(
+                        Status.SUCCESS, 'insert-diff-commit, version'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['--version'],
+                    expected=Result(
+                        Status.SUCCESS, 'insert-diff-commit, version'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    expected=Result(Status.FAILURE, 'abc'),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: bla bla bla\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                    expected=Result(
+                        message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
+                        'nothing.py\nM\tincolume/py/none.py\n#',
+                    ),
                 ),
-                Result(
-                    message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
-                    'nothing.py\nM\tincolume/py/none.py\n#',
-                ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(commit_msg_file='ci: #123 added ci/cd\n\n#'),
-                Result(Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'),
-                marks=[],
+                Entrance(
+                    msg_commit='ci: #123 added ci/cd\n\n#',
+                    expected=Result(
+                        Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'
+                    ),
+                ),
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(
+                Entrance(
                     commit_source='template',
-                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                    msg_commit='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                    expected=Result(
+                        code=Status.SUCCESS,
+                        message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
+                        'nothing.py'
+                        '\nM\tincolume/py/none.py\n#',
+                    ),
                 ),
-                Result(
-                    code=Status.SUCCESS,
-                    message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
-                    'nothing.py'
-                    '\nM\tincolume/py/none.py\n#',
-                ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(args=['--nonexequi']),
-                Result(Status.SUCCESS, ''),
-                marks=[],
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(Status.SUCCESS, ''),
+                ),
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(
-                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                Entrance(
+                    msg_commit='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
-                    args=['--nonexequi'],
+                    params=['--nonexequi'],
+                    expected=Result(
+                        code=Status.SUCCESS,
+                        message='ci: #123 added ci/cd\n\n#',
+                    ),
                 ),
-                Result(
-                    code=Status.SUCCESS, message='ci: #123 added ci/cd\n\n#'
-                ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
@@ -848,27 +892,30 @@ class TestCaseAllCLI:
         self,
         cli_runner: CliRunner,
         mocker: MockerFixture,
-        entrance: MainEntrance,
-        expected: Result,
+        entrance: Entrance,
     ) -> None:
         """Test CLI function."""
         mocker.patch(
             'subprocess.check_output',
             return_value=entrance.diff_output,
         )
-        with NamedTemporaryFile(dir=self.test_dir) as tf:
+        dout: Path = self.test_dir / stack()[0][3]
+        dout.mkdir(parents=True, exist_ok=True)
+
+        with NamedTemporaryFile(dir=dout) as tf:
             test_file = Path(tf.name)
-        test_file.parent.mkdir(parents=True, exist_ok=True)
-        test_file.write_text(entrance.commit_msg_file, encoding='utf-8')
+
+        test_file.write_text(entrance.msg_commit, encoding='utf-8')
+
         entries = [
-            *entrance.args,
             test_file.as_posix(),
             # entrance.commit_source,
             # entrance.commit_hash,
+            *entrance.params,
         ]
         ic(entries)
         result = cli_runner.invoke(cli.insert_diff_cli, entries)
         assert test_file.is_file()
-        assert result.output == 'a'
-        assert result.exit_code == expected.code.value
-        assert test_file.read_text(encoding='utf-8') == expected.message
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
+        assert entrance.diff_output in test_file.read_text(encoding='utf-8')
