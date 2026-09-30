@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.17.0a14"
+version = "1.17.0a15"
 description = "Hooks git for incolume projects"
 readme = "README.md"
 license-files = ["LICEN[CS]E*", "docs/vendored/licenses/*.txt", "docs/AUTHORS.md"]
@@ -24,7 +24,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-#  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Build Tools",
   'Topic :: Software Development :: Libraries :: Python Modules',
   'Topic :: Utilities',
