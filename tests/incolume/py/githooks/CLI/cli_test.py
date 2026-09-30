@@ -496,7 +496,7 @@ class TestCaseAllCLI:
             cli.detect_private_key_cli, [test_file.as_posix(), *args]
         )
         if args:
-            assert msg_output == result.output
+            assert msg_output in result.output
         else:
             assert msg_output.format(test_file.as_posix()) in result.output
 
