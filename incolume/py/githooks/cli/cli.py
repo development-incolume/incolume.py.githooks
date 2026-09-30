@@ -742,45 +742,68 @@ def effort_random_msg_cli(
     return 0
 
 
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=True,
+    name='insert-diff-commit',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='insert-diff-commit',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=(msg_commit_file,),
+    required=True,
+    help='Filename for commit message',
+)
+@click.argument(
+    'commit_source', default='', required=False, help='Commit source'
+)
+@click.argument('commit_hash', default='', required=False, help='Commit hash')
+@click.pass_context
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
-def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
-    """CLI for module gitdiff."""
-    parser = argparse.ArgumentParser(
-        description='Processa mensagens de commit'
-        ' como no hook original em Perl.'
-    )
-    parser.add_argument(
-        'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
-    )
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (ex.: template)'
-    )
-    parser.add_argument(
-        'commit_hash', default='', help='Hash do commit ou vazio'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        dest='nonexequi',
-        action='store_false',
-        help='Não executar hook.',
-    )
-
-    args = parser.parse_args(argv)
+def insert_diff_cli(
+    ctx: click.Context,
+    commit_msg_file: Sequence[Path],
+    commit_source: str,
+    commit_hash: str,
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
+    """Proccess commit messages adding git-diff."""
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-    ic(args)
+    logging.debug(
+        'commit_msg_file=%s commit_source=%s commit_hash=%s',
+        commit_msg_file,
+        commit_source,
+        commit_hash,
+    )
 
-    if not args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return Status.SUCCESS.value
+        ctx.exit(Status.SUCCESS.value)
 
     diff_output = get_git_diff()
-    insert_git_diff(args.commit_msg_file, diff_output)
+    logging.debug(diff_output)
+    insert_git_diff(commit_msg_file, diff_output)
 
-    return Status.SUCCESS.value
+    ctx.exit(Status.SUCCESS.value)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
@@ -900,7 +923,7 @@ cli_group.add_command(detect_private_key_cli, name='detect-key')
 cli_group.add_command(effort_msg_cli, name='effort-msg')
 cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
 cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
-# cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
+cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
 # cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
 cli_group.add_command(
