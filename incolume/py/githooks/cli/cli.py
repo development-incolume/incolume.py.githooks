@@ -614,10 +614,19 @@ def clean_commit_msg_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=(msg_commit_file,),
+    required=False,
+    help='Filename for commit message',
+)
 @click.pass_context
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
+    commit_msg_file: Path,
     *,
     nonexequi: bool = False,
 ) -> click.Context:
@@ -625,7 +634,6 @@ def validate_format_commit_msg_cli(
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    # parser.add_argument('filenames', nargs='*', help='Filenames to check')
     logging.info(inspect.stack()[0][3])
 
     if nonexequi:
@@ -638,7 +646,7 @@ def validate_format_commit_msg_cli(
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    result = validate_format_commit_msg(*args.filenames)
+    result = validate_format_commit_msg(*commit_msg_file)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
