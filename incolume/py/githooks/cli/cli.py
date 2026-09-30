@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import argparse
 import inspect
 import logging
+import os
 import platform
 import re
 import sys
@@ -650,7 +650,7 @@ def validate_format_commit_msg_cli(
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    result = validate_format_commit_msg(*commit_msg_file)
+    result: Result = validate_format_commit_msg(commit_msg_file)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
@@ -658,44 +658,61 @@ def validate_format_commit_msg_cli(
     ctx.exit(result.code.value)
 
 
+@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-precommit-installed',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
-    """Run pre-commit-installed hook.
+def pre_commit_installed_cli(
+    ctx: click.Context,
+    *,
+    nonexequi: bool = False,
+) -> None:
+    """Validade pre-commit binary instalation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    parser = argparse.ArgumentParser(
-        description='Validade pre-commit binary instalation.'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        ctx.exit(0)
 
     result = Status.SUCCESS
-    files = list(Path.cwd().glob('.pre-commit-config.yaml'))
+    files = list(find_project_root().glob('.pre-commit-config.yaml'))
+    bins = tuple(
+        find_project_root().joinpath('.git', 'hooks', x)
+        for x in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'post-commit',
+        )
+    )
     ic(files)
-    if not files:
+    if files and not all(os.access(x, os.X_OK) for x in bins):
         click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
             fg='red',
         )
         result |= Status.FAILURE
-    return int(result.value)
+    ctx.exit(result.value)
 
 
 @click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
@@ -924,7 +941,7 @@ cli_group.add_command(effort_msg_cli, name='effort-msg')
 cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
 cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
 cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
-# cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
+cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
 cli_group.add_command(
     validate_format_commit_msg_cli, name='is-valid-msg-commit'

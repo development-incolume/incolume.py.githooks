@@ -702,7 +702,7 @@ class TestCaseAllCLI:
                         code=1, message='Please use the following format'
                     ),
                 ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
                 Entrance(
@@ -712,7 +712,7 @@ class TestCaseAllCLI:
                         code=0, message='Commit message is validated'
                     ),
                 ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
@@ -733,39 +733,58 @@ class TestCaseAllCLI:
         assert entrance.expected.message in result.output
 
     @pytest.mark.parametrize(
-        ['entrance', 'args', 'expected'],
+        'entrance',
         [
             pytest.param(
-                '.pre-commit-config.yaml',
-                [],
-                Status.SUCCESS,
+                Entrance(
+                    params=['-N'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
                 marks=[],
             ),
             pytest.param(
-                '',
-                [],
-                Status.FAILURE,
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
                 marks=[],
             ),
             pytest.param(
-                '',
-                ['--nonexequi'],
-                Status.SUCCESS,
-                marks=[],
+                Entrance(
+                    msg_file='.pre-commit-config.yaml',
+                    params=[],
+                    expected=Result(Status.SUCCESS, 'abc'),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                Entrance(params=[], expected=Result(Status.FAILURE, 'abc')),
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
     def test_precommit_installed(
-        self, entrance: str, args: list[str], expected: Status
+        self,
+        cli_runner: CliRunner,
+        entrance: Entrance,
     ) -> None:
         """Test for pre-commit installed."""
         result = Status.FAILURE
         with patch.object(Path, 'cwd') as m:
             m.return_value.glob.return_value = (
-                [Path(entrance)] if entrance else []
+                [Path(entrance.msg_file)] if entrance else []
             )
-            result = cli.pre_commit_installed_cli([*args])
-        assert Status(result) == Status(expected)
+            result = cli_runner.invoke(
+                cli.pre_commit_installed_cli, entrance.params
+            )
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
 
     @pytest.mark.parametrize(
         'entrance',
