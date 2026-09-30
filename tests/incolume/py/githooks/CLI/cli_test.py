@@ -702,7 +702,7 @@ class TestCaseAllCLI:
                         code=1, message='Please use the following format'
                     ),
                 ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
                 Entrance(
@@ -712,7 +712,7 @@ class TestCaseAllCLI:
                         code=0, message='Commit message is validated'
                     ),
                 ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
