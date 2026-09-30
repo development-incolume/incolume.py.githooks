@@ -636,7 +636,7 @@ def validate_format_commit_msg_cli(
 ) -> click.Context:
     """Validate commit message.
 
-    Hook designed for stages: pre-commit, pre-push, manual
+    Hook designed for stages: prepare-commit-msg, manual
     """
     logging.info(inspect.stack()[0][3])
 
