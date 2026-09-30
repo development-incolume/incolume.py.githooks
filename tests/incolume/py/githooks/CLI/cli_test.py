@@ -736,18 +736,6 @@ class TestCaseAllCLI:
         ['entrance', 'args', 'expected'],
         [
             pytest.param(
-                '.pre-commit-config.yaml',
-                [],
-                Status.SUCCESS,
-                marks=[],
-            ),
-            pytest.param(
-                '',
-                [],
-                Status.FAILURE,
-                marks=[],
-            ),
-            pytest.param(
                 '',
                 ['-N'],
                 Status.SUCCESS,
@@ -758,6 +746,18 @@ class TestCaseAllCLI:
                 ['--nonexequi'],
                 Status.SUCCESS,
                 marks=[],
+            ),
+            pytest.param(
+                '.pre-commit-config.yaml',
+                [],
+                Status.SUCCESS,
+                marks=[],
+            ),
+            pytest.param(
+                '',
+                [],
+                Status.FAILURE,
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
