@@ -599,7 +599,11 @@ def clean_commit_msg_cli(
     return int(Status.SUCCESS.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    name='is-valid-msg-commit',
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+)
 @click.version_option(
     __version__,
     '-V',
