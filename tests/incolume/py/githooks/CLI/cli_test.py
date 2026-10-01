@@ -889,13 +889,6 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
-                    params=['--nonexequi'],
-                    expected=Result(Status.SUCCESS, ''),
-                ),
-                marks=[pytest.mark.xfail],
-            ),
-            pytest.param(
-                Entrance(
                     msg_commit='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                     params=['--nonexequi'],
