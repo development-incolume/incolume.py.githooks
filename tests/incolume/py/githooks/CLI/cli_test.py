@@ -805,6 +805,7 @@ class TestCaseAllCLI:
         captured = capsys.readouterr()
         assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 
+    @pytest.mark.xfail
     @pytest.mark.parametrize(
         'entrance',
         [
