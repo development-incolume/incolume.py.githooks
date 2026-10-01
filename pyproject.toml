@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.16.0"
+version = "1.17.0"
 description = "Hooks git for incolume projects"
 readme = "README.md"
 license-files = ["LICEN[CS]E*", "docs/vendored/licenses/*.txt", "docs/AUTHORS.md"]
@@ -24,7 +24,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-#  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Software Development :: Build Tools",
   'Topic :: Software Development :: Libraries :: Python Modules',
   'Topic :: Utilities',
@@ -76,6 +76,7 @@ clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"
 detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.cli:effort_msg_cli"
 effort-random-msg = "incolume.py.githooks.cli:effort_random_msg_cli"
+githooks-cli = "incolume.py.githooks.cli:cli_group"
 insert-diff-commit = "incolume.py.githooks.cli:insert_diff_cli"
 is-precommit-installed = "incolume.py.githooks.cli:pre_commit_installed_cli"
 is-valid-branchname = "incolume.py.githooks.cli:check_valid_branchname_cli"

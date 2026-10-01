@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import argparse
 import inspect
 import logging
+import os
 import platform
 import re
 import sys
@@ -149,7 +149,11 @@ def check_len_first_line_commit_msg_cli(
     return int(result_code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-type-commit-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -198,7 +202,11 @@ def check_type_commit_msg_cli(
     )  # Validation passed or failure, allowing commit
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='is-valid-branchname',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -289,7 +297,11 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
     ctx.exit(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='is-valid-filename',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -367,46 +379,62 @@ def check_valid_filenames_cli(
     ctx.exit(codes.value)
 
 
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='detect-key',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='detect-key',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Checking private keys in files.')
-def detect_private_key_cli(argv: Sequence[str] | None = None) -> int:
+def detect_private_key_cli(
+    ctx: click.Context,
+    filenames: Sequence[Path],
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
     """CLI to check private key.
 
     Hook designed for stages: all
-
-    Args:
-        argv (Sequence[str] | None, optional): _description_. Defaults to None.
-
-    Returns:
-        int: _description_
-
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        return ctx.exit(0)
 
-    ic(args)
-    result: Result = has_private_key(*args.filenames)
+    result: Result = has_private_key(*filenames)
     click.secho(result.message, fg='red')
-    return int(result.code.value)
+    return ctx.exit(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='set-footer-signed-off-by',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -472,7 +500,11 @@ def footer_signedoffby_cli(
     return int(Status.SUCCESS.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='effort-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -506,7 +538,11 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     return 0
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=True,
+    name='clean-commit-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -591,88 +627,131 @@ def clean_commit_msg_cli(
     return int(Status.SUCCESS.value)
 
 
+@click.command(
+    name='is-valid-msg-commit',
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-valid-msg-commit',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=(msg_commit_file,),
+    required=False,
+    help='Filename for commit message',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
-    argv: Sequence[str] | None = None,
-) -> Status:
-    """Run CLI for prepare-commit-msg hook.
+    ctx: click.Context,
+    commit_msg_file: Path,
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
+    """Validate commit message.
 
-    Hook designed for stages: pre-commit, pre-push, manual
+    Hook designed for stages: prepare-commit-msg, manual
     """
-    parser = argparse.ArgumentParser()
-    parser.add_argument('filenames', nargs='*', help='Filenames to check')
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Do not run this hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        ctx.exit(0)
 
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    logging.debug('msgfile: %s', args)
-
-    result = validate_format_commit_msg(*args.filenames)
+    result: Result = validate_format_commit_msg(commit_msg_file)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
     )
-    return result.code.value
+    ctx.exit(result.code.value)
 
 
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='is-precommit-installed',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='is-precommit-installed',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
-def pre_commit_installed_cli(argv: Sequence[str] | None = None) -> int:
-    """Run pre-commit-installed hook.
+def pre_commit_installed_cli(
+    ctx: click.Context,
+    *,
+    nonexequi: bool = False,
+) -> None:
+    """Validade pre-commit binary instalation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    parser = argparse.ArgumentParser(
-        description='Validade pre-commit binary instalation.'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        default=False,
-        dest='nonexequi',
-        action='store_true',
-        help='Não executar hook.',
-    )
-    args = parser.parse_args(argv)
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
 
-    if args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return 0
+        ctx.exit(0)
 
     result = Status.SUCCESS
-    files = list(Path.cwd().glob('.pre-commit-config.yaml'))
+    files = list(find_project_root().glob('.pre-commit-config.yaml'))
+    bins = tuple(
+        find_project_root().joinpath('.git', 'hooks', x)
+        for x in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'post-commit',
+        )
+    )
     ic(files)
-    if not files:
+    if files and not all(os.access(x, os.X_OK) for x in bins):
         click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
             fg='red',
         )
         result |= Status.FAILURE
-    return int(result.value)
+    ctx.exit(result.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='effort-random-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -716,48 +795,75 @@ def effort_random_msg_cli(
     return 0
 
 
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=True,
+    name='insert-diff-commit',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='insert-diff-commit',
+)
+@click.option(
+    '--nonexequi',
+    '-N',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.argument(
+    'commit_msg_file',
+    nargs=-1,
+    type=click.Path(exists=True),
+    default=(msg_commit_file,),
+    required=True,
+    help='Filename for commit message',
+)
+@click.argument(
+    'commit_source', default='', required=False, help='Commit source'
+)
+@click.argument('commit_hash', default='', required=False, help='Commit hash')
+@click.pass_context
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
-def insert_diff_cli(argv: Sequence[str] | None = None) -> Status:
-    """CLI for module gitdiff."""
-    parser = argparse.ArgumentParser(
-        description='Processa mensagens de commit'
-        ' como no hook original em Perl.'
-    )
-    parser.add_argument(
-        'commit_msg_file', type=Path, help='Arquivo da mensagem de commit'
-    )
-    parser.add_argument(
-        'commit_source', default='', help='Origem do commit (ex.: template)'
-    )
-    parser.add_argument(
-        'commit_hash', default='', help='Hash do commit ou vazio'
-    )
-    parser.add_argument(
-        '--nonexequi',
-        dest='nonexequi',
-        action='store_false',
-        help='Não executar hook.',
-    )
-
-    args = parser.parse_args(argv)
+def insert_diff_cli(
+    ctx: click.Context,
+    commit_msg_file: Sequence[Path],
+    commit_source: str,
+    commit_hash: str,
+    *,
+    nonexequi: bool = False,
+) -> click.Context:
+    """Proccess commit messages adding git-diff."""
     logging.info(inspect.stack()[0][3])
-    logging.debug('msgfile: %s', args)
-    ic(args)
+    logging.debug(
+        'commit_msg_file=%s commit_source=%s commit_hash=%s',
+        commit_msg_file,
+        commit_source,
+        commit_hash,
+    )
 
-    if not args.nonexequi:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
-        return Status.SUCCESS.value
+        ctx.exit(Status.SUCCESS.value)
 
     diff_output = get_git_diff()
-    insert_git_diff(args.commit_msg_file, diff_output)
+    logging.debug(diff_output)
+    insert_git_diff(commit_msg_file, diff_output)
 
-    return Status.SUCCESS.value
+    ctx.exit(Status.SUCCESS.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='set-issue-from-branch',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -833,5 +939,53 @@ def set_issue_from_branch_cli(
     return 0
 
 
+@click.group(
+    'githooks-cli',
+    no_args_is_help=True,
+    context_settings=CONTEXT_SETTINGS_CLICK,
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='githooks-cli',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+def cli_group(ctx: click.Context, *, nonexequi: bool = False) -> None:
+    """Unifier Grouped for CLI - Command Line Interface."""
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        ctx.exit(0)
+
+
+cli_group.add_command(
+    check_len_first_line_commit_msg_cli, name='check-len-first-line'
+)
+cli_group.add_command(check_type_commit_msg_cli, name='check-type-commit-msg')
+cli_group.add_command(check_valid_branchname_cli, name='is-valid-branchname')
+cli_group.add_command(check_valid_filenames_cli, name='is-valid-filename')
+cli_group.add_command(clean_commit_msg_cli, name='clean-commit-msg')
+cli_group.add_command(detect_private_key_cli, name='detect-key')
+cli_group.add_command(effort_msg_cli, name='effort-msg')
+cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
+cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
+cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
+cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
+cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
+cli_group.add_command(
+    validate_format_commit_msg_cli, name='is-valid-msg-commit'
+)
+
 if __name__ == '__main__':
-    sys.exit(effort_random_msg_cli(sys.argv[1:]))
+    sys.exit(cli_group(sys.argv[1:]))

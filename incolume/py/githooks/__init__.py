@@ -1,6 +1,7 @@
 """Module githooks."""
 
 from incolume.py.githooks.core import (
+    __package_name__,
     __version__,
     debug_enable,
     debug_var_active,
@@ -12,6 +13,7 @@ from incolume.py.githooks.core import (
 )
 
 __all__ = [
+    '__package_name__',
     '__version__',
     'debug_enable',
     'debug_var_active',
