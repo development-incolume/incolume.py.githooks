@@ -26,21 +26,27 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip uv ruff
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        uv sync
+        if [ -f requirements.txt ]; then uv pip install -r requirements.txt; fi
+        uv sync --all-packages --all-extras --all-groups
+
+    - name: Activate virtual environment
+      run: |
+        source .venv/bin/activate
+        source .venv/Script/activate
 
     - name: Check with mypy
       continue-on-error: true
-      run: uv run mypy incolume/ tests/
+      run: mypy incolume/ tests/
 
     - name: Lint check
       run: |
-        uv run ruff check --fix incolume/ tests/
-        uv run ruff format incolume/ tests/
+        ruff check --fix incolume/ tests/
+        ruff format incolume/ tests/
 
     - name: Test with pytest
       run: |
-        uv run pytest -m 'not noci' --maxfail=1 --disable-warnings -q
+        pytest -m 'not noci' --maxfail=1 --disable-warnings -q
