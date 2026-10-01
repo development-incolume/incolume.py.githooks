@@ -5,6 +5,8 @@ name: Python package
 
 on:
   workflow_dispatch:
+    inputs:
+      branches:
 
   push:
     branches: [ "dev" ]
