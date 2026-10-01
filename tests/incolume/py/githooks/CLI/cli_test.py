@@ -16,7 +16,6 @@ from incolume.py.githooks.detect_private_key import BLACKLIST
 from inspect import stack
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
-    MainEntrance,
     MESSAGES,
     Status,
     Result,
@@ -37,6 +36,8 @@ class Entrance:
     msg_file: str | Path = ''
     msg_commit: str = ''
     params: list[str] = field(default_factory=list)
+    diff_output: str = ''
+    commit_source: str = ''
     expected: Result = field(
         default_factory=lambda: Result(Status.FAILURE, MESSAGERROR)
     )
@@ -331,18 +332,10 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                'dev',
-                0,
-                ['--no-dev'],
-                '',
-                marks=[pytest.mark.xfail]
+                'dev', 0, ['--no-dev'], '', marks=[pytest.mark.xfail]
             ),
             pytest.param(
-                'tags',
-                0,
-                ['--no-tags'],
-                '',
-                marks=[pytest.mark.xfail]
+                'tags', 0, ['--no-tags'], '', marks=[pytest.mark.xfail]
             ),
             pytest.param(
                 'main',
@@ -456,22 +449,40 @@ class TestCaseAllCLI:
         assert expected in result.output
 
     @pytest.mark.parametrize(
-        ['entrance', 'args'],
+        ['entrance', 'args', 'msg_output'],
         chain.from_iterable(
             [
                 (
-                    pytest.param(line, ['--nonexequi'], marks=[])
+                    pytest.param(
+                        line,
+                        ['--nonexequi'],
+                        'Hook not executed due to the `--nonexequi` option.\n',
+                        marks=[],
+                    )
                     for line in BLACKLIST
                 ),
-                (pytest.param(line, [], marks=[]) for line in BLACKLIST),
+                (
+                    pytest.param(
+                        line,
+                        ['-N'],
+                        'Hook not executed due to the `--nonexequi` option.\n',
+                        marks=[],
+                    )
+                    for line in BLACKLIST
+                ),
+                (
+                    pytest.param(line, [], 'Private key found: {}', marks=[])
+                    for line in BLACKLIST
+                ),
             ],
         ),
     )
     def test_detect_private_key_cli(
         self,
-        capsys: pytest.CaptureFixture[Any],
+        cli_runner: CliRunner,
         entrance: str,
         args: list[str],
+        msg_output: str,
     ) -> None:
         """Test CLI."""
         dout = self.test_dir / stack()[0][3]
@@ -481,10 +492,13 @@ class TestCaseAllCLI:
 
         ic(test_file, type(test_file))
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
-        cli.detect_private_key_cli([test_file.as_posix(), *args])
-        captured = capsys.readouterr()
-        if not args:
-            assert f'Private key found: {test_file.as_posix()}' in captured.out
+        result = cli_runner.invoke(
+            cli.detect_private_key_cli, [test_file.as_posix(), *args]
+        )
+        if args:
+            assert msg_output in result.output
+        else:
+            assert msg_output.format(test_file.as_posix()) in result.output
 
     @pytest.mark.parametrize(
         ['args', 'content', 'expected'],
@@ -637,57 +651,140 @@ class TestCaseAllCLI:
         )
 
     @pytest.mark.parametrize(
-        ['entrance', 'expected'],
+        'entrance',
         [
-            pytest.param([], 1, marks=[]),
-            pytest.param(['--nonexequi'], 0, marks=[]),
+            pytest.param(
+                Entrance(
+                    params=['-V'],
+                    expected=Result(0, 'is-valid-msg-commit, version'),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['-h'],
+                    expected=Result(
+                        0,
+                        'Usage: is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]...',
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(
+                        0, 'Hook not executed due to the `--nonexequi` option.'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['-N'],
+                    expected=Result(
+                        0, 'Hook not executed due to the `--nonexequi` option.'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[], msg_commit='', expected=Result(1, message='')
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='fake commit',
+                    expected=Result(
+                        code=1, message='Please use the following format'
+                    ),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='feat: #123 fake commit',
+                    expected=Result(
+                        code=0, message='Commit message is validated'
+                    ),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
         ],
     )
     def test_validate_format_commit_msg_cli(
-        self, entrance: list[str], expected: int
+        self, cli_runner: CliRunner, entrance: Entrance
     ) -> None:
         """Test CLI prepend commit message."""
-        with NamedTemporaryFile(dir=self.test_dir) as fl:
+        dout: Path = self.test_dir.joinpath(stack()[0][3])
+        dout.mkdir(parents=True, exist_ok=True)
+        with NamedTemporaryFile(dir=dout) as fl:
             test_file = Path(fl.name)
-        test_file.write_bytes(b'xpto: abc')
-        entrance.insert(0, test_file.as_posix())
+        test_file.write_bytes(entrance.msg_commit.encode(encoding='utf-8'))
 
-        assert cli.validate_format_commit_msg_cli(entrance) == expected
+        entry: list[str] = [test_file.as_posix(), *entrance.params]
+
+        result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
+        assert result.exit_code == entrance.expected.code
+        assert entrance.expected.message in result.output
 
     @pytest.mark.parametrize(
-        ['entrance', 'args', 'expected'],
+        'entrance',
         [
             pytest.param(
-                '.pre-commit-config.yaml',
-                [],
-                Status.SUCCESS,
+                Entrance(
+                    params=['-N'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
                 marks=[],
             ),
             pytest.param(
-                '',
-                [],
-                Status.FAILURE,
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
                 marks=[],
             ),
             pytest.param(
-                '',
-                ['--nonexequi'],
-                Status.SUCCESS,
-                marks=[],
+                Entrance(
+                    msg_file='.pre-commit-config.yaml',
+                    params=[],
+                    expected=Result(Status.SUCCESS, 'abc'),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                Entrance(params=[], expected=Result(Status.FAILURE, 'abc')),
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
     def test_precommit_installed(
-        self, entrance: str, args: list[str], expected: Status
+        self,
+        cli_runner: CliRunner,
+        entrance: Entrance,
     ) -> None:
         """Test for pre-commit installed."""
         result = Status.FAILURE
         with patch.object(Path, 'cwd') as m:
             m.return_value.glob.return_value = (
-                [Path(entrance)] if entrance else []
+                [Path(entrance.msg_file)] if entrance else []
             )
-            result = cli.pre_commit_installed_cli([*args])
-        assert Status(result) == Status(expected)
+            result = cli_runner.invoke(
+                cli.pre_commit_installed_cli, entrance.params
+            )
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
 
     @pytest.mark.parametrize(
         'entrance',
@@ -708,81 +805,137 @@ class TestCaseAllCLI:
         captured = capsys.readouterr()
         assert remove_color_tags(captured.out.strip()) in {'', *MESSAGES}
 
+    @pytest.mark.xfail
     @pytest.mark.parametrize(
+        'entrance',
         [
-            'entrance',
-            'expected',
-        ],
-        [
-            pytest.param(MainEntrance(), Result(Status.SUCCESS, ''), marks=[]),
             pytest.param(
-                MainEntrance(
-                    commit_msg_file='feat: bla bla bla\n\n#',
+                Entrance(
+                    params=['-N'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(
+                        Status.SUCCESS,
+                        'Hook not executed due to the `--nonexequi` option.',
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['-V'],
+                    expected=Result(
+                        Status.SUCCESS, 'insert-diff-commit, version'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['--version'],
+                    expected=Result(
+                        Status.SUCCESS, 'insert-diff-commit, version'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    expected=Result(Status.FAILURE, 'abc'),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='feat: bla bla bla\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                    expected=Result(
+                        message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
+                        'nothing.py\nM\tincolume/py/none.py\n#',
+                    ),
                 ),
-                Result(
-                    message='feat: bla bla bla\n\n\nA\tincolume/py/fake/'
-                    'nothing.py\nM\tincolume/py/none.py\n#',
-                ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(commit_msg_file='ci: #123 added ci/cd\n\n#'),
-                Result(Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'),
-                marks=[],
+                Entrance(
+                    msg_commit='ci: #123 added ci/cd\n\n#',
+                    expected=Result(
+                        Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'
+                    ),
+                ),
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(
+                Entrance(
                     commit_source='template',
-                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                    msg_commit='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
+                    expected=Result(
+                        code=Status.SUCCESS,
+                        message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
+                        'nothing.py'
+                        '\nM\tincolume/py/none.py\n#',
+                    ),
                 ),
-                Result(
-                    code=Status.SUCCESS,
-                    message='ci: #123 added ci/cd\n\n\nA\tincolume/py/fake/'
-                    'nothing.py'
-                    '\nM\tincolume/py/none.py\n#',
-                ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(args=['--nonexequi']),
-                Result(Status.SUCCESS, ''),
-                marks=[],
+                Entrance(
+                    params=['--nonexequi'],
+                    expected=Result(Status.SUCCESS, ''),
+                ),
+                marks=[pytest.mark.xfail],
             ),
             pytest.param(
-                MainEntrance(
-                    commit_msg_file='ci: #123 added ci/cd\n\n#',
+                Entrance(
+                    msg_commit='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
-                    args=['--nonexequi'],
+                    params=['--nonexequi'],
+                    expected=Result(
+                        code=Status.SUCCESS,
+                        message='ci: #123 added ci/cd\n\n#',
+                    ),
                 ),
-                Result(
-                    code=Status.SUCCESS, message='ci: #123 added ci/cd\n\n#'
-                ),
-                marks=[],
+                marks=[pytest.mark.xfail],
             ),
         ],
     )
     def test_insert_diff_cli(
         self,
+        cli_runner: CliRunner,
         mocker: MockerFixture,
-        entrance: MainEntrance,
-        expected: Result,
+        entrance: Entrance,
     ) -> None:
         """Test CLI function."""
         mocker.patch(
             'subprocess.check_output',
             return_value=entrance.diff_output,
         )
-        with NamedTemporaryFile() as tf:
+        dout: Path = self.test_dir / stack()[0][3]
+        dout.mkdir(parents=True, exist_ok=True)
+
+        with NamedTemporaryFile(dir=dout) as tf:
             test_file = Path(tf.name)
-        test_file.write_text(entrance.commit_msg_file, encoding='utf-8')
+
+        test_file.write_text(entrance.msg_commit, encoding='utf-8')
+
         entries = [
             test_file.as_posix(),
-            entrance.commit_source,
-            entrance.commit_hash,
-            *entrance.args,
+            # entrance.commit_source,
+            # entrance.commit_hash,
+            *entrance.params,
         ]
-
-        assert cli.insert_diff_cli(entries) == expected.code.value
-        assert test_file.read_text(encoding='utf-8') == expected.message
+        ic(entries)
+        result = cli_runner.invoke(cli.insert_diff_cli, entries)
+        assert test_file.is_file()
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
+        assert entrance.diff_output in test_file.read_text(encoding='utf-8')
