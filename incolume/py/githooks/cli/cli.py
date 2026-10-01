@@ -808,8 +808,8 @@ def effort_random_msg_cli(
     prog_name='insert-diff-commit',
 )
 @click.option(
-    '-N',
     '--nonexequi',
+    '-N',
     default=False,
     is_flag=True,
     help='Do not run this hook.',
