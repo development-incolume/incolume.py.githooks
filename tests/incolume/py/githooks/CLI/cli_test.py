@@ -38,6 +38,7 @@ class Entrance:
     params: list[str] = field(default_factory=list)
     diff_output: str = ''
     commit_source: str = ''
+    commit_hash: str = ''
     expected: Result = field(
         default_factory=lambda: Result(Status.FAILURE, MESSAGERROR)
     )
@@ -929,8 +930,8 @@ class TestCaseAllCLI:
 
         entries = [
             test_file.as_posix(),
-            # entrance.commit_source,
-            # entrance.commit_hash,
+            entrance.commit_source,
+            entrance.commit_hash,
             *entrance.params,
         ]
         ic(entries)
