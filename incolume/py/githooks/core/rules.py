@@ -210,7 +210,7 @@ class RequestFl:
     def refname(self) -> str:
         """Getting the reference name."""
         name = self.filename.stem
-        regex = r'[^\w\d_]' if self.considers_underscore else r'[^\w\d]'
+        regex = r'' if self.considers_underscore else '_'
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname

@@ -267,6 +267,15 @@ class TestCaseRules:
                 marks=[],
             ),
             pytest.param(
+                {
+                    'test_file': 'module/Áçücênà_A_U.py',
+                    'considers_underscore': False,
+                },
+                'refname',
+                'ÁçücênàAU',
+                marks=[],
+            ),
+            pytest.param(
                 {'test_file': 'module/File_4_U.js'},
                 'refname',
                 'File_4_U',
