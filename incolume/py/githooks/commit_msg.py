@@ -1,16 +1,3 @@
 """Module to handle commit message hook."""
 
 from __future__ import annotations
-
-import secrets
-
-from incolume.py.githooks.core.rules import MESSAGES
-
-
-def effort_random_msg(
-    *, fixed: bool = False, messages: list[str] | None = None
-) -> str:
-    """Get message."""
-    messages = messages or MESSAGES
-    msg = messages[0] if fixed else secrets.choice(messages)
-    return f'\n{msg}\n'
