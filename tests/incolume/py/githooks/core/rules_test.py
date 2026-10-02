@@ -227,6 +227,14 @@ class TestCaseRules:
         ['test_file', 'method', 'expected'],
         [
             pytest.param('module/file.py', 'refname', 'file', marks=[]),
+            pytest.param('module/U4File.md', 'refname', 'U4File', marks=[]),
+            pytest.param('module/4UFile.yml', 'refname', '4UFile', marks=[]),
+            pytest.param(
+                'module/file_4_u.sh', 'refname', 'file_4_u', marks=[]
+            ),
+            pytest.param(
+                'module/File_4_U.js', 'refname', 'File_4_U', marks=[]
+            ),
             pytest.param(
                 'module/__init__.py', 'refname', '__init__', marks=[]
             ),
