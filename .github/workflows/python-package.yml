@@ -5,13 +5,16 @@ name: Python package
 
 on:
   workflow_dispatch:
-    inputs:
-      branches:
+   inputs:
+     environment:
+       description: 'Run manually for all branches (e.g. main, tags, dev)'
+       required: true
+       default: 'tags'
 
   push:
     branches: [ "dev" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "main", "tags" ]
 
 jobs:
   build:
