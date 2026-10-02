@@ -1,11 +1,5 @@
-r"""Module for git hook.
+"""Module to handle effort commit message hook."""
 
-#!/bin/sh
-
-message='Boa! Continue trabalhando com dedicação!'
-echo "\033[1;32m $message\033[0m\n";
-
-"""
 import secrets
 
 from colorama import Fore, Style
