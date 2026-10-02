@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING
 import click
 from icecream import ic
 
-from incolume.py.githooks.commit_msg import effort_random_msg
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
@@ -32,7 +31,7 @@ from incolume.py.githooks.core.rules import (
 )
 from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
-from incolume.py.githooks.effort_message import effort_msg
+from incolume.py.githooks.effort_message import effort_msg, effort_random_msg
 from incolume.py.githooks.footer_signedoffby import (
     add_blank_line_if_needed,
     add_signed_off_by,
