@@ -1,5 +1,6 @@
 """Test for rules module."""
 
+from collections.abc import Mapping
 from typing import Any
 
 import pytest
@@ -224,53 +225,127 @@ class TestCaseRules:
         assert expected in dir(obj)
 
     @pytest.mark.parametrize(
-        ['test_file', 'method', 'expected'],
+        ['entrance', 'method', 'expected'],
         [
-            pytest.param('module/file.py', 'refname', 'file', marks=[]),
             pytest.param(
-                'module/__init__.py', 'refname', '__init__', marks=[]
-            ),
-            pytest.param('module/file.py', 'has_filename', True, marks=[]),
-            pytest.param('module/file.py', 'is_dundle_init', False, marks=[]),
-            pytest.param(
-                'module/__init__.py', 'is_dundle_init', True, marks=[]
-            ),
-            pytest.param('module/file.py', 'is_python_file', True, marks=[]),
-            pytest.param(
-                'module/README.md', 'is_python_file', False, marks=[]
+                {'test_file': 'module/file.py'}, 'refname', 'file', marks=[]
             ),
             pytest.param(
-                'tests/file.py',
+                {'test_file': 'module/U4File.md'},
+                'refname',
+                'U4File',
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/4UFile.yml'},
+                'refname',
+                '4UFile',
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/file_4_u.sh'},
+                'refname',
+                'file_4_u',
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'test_file': 'module/file_4_u.py',
+                    'considers_underscore': True,
+                },
+                'refname',
+                'file_4_u',
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'test_file': 'module/file_4_U.py',
+                    'considers_underscore': False,
+                },
+                'refname',
+                'file4U',
+                marks=[],
+            ),
+            pytest.param(
+                {
+                    'test_file': 'module/Áçücênà_A_U.py',
+                    'considers_underscore': False,
+                },
+                'refname',
+                'ÁçücênàAU',
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/File_4_U.js'},
+                'refname',
+                'File_4_U',
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/__init__.py'},
+                'refname',
+                '__init__',
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/file.py'}, 'has_filename', True, marks=[]
+            ),
+            pytest.param(
+                {'test_file': 'module/file.py'},
+                'is_dundle_init',
+                False,
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/__init__.py'},
+                'is_dundle_init',
+                True,
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/file.py'},
+                'is_python_file',
+                True,
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'module/README.md'},
+                'is_python_file',
+                False,
+                marks=[],
+            ),
+            pytest.param(
+                {'test_file': 'tests/file.py'},
                 'is_not_test_filename',
                 False,
                 marks=[],
             ),
             pytest.param(
-                'module/file_tests.py',
+                {'test_file': 'module/file_tests.py'},
                 'is_not_test_filename',
                 False,
                 marks=[],
             ),
             pytest.param(
-                'module/file.py',
+                {'test_file': 'module/file.py'},
                 'is_not_test_filename',
                 True,
                 marks=[],
             ),
             pytest.param(
-                'module/__init__.py',
+                {'test_file': 'module/__init__.py'},
                 'is_not_test_filename',
                 True,
                 marks=[],
             ),
             pytest.param(
-                'tests/file.py',
+                {'test_file': 'tests/file.py'},
                 'has_test_pathname',
                 True,
                 marks=[],
             ),
             pytest.param(
-                'module/file.py',
+                {'test_file': 'module/file.py'},
                 'has_test_pathname',
                 False,
                 marks=[],
@@ -278,12 +353,16 @@ class TestCaseRules:
         ],
     )
     def test_request_file_class_model(
-        self, test_file: str, method: str, expected: Any
+        self, entrance: Mapping[str, str], method: str, expected: Any
     ) -> None:
         """Test for RequestFl."""
+        entry = {}
         fout: Path = (
-            Path(gettempdir()) / 'VerifyRequestFileClassModel' / test_file
+            Path(gettempdir())
+            / 'VerifyRequestFileClassModel'
+            / entrance.pop('test_file')
         )
-        tfile: pkg.RequestFl = pkg.RequestFl(fout)
+        entry.update({'filename': fout}, **entrance)
+        tfile: pkg.RequestFl = pkg.RequestFl(**entry)
         result = getattr(tfile, method)
         assert result == expected
