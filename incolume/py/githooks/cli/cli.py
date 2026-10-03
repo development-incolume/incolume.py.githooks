@@ -736,13 +736,20 @@ def pre_commit_installed_cli(
         )
     )
     ic(files)
+    if not files:
+        result |= Status.FAILURE
+        click.secho(
+            '\n\nConfiguration file ".pre-commit-config.yaml" not detected',
+            fg='red',
+        )
+
     if files and not all(os.access(x, os.X_OK) for x in bins):
+        result |= Status.FAILURE
         click.secho(
             '\n\n`pre-commit` configuration detected,'
             ' but `pre-commit install` was never ran.\n',
             fg='red',
         )
-        result |= Status.FAILURE
     ctx.exit(result.value)
 
 
