@@ -1,7 +1,7 @@
 """Test module for CLI."""
 
 from __future__ import annotations
-
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
@@ -756,18 +756,6 @@ class TestCaseAllCLI:
                 ),
                 marks=[],
             ),
-            pytest.param(
-                Entrance(
-                    msg_file='.pre-commit-config.yaml',
-                    params=[],
-                    expected=Result(Status.SUCCESS, 'abc'),
-                ),
-                marks=[pytest.mark.xfail],
-            ),
-            pytest.param(
-                Entrance(params=[], expected=Result(Status.FAILURE, 'abc')),
-                marks=[pytest.mark.xfail],
-            ),
         ],
     )
     def test_precommit_installed(
@@ -776,7 +764,59 @@ class TestCaseAllCLI:
         entrance: Entrance,
     ) -> None:
         """Test for pre-commit installed."""
-        result = Status.FAILURE
+        result = cli_runner.invoke(
+            cli.pre_commit_installed_cli, entrance.params
+        )
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
+
+    def test_precommit_installed1(self, cli_runner: CliRunner) -> None:
+        """Test for pre-commit installed."""
+        entrance = Entrance(
+            msg_file='.pre-commit-config.yaml',
+            params=[],
+            expected=Result(Status.SUCCESS, ''),
+        )
+        with (
+            patch.object(Path, 'cwd') as m,
+            patch.object(os, 'access', return_value=True),
+        ):
+            m.return_value.glob.return_value = [Path(entrance.msg_file)]
+            result = cli_runner.invoke(
+                cli.pre_commit_installed_cli, entrance.params
+            )
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
+
+    def test_precommit_installed2(self, cli_runner: CliRunner) -> None:
+        """Test for pre-commit installed."""
+        entrance = Entrance(
+            msg_file='',
+            params=[],
+            expected=Result(
+                Status.FAILURE,
+                'Configuration file ".pre-commit-config.yaml" not detected',
+            ),
+        )
+        with patch.object(Path, 'cwd') as m:
+            m.return_value.glob.return_value = (
+                [Path(entrance.msg_file)] if entrance else []
+            )
+            result = cli_runner.invoke(
+                cli.pre_commit_installed_cli, entrance.params
+            )
+        assert result.exit_code == entrance.expected.code.value
+        assert entrance.expected.message in result.output
+
+    def test_precommit_installed3(self, cli_runner: CliRunner) -> None:
+        """Test for pre-commit installed."""
+        entrance = Entrance(
+            params=[],
+            expected=Result(
+                Status.FAILURE,
+                '`pre-commit` configuration detected, but `pre-commit install` was never ran.',
+            ),
+        )
         with patch.object(Path, 'cwd') as m:
             m.return_value.glob.return_value = (
                 [Path(entrance.msg_file)] if entrance else []
