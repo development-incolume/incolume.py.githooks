@@ -14,7 +14,6 @@ from typing import TYPE_CHECKING
 import click
 from icecream import ic
 
-from incolume.py.githooks.commit_msg import effort_random_msg
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
@@ -32,7 +31,7 @@ from incolume.py.githooks.core.rules import (
 )
 from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
-from incolume.py.githooks.effort_message import effort_msg
+from incolume.py.githooks.effort_message import effort_msg, effort_random_msg
 from incolume.py.githooks.footer_signedoffby import (
     add_blank_line_if_needed,
     add_signed_off_by,
@@ -149,7 +148,11 @@ def check_len_first_line_commit_msg_cli(
     return int(result_code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-type-commit-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -198,7 +201,11 @@ def check_type_commit_msg_cli(
     )  # Validation passed or failure, allowing commit
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='is-valid-branchname',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -289,7 +296,11 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
     ctx.exit(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='is-valid-filename',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -367,7 +378,11 @@ def check_valid_filenames_cli(
     ctx.exit(codes.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='detect-key',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -414,7 +429,11 @@ def detect_private_key_cli(
     return ctx.exit(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='set-footer-signed-off-by',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -480,7 +499,11 @@ def footer_signedoffby_cli(
     return int(Status.SUCCESS.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='effort-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -514,7 +537,11 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
     return 0
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=True)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=True,
+    name='clean-commit-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -658,7 +685,11 @@ def validate_format_commit_msg_cli(
     ctx.exit(result.code.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='is-precommit-installed',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -715,7 +746,11 @@ def pre_commit_installed_cli(
     ctx.exit(result.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='effort-random-msg',
+)
 @click.version_option(
     __version__,
     '-V',
@@ -772,8 +807,8 @@ def effort_random_msg_cli(
     prog_name='insert-diff-commit',
 )
 @click.option(
-    '-N',
     '--nonexequi',
+    '-N',
     default=False,
     is_flag=True,
     help='Do not run this hook.',
@@ -823,7 +858,11 @@ def insert_diff_cli(
     ctx.exit(Status.SUCCESS.value)
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='set-issue-from-branch',
+)
 @click.version_option(
     __version__,
     '-V',

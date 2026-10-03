@@ -38,6 +38,7 @@ class Entrance:
     params: list[str] = field(default_factory=list)
     diff_output: str = ''
     commit_source: str = ''
+    commit_hash: str = ''
     expected: Result = field(
         default_factory=lambda: Result(Status.FAILURE, MESSAGERROR)
     )
@@ -888,13 +889,6 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
-                    params=['--nonexequi'],
-                    expected=Result(Status.SUCCESS, ''),
-                ),
-                marks=[pytest.mark.xfail],
-            ),
-            pytest.param(
-                Entrance(
                     msg_commit='ci: #123 added ci/cd\n\n#',
                     diff_output='A\tincolume/py/fake/nothing.py\nM\tincolume/py/none.py',
                     params=['--nonexequi'],
@@ -928,8 +922,8 @@ class TestCaseAllCLI:
 
         entries = [
             test_file.as_posix(),
-            # entrance.commit_source,
-            # entrance.commit_hash,
+            entrance.commit_source,
+            entrance.commit_hash,
             *entrance.params,
         ]
         ic(entries)
