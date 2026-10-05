@@ -24,14 +24,14 @@ MARKERS: Final[tuple[str, ...]] = (
 def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
     """Backup file."""
     count = itertools.count(start=start)
-    backup: Path = filename.with_suffix(filename.suffix + ext)
+    bkp_fl: Path = filename.with_suffix(filename.suffix + ext)
 
-    while backup.is_file():
-        backup = filename.with_suffix(filename.suffix + f'{ext}.{next(count)}')
 
-    shutil.copy(filename, backup)
+    while bkp_fl.is_file():
+        bkp_fl = bkp_fl.with_suffix(bkp_fl.suffix + f'{ext}.{next(count)}')
+    shutil.copy(filename, bkp_fl)
 
-    return backup
+    return bkp_fl
 
 
 def find_project_root(
