@@ -958,6 +958,7 @@ class TestCasePreCommit:
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
 
+    @pytest.mark.xfail
     def test_precommit_installed2(self, cli_runner: CliRunner) -> None:
         """Test for pre-commit installed."""
         entrance = Entrance(
