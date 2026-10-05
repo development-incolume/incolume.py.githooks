@@ -23,13 +23,6 @@ class TestCaseUtils:
          e diretórios gerados ao final.
         """
         ic(f'finished class {cls.__name__} execution')
-        ic(dir(cls))
-        ic([
-            name
-            for name in cls.__dict__
-            if callable(cls.__dict__[name]) and not name.startswith('_')
-        ])
-        ic(list(inspect.getmembers(cls, predicate=inspect.isfunction)))
 
         for name in (
             name
