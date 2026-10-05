@@ -23,6 +23,7 @@ class TestCaseUtils:
         """
         ic(f'finished class {cls.__name__} execution')
         ic(dir(cls))
+        print([name for name in cls.__dict__ if callable(cls.__dict__[name]) and not name.startswith('_')])
 
     @pytest.mark.parametrize(
         'entrance',
