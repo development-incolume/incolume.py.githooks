@@ -7,6 +7,7 @@ from pathlib import Path
 import inspect
 import re
 from icecream import ic
+import shutil
 
 
 class TestCaseUtils:
@@ -23,8 +24,21 @@ class TestCaseUtils:
         """
         ic(f'finished class {cls.__name__} execution')
         ic(dir(cls))
-        ic([name for name in cls.__dict__ if callable(cls.__dict__[name]) and not name.startswith('_')])
-        ic([(fnct, a) for fnct, a in inspect.getmembers(cls, predicate=inspect.isfunction)])
+        ic([
+            name
+            for name in cls.__dict__
+            if callable(cls.__dict__[name]) and not name.startswith('_')
+        ])
+        ic(list(inspect.getmembers(cls, predicate=inspect.isfunction)))
+
+        for name in (
+            name
+            for name, _ in inspect.getmembers(
+                cls, predicate=inspect.isfunction
+            )
+        ):
+            dout = cls.test_dir / name
+            shutil.rmtree(dout, ignore_errors=True)
 
     @pytest.mark.parametrize(
         'entrance',
