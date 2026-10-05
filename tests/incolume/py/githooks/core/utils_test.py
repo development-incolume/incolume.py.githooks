@@ -6,12 +6,22 @@ from tempfile import gettempdir
 from pathlib import Path
 import inspect
 import re
+from icecream import ic
 
 
 class TestCaseUtils:
     """Case test for utils."""
 
     test_dir: Path = Path(gettempdir(), inspect.stack()[0][3])
+
+    @classmethod
+    def teardown_class(cls) -> None:
+        """Teardown class.
+
+        Teardown da classe. Remove todos os arquivos
+         e diretórios gerados ao final.
+        """
+        ic(f'finished class {cls.__name__} execution')
 
     @pytest.mark.parametrize(
         'entrance',
