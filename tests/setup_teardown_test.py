@@ -48,7 +48,7 @@ class TestCaseCompactShutil:
                 cls, predicate=inspect.isfunction
             )
         ):
-            dout = cls.test_dir / name
+            dout = cls.PATH / name
             shutil.rmtree(dout, ignore_errors=True)
 
     def setup_method(self, method: Callable[[], None]) -> None:
