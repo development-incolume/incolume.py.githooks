@@ -1,6 +1,5 @@
 """Test for rules module."""
 
-from collections.abc import Mapping
 from typing import Any
 
 import pytest
@@ -353,10 +352,10 @@ class TestCaseRules:
         ],
     )
     def test_request_file_class_model(
-        self, entrance: Mapping[str, str], method: str, expected: Any
+        self, entrance: dict[str, str], method: str, expected: Any
     ) -> None:
         """Test for RequestFl."""
-        entry = {}
+        entry: dict[str, Any] = {}
         fout: Path = (
             Path(gettempdir())
             / 'VerifyRequestFileClassModel'
