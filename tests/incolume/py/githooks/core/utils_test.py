@@ -23,8 +23,8 @@ class TestCaseUtils:
         """
         ic(f'finished class {cls.__name__} execution')
         ic(dir(cls))
-        print([name for name in cls.__dict__ if callable(cls.__dict__[name]) and not name.startswith('_')])
-        print([(fnct, a) for fnct, a in inspect.getmembers(cls, predicate=inspect.isfunction)])
+        ic([name for name in cls.__dict__ if callable(cls.__dict__[name]) and not name.startswith('_')])
+        ic([(fnct, a) for fnct, a in inspect.getmembers(cls, predicate=inspect.isfunction)])
 
     @pytest.mark.parametrize(
         'entrance',
