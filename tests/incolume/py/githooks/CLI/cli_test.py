@@ -948,8 +948,8 @@ class TestCasePreCommit:
             expected=Result(Status.SUCCESS),
         )
         with (
-            patch.object(cli.cli.Path, 'cwd') as m,
-            patch.object(cli.cli.os, 'access', return_value=True),
+            patch.object(Path, 'cwd') as m,
+            patch.object(os, 'access', return_value=True),
         ):
             m.return_value.glob.return_value = [Path(entrance.msg_file)]
             result = cli_runner.invoke(
@@ -958,7 +958,6 @@ class TestCasePreCommit:
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
 
-    @pytest.mark.skip
     def test_precommit_installed2(self, cli_runner: CliRunner) -> None:
         """Test for pre-commit installed."""
         entrance = Entrance(
@@ -970,10 +969,9 @@ class TestCasePreCommit:
             ),
         )
         with (
-            patch.object(cli.cli.Path, 'cwd') as m,
+            patch.object(cli.cli.Path, 'cwd', return_value=[]),
             patch.object(cli.cli.os, 'access', return_value=False),
         ):
-            m.return_value.glob.return_value = []
             result = cli_runner.invoke(
                 cli.pre_commit_installed_cli, entrance.params
             )
