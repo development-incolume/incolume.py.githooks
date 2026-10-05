@@ -22,7 +22,7 @@ class TestCaseUtils:
          e diretórios gerados ao final.
         """
         ic(f'finished class {cls.__name__} execution')
-        print(dir(cls))
+        ic(dir(cls))
 
     @pytest.mark.parametrize(
         'entrance',
