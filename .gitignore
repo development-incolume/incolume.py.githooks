@@ -1,6 +1,3 @@
-# personal
-.git/*MSG.b??.[0-9]*
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
