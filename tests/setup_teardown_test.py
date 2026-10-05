@@ -34,6 +34,22 @@ class TestCaseCompactShutil:
          e diretórios gerados ao final.
         """
         ic(f'finished class {cls.__name__} execution')
+        ic(dir(cls))
+        ic([
+            name
+            for name in cls.__dict__
+            if callable(cls.__dict__[name]) and not name.startswith('_')
+        ])
+        ic(list(inspect.getmembers(cls, predicate=inspect.isfunction)))
+
+        for name in (
+            name
+            for name, _ in inspect.getmembers(
+                cls, predicate=inspect.isfunction
+            )
+        ):
+            dout = cls.test_dir / name
+            shutil.rmtree(dout, ignore_errors=True)
 
     def setup_method(self, method: Callable[[], None]) -> None:
         """Set method.
