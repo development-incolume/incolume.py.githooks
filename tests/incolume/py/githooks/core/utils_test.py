@@ -81,3 +81,22 @@ class TestCaseUtils:
         dout.mkdir(exist_ok=True, parents=True)
         dbase.joinpath('setup.cfg').touch()
         assert pkg.find_project_root(start_dir=dout.as_posix()).is_dir()
+
+    @pytest.mark.parametrize(
+        ['entrance', 'expected'],
+        [
+            pytest.param('file.txt', 'file.txt.bkp', marks=[]),
+            pytest.param('file.txt', 'file.txt.bkp.1', marks=[]),
+            pytest.param('file.txt', 'file.txt.bkp.2', marks=[]),
+        ],
+    )
+    def test_backup_file(self, entrance, expected) -> None:
+        """Test backup_file."""
+        fout = self.test_dir / inspect.stack()[0][3] / entrance
+        fout.parent.mkdir(exist_ok=True, parents=True)
+        fout.touch()
+        result = pkg.backup_file(fout)
+
+        assert fout.exists()
+        assert result.is_file()
+        assert result.name == expected
