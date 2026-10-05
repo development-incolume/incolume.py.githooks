@@ -90,7 +90,7 @@ class TestCaseUtils:
             pytest.param('file.txt', 'file.txt.bkp.2', marks=[]),
         ],
     )
-    def test_backup_file(self, entrance, expected) -> None:
+    def test_backup_file(self, entrance: str, expected: str) -> None:
         """Test backup_file."""
         fout = self.test_dir / inspect.stack()[0][3] / entrance
         fout.parent.mkdir(exist_ok=True, parents=True)
