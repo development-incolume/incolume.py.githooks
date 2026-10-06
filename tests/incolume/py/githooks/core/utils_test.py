@@ -8,6 +8,7 @@ import inspect
 import re
 from icecream import ic
 import shutil
+import tempfile
 
 
 class TestCaseUtils:
@@ -100,3 +101,21 @@ class TestCaseUtils:
         assert fout.exists()
         assert result.is_file()
         assert result.name == expected
+
+    def test_bkp_file(self) -> None:
+        """Test backup_file function."""
+        with tempfile.NamedTemporaryFile(
+            dir=self.test_dir, suffix='.txt'
+        ) as tf:
+            test_file = Path(tf.name).with_stem('test-file')
+        test_file.parent.mkdir(exist_ok=True, parents=True)
+        test_file.write_text('Initial commit message\n', encoding='utf-8')
+
+        pkg.backup_file(test_file)
+        pkg.backup_file(test_file)
+        result = pkg.backup_file(test_file)
+
+        assert test_file.is_file()
+        assert test_file.with_suffix(test_file.suffix + '.bkp').is_file()
+        assert test_file.with_suffix(test_file.suffix + '.bkp.1').is_file()
+        assert test_file.with_suffix(test_file.suffix + '.bkp.2').is_file()
