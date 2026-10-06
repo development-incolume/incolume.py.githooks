@@ -601,7 +601,7 @@ def clean_commit_msg_cli(
 
     commit_msg_file = Path(commit_msg_file)
 
-    backup = backup_file(commit_msg_file, '.bak')
+    backup = backup_file(commit_msg_file)
     logging.debug(backup)
 
     result = []
