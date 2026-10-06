@@ -668,7 +668,7 @@ class TestCaseAllCLI:
                         code=1, message='Please use the following format'
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -678,7 +678,14 @@ class TestCaseAllCLI:
                         code=0, message='Commit message is validated'
                     ),
                 ),
-                marks=[pytest.mark.skip],
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=['--version'],
+                    expected=Result(0, 'is-valid-msg-commit, version'),
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -689,10 +696,20 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
+                    params=['--help'],
+                    expected=Result(
+                        0,
+                        'is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]',
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
                     params=['-h'],
                     expected=Result(
                         0,
-                        'Usage: is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]...',
+                        'is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]',
                     ),
                 ),
                 marks=[],
@@ -730,7 +747,6 @@ class TestCaseAllCLI:
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 
         result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
-        # assert result.exit_code == 0
         assert result.exit_code == entrance.expected.code
         assert entrance.expected.message in result.output
 
