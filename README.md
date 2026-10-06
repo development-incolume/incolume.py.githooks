@@ -22,7 +22,7 @@ Model for .pre-commit-config.yaml, bellow:
 ```yaml
 # File .pre-commit-config.yaml
 
-default_install_hook_types: [pre-commit, prepare-commit-msg]
+default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, post-commit]
 repos:
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -60,26 +60,26 @@ repos:
       args: [--config, ruff.toml]
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  # https://github.com/development-incolume/incolume.py.githooks/blob/dev/README.md
-  rev: 1.15.0
+  # https://github.com/development-incolume/incolume.py.githooks/blob/1.17.0/README.md
+  rev: 1.17.0
   hooks:
     - id: check-len-first-line
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
     - id: check-precommit-installed
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-branchnames
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-filenames
-    #   args: ['--min-len=3', '--max-len=256', '--nonexequi']
+    #   args: ['--min-len=3', '--max-len=256', '--nonexequi|-N', '--version|-V']
     - id: detect-key
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
     - id: effort-message
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
     - id: footer-signed-off-by
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
     - id: insert-diff-commit
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
     - id: validate-message-commit
-    #   args: [--nonexequi]
+    #   args: [--nonexequi|-N, --version|-V]
 
 ```
