@@ -647,9 +647,8 @@ def clean_commit_msg_cli(
 )
 @click.argument(
     'commit_msg_file',
-    nargs=-1,
     type=click.Path(exists=True),
-    default=(msg_commit_file,),
+    default=msg_commit_file,
     required=False,
     help='Filename for commit message',
 )
@@ -660,7 +659,7 @@ def validate_format_commit_msg_cli(
     commit_msg_file: Path,
     *,
     nonexequi: bool = False,
-) -> click.Context:
+) -> int:
     """Validate commit message.
 
     Hook designed for stages: prepare-commit-msg, manual

@@ -658,7 +658,7 @@ class TestCaseAllCLI:
                 Entrance(
                     params=[], msg_commit='', expected=Result(1, message='')
                 ),
-                marks=[pytest.mark.skip],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -730,6 +730,7 @@ class TestCaseAllCLI:
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 
         result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
+        # assert result.exit_code == 0
         assert result.exit_code == entrance.expected.code
         assert entrance.expected.message in result.output
 
