@@ -32,7 +32,7 @@ class TestCaseUtils:
             )
         ):
             dout = cls.test_dir / name
-            shutil.rmtree(dout / 'file', ignore_errors=True)
+            shutil.rmtree(dout, ignore_errors=True)
 
     @pytest.mark.parametrize(
         'entrance',
