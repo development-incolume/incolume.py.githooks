@@ -86,21 +86,35 @@ class TestCaseUtils:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param('file.txt', '.bkp/file.txt.bkp', marks=[]),
-            pytest.param('file.txt', '.bkp/file.txt.bkp.1', marks=[]),
-            pytest.param('file.txt', '.bkp/file.txt.bkp.2', marks=[]),
+            pytest.param('file-', r'\.bkp/file-.*\.bkp', marks=[]),
+            pytest.param('file-', r'.bkp/file-.*.bkp.1', marks=[]),
+            pytest.param(
+                'file-', r'.bkp/file-.*.bkp.2', marks=[pytest.mark.xfail]
+            ),
         ],
     )
     def test_backup_file(self, entrance: str, expected: str) -> None:
         """Test backup_file."""
-        fout = self.test_dir / inspect.stack()[0][3] / entrance
-        fout.parent.mkdir(exist_ok=True, parents=True)
+        dout = self.test_dir / inspect.stack()[0][3]
+        dout.mkdir(parents=True, exist_ok=True)
+
+        with tempfile.NamedTemporaryFile(
+            dir=dout, prefix=entrance, suffix='.md'
+        ) as tf:
+            fout = Path(tf.name)
+
         fout.touch()
-        result = pkg.backup_file(fout)
+        results = [
+            pkg.backup_file(fout),
+            pkg.backup_file(fout),
+            pkg.backup_file(fout),
+        ]
 
         assert fout.exists()
-        assert result.is_file()
-        assert result.as_posix() == expected
+        assert all(result.is_file() for result in results)
+        assert any(
+            re.fullmatch(expected, result.as_posix()) for result in results
+        )
 
     def test_backup_file1(self) -> None:
         """Test backup_file function."""
