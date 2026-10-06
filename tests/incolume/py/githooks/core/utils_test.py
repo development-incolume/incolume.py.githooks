@@ -16,8 +16,8 @@ from dataclasses import dataclass
 class EntranceBkp:
     """Entrada para teste de backup."""
 
-    prefix: str
     regex: str
+    prefix: str = ''
     ext_fl: str = '.txt'
     ext_bkp: str = '.bkp'
     content: str = ''
@@ -104,11 +104,20 @@ class TestCaseUtils:
                 marks=[],
             ),
             pytest.param(
-                EntranceBkp(prefix='file-', regex=r'.bkp/file-.*.bkp.1'),
+                EntranceBkp(prefix='fl-', regex=r'.bkp/fl-.*.bkp.1'),
                 marks=[],
             ),
             pytest.param(
-                EntranceBkp(prefix='file-', regex=r'.bkp/file-.*.bkp.2'),
+                EntranceBkp(ext_fl='.xpto', regex=r'.bkp/.*\.xpto\.bkp\.2'),
+                marks=[],
+            ),
+            pytest.param(
+                EntranceBkp(
+                    prefix='testfile-',
+                    ext_fl='.md',
+                    content='test: teste da função `backup_file`\n',
+                    regex=r'.bkp/testfile-.*.bkp.2',
+                ),
                 marks=[],
             ),
         ],
@@ -123,7 +132,7 @@ class TestCaseUtils:
         ) as tf:
             fout = Path(tf.name)
 
-        fout.touch()
+        fout.write_text(entrance.content, encoding='utf-8')
         results = [
             pkg.backup_file(fout),
             pkg.backup_file(fout),
@@ -136,28 +145,3 @@ class TestCaseUtils:
             re.fullmatch(entrance.regex, result.as_posix())
             for result in results
         )
-
-    def test_backup_file1(self) -> None:
-        """Test backup_file function."""
-        dout = self.test_dir / inspect.stack()[0][3]
-        dout.mkdir(parents=True, exist_ok=True)
-
-        with tempfile.NamedTemporaryFile(dir=dout, suffix='.txt') as tf:
-            test_file = Path(tf.name)
-        test_file.write_text('Initial commit message\n', encoding='utf-8')
-
-        pkg.backup_file(test_file)
-        pkg.backup_file(test_file)
-        result = pkg.backup_file(test_file)
-
-        assert test_file.is_file()
-        assert result.is_file()
-        assert result.with_name(
-            test_file.stem + test_file.suffix + '.bkp'
-        ).is_file()
-        assert result.with_name(
-            test_file.stem + test_file.suffix + '.bkp.1'
-        ).is_file()
-        assert result.with_name(
-            test_file.stem + test_file.suffix + '.bkp.2'
-        ).is_file()
