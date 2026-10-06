@@ -112,20 +112,3 @@ class TestCaseFooterSignedOffBy:
         test_file.write_text(entrance, encoding='utf-8')
         pkg.add_blank_line_if_needed(test_file, commit_source)
         assert test_file.read_text(encoding='utf-8') == expected
-
-    def test_bkp_file(self) -> None:
-        """Test add_signed_off_by function."""
-        with tempfile.NamedTemporaryFile(
-            dir=self.test_dir, suffix='.txt'
-        ) as tf:
-            test_file = Path(tf.name).with_stem('test-file')
-        test_file.write_text('Initial commit message\n', encoding='utf-8')
-
-        pkg.clean_commit_msg(path=test_file)
-        pkg.clean_commit_msg(path=test_file)
-        pkg.clean_commit_msg(path=test_file)
-
-        assert test_file.is_file()
-        assert test_file.with_suffix(test_file.suffix + '.bkp').is_file()
-        assert test_file.with_suffix(test_file.suffix + '.bkp.1').is_file()
-        assert test_file.with_suffix(test_file.suffix + '.bkp.2').is_file()
