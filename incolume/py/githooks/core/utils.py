@@ -25,20 +25,14 @@ def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
     """Backup file."""
     count = itertools.count(start=start)
     ext = f'.{ext.strip(".")}'
-    bkp_fl: Path = filename.with_suffix(f'{filename.suffix}{ext}')
     bkp_dir = Path('.bkp')
+    bkp_fl: Path = bkp_dir / f'{filename.stem}{filename.suffix}{ext}'
 
     bkp_dir.mkdir(exist_ok=True, parents=True)
 
     while bkp_fl.is_file():
-        # bkp_fl = bkp_fl.with_suffix(bkp_fl.suffix + f'{ext}.{next(count)}')
-        # bkp_fl = bkp_fl.with_suffix(f'{".".join(bkp_fl.suffixes[:])}.{next(count)}')
-        # bkp_fl = bkp_fl.with_suffix(f'{".".join(bkp_fl.suffixes[:])}.{next(count)}')
-        # bkp_fl = filename.with_suffix('.'.join(bkp_fl.suffixes))
-        # bkp_fl = bkp_fl.with_suffix('.'.join(bkp_fl.suffixes))
-        # bkp_fl = bkp_fl.with_suffix(''.join(bkp_fl.suffixes[1:]) + f'.{next(count)}')
-        bkp_fl = bkp_fl.with_name(
-            f'{filename.stem}{filename.suffix}{ext}.{next(count)}'
+        bkp_fl = (
+            bkp_dir / f'{filename.stem}{filename.suffix}{ext}.{next(count)}'
         )
     shutil.copy(filename, bkp_fl)
 
