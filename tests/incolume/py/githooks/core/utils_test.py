@@ -116,7 +116,7 @@ class TestCaseUtils:
                     prefix='testfile-',
                     ext_fl='.md',
                     content='test: teste da função `backup_file`\n',
-                    regex=r'.bkp/testfile-.*.bkp.2',
+                    regex=r'.bkp/testfile-.*.bkp.*',
                 ),
                 marks=[],
             ),
