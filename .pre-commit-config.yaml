@@ -127,11 +127,21 @@ repos:
       args: []
 
     - id: effort-message
-      verbose: true
+      verbose: false
       name: Incolume - Commit Message Effort Hook
       language: python
       entry: effort-msg
       additional_dependencies: [colorama,rich]  # Python dependency for the script
+      always_run: true
+      stages: [post-commit, manual]  # this hook is run at commit time
+      args: []
+
+    - id: effort-random-message
+      verbose: false
+      name: Incolume - Commit Message Effort Hook
+      language: python
+      entry: effort-random-msg
+      additional_dependencies: []
       always_run: true
       stages: [post-commit, manual]  # this hook is run at commit time
       args: []
