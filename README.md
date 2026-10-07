@@ -67,7 +67,7 @@ repos:
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
     - id: check-precommit-installed
     #   args: [--nonexequi|-N, --version|-V]
-    - id: check-valid-branchnames
+    - id: check-valid-branchname
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-filenames
     #   args: ['--min-len=3', '--max-len=256', '--nonexequi|-N', '--version|-V']
