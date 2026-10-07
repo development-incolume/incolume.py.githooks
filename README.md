@@ -75,7 +75,7 @@ repos:
     #   args: [--nonexequi|-N, --version|-V]
     - id: effort-message
     #   args: [--nonexequi|-N, --version|-V]
-    - id: effort-random-msg
+    - id: effort-random-message
     #   args: [--fixed|-F, --nonexequi|-N, --version|-V]
     - id: footer-signed-off-by
     #   args: [--nonexequi|-N, --version|-V]
