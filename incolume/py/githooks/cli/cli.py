@@ -59,7 +59,11 @@ msg_commit_file: Path = find_project_root(__file__).joinpath(
 )
 
 
-@click.command(context_settings=CONTEXT_SETTINGS_CLICK, no_args_is_help=False)
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-len-first-line',
+)
 @click.version_option(
     __version__,
     '-V',
