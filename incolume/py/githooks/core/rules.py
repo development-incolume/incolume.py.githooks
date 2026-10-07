@@ -46,7 +46,7 @@ def add_class_method_decorator(
     return wrapper
 
 
-def _missing_(cls: Self, value: str) -> Self | None:
+def _missing_(cls: Self, value: str) -> Self | None:  # type: ignore[type-arg]
     """Get self instance."""
     value = str(value).upper().strip()
 
@@ -66,17 +66,17 @@ def _generate_next_value_(
     return str(name.casefold())
 
 
-def to_set(cls: Self) -> set[str]:
+def to_set(cls: Self) -> set[str]:  # type: ignore[type-arg]
     """Enum to set."""
     return set(cls._value2member_map_)
 
 
-def to_list(cls: Self) -> list[str]:
+def to_list(cls: Self) -> list[str]:  # type: ignore[type-arg]
     """Enum to list."""
     return sorted(cls._value2member_map_)
 
 
-def to_tuple(cls: Self) -> tuple[str]:
+def to_tuple(cls: Self) -> tuple[str]:  # type: ignore[type-arg]
     """Enum to list."""
     return tuple(sorted(cls._value2member_map_))
 
