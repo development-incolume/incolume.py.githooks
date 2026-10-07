@@ -55,7 +55,16 @@
   language: python
   pass_filenames: false
   types: []
-  stages: [pre-commit, pre-push, manual]
+  stages: [post-commit, manual]
+
+- id: effort-random-message
+  name: Incolume - Commit Message Effort Hook
+  description: Effort message for commit.
+  entry: effort-random-msg
+  language: python
+  pass_filenames: false
+  types: []
+  stages: [post-commit, manual]
 
 - id: footer-signed-off-by
   name: Incolume - Seting footer with Signed-off-by
@@ -75,6 +84,14 @@
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: false
 
+- id: validate-message-commit
+  name: Incolume - check if is valid the message commit
+  description: Guarantees valid commit messages.
+  entry: is-valid-msg-commit
+  language: python
+  additional_dependencies: []
+  types: []
+  stages: [pre-commit, pre-push, manual]
 
 - id: set_issue_from_branch_cli
   name: Incolume - Set Issue from Branch Name
