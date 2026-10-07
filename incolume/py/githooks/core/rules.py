@@ -13,15 +13,12 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from pathlib import Path
 from string import ascii_lowercase, digits
-from typing import Final
+from typing import Any, Final
 
 from icecream import ic
 
 with contextlib.suppress(ImportError, ModuleNotFoundError):
-    from typing import Self  # type: ignore[attr-defined]
-
-with contextlib.suppress(ImportError, ModuleNotFoundError):
-    from typing_extensions import Self
+    from typing import Self
 
 
 ic.disable()
@@ -33,7 +30,7 @@ def add_class_method_decorator(
 ) -> Callable:  # type: ignore[type-arg]
     """Decorate dynamically add a class method into any class."""
 
-    def wrapper(cls: Self) -> Self:
+    def wrapper(cls: Callable[..., Any]) -> Callable[..., Any]:
         """Wrap to add class method."""
         match method_modo:
             case Callable():
@@ -46,7 +43,7 @@ def add_class_method_decorator(
     return wrapper
 
 
-def _missing_(cls: Self, value: str) -> Self | None:
+def _missing_(cls: type[Enum], value: str) -> Enum | None:
     """Get self instance."""
     value = str(value).upper().strip()
 
@@ -66,17 +63,17 @@ def _generate_next_value_(
     return str(name.casefold())
 
 
-def to_set(cls: Self) -> set[str]:
+def to_set(cls: type[Enum]) -> set[str]:
     """Enum to set."""
     return set(cls._value2member_map_)
 
 
-def to_list(cls: Self) -> list[str]:
+def to_list(cls: type[Enum]) -> list[str]:
     """Enum to list."""
     return sorted(cls._value2member_map_)
 
 
-def to_tuple(cls: Self) -> tuple[str]:
+def to_tuple(cls: type[Enum]) -> tuple[str]:
     """Enum to list."""
     return tuple(sorted(cls._value2member_map_))
 
@@ -210,7 +207,7 @@ class RequestFl:
     def refname(self) -> str:
         """Getting the reference name."""
         name = self.filename.stem
-        regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
+        regex = r'' if self.considers_underscore else '_'
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
         return refname
