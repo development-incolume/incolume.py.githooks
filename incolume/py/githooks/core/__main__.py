@@ -12,10 +12,10 @@ from icecream import ic
 ic.disable()
 
 with suppress(ImportError, ModuleNotFoundError):
-    import tomllib as tomli
+    import tomli
 
 with suppress(ImportError, ModuleNotFoundError):
-    import tomli
+    import tomllib as tomli
 
 
 confproject = Path(__file__).parents[4] / 'pyproject.toml'
