@@ -106,7 +106,7 @@ def check_len_first_line_commit_msg_cli(
     *,
     nonexequi: bool = False,
 ) -> int:
-    """Check commit message."""
+    """Check length of first line in commit message."""
     results: list[Result] = []
     result_code: Status = Status.SUCCESS
 
@@ -185,7 +185,7 @@ def check_type_commit_msg_cli(
     *,
     nonexequi: bool = False,
 ) -> int:
-    """Check commit message."""
+    """Check type of commit message."""
     logging.info(inspect.stack()[0][3])
 
     result = check_type_commit_msg(*commit_msg_file)
@@ -464,19 +464,20 @@ def detect_private_key_cli(
 def footer_signedoffby_cli(
     commit_msg_filename: Path = msg_commit_file, *, nonexequi: bool = False
 ) -> int:
-    """Função principal que processa os argumentos.
+    """Process footer signed-off-by in commit message.
 
-    E aplica as transformações no arquivo de commit.
+    Aplly changes into commit file.
 
     Hook designed for stages: pre-commit, pre-push, manual
 
-    Fluxo:
+    Flow:
 
-      1. Remove linhas desnecessárias do template de commit.
+      1. Removes unnecessary lines from the commit template;
 
-      2. Adiciona 'Signed-off-by' do committer atual.
+      2. Adds `Signed-off-by` from the current committer
 
-      3. Adiciona linha em branco no topo se necessário.
+
+      3. Add a blank line at the top if necessary.
 
     Returns:
         None
@@ -524,7 +525,7 @@ def footer_signedoffby_cli(
 )
 @logging_call(logging.INFO, 'Displaying effort message after commit.')
 def effort_msg_cli(*, nonexequi: bool) -> int:
-    """Run it.
+    """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
     """
@@ -786,7 +787,7 @@ def pre_commit_installed_cli(
 def effort_random_msg_cli(
     *, fixed: bool = False, nonexequi: bool = False
 ) -> int:
-    """Display success messages after a successful commit.
+    """Display randomly success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
     """
@@ -884,7 +885,7 @@ def insert_diff_cli(
     'commit_msg_filepath',
     default=msg_commit_file.as_posix(),
     type=click.Path(exists=True),
-    help='Caminho para o arquivo de mensagem de commit',
+    help='Fullpath to the commit message file',
 )
 @click.argument(
     'commit_type',
@@ -903,11 +904,11 @@ def insert_diff_cli(
 def set_issue_from_branch_cli(
     commit_msg_filepath: str, commit_type: str, *, nonexequi: bool = False
 ) -> int:
-    """CLI para extrair o número do ticket do nome do branch.
+    """CLI to extract the ticket number from the branch name.
 
-    Verifica se o hook foi chamado com a opção
-    -m (mensagem fornecida pelo usuário)
-    Se sim, evita sobrescrever a mensagem manualmente inserida
+    Checks whether the hook was called with the
+    -m option (user-provided message)
+    If so, it prevents the manually entered message from being overwritten
     """
     ic(f'{commit_msg_filepath=}, {commit_type=}, {nonexequi=}')
     if nonexequi:
@@ -922,7 +923,7 @@ def set_issue_from_branch_cli(
     # Se sim, evita sobrescrever a mensagem manualmente inserida
     if commit_type == 'message':
         click.secho(
-            'Hook não executado devido ao commit_type=message.',
+            'Hook not executed because of commit_type=message.',
             fg='yellow',
         )
         return 0
