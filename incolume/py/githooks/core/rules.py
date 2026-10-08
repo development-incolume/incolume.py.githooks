@@ -17,6 +17,8 @@ from typing import Any, Final
 
 from icecream import ic
 
+from incolume.py.githooks.core.utils import find_project_root
+
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing import Self
 
@@ -269,3 +271,6 @@ MESSAGES: Final[list[str]] = [
 CONTEXT_SETTINGS_CLICK: dict[str, list[str]] = {
     'help_option_names': ['-h', '--help'],
 }
+msg_commit_file: Path = find_project_root(__file__).joinpath(
+    '.git', 'COMMIT_EDITMSG'
+)

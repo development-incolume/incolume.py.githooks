@@ -28,6 +28,7 @@ from incolume.py.githooks.core.rules import (
     RequestFl,
     Result,
     Status,
+    msg_commit_file,
 )
 from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
@@ -54,9 +55,7 @@ if TYPE_CHECKING:
 
 
 logging.debug('Python %s', platform.python_version())
-msg_commit_file: Path = find_project_root(__file__).joinpath(
-    '.git', 'COMMIT_EDITMSG'
-)
+
 
 
 @click.command(
