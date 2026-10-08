@@ -55,18 +55,18 @@ def validate_format_commit_msg(files: list[Path] | None = None) -> Result:
     Stages:
       - prepare_commit_msg
     """
-    files = [Path(fl) for fl in files] if files else [msg_commit_file]
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
 
     try:
+        files = [Path(fl) for fl in files] if files else [msg_commit_file]
         content = files[0].read_bytes().strip().decode()
         logging.debug('%s', ic(content))
 
         if not regex.match(content):
             raise AssertionError  # ruff: ignore[raise-within-try]
-    except (AssertionError, FileNotFoundError, FileExistsError):
+    except (AssertionError, FileNotFoundError, FileExistsError, TypeError):
         result = Result(Status.FAILURE, MESSAGERROR)
 
     return result

@@ -577,7 +577,8 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='Please enter the commit message\n\n#',
                     expected=Result(Status.SUCCESS, ''),
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -586,7 +587,8 @@ class TestCaseAllCLI:
                         Status.SUCCESS,
                         'feat: #61 Please enter the commit message',
                     ),
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -601,7 +603,8 @@ class TestCaseAllCLI:
                         Status.SUCCESS,
                         'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
                     ),
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -612,20 +615,23 @@ class TestCaseAllCLI:
                     ),
                     params=['--nonexequi'],
                 ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='',
                     expected=Result(Status.SUCCESS, ''),
                     params=['-h'],
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='',
                     expected=Result(Status.SUCCESS, ''),
                     params=['-N'],
-                )
+                ),
+                marks=[],
             ),
         ],
     )
