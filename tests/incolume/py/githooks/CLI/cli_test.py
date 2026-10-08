@@ -656,7 +656,11 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 Entrance(
-                    params=[], msg_commit='', expected=Result(1, message='')
+                    params=[],
+                    msg_commit='',
+                    expected=Result(
+                        1, message='Please use the following format'
+                    ),
                 ),
                 marks=[],
             ),
@@ -699,7 +703,7 @@ class TestCaseAllCLI:
                     params=['--help'],
                     expected=Result(
                         0,
-                        'is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]',
+                        'is-valid-msg-commit [OPTIONS] [FILENAMES]',
                     ),
                 ),
                 marks=[],
@@ -709,7 +713,7 @@ class TestCaseAllCLI:
                     params=['-h'],
                     expected=Result(
                         0,
-                        'is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]',
+                        'is-valid-msg-commit [OPTIONS] [FILENAMES]',
                     ),
                 ),
                 marks=[],
@@ -732,6 +736,36 @@ class TestCaseAllCLI:
                 ),
                 marks=[],
             ),
+            pytest.param(
+                Entrance(
+                    msg_commit='test: #312 fix the bug in the code using the new algorithm and improve performance with the latest optimization techniques',
+                    params=[
+                        '.github/workflows/unit-tests.yml',
+                        'docs/user_guide/writing-your-docs.it.md',
+                        '.github/workflows/multplatform-ci-cd.yml',
+                        'docs/user_guide/code_of_conduct.en.md',
+                        'docs/asserts/img/up-arrow-svgrepo-com.svg',
+                        'tests/changelog/changelog_test.py',
+                    ],
+                    expected=Result(0, 'Commit message is validated [OK]'),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_commit='test: #312 fix the bug in the code using the new algorithm and improve performance with the latest optimization techniques',
+                    params=[
+                        'mypy.ini',
+                        'tests/package_test.py',
+                        'docs/user_guide/development.md',
+                        'README.md',
+                        'docs/about/CHANGELOG.md',
+                        'docs/user_guide/development.es.md',
+                    ],
+                    expected=Result(0, 'Commit message is validated [OK]'),
+                ),
+                marks=[],
+            ),
         ],
     )
     def test_validate_format_commit_msg_cli(
@@ -740,9 +774,12 @@ class TestCaseAllCLI:
         """Test CLI prepend commit message."""
         dout: Path = self.test_dir.joinpath(stack()[0][3])
         dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout) as fl:
+        with NamedTemporaryFile(dir=dout, suffix='.txt') as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(entrance.msg_commit.encode(encoding='utf-8'))
+
+        assert test_file.is_file()
+        assert test_file.read_text(encoding='utf-8') == entrance.msg_commit
 
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 

@@ -17,6 +17,10 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.18.3]	 &#8212; 	2026-10-08:
+### Changed
+  - Is-valid-msg-commit argumentos extras inexperados;
+
 ## [1.18.2]	 &#8212; 	2026-10-07:
 ### Changed
   - Mapeamento para hooks effort-random-message;
@@ -316,4 +320,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.18.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.17.0...1.18.0
 [1.18.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.0...1.18.1
 [1.18.2]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.1...1.18.2
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.2...Unreleased
+[1.18.3]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.2...1.18.3
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.3...Unreleased
