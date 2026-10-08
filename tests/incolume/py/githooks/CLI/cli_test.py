@@ -656,7 +656,11 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 Entrance(
-                    params=[], msg_commit='', expected=Result(1, message='')
+                    params=[],
+                    msg_commit='',
+                    expected=Result(
+                        1, message='Please use the following format'
+                    ),
                 ),
                 marks=[],
             ),
