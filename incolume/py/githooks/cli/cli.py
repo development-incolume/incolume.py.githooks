@@ -28,6 +28,7 @@ from incolume.py.githooks.core.rules import (
     RequestFl,
     Result,
     Status,
+    msg_commit_file,
 )
 from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
@@ -54,9 +55,6 @@ if TYPE_CHECKING:
 
 
 logging.debug('Python %s', platform.python_version())
-msg_commit_file: Path = find_project_root(__file__).joinpath(
-    '.git', 'COMMIT_EDITMSG'
-)
 
 
 @click.command(
@@ -651,17 +649,17 @@ def clean_commit_msg_cli(
     help='Do not run this hook.',
 )
 @click.argument(
-    'commit_msg_file',
-    type=click.Path(exists=True),
-    default=msg_commit_file,
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
     required=False,
-    help='Filename for commit message',
+    help='Filenames for commit messages',
 )
 @click.pass_context
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
-    commit_msg_file: Path,
+    filenames: list[Path],
     *,
     nonexequi: bool = False,
 ) -> int:
@@ -681,7 +679,7 @@ def validate_format_commit_msg_cli(
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    result: Result = validate_format_commit_msg(commit_msg_file)
+    result: Result = validate_format_commit_msg(filenames)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
