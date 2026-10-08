@@ -732,6 +732,34 @@ class TestCaseAllCLI:
                 ),
                 marks=[],
             ),
+            pytest.param(
+                Entrance(
+                    params=[
+                        '.github/workflows/unit-tests.yml',
+                        'docs/user_guide/writing-your-docs.it.md',
+                        '.github/workflows/multplatform-ci-cd.yml',
+                        'docs/user_guide/code_of_conduct.en.md',
+                        'docs/asserts/img/up-arrow-svgrepo-com.svg',
+                        'tests/changelog/changelog_test.py',
+                    ],
+                    expected=Result(0, 'is-valid-msg-commit'),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[
+                        'mypy.ini',
+                        'tests/package_test.py',
+                        'docs/user_guide/development.md',
+                        'README.md',
+                        'docs/about/CHANGELOG.md',
+                        'docs/user_guide/development.es.md',
+                    ],
+                    expected=Result(0, 'is-valid-msg-commit'),
+                ),
+                marks=[pytest.mark.xfail],
+            ),
         ],
     )
     def test_validate_format_commit_msg_cli(
