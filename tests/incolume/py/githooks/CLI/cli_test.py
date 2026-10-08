@@ -703,7 +703,7 @@ class TestCaseAllCLI:
                     params=['--help'],
                     expected=Result(
                         0,
-                        'is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]',
+                        'is-valid-msg-commit [OPTIONS] [FILENAMES]',
                     ),
                 ),
                 marks=[],
@@ -713,7 +713,7 @@ class TestCaseAllCLI:
                     params=['-h'],
                     expected=Result(
                         0,
-                        'is-valid-msg-commit [OPTIONS] [COMMIT_MSG_FILE]',
+                        'is-valid-msg-commit [OPTIONS] [FILENAMES]',
                     ),
                 ),
                 marks=[],
@@ -738,6 +738,7 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
+                    msg_commit='test: #312 fix the bug in the code using the new algorithm and improve performance with the latest optimization techniques',
                     params=[
                         '.github/workflows/unit-tests.yml',
                         'docs/user_guide/writing-your-docs.it.md',
@@ -746,12 +747,13 @@ class TestCaseAllCLI:
                         'docs/asserts/img/up-arrow-svgrepo-com.svg',
                         'tests/changelog/changelog_test.py',
                     ],
-                    expected=Result(0, 'is-valid-msg-commit'),
+                    expected=Result(0, 'Commit message is validated [OK]'),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
+                    msg_commit='test: #312 fix the bug in the code using the new algorithm and improve performance with the latest optimization techniques',
                     params=[
                         'mypy.ini',
                         'tests/package_test.py',
@@ -760,9 +762,9 @@ class TestCaseAllCLI:
                         'docs/about/CHANGELOG.md',
                         'docs/user_guide/development.es.md',
                     ],
-                    expected=Result(0, 'is-valid-msg-commit'),
+                    expected=Result(0, 'Commit message is validated [OK]'),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -772,9 +774,12 @@ class TestCaseAllCLI:
         """Test CLI prepend commit message."""
         dout: Path = self.test_dir.joinpath(stack()[0][3])
         dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout) as fl:
+        with NamedTemporaryFile(dir=dout, suffix='.txt') as fl:
             test_file = Path(fl.name)
         test_file.write_bytes(entrance.msg_commit.encode(encoding='utf-8'))
+
+        assert test_file.is_file()
+        assert test_file.read_text(encoding='utf-8') == entrance.msg_commit
 
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 
