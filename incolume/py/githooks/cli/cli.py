@@ -57,7 +57,6 @@ if TYPE_CHECKING:
 logging.debug('Python %s', platform.python_version())
 
 
-
 @click.command(
     context_settings=CONTEXT_SETTINGS_CLICK,
     no_args_is_help=False,
@@ -650,17 +649,17 @@ def clean_commit_msg_cli(
     help='Do not run this hook.',
 )
 @click.argument(
-    'commit_msg_file',
-    type=click.Path(exists=True),
-    default=msg_commit_file,
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
     required=False,
-    help='Filename for commit message',
+    help='Filenames for commit messages',
 )
 @click.pass_context
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
-    commit_msg_file: Path,
+    filenames: list[Path],
     *,
     nonexequi: bool = False,
 ) -> int:
@@ -680,7 +679,7 @@ def validate_format_commit_msg_cli(
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    result: Result = validate_format_commit_msg(commit_msg_file)
+    result: Result = validate_format_commit_msg(filenames)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
