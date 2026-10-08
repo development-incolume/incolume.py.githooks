@@ -15,6 +15,7 @@ from incolume.py.githooks.core.rules import (
     Result,
     Status,
     TypeCommit,
+    msg_commit_file,
 )
 
 debug_enable()
@@ -48,19 +49,19 @@ MESSAGERROR = """[red]
     [/red]"""
 
 
-def validate_format_commit_msg(msgfile: Path | str = '') -> Result:
+def validate_format_commit_msg(files: list[Path] | None = None) -> Result:
     """Validate the text of commit message according to current rules.
 
     Stages:
       - prepare_commit_msg
     """
-    msgfile = Path(msgfile)
+    files = [Path(fl) for fl in files] if files else [msg_commit_file]
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
 
     try:
-        content = msgfile.read_bytes().strip().decode()
+        content = files[0].read_bytes().strip().decode()
         logging.debug('%s', ic(content))
 
         if not regex.match(content):
