@@ -15,6 +15,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Mapeado hooks desaparecidos;
   - Mapeamento para hooks effort-random-message;
   - CLI `is-valid-msg-commit` argumentos extras inexperados;
+  - Corrigido erro IndexError/ValueError para entrada do script;
 ### Deprecated
   - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
@@ -176,6 +177,10 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Removed
   - Modulo `utils` substituído pelo modulo `core`;
 
+## [1.8.4]	 &#8212; 	2026-10-09:
+### Changed
+  - Corrigido erro IndexError/ValueError para entrada do script;
+
 ## [1.8.0]	 &#8212; 	2025-10-20:
 ### Added
   - Disponibilizado hook check-valid-branchname;
@@ -312,7 +317,8 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.6.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.5.0...1.6.0
 [1.7.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...1.7.0
 [1.8.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.7.0...1.8.0
-[1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.9.0
+[1.8.4]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.8.4
+[1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.4...1.9.0
 [1.10.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.9.0...1.10.0
 [1.11.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...1.11.0
 [1.12.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...1.12.0
