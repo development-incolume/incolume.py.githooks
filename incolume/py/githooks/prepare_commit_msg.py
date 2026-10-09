@@ -63,8 +63,8 @@ def validate_format_commit_msg(
 
     if not files:
         files = [msg_commit_file]
-    elif isinstance(files, Path):
-        files = [files]
+    elif isinstance(files, Path | str):
+        files = [Path(files)]
     elif files and isinstance(files, list):
         files = [Path(fl) for fl in files]
 
