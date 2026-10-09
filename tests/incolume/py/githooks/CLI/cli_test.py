@@ -577,7 +577,8 @@ class TestCaseAllCLI:
                 Entrance(
                     msg_commit='Please enter the commit message\n\n#',
                     expected=Result(Status.SUCCESS, ''),
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -586,7 +587,8 @@ class TestCaseAllCLI:
                         Status.SUCCESS,
                         'feat: #61 Please enter the commit message',
                     ),
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -601,7 +603,8 @@ class TestCaseAllCLI:
                         Status.SUCCESS,
                         'conteúdo fake para teste.\nA\tfile1.txt\nB\tfile2.txt\n#\n# On branch main\n',
                     ),
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -612,20 +615,23 @@ class TestCaseAllCLI:
                     ),
                     params=['--nonexequi'],
                 ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='',
                     expected=Result(Status.SUCCESS, ''),
                     params=['-h'],
-                )
+                ),
+                marks=[],
             ),
             pytest.param(
                 Entrance(
                     msg_commit='',
                     expected=Result(Status.SUCCESS, ''),
                     params=['-N'],
-                )
+                ),
+                marks=[],
             ),
         ],
     )
@@ -654,36 +660,6 @@ class TestCaseAllCLI:
     @pytest.mark.parametrize(
         'entrance',
         [
-            pytest.param(
-                Entrance(
-                    params=[],
-                    msg_commit='',
-                    expected=Result(
-                        1, message='Please use the following format'
-                    ),
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                Entrance(
-                    params=[],
-                    msg_commit='fake commit',
-                    expected=Result(
-                        code=1, message='Please use the following format'
-                    ),
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                Entrance(
-                    params=[],
-                    msg_commit='feat: #123 fake commit',
-                    expected=Result(
-                        code=0, message='Commit message is validated'
-                    ),
-                ),
-                marks=[],
-            ),
             pytest.param(
                 Entrance(
                     params=['--version'],
@@ -738,6 +714,36 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
+                    params=[],
+                    msg_commit='',
+                    expected=Result(
+                        1, message='Please use the following format'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='fake commit',
+                    expected=Result(
+                        code=1, message='Please use the following format'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='feat: #123 fake commit',
+                    expected=Result(
+                        code=0, message='Commit message is validated'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
                     msg_commit='test: #312 fix the bug in the code using the new algorithm and improve performance with the latest optimization techniques',
                     params=[
                         '.github/workflows/unit-tests.yml',
@@ -784,8 +790,8 @@ class TestCaseAllCLI:
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 
         result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
-        assert result.exit_code == entrance.expected.code
         assert entrance.expected.message in result.output
+        assert result.exit_code == entrance.expected.code
 
     @pytest.mark.parametrize(
         'entrance',

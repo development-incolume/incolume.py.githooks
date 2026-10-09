@@ -10,12 +10,21 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-10-07:
+## [Unreleased]	 &#8212; 	2026-10-09:
+### Changed
+  - Mapeado hooks desaparecidos;
+  - Mapeamento para hooks effort-random-message;
+  - CLI `is-valid-msg-commit` argumentos extras inexperados;
+  - Corrigido erro IndexError/ValueError para entrada do script;
 ### Deprecated
-  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
+## [1.18.4]	 &#8212; 	2026-10-09:
+### Changed
+  - Corrigido erro IndexError/ValueError para entrada do script;
 
 ## [1.18.3]	 &#8212; 	2026-10-08:
 ### Changed
@@ -321,4 +330,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.18.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.0...1.18.1
 [1.18.2]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.1...1.18.2
 [1.18.3]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.2...1.18.3
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.3...Unreleased
+[1.18.4]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.3...1.18.4
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.4...Unreleased
