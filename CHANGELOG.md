@@ -22,6 +22,10 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.18.4]	 &#8212; 	2026-10-09:
+### Changed
+  - Corrigido erro IndexError/ValueError para entrada do script;
+
 ## [1.18.3]	 &#8212; 	2026-10-08:
 ### Changed
   - Is-valid-msg-commit argumentos extras inexperados;
@@ -177,10 +181,6 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Removed
   - Modulo `utils` substituído pelo modulo `core`;
 
-## [1.8.4]	 &#8212; 	2026-10-09:
-### Changed
-  - Corrigido erro IndexError/ValueError para entrada do script;
-
 ## [1.8.0]	 &#8212; 	2025-10-20:
 ### Added
   - Disponibilizado hook check-valid-branchname;
@@ -317,8 +317,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.6.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.5.0...1.6.0
 [1.7.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.6.0...1.7.0
 [1.8.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.7.0...1.8.0
-[1.8.4]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.8.4
-[1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.4...1.9.0
+[1.9.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.8.0...1.9.0
 [1.10.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.9.0...1.10.0
 [1.11.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.10.0...1.11.0
 [1.12.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.11.0...1.12.0
@@ -331,4 +330,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.18.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.0...1.18.1
 [1.18.2]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.1...1.18.2
 [1.18.3]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.2...1.18.3
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.3...Unreleased
+[1.18.4]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.3...1.18.4
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.4...Unreleased
