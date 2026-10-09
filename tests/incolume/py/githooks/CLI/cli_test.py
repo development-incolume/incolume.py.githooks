@@ -790,8 +790,8 @@ class TestCaseAllCLI:
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 
         result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
-        assert result.exit_code == entrance.expected.code
         assert entrance.expected.message in result.output
+        assert result.exit_code == entrance.expected.code
 
     @pytest.mark.parametrize(
         'entrance',
