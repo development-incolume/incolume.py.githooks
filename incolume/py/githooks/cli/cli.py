@@ -668,6 +668,12 @@ def validate_format_commit_msg_cli(
     Hook designed for stages: prepare-commit-msg, manual
     """
     logging.info(inspect.stack()[0][3])
+    logging.debug(
+        'callable=%s, filenames=%s, nonexequi=%s',
+        inspect.stack()[0][3],
+        filenames,
+        nonexequi,
+    )
 
     if nonexequi:
         click.secho(
