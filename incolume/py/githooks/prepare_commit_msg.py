@@ -67,7 +67,7 @@ def validate_format_commit_msg(
         files = [files]
     elif files and isinstance(files, list):
         files = [Path(fl) for fl in files]
-        
+
     try:
         content = files[0].read_bytes().strip().decode()
         logging.debug('%s', ic(content))
