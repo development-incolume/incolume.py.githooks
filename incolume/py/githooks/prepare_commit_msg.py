@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Sequence
 from pathlib import Path
 
 from icecream import ic
@@ -49,16 +50,29 @@ MESSAGERROR = """[red]
     [/red]"""
 
 
-def validate_format_commit_msg(files: list[Path] | None = None) -> Result:
+def validate_format_commit_msg(
+    filenames: list[Path] | Path | str | None = None,
+) -> Result:
     """Validate the text of commit message according to current rules.
 
     Stages:
       - prepare_commit_msg
     """
-    files = [Path(fl) for fl in files] if files else [msg_commit_file]
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
+    ic('filenames=%s', filenames)
+
+    files: list[Path] = [msg_commit_file.resolve()]
+    ic(type(filenames))
+
+    if isinstance(filenames, Path | str):
+        ic('filenames is Path or str')
+        files.insert(0, Path(filenames).resolve())
+    elif isinstance(filenames, Sequence):
+        ic('filenames is list')
+        files = [Path(fl).resolve() for fl in filenames if fl]
+    ic('files=%s', files)
 
     try:
         content = files[0].read_bytes().strip().decode()
@@ -66,7 +80,7 @@ def validate_format_commit_msg(files: list[Path] | None = None) -> Result:
 
         if not regex.match(content):
             raise AssertionError  # ruff: ignore[raise-within-try]
-    except (AssertionError, FileNotFoundError, FileExistsError):
+    except (AssertionError, FileNotFoundError, FileExistsError, IndexError):
         result = Result(Status.FAILURE, MESSAGERROR)
 
     return result
