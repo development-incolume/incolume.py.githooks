@@ -662,36 +662,6 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 Entrance(
-                    params=[],
-                    msg_commit='',
-                    expected=Result(
-                        1, message='Please use the following format'
-                    ),
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                Entrance(
-                    params=[],
-                    msg_commit='fake commit',
-                    expected=Result(
-                        code=1, message='Please use the following format'
-                    ),
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                Entrance(
-                    params=[],
-                    msg_commit='feat: #123 fake commit',
-                    expected=Result(
-                        code=0, message='Commit message is validated'
-                    ),
-                ),
-                marks=[],
-            ),
-            pytest.param(
-                Entrance(
                     params=['--version'],
                     expected=Result(0, 'is-valid-msg-commit, version'),
                 ),
@@ -738,6 +708,36 @@ class TestCaseAllCLI:
                     params=['-N'],
                     expected=Result(
                         0, 'Hook not executed due to the `--nonexequi` option.'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='',
+                    expected=Result(
+                        1, message='Please use the following format'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='fake commit',
+                    expected=Result(
+                        code=1, message='Please use the following format'
+                    ),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    params=[],
+                    msg_commit='feat: #123 fake commit',
+                    expected=Result(
+                        code=0, message='Commit message is validated'
                     ),
                 ),
                 marks=[],
