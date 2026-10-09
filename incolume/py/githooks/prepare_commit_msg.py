@@ -60,13 +60,14 @@ def validate_format_commit_msg(
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
-    if isinstance(files, Path):
+
+    if not files:
+        files = [msg_commit_file]
+    elif isinstance(files, Path):
         files = [files]
     elif files and isinstance(files, list):
         files = [Path(fl) for fl in files]
-    else:
-        files = [msg_commit_file]
-
+        
     try:
         content = files[0].read_bytes().strip().decode()
         logging.debug('%s', ic(content))
