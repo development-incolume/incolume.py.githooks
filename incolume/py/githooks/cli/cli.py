@@ -659,7 +659,7 @@ def clean_commit_msg_cli(
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
-    filenames: list[Path],
+    filenames: list[Path | str],
     *,
     nonexequi: bool = False,
 ) -> int:
