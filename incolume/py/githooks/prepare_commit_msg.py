@@ -49,7 +49,9 @@ MESSAGERROR = """[red]
     [/red]"""
 
 
-def validate_format_commit_msg(files: list[Path] | None = None) -> Result:
+def validate_format_commit_msg(
+    files: list[Path] | Path | None = None,
+) -> Result:
     """Validate the text of commit message according to current rules.
 
     Stages:
@@ -58,9 +60,14 @@ def validate_format_commit_msg(files: list[Path] | None = None) -> Result:
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
     logging.debug('%s', regex.pattern)
+    if isinstance(files, Path):
+        files = [files]
+    elif files and isinstance(files, list):
+        files = [Path(fl) for fl in files]
+    else:
+        files = [msg_commit_file]
 
     try:
-        files = [Path(fl) for fl in files] if files else [msg_commit_file]
         content = files[0].read_bytes().strip().decode()
         logging.debug('%s', ic(content))
 
