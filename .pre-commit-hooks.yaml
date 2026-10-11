@@ -35,7 +35,7 @@
   additional_dependencies: [icecream]  # Python dependency for the script
   types: [file, python]
   stages: [pre-commit, pre-push, manual]
-  require_serial: false  # true run in parallel otherwise false  
+  require_serial: true  # true run in parallel otherwise false  
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: clean-commit-message
