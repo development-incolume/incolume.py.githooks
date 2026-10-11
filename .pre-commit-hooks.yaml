@@ -4,6 +4,8 @@
   entry: check-len-first-line
   language: python
   stages: [prepare-commit-msg, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: check-precommit-installed
   name: Incolume - check if pre-commit is installed
@@ -13,6 +15,8 @@
   types: [python]
   pass_filenames: false
   stages: [pre-commit, pre-push, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: check-valid-branchname
   name: Incolume - check if is valid branchnames
@@ -20,6 +24,8 @@
   entry: is-valid-branchname
   language: python
   stages: [pre-commit, pre-push, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: check-valid-filenames
   name: Incolume - check if is valid filenames
@@ -29,6 +35,8 @@
   additional_dependencies: [icecream]  # Python dependency for the script
   types: [file, python]
   stages: [pre-commit, pre-push, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: clean-commit-message
   name: Incolume - Clean Commit message
@@ -40,6 +48,8 @@
 #   types: [python]  # jupyter is alias for .ipynb files
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: false
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: detect-key
   name: Incolume - detect private key
@@ -48,6 +58,8 @@
   language: python
   types: ["file", "non-executable", "python", "text"]
   exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: effort-message
   name: Incolume - Commit Message Effort Hook
@@ -57,6 +69,8 @@
   pass_filenames: false
   types: []
   stages: [post-commit, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: effort-random-message
   name: Incolume - Commit Message Effort Hook
@@ -66,6 +80,8 @@
   pass_filenames: false
   types: []
   stages: [post-commit, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: footer-signed-off-by
   name: Incolume - Seting footer with Signed-off-by
@@ -76,6 +92,8 @@
   pass_filenames: false
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: true
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: insert-diff-commit
   name: Incolume - Insert Git Diff into Commit Message
@@ -85,6 +103,8 @@
   additional_dependencies: []  # Python dependency for the script
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: false
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: validate-message-commit
   name: Incolume - check if is valid the message commit
@@ -95,6 +115,8 @@
   types: []
   pass_filenames: false
   stages: [pre-commit, pre-push, manual]
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: set_issue_from_branch_cli
   name: Incolume - Set Issue from Branch Name
@@ -105,3 +127,5 @@
   pass_filenames: false
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: true
+  require_serial: false  # true run in parallel otherwise false  
+  additional_dependencies: [click, icecream]  # Python dependency for the script
