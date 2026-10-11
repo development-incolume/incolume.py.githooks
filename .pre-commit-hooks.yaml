@@ -11,6 +11,7 @@
   entry: is-precommit-installed
   language: python
   types: [python]
+  pass_filenames: false
   stages: [pre-commit, pre-push, manual]
 
 - id: check-valid-branchname
@@ -72,6 +73,7 @@
   language: python  # script requires the Python interpreter
   pass_filenames: false
   additional_dependencies: []  # Python dependency for the script
+  pass_filenames: false
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: true
 
@@ -91,6 +93,7 @@
   language: python
   additional_dependencies: []
   types: []
+  pass_filenames: false
   stages: [pre-commit, pre-push, manual]
 
 - id: set_issue_from_branch_cli
