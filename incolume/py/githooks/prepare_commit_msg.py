@@ -51,7 +51,7 @@ MESSAGERROR = """[red]
 
 
 def validate_format_commit_msg(
-    filenames: list[Path] | Path | str | None = None,
+    filenames: Sequence[Path] | Path | str | None = None,
 ) -> Result:
     """Validate the text of commit message according to current rules.
 
@@ -74,13 +74,16 @@ def validate_format_commit_msg(
         files = [Path(fl).resolve() for fl in filenames if fl]
     ic('files=%s', files)
 
+    file, *_ = files
+    ic('file=%s', file)
+
     try:
-        content = files[0].read_bytes().strip().decode()
+        content = file.read_bytes().strip().decode()
         logging.debug('%s', ic(content))
 
         if not regex.match(content):
             raise AssertionError  # ruff: ignore[raise-within-try]
-    except (AssertionError, FileNotFoundError, FileExistsError, IndexError):
+    except (AssertionError, FileNotFoundError, FileExistsError):
         result = Result(Status.FAILURE, MESSAGERROR)
 
     return result
