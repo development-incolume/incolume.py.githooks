@@ -64,6 +64,7 @@ repos:
       description: Guarantees that the first line of the commit message does not exceed a specified length.
       entry: check-len-first-line
       language: python
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [prepare-commit-msg, manual]
       args: [--min-first-line=10, --max-first-line=256]
 
@@ -82,6 +83,7 @@ repos:
       description: Guarantees that the type of the commit message is correct.
       entry: check-type-commit-msg
       language: python
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [prepare-commit-msg, manual]
       args: [-N]
 
@@ -90,6 +92,7 @@ repos:
       description: Guarantees valid branchname for project.
       entry: is-valid-branchname
       language: python
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [pre-commit, pre-push, manual]
       args: []
 
@@ -98,7 +101,7 @@ repos:
       description: Guarantees valid filenames for Python.
       entry: is-valid-filename
       language: python
-      additional_dependencies: [icecream, click]  # Python dependency for the script
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       types: [python]
       stages: [pre-commit, pre-push, manual]
       args: []
@@ -109,7 +112,7 @@ repos:
       entry: clean-commit-msg
       language: python  # script requires the Python interpreter
     #   require_serial: false  # don't run in parallel
-    #   additional_dependencies: []  # Python dependency for the script
+      additional_dependencies: [click, icecream]  # Python dependency for the script
     #   # files: ^*$  # this catches all .ipynb under examples/
     #   types: [python]  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
@@ -121,6 +124,7 @@ repos:
       description: detects the presence of private keys.
       entry: detect-key
       language: python
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       types: [text]
       files: ''  # The pattern of files to run on.
       exclude: '^.*detect_private_key.*$'  # Exclude files that were matched by files.
@@ -131,7 +135,7 @@ repos:
       name: Incolume - Commit Message Effort Hook
       language: python
       entry: effort-msg
-      additional_dependencies: [colorama,rich]  # Python dependency for the script
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       always_run: true
       stages: [post-commit, manual]  # this hook is run at commit time
       args: []
@@ -141,7 +145,7 @@ repos:
       name: Incolume - Commit Message Effort Hook
       language: python
       entry: effort-random-msg
-      additional_dependencies: []
+      additional_dependencies: [click, icecream]
       always_run: true
       stages: [post-commit, manual]  # this hook is run at commit time
       args: []
@@ -152,7 +156,7 @@ repos:
       entry: set-footer-signed-off-by  # script is called from root directory
       language: python  # script requires the Python interpreter
     #   require_serial: true  # don't run in parallel because one call of the script parses all files
-      additional_dependencies: []  # Python dependency for the script
+      additional_dependencies: [click, icecream]  # Python dependency for the script
     #   files: ^examples/.*\.ipynb$  # this catches all .ipynb under examples/
       # types: []  # jupyter is alias for .ipynb files
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
@@ -163,7 +167,7 @@ repos:
       name: Incolume - Insert Git Diff into Commit Message
       entry: insert-diff-commit
       language: python  # script requires the Python interpreter
-      additional_dependencies: []  # Python dependency for the script
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [commit-msg, manual]  # this hook is run at commit time
       args: []
       verbose: false
@@ -174,7 +178,7 @@ repos:
       description: Extracts the issue number from the branch name and sets it in the commit message.
       entry: set-issue-from-branch
       language: python
-      additional_dependencies: []  # Python dependency for the script
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       pass_filenames: true
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
       args: [-N]
@@ -186,8 +190,8 @@ repos:
       language: python  # script requires the Python interpreter
       pass_filenames: false
       always_run: true
-      require_serial: false  # don't run in parallel
-      additional_dependencies: [colorama,rich]  # Python dependency for the script
+      require_serial: false  # true run in parallel otherwise false  
+      additional_dependencies: [click, icecream]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
       types_or: [system-verilog]  #
       stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
