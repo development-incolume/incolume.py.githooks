@@ -27,7 +27,7 @@ repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
-  rev: v0.13.0
+  rev: v0.17.0
   hooks:
     # Run the linter.
     - id: ruff-check
@@ -39,7 +39,7 @@ repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
   # See https://pre-commit.com for more information
-  # See https://pre-commit.com/hooks.html for more hooks  
+  # See https://pre-commit.com/hooks.html for more hooks
   hooks:
     - id: check-added-large-files
     - id: check-ast
