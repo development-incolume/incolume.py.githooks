@@ -685,7 +685,7 @@ def validate_format_commit_msg_cli(
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    result: Result = validate_format_commit_msg(filenames)
+    result: Result = validate_format_commit_msg(filenames=filenames or fl)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
