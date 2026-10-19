@@ -10,17 +10,27 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-10-09:
-### Changed
-  - Mapeado hooks desaparecidos;
-  - Mapeamento para hooks effort-random-message;
-  - CLI `is-valid-msg-commit` argumentos extras inexperados;
-  - Corrigido erro IndexError/ValueError para entrada do script;
+## [Unreleased]	 &#8212; 	2026-10-19:
 ### Deprecated
   - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
+## [1.19.0]	 &#8212; 	2026-10-19:
+### Changed
+  - Mapeado hooks desaparecidos;
+  - Mapeamento para hooks effort-random-message;
+  - CLI `is-valid-msg-commit` argumentos extras inexperados;
+  - Corrigido erro IndexError/ValueError para entrada do script;
+  - Corrigido dependências para hooks remotos;
+### Deprecated
+  - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
+### Security
+  - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
+  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+### Added
+  - Acrescentado modo verboso ao script `githook-cli`;
 
 ## [1.18.5]	 &#8212; 	2026-10-12:
 ### Changed
@@ -336,4 +346,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.18.3]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.2...1.18.3
 [1.18.4]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.3...1.18.4
 [1.18.5]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.4...1.18.5
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.5...Unreleased
+[1.19.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.18.5...1.19.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.19.0...Unreleased
