@@ -675,7 +675,7 @@ def validate_format_commit_msg_cli(
         nonexequi,
     )
 
-    if nonexequi:
+    if nonexequi or ctx.obj['nonexequi']:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
@@ -984,13 +984,19 @@ def cli_group(
     ctx: click.Context, *, nonexequi: bool = False, verbose: bool = False
 ) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
+    ic.disable()
     ctx.ensure_object(dict)
 
     # Store in context
     ctx.obj['nonexequi'] = nonexequi
     ctx.obj['verbose'] = verbose
 
-    if nonexequi:
+    if ctx.obj['verbose']:
+        click.secho('Verbose mode actived', fg='cyan')
+        ic.enable()
+
+
+    if ctx.obj['nonexequi']:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
