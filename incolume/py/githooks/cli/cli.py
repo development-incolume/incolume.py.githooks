@@ -685,7 +685,7 @@ def validate_format_commit_msg_cli(
     ic(fl := msg_commit_file)
     ic(fl.is_file())
 
-    result: Result = validate_format_commit_msg(filenames)
+    result: Result = validate_format_commit_msg(filenames=filenames or fl)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
@@ -972,9 +972,31 @@ def set_issue_from_branch_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.option(
+    '-v',
+    '--verbose',
+    is_flag=True,
+    default=False,
+    help='Enable verbose output',
+)
 @click.pass_context
-def cli_group(ctx: click.Context, *, nonexequi: bool = False) -> None:
+def cli_group(
+    ctx: click.Context, *, nonexequi: bool = False, verbose: bool = False
+) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
+    ctx.ensure_object(dict)
+
+    # Store in context
+    ctx.obj['nonexequi'] = nonexequi
+    ctx.obj['verbose'] = verbose
+
+    if ctx.obj['verbose']:
+        click.secho('Verbose mode active', fg='cyan')
+        ic.enable()
+    else:
+        ic.disable()
+        debug_enable()
+
     if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
