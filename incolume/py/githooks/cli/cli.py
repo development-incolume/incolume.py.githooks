@@ -675,7 +675,7 @@ def validate_format_commit_msg_cli(
         nonexequi,
     )
 
-    if nonexequi or ctx.obj['nonexequi']:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
@@ -990,13 +990,7 @@ def cli_group(
     ctx.obj['nonexequi'] = nonexequi
     ctx.obj['verbose'] = verbose
 
-    if ctx.obj['verbose']:
-        click.secho('Verbose mode actived', fg='cyan')
-        ic.enable()
-    else:
-        ic.disable()
-
-    if ctx.obj['nonexequi']:
+    if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
