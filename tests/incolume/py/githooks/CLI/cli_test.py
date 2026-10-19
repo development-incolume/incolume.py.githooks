@@ -64,7 +64,7 @@ class TestCaseAllCLI:
         Remove a arvore de diretórios criadas após os testes realizados.
         """
         ic(f'teardown for {cls.__name__}')
-        shutil.rmtree(cls.test_dir / 'abc', ignore_errors=True)
+        shutil.rmtree(cls.test_dir, ignore_errors=True)
 
     @pytest.mark.parametrize(
         'entrance',
@@ -720,7 +720,7 @@ class TestCaseAllCLI:
                         1, message='Please use the following format'
                     ),
                 ),
-                marks=[pytest.mark.xfail(reason='Commit message is empty')],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
