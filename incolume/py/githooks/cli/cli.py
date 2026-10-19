@@ -993,6 +993,9 @@ def cli_group(
     if ctx.obj['verbose']:
         click.secho('Verbose mode active', fg='cyan')
         ic.enable()
+    else:
+        ic.disable()
+        debug_enable()
 
     if nonexequi:
         click.secho(
