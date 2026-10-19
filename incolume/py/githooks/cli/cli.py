@@ -984,7 +984,6 @@ def cli_group(
     ctx: click.Context, *, nonexequi: bool = False, verbose: bool = False
 ) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
-    ic.disable()
     ctx.ensure_object(dict)
 
     # Store in context
@@ -994,7 +993,8 @@ def cli_group(
     if ctx.obj['verbose']:
         click.secho('Verbose mode actived', fg='cyan')
         ic.enable()
-
+    else:
+        ic.disable()
 
     if ctx.obj['nonexequi']:
         click.secho(
