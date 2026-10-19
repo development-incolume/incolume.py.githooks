@@ -990,6 +990,10 @@ def cli_group(
     ctx.obj['nonexequi'] = nonexequi
     ctx.obj['verbose'] = verbose
 
+    if ctx.obj['verbose']:
+        click.secho('Verbose mode active', fg='cyan')
+        ic.enable()
+
     if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
