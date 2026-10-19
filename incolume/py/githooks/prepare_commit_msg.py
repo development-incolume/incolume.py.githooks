@@ -3,6 +3,7 @@
 # ruff: file-ignore[line-too-long]
 from __future__ import annotations
 
+import inspect
 import logging
 import re
 from collections.abc import Sequence
@@ -18,8 +19,6 @@ from incolume.py.githooks.core.rules import (
     TypeCommit,
     msg_commit_file,
 )
-
-debug_enable()
 
 MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
@@ -64,18 +63,19 @@ def validate_format_commit_msg(
     ic('filenames=%s', filenames)
 
     files: list[Path] = [msg_commit_file.resolve()]
-    ic(type(filenames))
+    ic(f'{type(filenames)=}, {filenames=}')
 
     if isinstance(filenames, Path | str):
-        ic('filenames is Path or str')
+        ic(f'{inspect.stack()[0][3]}: replaced filenames for Path or str')
         files.insert(0, Path(filenames).resolve())
     elif isinstance(filenames, Sequence):
-        ic('filenames is list')
+        ic(f'{inspect.stack()[0][3]}: replaced filenames for list')
         files = [Path(fl).resolve() for fl in filenames if fl]
-    ic('files=%s', files)
 
     file, *_ = files
-    ic('file=%s', file)
+    msg = ('%s: files=%s, file=%s', inspect.stack()[0][3], files, file)
+    ic(msg)
+    logging.info(msg)
 
     try:
         content = file.read_bytes().strip().decode()
