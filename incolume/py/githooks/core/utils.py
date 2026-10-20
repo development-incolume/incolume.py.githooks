@@ -46,9 +46,9 @@ def find_project_root(
     """Find the project root directory by looking for specific markers."""
     ic(f'{inspect.stack()[0].function}: {start_dir=}, {markers=}')
 
-    start_dir = Path(start_dir)
-    start_dir = start_dir.parent if start_dir.is_file() else start_dir
+    start_dir = Path(start_dir) if start_dir else Path.cwd()
     start_dir = start_dir.expanduser().resolve()
+    start_dir = start_dir.parent if start_dir.is_file() else start_dir
 
     markers = markers or MARKERS[:]
     current = start_dir
