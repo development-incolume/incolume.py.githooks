@@ -444,7 +444,7 @@ def detect_private_key_cli(
 @click.argument(
     'commit_msg_filename',
     type=Path,
-    default=msg_commit_file,
+    default=find_project_root(Path.cwd()).joinpath('.git', 'COMMIT_EDITMSG'),
     help='Arquivo de mensagem de commit',
 )
 @click.option(
