@@ -10,14 +10,12 @@ from typing import Any, ParamSpec, TypeVar, cast
 from deprecated import deprecated
 from icecream import ic
 
-from incolume.py.githooks.core import debug_enable, debug_var_active
+from incolume.py.githooks.core import debug_var_active
 from incolume.py.githooks.core.rules import LoggingLevel
 
 P = ParamSpec('P')
 R = TypeVar('R')
 F = TypeVar('F', bound=Callable[..., Any])
-
-debug_enable()
 
 
 def my_decorator(func: Callable[P, R]) -> Callable[P, R]:

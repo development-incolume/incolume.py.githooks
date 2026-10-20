@@ -48,8 +48,6 @@ from incolume.py.githooks.prepare_commit_msg import (
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
 
-debug_enable()
-
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
