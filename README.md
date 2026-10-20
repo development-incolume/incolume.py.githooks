@@ -70,7 +70,7 @@ repos:
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
   # https://github.com/development-incolume/incolume.py.githooks/blob/1.18.0/README.md
-  rev: 1.18.5
+  rev: 1.20.0
   hooks:
     - id: check-len-first-line
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
