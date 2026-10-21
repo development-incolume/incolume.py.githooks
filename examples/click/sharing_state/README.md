@@ -8,6 +8,7 @@ Store shared configuration in the context object at the group level and retrieve
 ```python
 import click
 
+
 @click.group()
 @click.option('--debug/--no-debug', default=False)
 @click.pass_context
@@ -16,13 +17,15 @@ def cli(ctx, debug):
     ctx.ensure_object(dict)
     ctx.obj['DEBUG'] = debug
 
+
 @cli.command()
 @click.pass_context
 def sync(ctx):
     # Access the stored option
     if ctx.obj['DEBUG']:
-        click.echo("Debug mode is on")
-    click.echo("Syncing data...")
+        click.echo('Debug mode is on')
+    click.echo('Syncing data...')
+
 
 if __name__ == '__main__':
     cli()
@@ -34,13 +37,15 @@ Access command-line arguments directly from the context’s `params` dictionary.
 ```python
 import click
 
+
 @click.command()
 @click.option('--name', default='World')
 @click.pass_context
 def hello(ctx):
     # Access option value via context
     name = ctx.params['name']
-    click.echo(f"Hello, {name}!")
+    click.echo(f'Hello, {name}!')
+
 
 if __name__ == '__main__':
     hello()
