@@ -9,7 +9,7 @@ import platform
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import click
 from icecream import ic
@@ -50,7 +50,7 @@ from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Mapping, Sequence
 
 
 logging.warning('Python %s', platform.python_version())
@@ -841,13 +841,14 @@ def effort_random_msg_cli(
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
-    commit_msg_file: Sequence[Path],
-    commit_source: str,
-    commit_hash: str,
-    *,
-    nonexequi: bool = False,
+    **kwargs: Mapping[str, Any],
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
+    commit_msg_file = kwargs.get('commit_msg_file', None)
+    commit_source = kwargs.get('commit_source', '')
+    commit_hash = kwargs.get('commit_hash', '')
+    nonexequi = kwargs.get('nonexequi', False)
+
     logging.warning(inspect.stack()[0][3])
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
@@ -856,16 +857,19 @@ def insert_diff_cli(
         commit_hash,
     )
 
-    if nonexequi:
+    if nonexequi or ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
         )
         ctx.exit(Status.SUCCESS.value)
-
+    try:
+        fl = commit_msg_file[0]
+    except IndexError:
+        fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
     diff_output = get_git_diff()
     logging.debug(diff_output)
-    insert_git_diff(commit_msg_file, diff_output)
+    insert_git_diff(fl, diff_output)
 
     ctx.exit(Status.SUCCESS.value)
 
