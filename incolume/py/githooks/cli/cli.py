@@ -25,6 +25,7 @@ from incolume.py.githooks.core import (
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
     CONTEXT_SETTINGS_CLICK,
+    GITCOMMITMSGFL,
     RequestFl,
     Result,
     Status,
@@ -171,7 +172,7 @@ def check_len_first_line_commit_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=(msg_commit_file,),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filename for commit message',
 )
@@ -444,7 +445,7 @@ def detect_private_key_cli(
 @click.argument(
     'commit_msg_filename',
     type=Path,
-    default=find_project_root(Path.cwd()).joinpath('.git', 'COMMIT_EDITMSG'),
+    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     help='Arquivo de mensagem de commit',
 )
 @click.option(
@@ -650,6 +651,7 @@ def clean_commit_msg_cli(
     'filenames',
     nargs=-1,
     type=click.Path(exists=False),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filenames for commit messages',
 )
@@ -680,10 +682,7 @@ def validate_format_commit_msg_cli(
         )
         ctx.exit(0)
 
-    ic(fl := msg_commit_file)
-    ic(fl.is_file())
-
-    result: Result = validate_format_commit_msg(filenames=filenames or fl)
+    result: Result = validate_format_commit_msg(filenames=filenames)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
@@ -830,9 +829,7 @@ def effort_random_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=(
-        find_project_root(Path.cwd()).joinpath('.git', 'COMMIT_EDITMSG'),
-    ),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL),
     required=True,
     help='Filename for commit message',
 )
@@ -887,7 +884,7 @@ def insert_diff_cli(
 )
 @click.argument(
     'commit_msg_filepath',
-    default=msg_commit_file.as_posix(),
+    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     type=click.Path(exists=True),
     help='Fullpath to the commit message file',
 )
