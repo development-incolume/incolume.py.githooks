@@ -113,7 +113,7 @@
   language: python
   additional_dependencies: []
   types: []
-  pass_filenames: true
+  pass_filenames: false
   stages: [pre-commit, pre-push, manual]
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
