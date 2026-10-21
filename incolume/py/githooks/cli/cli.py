@@ -954,9 +954,10 @@ def set_issue_from_branch_cli(
 
 
 @click.group(
-    'githooks-cli',
-    no_args_is_help=True,
+    name='githooks-cli',
+    chain=True,
     context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=True,
 )
 @click.version_option(
     __version__,
