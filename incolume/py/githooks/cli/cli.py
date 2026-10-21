@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import click
+from click_help_colors import HelpColorsCommand, HelpColorsGroup
 from icecream import ic
 
 from incolume.py.githooks.core import (
@@ -968,6 +969,9 @@ def set_issue_from_branch_cli(
     chain=True,
     context_settings=CONTEXT_SETTINGS_CLICK,
     no_args_is_help=True,
+    cls=HelpColorsGroup,
+    help_headers_color='cyan',
+    help_options_color='green',
 )
 @click.version_option(
     __version__,
