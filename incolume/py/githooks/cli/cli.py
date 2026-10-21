@@ -830,7 +830,7 @@ def effort_random_msg_cli(
     nargs=-1,
     type=click.Path(exists=True),
     default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL),
-    required=True,
+    required=False,
     help='Filename for commit message',
 )
 @click.argument(
