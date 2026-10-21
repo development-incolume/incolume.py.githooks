@@ -25,6 +25,7 @@ from incolume.py.githooks.core import (
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
     CONTEXT_SETTINGS_CLICK,
+    GITCOMMITMSGFL,
     RequestFl,
     Result,
     Status,
@@ -48,13 +49,11 @@ from incolume.py.githooks.prepare_commit_msg import (
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
 
-debug_enable()
-
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
-logging.debug('Python %s', platform.python_version())
+logging.warning('Python %s', platform.python_version())
 
 
 @click.command(
@@ -112,7 +111,7 @@ def check_len_first_line_commit_msg_cli(
         f'{inspect.stack()[0][3]}: {sys.argv=}, '
         f'{filenames=}, {min_first_line=}, {max_first_line=}, {nonexequi=}'
     )
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -173,7 +172,7 @@ def check_len_first_line_commit_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=(msg_commit_file,),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filename for commit message',
 )
@@ -184,7 +183,7 @@ def check_type_commit_msg_cli(
     nonexequi: bool = False,
 ) -> int:
     """Check type of commit message."""
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     result = check_type_commit_msg(*commit_msg_file)
 
@@ -269,7 +268,7 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
         int: 0 to SUCCESS or 1 to FAILURE
 
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
     logging.debug(
         'commit_msg_file: %s, commit_source: %s, commit_hash: %s',
         commit_msg_file,
@@ -353,7 +352,7 @@ def check_valid_filenames_cli(
     """
     codes: Status = Status.SUCCESS
 
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
     msg = f'{filenames=} {min_len=} {max_len=} {nonexequi=}'
     logging.debug(msg)
 
@@ -417,7 +416,7 @@ def detect_private_key_cli(
 
     Hook designed for stages: all
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -446,7 +445,7 @@ def detect_private_key_cli(
 @click.argument(
     'commit_msg_filename',
     type=Path,
-    default=msg_commit_file,
+    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     help='Arquivo de mensagem de commit',
 )
 @click.option(
@@ -481,7 +480,7 @@ def footer_signedoffby_cli(
         None
 
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -491,7 +490,7 @@ def footer_signedoffby_cli(
         return 0
 
     commit_source = commit_msg_filename.read_text(encoding='utf-8')
-    logging.info(commit_source)
+    logging.warning(commit_source)
 
     clean_commit_msg(commit_msg_filename)
     add_signed_off_by(commit_msg_filename)
@@ -527,7 +526,7 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
 
     Hook designed for stages: post-commit, manual
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -591,7 +590,7 @@ def clean_commit_msg_cli(
         int: SUCCESS code if the operation completes.
 
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -652,6 +651,7 @@ def clean_commit_msg_cli(
     'filenames',
     nargs=-1,
     type=click.Path(exists=False),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filenames for commit messages',
 )
@@ -667,7 +667,7 @@ def validate_format_commit_msg_cli(
 
     Hook designed for stages: prepare-commit-msg, manual
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
     logging.debug(
         'callable=%s, filenames=%s, nonexequi=%s',
         inspect.stack()[0][3],
@@ -682,10 +682,7 @@ def validate_format_commit_msg_cli(
         )
         ctx.exit(0)
 
-    ic(fl := msg_commit_file)
-    ic(fl.is_file())
-
-    result: Result = validate_format_commit_msg(filenames=filenames or fl)
+    result: Result = validate_format_commit_msg(filenames=filenames)
 
     click.secho(
         result.message, fg='green' if result.code == Status.SUCCESS else 'red'
@@ -723,7 +720,7 @@ def pre_commit_installed_cli(
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -795,7 +792,7 @@ def effort_random_msg_cli(
 
     Hook designed for stages: post-commit, manual
     """
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
 
     if nonexequi:
         click.secho(
@@ -832,7 +829,7 @@ def effort_random_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=(msg_commit_file,),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL),
     required=True,
     help='Filename for commit message',
 )
@@ -851,7 +848,7 @@ def insert_diff_cli(
     nonexequi: bool = False,
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
-    logging.info(inspect.stack()[0][3])
+    logging.warning(inspect.stack()[0][3])
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
         commit_msg_file,
@@ -887,7 +884,7 @@ def insert_diff_cli(
 )
 @click.argument(
     'commit_msg_filepath',
-    default=msg_commit_file.as_posix(),
+    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     type=click.Path(exists=True),
     help='Fullpath to the commit message file',
 )
@@ -954,9 +951,10 @@ def set_issue_from_branch_cli(
 
 
 @click.group(
-    'githooks-cli',
-    no_args_is_help=True,
+    name='githooks-cli',
+    chain=True,
     context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=True,
 )
 @click.version_option(
     __version__,

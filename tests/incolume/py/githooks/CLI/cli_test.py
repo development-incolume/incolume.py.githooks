@@ -1005,7 +1005,10 @@ class TestCasePreCommit:
         entrance = Entrance(
             msg_file='.pre-commit-config.yaml',
             params=[],
-            expected=Result(Status.SUCCESS),
+            expected=Result(
+                Status.FAILURE,
+                'Configuration file ".pre-commit-config.yaml" not detected',
+            ),
         )
         with (
             patch.object(Path, 'cwd') as m,
@@ -1030,8 +1033,8 @@ class TestCasePreCommit:
             ),
         )
         with (
-            patch.object(cli.cli.Path, 'cwd', return_value=[]),
-            patch.object(cli.cli.os, 'access', return_value=False),
+            patch.object(Path, 'cwd', return_value=[]),
+            patch.object(os, 'access', return_value=False),
         ):
             result = cli_runner.invoke(
                 cli.pre_commit_installed_cli, entrance.params
@@ -1046,7 +1049,7 @@ class TestCasePreCommit:
             params=[],
             expected=Result(
                 Status.FAILURE,
-                '`pre-commit` configuration detected, but `pre-commit install` was never ran.',
+                'Configuration file ".pre-commit-config.yaml" not detected',
             ),
         )
         with (

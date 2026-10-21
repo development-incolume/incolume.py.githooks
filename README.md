@@ -27,7 +27,7 @@ repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
-  rev: v0.13.0
+  rev: v0.17.0
   hooks:
     # Run the linter.
     - id: ruff-check
@@ -37,23 +37,31 @@ repos:
       args: [--config, ruff.toml]
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v6.0.0
   # See https://pre-commit.com for more information
-  # See https://pre-commit.com/hooks.html for more hooks  rev: v6.0.0
+  # See https://pre-commit.com/hooks.html for more hooks
   hooks:
     - id: check-added-large-files
     - id: check-ast
     - id: check-case-conflict
     - id: check-docstring-first
+    - id: check-executables-have-shebangs
     - id: check-illegal-windows-names
     - id: check-json
+    - id: check-merge-conflict
+    - id: check-shebang-scripts-are-executable
+    - id: check-symlinks
     - id: check-toml
     - id: check-xml
     - id: check-yaml
+    - id: debug-statements
+    - id: destroyed-symlinks
     - id: detect-private-key
     - id: double-quote-string-fixer
     - id: end-of-file-fixer
     - id: forbid-new-submodules
     - id: forbid-submodules
+    - id: mixed-line-ending
     - id: name-tests-test
     - id: no-commit-to-branch
     - id: pretty-format-json
@@ -61,8 +69,8 @@ repos:
 
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  # https://github.com/development-incolume/incolume.py.githooks/blob/1.19.0/README.md
-  rev: 1.19.0
+  # https://github.com/development-incolume/incolume.py.githooks/blob/1.20.0/README.md
+  rev: 1.20.0
   hooks:
     - id: check-len-first-line
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]

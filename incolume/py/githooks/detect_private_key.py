@@ -8,13 +8,10 @@ from typing import TYPE_CHECKING
 
 from icecream import ic
 
-from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.core.rules import Result, Status
 
 if TYPE_CHECKING:
     from os import PathLike
-
-debug_enable()
 
 BLACKLIST: list[bytes] = [
     b'BEGIN RSA PRIVATE KEY',
