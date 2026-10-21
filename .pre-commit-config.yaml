@@ -170,7 +170,7 @@ repos:
       additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [commit-msg, manual]  # this hook is run at commit time
       args: []
-      verbose: false
+      verbose: true
 
     - id: set-issue-from-branch-cli
       verbose: true
