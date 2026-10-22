@@ -190,7 +190,7 @@ repos:
       language: python  # script requires the Python interpreter
       pass_filenames: false
       always_run: true
-      require_serial: false  # true run in parallel otherwise false  
+      require_serial: false  # true run in parallel otherwise false
       additional_dependencies: [click, icecream]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
       types_or: [system-verilog]  #
