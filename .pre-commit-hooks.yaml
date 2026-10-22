@@ -32,7 +32,6 @@
   description: Guarantees valid filenames for Python.
   entry: is-valid-filename
   language: python
-  additional_dependencies: [icecream]  # Python dependency for the script
   types: [file, python]
   stages: [pre-commit, pre-push, manual]
   require_serial: true  # true run in parallel otherwise false
