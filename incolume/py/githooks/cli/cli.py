@@ -875,7 +875,9 @@ def insert_diff_cli(
         ctx.exit(Status.SUCCESS.value)
 
     diff_output = get_git_diff()
-    logging.debug(diff_output)
+    ic(f'{fl=}')
+    ic(f'{diff_output=}')
+    logging.debug('fl="%s", diff_output="%s"', fl, diff_output)
     insert_git_diff(fl, diff_output)
 
     ctx.exit(Status.SUCCESS.value)
