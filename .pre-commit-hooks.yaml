@@ -61,7 +61,7 @@
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: effort-message
-  name: Incolume - Commit Message Effort Hook
+  name: Incolume - Show Message Effort Hook
   description: Effort message for commit.
   entry: effort-msg
   language: python
@@ -72,7 +72,7 @@
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: effort-random-message
-  name: Incolume - Commit Message Effort Hook
+  name: Incolume - Show Random Message Effort Hook
   description: Effort message for commit.
   entry: effort-random-msg
   language: python
