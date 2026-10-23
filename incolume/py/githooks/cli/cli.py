@@ -844,21 +844,23 @@ def insert_diff_cli(
     **kwargs: dict[str, Any],
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
+    ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
-    commit_msg_file = kwargs.get('commit_msg_file')
+
+    commit_msg_file = ctx.params.get('commit_msg_file')
+    commit_source = ctx.params.get('commit_source', '')
+    commit_hash = ctx.params.get('commit_hash', '')
+    nonexequi = ctx.params.get('nonexequi', False)
+
     match commit_msg_file:
         case list() | tuple() | set():
-            fl = Path(kwargs.get('commit_msg_file')[0])
+            fl = Path(next(iter(commit_msg_file)))
         case str():
-            fl = Path(kwargs.get('commit_msg_file'))
+            fl = Path(commit_msg_file)
         case Path():
-            fl = kwargs.get('commit_msg_file')
+            fl = commit_msg_file
         case None:
             fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
-
-    commit_source = kwargs.get('commit_source', '')
-    commit_hash = kwargs.get('commit_hash', '')
-    nonexequi = kwargs.get('nonexequi', False)
 
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
