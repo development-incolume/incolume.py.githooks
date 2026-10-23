@@ -20,6 +20,12 @@ from incolume.py.githooks.core.rules import (
     msg_commit_file,
 )
 
+COLOR_SUCCESS = 'green'
+COLOR_ERROR = 'red'
+COLOR_ALERT1 = 'cyan'
+COLOR_ALERT2 = ''
+COLOR_ALERT3 = 'yellow'
+
 MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
     Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...
