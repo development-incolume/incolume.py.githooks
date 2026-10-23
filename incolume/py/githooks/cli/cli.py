@@ -829,8 +829,8 @@ def effort_random_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL),
-    required=True,
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
+    required=False,
     help='Filename for commit message',
 )
 @click.argument(
@@ -841,13 +841,24 @@ def effort_random_msg_cli(
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
-    commit_msg_file: Sequence[Path],
-    commit_source: str,
-    commit_hash: str,
-    *,
-    nonexequi: bool = False,
+    **kwargs: Sequence[Path],
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
+    commit_msg_file = kwargs.get('commit_msg_file')
+    match commit_msg_file:
+        case list() | tuple() | set():
+            fl = Path(kwargs.get('commit_msg_file')[0])
+        case str():
+            fl = Path(kwargs.get('commit_msg_file'))
+        case Path():
+            fl = kwargs.get('commit_msg_file')
+        case _:
+            fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
+
+    commit_source = kwargs.get('commit_source', '')
+    commit_hash = kwargs.get('commit_hash', '')
+    nonexequi = kwargs.get('nonexequi', False)
+
     logging.warning(inspect.stack()[0][3])
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
@@ -856,7 +867,7 @@ def insert_diff_cli(
         commit_hash,
     )
 
-    if nonexequi:
+    if nonexequi or ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
@@ -864,8 +875,10 @@ def insert_diff_cli(
         ctx.exit(Status.SUCCESS.value)
 
     diff_output = get_git_diff()
-    logging.debug(diff_output)
-    insert_git_diff(commit_msg_file, diff_output)
+    ic(f'{fl=}')
+    ic(f'{diff_output=}')
+    logging.debug('fl="%s", diff_output="%s"', fl, diff_output)
+    insert_git_diff(fl, diff_output)
 
     ctx.exit(Status.SUCCESS.value)
 
