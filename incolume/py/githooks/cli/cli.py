@@ -844,6 +844,7 @@ def insert_diff_cli(
     **kwargs: Sequence[Path],
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
     commit_msg_file = kwargs.get('commit_msg_file')
     match commit_msg_file:
         case list() | tuple() | set():
@@ -859,7 +860,6 @@ def insert_diff_cli(
     commit_hash = kwargs.get('commit_hash', '')
     nonexequi = kwargs.get('nonexequi', False)
 
-    logging.warning(inspect.stack()[0][3])
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
         commit_msg_file,
