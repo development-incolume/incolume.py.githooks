@@ -9,7 +9,7 @@ import platform
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import click
 from icecream import ic
@@ -841,7 +841,7 @@ def effort_random_msg_cli(
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
-    **kwargs: Sequence[Path],
+    **kwargs: dict[str, Any],
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
