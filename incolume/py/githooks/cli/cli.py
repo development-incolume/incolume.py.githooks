@@ -853,7 +853,7 @@ def insert_diff_cli(
             fl = Path(kwargs.get('commit_msg_file'))
         case Path():
             fl = kwargs.get('commit_msg_file')
-        case _:
+        case None:
             fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
 
     commit_source = kwargs.get('commit_source', '')
