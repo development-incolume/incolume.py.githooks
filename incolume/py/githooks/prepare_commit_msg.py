@@ -8,6 +8,7 @@ import logging
 import re
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Final
 
 from icecream import ic
 
@@ -20,11 +21,11 @@ from incolume.py.githooks.core.rules import (
     msg_commit_file,
 )
 
-COLOR_SUCCESS = 'green'
-COLOR_ERROR = 'red'
-COLOR_ALERT1 = 'cyan'
-COLOR_ALERT2 = ''
-COLOR_ALERT3 = 'yellow'
+COLOR_SUCCESS: Final[str] = 'green'
+COLOR_ERROR: Final[str] = 'red'
+COLOR_ALERT1: Final[str] = 'cyan'
+COLOR_ALERT2: Final[str] = ''
+COLOR_ALERT3: Final[str] = 'yellow'
 
 MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
 MESSAGERROR = """[red]
