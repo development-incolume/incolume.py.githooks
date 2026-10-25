@@ -9,7 +9,7 @@ import platform
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import click
 from icecream import ic
@@ -828,7 +828,7 @@ def effort_random_msg_cli(
 @click.argument(
     'commit_msg_file',
     nargs=-1,
-    type=click.Path(exists=True),
+    type=click.Path(exists=True, dir_okay=False),
     default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filename for commit message',
@@ -841,25 +841,27 @@ def effort_random_msg_cli(
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
-    **kwargs: Sequence[Path],
+    **kwargs: dict[str, Any],
 ) -> click.Context:
     """Proccess commit messages adding git-diff."""
-    commit_msg_file = kwargs.get('commit_msg_file')
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+
+    commit_msg_file = ctx.params.get('commit_msg_file')
+    commit_source = ctx.params.get('commit_source', '')
+    commit_hash = ctx.params.get('commit_hash', '')
+    nonexequi = ctx.params.get('nonexequi', False)
+
     match commit_msg_file:
         case list() | tuple() | set():
-            fl = Path(kwargs.get('commit_msg_file')[0])
+            fl = Path(next(iter(commit_msg_file)))
         case str():
-            fl = Path(kwargs.get('commit_msg_file'))
+            fl = Path(commit_msg_file)
         case Path():
-            fl = kwargs.get('commit_msg_file')
-        case _:
+            fl = commit_msg_file
+        case None:
             fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
 
-    commit_source = kwargs.get('commit_source', '')
-    commit_hash = kwargs.get('commit_hash', '')
-    nonexequi = kwargs.get('nonexequi', False)
-
-    logging.warning(inspect.stack()[0][3])
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
         commit_msg_file,

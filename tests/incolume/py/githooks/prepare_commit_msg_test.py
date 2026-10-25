@@ -64,11 +64,19 @@ class TestCasePrepareCommitMsg:
                     'invalid commit message',
                     'Please use the following format',
                     '<type>(optional scope): #id-issue <description>',
-                    '[red]',
-                    'Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...',
-                    'Please use the following format:',
-                    '[green]<type>(optional scope): #id-issue <description>[/green]',
-                    '[cyan]type values: feature | feat, bugfix | fix, chore, refactor, docs, style, test, perf, ci, build or revert[/cyan]',
+                ],
+                marks=[],
+            ),
+            pytest.param(
+                pkg.MESSAGE_ALERT1,
+                [
+                    'type values: feature | feat, bugfix | fix, chore, refactor, docs, style, test, perf, ci, build or revert',
+                ],
+                marks=[],
+            ),
+            pytest.param(
+                pkg.MESSAGE_ALERT2,
+                [
                     'Examples:',
                     '#1 <type>: #id-issue <description>:',
                     "git commit -m 'feature: #1234 feature example comment'",
@@ -84,8 +92,13 @@ class TestCasePrepareCommitMsg:
                     "git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'",
                     '#7 <type>(scope)!: #id-issue <description>:',
                     "git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'",
-                    '[yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/yellow]',
-                    '[/red]',
+                ],
+                marks=[],
+            ),
+            pytest.param(
+                pkg.MESSAGE_ALERT3,
+                [
+                    ' >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/',
                 ],
                 marks=[],
             ),
