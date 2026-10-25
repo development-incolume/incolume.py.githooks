@@ -27,15 +27,13 @@ COLOR_ALERT1: Final[str] = 'cyan'
 COLOR_ALERT2: Final[str] = ''
 COLOR_ALERT3: Final[str] = 'yellow'
 
-MESSAGESUCCESS = '[green]Commit message is validated [OK][/green]'
-MESSAGERROR = """[red]
-    Your commit was rejected due to the [bold underline]invalid commit message[/bold underline]...
+MESSAGESUCCESS = 'Commit message is validated [OK]'
+MESSAGERROR = """Your commit was rejected due to the **invalid commit message**...
 
     Please use the following format:
-      [green]<type>(optional scope): #id-issue <description>[/green]
-
-    [cyan]type values: feature | feat, bugfix | fix, chore, refactor, docs, style, test, perf, ci, build or revert[/cyan]
-
+        <type>(optional scope): #id-issue <description>"""
+MESSAGE_ALERT1 = """    type values: feature | feat, bugfix | fix, chore, refactor, docs, style, test, perf, ci, build or revert"""
+MESSAGE_ALERT2 = """
     Examples:
       #1 <type>: #id-issue <description>:
             git commit -m 'feature: #1234 feature example comment'
@@ -51,9 +49,8 @@ MESSAGERROR = """[red]
             git commit -m 'refactor(chore)!: #4321 chore example comment with possible breaking change'
       #7 <type>(scope)!: #id-issue <description>:
             git commit -m 'chore(fix)!: #4321 drop support for Python 2.6' -m 'BREAKING CHANGE: Some features not available in Python 2.7-.'
-
-    [yellow] >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/yellow]
-    [/red]"""
+"""
+MESSAGE_ALERT3 = ' >>> More details on docs/user_guide/CONVENTIONAL_COMMITS.md or https://www.conventionalcommits.org/pt-br/v1.0.0/[/yellow]'
 
 
 def validate_format_commit_msg(
