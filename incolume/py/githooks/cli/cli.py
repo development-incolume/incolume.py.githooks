@@ -994,16 +994,18 @@ def set_issue_from_branch_cli(
 )
 @click.pass_context
 def cli_group(
-    ctx: click.Context, *, nonexequi: bool = False, verbose: bool = False
+    ctx: click.Context, **kwargs: str
 ) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
     ctx.ensure_object(dict)
 
     # Store in context
-    ctx.obj['nonexequi'] = nonexequi
-    ctx.obj['verbose'] = verbose
+    nonexequi = ctx.params.get('nonexequi')
+    verbose = ctx.params.get('verbose')
 
-    if ctx.obj['verbose']:
+    if verbose:
         click.secho('Verbose mode active', fg='cyan')
         ic.enable()
     else:
