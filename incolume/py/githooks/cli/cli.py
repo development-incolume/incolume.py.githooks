@@ -993,9 +993,7 @@ def set_issue_from_branch_cli(
     help='Enable verbose output',
 )
 @click.pass_context
-def cli_group(
-    ctx: click.Context, **kwargs: str
-) -> None:
+def cli_group(ctx: click.Context, /, **kwargs: str) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
