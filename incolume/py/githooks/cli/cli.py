@@ -340,21 +340,20 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
 @logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
     ctx: click.Context,
-    filenames: Sequence[Path],
-    min_len: int = 3,
-    max_len: int = 256,
-    *,
-    nonexequi: bool = False,
-) -> click.Context:
+    **kwargs: dict[str, Any],
+) -> int:
     """Validate Filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    codes: Status = Status.SUCCESS
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
 
-    logging.warning(inspect.stack()[0][3])
-    msg = f'{filenames=} {min_len=} {max_len=} {nonexequi=}'
-    logging.debug(msg)
+    codes: Status = Status.SUCCESS
+    filenames = ctx.params.get('filenames')
+    nonexequi = ctx.params.get('nonexequi')
+    min_len = ctx.params.get('min_len')
+    max_len = ctx.params.get('max_len')
 
     if nonexequi:
         click.secho(
@@ -365,7 +364,7 @@ def check_valid_filenames_cli(
 
     results: list[RequestFl] = [
         validate_filename(filename=filename, min_len=min_len, max_len=max_len)
-        for filename in filenames
+        for filename in filenames  # type: ignore[union-attr]
     ]
     for result in results:
         codes |= result.code
