@@ -713,16 +713,16 @@ def validate_format_commit_msg_cli(
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
 def pre_commit_installed_cli(
     ctx: click.Context,
-    *,
-    nonexequi: bool = False,
-) -> None:
+    **kwargs: dict[str, Any],
+) -> int:
     """Validade pre-commit binary instalation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
 
-    if nonexequi:
+    if ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
