@@ -416,7 +416,8 @@ def detect_private_key_cli(
 
     Hook designed for stages: all
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
 
     if nonexequi:
         click.secho(
