@@ -2,9 +2,14 @@
 
 ## Casos de Uso Comuns
 
-- **Simulação de Escopos**: Modelar variáveis locais e globais, onde o nome local tem precedência sobre o global. 
-- **Configurações de Aplicação**: Gerar prioridade explícita entre argumentos de linha de comando, variáveis de ambiente e valores padrão.
-- **Inventários Múltiplos**: Acessar vários inventários separados como se fossem um único banco de dados.
+- **Simulação de Escopos**: Modelar variáveis locais e globais, onde o
+nome local tem precedência sobre o global.
+
+- **Configurações de Aplicação**: Gerar prioridade explícita entre
+argumentos de linha de comando, variáveis de ambiente e valores padrão.
+
+- **Inventários Múltiplos**: Acessar vários inventários separados como
+se fossem um único banco de dados.
 """
 
 from collections import ChainMap
