@@ -411,12 +411,12 @@ def detect_private_key_cli(
     filenames: Sequence[Path],
     *,
     nonexequi: bool = False,
-) -> click.Context:
+) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
     """
-    ic(f'{kwargs=}\n{ctx.params=}')
+    ic(f'\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
 
     if nonexequi:
