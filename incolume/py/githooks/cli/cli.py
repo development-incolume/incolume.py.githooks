@@ -659,21 +659,20 @@ def clean_commit_msg_cli(
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
-    filenames: list[Path | str],
-    *,
-    nonexequi: bool = False,
+    **kwargs: dict[str, Any],
 ) -> int:
     """Validate commit message.
 
     Hook designed for stages: prepare-commit-msg, manual
     """
-    logging.warning(inspect.stack()[0][3])
-    logging.debug(
-        'callable=%s, filenames=%s, nonexequi=%s',
+    logging.warning(
+        'callable=%s, ctx.params=%s, kwargs=%s',
         inspect.stack()[0][3],
-        filenames,
-        nonexequi,
+        ctx.params,
+        kwargs,
     )
+    nonexequi = ctx.params.get('nonexequi')
+    filenames = ctx.params.get('filenames')
 
     if nonexequi:
         click.secho(
