@@ -842,7 +842,7 @@ def effort_random_msg_cli(
 def insert_diff_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
-) -> click.Context:
+) -> int:
     """Proccess commit messages adding git-diff."""
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
