@@ -8,6 +8,7 @@ import os
 import platform
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -402,22 +403,27 @@ def check_valid_filenames_cli(
     'filenames',
     nargs=-1,
     type=click.Path(exists=False),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     help='Filenames to check',
 )
 @click.pass_context
 @logging_call(logging.INFO, 'Checking private keys in files.')
 def detect_private_key_cli(
     ctx: click.Context,
-    filenames: Sequence[Path],
-    *,
-    nonexequi: bool = False,
+    **kwargs: dict[str, Any],
 ) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
     """
-    ic(f'\n{ctx.params=}')
+    ic(f'{kwargs}\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    filenames = (
+        [Path(fl) for fl in ctx.params.get('filenames')]  # type: ignore[union-attr]
+        if isinstance(ctx.params.get('filenames'), Iterator)
+        else [find_project_root(Path.cwd()) / GITCOMMITMSGFL]
+    )
+    nonexequi = ctx.params.get('nonexequi')
 
     if nonexequi:
         click.secho(
