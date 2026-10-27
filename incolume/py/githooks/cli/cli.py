@@ -670,6 +670,7 @@ def validate_format_commit_msg_cli(
         ctx.params,
         kwargs,
     )
+
     nonexequi = ctx.params.get('nonexequi')
     filenames = ctx.params.get('filenames')
 
