@@ -29,7 +29,6 @@ from incolume.py.githooks.core.rules import (
     RequestFl,
     Result,
     Status,
-    msg_commit_file,
 )
 from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
@@ -454,11 +453,13 @@ def detect_private_key_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(
     logging.INFO, 'Processing footer signed-off-by in commit message.'
 )
 def footer_signedoffby_cli(
-    commit_msg_filename: Path = msg_commit_file, *, nonexequi: bool = False
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
     """Process footer signed-off-by in commit message.
 
@@ -479,7 +480,10 @@ def footer_signedoffby_cli(
         None
 
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    commit_msg_filename: Path = ctx.params.get('msg_commit_file')
+    nonexequi: bool = ctx.params.get('nonexequi', False)
 
     if nonexequi:
         click.secho(
