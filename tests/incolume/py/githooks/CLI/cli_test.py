@@ -519,17 +519,19 @@ class TestCaseAllCLI:
     )
     def test_footer_signedoffby_cli(
         self,
-        content: str,
         args: list[str],
+        content: str,
         expected: int,
         capsys: pytest.CaptureFixture[Any],
         cli_runner: CliRunner,
     ) -> None:
         """Test main function."""
-        with NamedTemporaryFile(dir=self.test_dir) as tf:
+        dout: Path = self.test_dir.joinpath(stack()[0].function)
+        dout.mkdir(parents=True, exist_ok=True)
+        ic(f'{dout=} {dout.exists()=}')
+        with NamedTemporaryFile(dir=dout, suffix='.txt') as tf:
             test_file = Path(tf.name)
-            test_file = Path(test_file.parent, stack()[0][3], test_file.name)
-        test_file.parent.mkdir(parents=True, exist_ok=True)
+        test_file.touch()
         if content:
             test_file.write_text(content, encoding='utf-8')
 
