@@ -905,7 +905,6 @@ def insert_diff_cli(
 )
 @click.argument(
     'commit_msg_filepath',
-    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     type=click.Path(exists=True),
     help='Fullpath to the commit message file',
 )
@@ -938,8 +937,9 @@ def set_issue_from_branch_cli(
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
 
-    commit_msg_filepath = ctx.params.get(
-        'commit_msg_filepath', find_project_root(Path.cwd()) / GITCOMMITMSGFL
+    commit_msg_filepath = (
+        ctx.params.get('commit_msg_filepath')
+        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
     )
     commit_type = ctx.params.get('commit_type')
     nonexequi = ctx.params.get('nonexequi')
