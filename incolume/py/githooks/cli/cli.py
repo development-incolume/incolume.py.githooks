@@ -443,7 +443,7 @@ def detect_private_key_cli(
 @click.argument(
     'commit_msg_filename',
     type=Path,
-    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
+    default=None,
     help='Arquivo de mensagem de commit',
 )
 @click.option(
@@ -482,7 +482,10 @@ def footer_signedoffby_cli(
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
-    commit_msg_filename: Path = ctx.params.get('msg_commit_file')
+    commit_msg_filename: Path = (
+        ctx.params.get('commit_msg_filename')
+        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
+    )
     nonexequi: bool = ctx.params.get('nonexequi', False)
 
     if nonexequi:
