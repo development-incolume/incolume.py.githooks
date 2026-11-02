@@ -10,7 +10,7 @@ import re
 import sys
 from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import click
 from icecream import ic
@@ -48,10 +48,6 @@ from incolume.py.githooks.prepare_commit_msg import (
 )
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
 
 logging.warning('Python %s', platform.python_version())
 
@@ -401,7 +397,6 @@ def check_valid_filenames_cli(
     'filenames',
     nargs=-1,
     type=click.Path(exists=False),
-    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     help='Filenames to check',
 )
 @click.pass_context

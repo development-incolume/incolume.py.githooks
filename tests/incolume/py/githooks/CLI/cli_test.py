@@ -488,11 +488,12 @@ class TestCaseAllCLI:
         """Test CLI."""
         dout = self.test_dir / stack()[0][3]
         dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout) as fl:
+        with NamedTemporaryFile(dir=dout, suffix='.txt') as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
+
         result = cli_runner.invoke(
             cli.detect_private_key_cli, [test_file.as_posix(), *args]
         )
