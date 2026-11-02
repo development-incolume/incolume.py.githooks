@@ -905,7 +905,6 @@ def insert_diff_cli(
 )
 @click.argument(
     'commit_msg_filepath',
-    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     type=click.Path(exists=True),
     help='Fullpath to the commit message file',
 )
@@ -923,8 +922,11 @@ def insert_diff_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 def set_issue_from_branch_cli(
-    commit_msg_filepath: str, commit_type: str, *, nonexequi: bool = False
+    ctx: click.Context,
+    /,
+    **kwargs: dict[str, Any],
 ) -> int:
     """CLI to extract the ticket number from the branch name.
 
@@ -932,7 +934,16 @@ def set_issue_from_branch_cli(
     -m option (user-provided message)
     If so, it prevents the manually entered message from being overwritten
     """
-    ic(f'{commit_msg_filepath=}, {commit_type=}, {nonexequi=}')
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+
+    commit_msg_filepath = (
+        ctx.params.get('commit_msg_filepath')
+        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
+    )
+    commit_type = ctx.params.get('commit_type')
+    nonexequi = ctx.params.get('nonexequi')
+
     if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
@@ -950,7 +961,7 @@ def set_issue_from_branch_cli(
         )
         return 0
 
-    flin: Path = Path(commit_msg_filepath)
+    flin = Path(commit_msg_filepath)
     issue_number = get_issue_from_branch()
     ic(f'{issue_number=}')
 
