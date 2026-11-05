@@ -13,7 +13,7 @@ import pytest
 from incolume.py.githooks import cli
 from icecream import ic
 from incolume.py.githooks.detect_private_key import BLACKLIST
-from inspect import stack
+from inspect import stack, getmembers, isfunction
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
     MESSAGES,
@@ -64,7 +64,8 @@ class TestCaseAllCLI:
         Remove a arvore de diretórios criadas após os testes realizados.
         """
         ic(f'teardown for {cls.__name__}')
-        shutil.rmtree(cls.test_dir, ignore_errors=True)
+        for path, _ in getmembers(cls, predicate=isfunction):
+            shutil.rmtree(cls.test_dir / path, ignore_errors=True)
 
     @pytest.mark.parametrize(
         'entrance',
