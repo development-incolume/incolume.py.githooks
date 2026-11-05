@@ -21,13 +21,15 @@ from incolume.py.githooks.core.rules import (
     Result,
 )
 from unittest.mock import patch
-from itertools import chain
+from itertools import chain, count
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
     from pytest_mock import MockerFixture
     from collections.abc import Callable
 
+
+counter = count(1)
 
 @dataclass
 class Entrance:
@@ -489,7 +491,8 @@ class TestCaseAllCLI:
         """Test CLI."""
         dout = self.test_dir / stack()[0][3]
         dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout, suffix='.txt') as fl:
+
+        with NamedTemporaryFile(dir=dout, prefix=f'tmp-{next(counter):0>3}-', suffix='.txt') as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
