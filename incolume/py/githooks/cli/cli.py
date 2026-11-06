@@ -411,7 +411,7 @@ def detect_private_key_cli(
     """
     ic(f'{kwargs}\n{ctx.params=}')
     ctx.params.update(kwargs)
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning('Running "%s" with %s', ctx.command_path, ctx.params)
     filenames = (
         [Path(fl) for fl in ctx.params.get('filenames')]  # type: ignore[union-attr]
         if isinstance(ctx.params.get('filenames'), Iterator)
