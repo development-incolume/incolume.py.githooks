@@ -1,6 +1,7 @@
 """Module test for get_issue_from_branch."""
 
 from collections.abc import Generator
+import inspect
 import shutil
 from incolume.py.githooks.core import subprocess
 from unittest.mock import patch
@@ -10,6 +11,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile, gettempdir
 from inspect import stack
 from click.testing import CliRunner
+from icecream import ic
 
 
 @pytest.fixture(scope='class')
@@ -29,6 +31,17 @@ class TestCaseGetIssueFromBranch:
 
     test_dir = Path(gettempdir()) / stack()[0][3]
 
+    @classmethod
+    def teardown_class(cls) -> None:
+        """Teardown class.
+
+        Remove a arvore de diretórios criadas após os testes realizados.
+        """
+        ic(f'teardown for {cls.__name__}')
+        for dout in (d for d in dir(cls) if d.startswith('test_')):
+            ic(f'{dout=}')
+            shutil.rmtree(cls.test_dir / dout, ignore_errors=True)
+
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
@@ -42,7 +55,7 @@ class TestCaseGetIssueFromBranch:
                 ],
             ),
             pytest.param(
-                [test_dir / 'COMMIT_EDITMSG', ''],
+                ['COMMIT_EDITMSG', ''],
                 '[ISSUE-123] ',
                 marks=[
                     pytest.mark.runner_setup(
@@ -63,7 +76,7 @@ class TestCaseGetIssueFromBranch:
         """Test get_issue_from_branch function."""
         flin: Path = filefortest
         if entrance[0]:
-            flin = Path(entrance[0])
+            flin = self.test_dir / inspect.stack()[0][3] / entrance[0]
             flin.parent.mkdir(parents=True, exist_ok=True)
             flin.touch(exist_ok=True)
         entrance[0] = str(flin)

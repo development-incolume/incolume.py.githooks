@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 
 from icecream import ic
 
-from incolume.py.githooks.core import debug_enable, get_branchname
+from incolume.py.githooks.core import get_branchname
 from incolume.py.githooks.core.rules import (
     RULE_BRANCHNAME,
     RULE_BRANCHNAME_REFUSED,
@@ -18,8 +18,6 @@ from incolume.py.githooks.core.rules import (
     Status,
     TypeCommit,
 )
-
-debug_enable()
 
 
 @dataclass

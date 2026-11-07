@@ -4,12 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from incolume.py.githooks.core import debug_enable
-
 if TYPE_CHECKING:
     from pathlib import Path
-
-debug_enable()
 
 
 def insert_git_diff(commit_msg_file: Path, diff_output: str) -> None:

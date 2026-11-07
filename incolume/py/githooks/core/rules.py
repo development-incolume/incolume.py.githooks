@@ -271,6 +271,5 @@ MESSAGES: Final[list[str]] = [
 CONTEXT_SETTINGS_CLICK: dict[str, list[str]] = {
     'help_option_names': ['-h', '--help'],
 }
-msg_commit_file: Path = find_project_root(__file__).joinpath(
-    '.git', 'COMMIT_EDITMSG'
-)
+GITCOMMITMSGFL: Final[str] = '.git/COMMIT_EDITMSG'
+msg_commit_file: Path = find_project_root(__file__) / GITCOMMITMSGFL

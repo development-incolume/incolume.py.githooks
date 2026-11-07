@@ -2,6 +2,7 @@
 
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
 
+import inspect
 import itertools
 import logging
 import re
@@ -43,20 +44,25 @@ def find_project_root(
     start_dir: Path | str = '', markers: tuple[str, ...] | None = None
 ) -> Path:
     """Find the project root directory by looking for specific markers."""
-    start_dir = Path(start_dir)
-    start_dir = start_dir.parent if start_dir.is_file() else start_dir
+    ic(f'{inspect.stack()[0].function}: {start_dir=}, {markers=}')
+
+    start_dir = Path(start_dir) if start_dir else Path.cwd()
     start_dir = start_dir.expanduser().resolve()
+    start_dir = start_dir.parent if start_dir.is_file() else start_dir
 
     markers = markers or MARKERS[:]
     current = start_dir
+    ic(f'{current=}, {markers=}')
 
     while current != current.parent:
         for marker in markers:
             if (current / marker).exists():
+                ic(f'Found marker "{marker}" in {current}')
                 return current
         current = current.parent
 
     msg = 'Project root not found (no markers detected).'
+    ic(f'{msg} {start_dir=}, {markers=}')
     raise FileNotFoundError(msg)
 
 

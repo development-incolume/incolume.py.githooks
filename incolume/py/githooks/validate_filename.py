@@ -14,15 +14,12 @@ from string import ascii_lowercase, digits
 from deprecated import deprecated
 from icecream import ic
 
-from incolume.py.githooks.core import debug_enable
 from incolume.py.githooks.core.rules import (
     FILENAME_STRUCTURE,
     SNAKE_CASE,
     RequestFl,
     Status,
 )
-
-debug_enable()
 
 SNAKE_CASE_REGEX = re.compile(SNAKE_CASE)
 FILENAME_STRUCTURE_REGEX = re.compile(FILENAME_STRUCTURE)

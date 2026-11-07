@@ -170,7 +170,7 @@ repos:
       additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [commit-msg, manual]  # this hook is run at commit time
       args: []
-      verbose: false
+      verbose: true
 
     - id: set-issue-from-branch-cli
       verbose: true
@@ -190,7 +190,7 @@ repos:
       language: python  # script requires the Python interpreter
       pass_filenames: false
       always_run: true
-      require_serial: false  # true run in parallel otherwise false  
+      require_serial: false  # true run in parallel otherwise false
       additional_dependencies: [click, icecream]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
       types_or: [system-verilog]  #
