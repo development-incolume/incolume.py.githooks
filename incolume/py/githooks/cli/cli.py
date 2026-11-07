@@ -192,14 +192,31 @@ def check_len_first_line_commit_msg_cli(
     required=False,
     help='Filename for commit message',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
-    commit_msg_file: list[Path],
-    *,
-    nonexequi: bool = False,
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
-    """Check type of commit message."""
-    logging.warning(inspect.stack()[0][3])
+    """Check type of commit message.
+
+    Args:
+      kwargs:
+        commit_msg_file: list[Path],
+        nonexequi: bool = False,
+      ctx: context CLI
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    commit_msg_file = ctx.params.get('commit_msg_file') or []
+    nonexequi = ctx.params.get('nonexequi')
 
     result = check_type_commit_msg(*commit_msg_file)
 
@@ -265,26 +282,44 @@ def check_type_commit_msg_cli(
 )
 @click.pass_context
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
+def check_valid_branchname_cli(
     ctx: click.Context,
-    commit_msg_file: Path,
-    commit_source: str,
-    commit_hash: str,
-    *,
-    dev: bool = False,
-    tags: bool = False,
-    main: bool = True,
-    nonexequi: bool = False,
+    **kwargs: dict[str, Any],
 ) -> click.Context:
     """Hookgit for check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
+    Args:
+      kwargs:
+        commit_msg_file: Path,
+        commit_source: str,
+        commit_hash: str,
+        dev: bool = False,
+        tags: bool = False,
+        main: bool = True,
+        nonexequi: bool = False,
 
     Returns:
         int: 0 to SUCCESS or 1 to FAILURE
 
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+
+    commit_msg_file = ctx.params.get('commit_msg_file ')
+    commit_source = ctx.params.get('commit_source ')
+    commit_hash = ctx.params.get('commit_hash ')
+    dev = ctx.params.get('dev')
+    tags = ctx.params.get('tags')
+    main = ctx.params.get('main')
+    nonexequi = ctx.params.get('nonexequi')
+
     logging.debug(
         'commit_msg_file: %s, commit_source: %s, commit_hash: %s',
         commit_msg_file,
@@ -363,7 +398,14 @@ def check_valid_filenames_cli(
     Hook designed for stages: pre-commit, pre-push, manual
     """
     ic(f'{kwargs=}\n{ctx.params=}')
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
     codes: Status = Status.SUCCESS
     filenames = ctx.params.get('filenames')
@@ -430,8 +472,14 @@ def detect_private_key_cli(
     Hook designed for stages: all
     """
     ic(f'{kwargs}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
     ctx.params.update(kwargs)
-    logging.warning('Running "%s" with %s', ctx.command_path, ctx.params)
     filenames = [Path(fl) for fl in ctx.params.get('filenames')]  # type: ignore[union-attr]
     nonexequi = ctx.params.get('nonexequi')
 
@@ -500,7 +548,14 @@ def footer_signedoffby_cli(
 
     """
     ic(f'{kwargs=}\n{ctx.params=}')
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
     commit_msg_filename: Path = (
         ctx.params.get('commit_msg_filename')
         or find_project_root(Path.cwd()) / GITCOMMITMSGFL
@@ -709,11 +764,13 @@ def validate_format_commit_msg_cli(
     Hook designed for stages: prepare-commit-msg, manual
     """
     logging.warning(
-        'callable=%s, ctx.params=%s, kwargs=%s',
-        inspect.stack()[0][3],
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
         ctx.params,
         kwargs,
     )
+    ctx.params.update(kwargs)
 
     nonexequi = ctx.params.get('nonexequi')
     filenames = ctx.params.get('filenames')
@@ -763,7 +820,14 @@ def pre_commit_installed_cli(
     Hook designed for stages: pre-commit, pre-push, manual
     """
     ic(f'{kwargs=}\n{ctx.params=}')
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
     if ctx.params.get('nonexequi'):
         click.secho(
@@ -851,6 +915,7 @@ def effort_random_msg_cli(
         ctx.params,
         kwargs,
     )
+    ctx.params.update(kwargs)
     fixed = ctx.params.get('fixed')
     nonexequi = ctx.params.get('nonexequi')
 
@@ -905,7 +970,14 @@ def insert_diff_cli(
 ) -> int:
     """Proccess commit messages adding git-diff."""
     ic(f'{kwargs=}\n{ctx.params=}')
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
     commit_msg_file = ctx.params.get('commit_msg_file')
     commit_source = ctx.params.get('commit_source', '')
@@ -1074,7 +1146,13 @@ def set_issue_from_branch_cli(
 def cli_group(ctx: click.Context, /, **kwargs: str) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
     ic(f'{kwargs=}\n{ctx.params=}')
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
     ctx.ensure_object(dict)
 
     # Store in context
