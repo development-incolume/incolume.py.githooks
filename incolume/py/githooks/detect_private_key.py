@@ -38,7 +38,7 @@ def has_private_key(*filenames: PathLike[str]) -> Result:
     logging.debug(ic(filenames))
 
     private_key_files = {
-        file
+        Path(file)
         for line in BLACKLIST
         for file in filenames
         if line in Path(file).read_bytes()
@@ -46,6 +46,6 @@ def has_private_key(*filenames: PathLike[str]) -> Result:
 
     if private_key_files:
         for private_key_file in private_key_files:
-            result.message += f'Private key found: {private_key_file}\n'
+            result.message += f'Private key found: {private_key_file.as_uri()}\n'
         result.code |= Status.FAILURE
     return result

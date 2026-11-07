@@ -507,7 +507,7 @@ class TestCaseAllCLI:
         if args:
             assert msg_output in result.output
         else:
-            assert msg_output.format(test_file.as_posix()) in result.output
+            assert msg_output.format(test_file.as_uri()) in result.output
 
     @pytest.mark.parametrize(
         ['args', 'content', 'expected'],
