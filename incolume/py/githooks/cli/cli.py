@@ -90,15 +90,36 @@ logging.warning('Python %s', platform.python_version())
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
-    filenames: list[str],
-    min_first_line: int = 10,
-    max_first_line: int = 50,
-    *,
-    nonexequi: bool = False,
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
-    """Check length of first line in commit message."""
+    """Check length of first line in commit message.
+
+    Args:
+      kwargs:
+        filenames: list[str],
+        min_first_line: int = 10,
+        max_first_line: int = 50,
+        nonexequi: bool = False,
+      ctx: contexto CLI
+
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    min_first_line = ctx.params.get('min_first_line') or 10
+    max_first_line = ctx.params.get('max_first_line') or 50
+    nonexequi = ctx.params.get('nonexequi')
     results: list[Result] = []
     result_code: Status = Status.SUCCESS
 
