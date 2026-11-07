@@ -532,7 +532,7 @@ def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     Hook designed for stages: post-commit, manual
     """
     logging.warning(
-        'callable=%s, comand=%s, ctx.params=%s, kwargs=%s',
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
         inspect.stack()[0].function,
         ctx.command_path,
         ctx.params,
@@ -600,7 +600,7 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
 
     """
     logging.warning(
-        'callable=%s, comand=%s, ctx.params=%s, kwargs=%s',
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
         inspect.stack()[0].function,
         ctx.command_path,
         ctx.params,
@@ -951,7 +951,14 @@ def set_issue_from_branch_cli(
     If so, it prevents the manually entered message from being overwritten
     """
     ic(f'{kwargs=}\n{ctx.params=}')
-    logging.warning('Running "%s" with %s', inspect.stack()[0][3], ctx.params)
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
     commit_msg_filepath = (
         ctx.params.get('commit_msg_filepath')
