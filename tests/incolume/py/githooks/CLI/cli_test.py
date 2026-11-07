@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 
 counter = count(1)
 
+
 @dataclass
 class Entrance:
     """Entrance dataclass for tests."""
@@ -492,7 +493,9 @@ class TestCaseAllCLI:
         dout = self.test_dir / stack()[0][3]
         dout.mkdir(parents=True, exist_ok=True)
 
-        with NamedTemporaryFile(dir=dout, prefix=f'tmp-{next(counter):0>3}-', suffix='.txt') as fl:
+        with NamedTemporaryFile(
+            dir=dout, prefix=f'tmp-{next(counter):0>3}-', suffix='.txt'
+        ) as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
