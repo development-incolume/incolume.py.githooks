@@ -13,7 +13,7 @@ import pytest
 from incolume.py.githooks import cli
 from icecream import ic
 from incolume.py.githooks.detect_private_key import BLACKLIST
-from inspect import stack
+from inspect import stack, getmembers, isfunction
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
     MESSAGES,
@@ -21,12 +21,15 @@ from incolume.py.githooks.core.rules import (
     Result,
 )
 from unittest.mock import patch
-from itertools import chain
+from itertools import chain, count
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
     from pytest_mock import MockerFixture
     from collections.abc import Callable
+
+
+counter = count(1)
 
 
 @dataclass
@@ -64,7 +67,8 @@ class TestCaseAllCLI:
         Remove a arvore de diretórios criadas após os testes realizados.
         """
         ic(f'teardown for {cls.__name__}')
-        shutil.rmtree(cls.test_dir, ignore_errors=True)
+        for path, _ in getmembers(cls, predicate=isfunction):
+            shutil.rmtree(cls.test_dir / path, ignore_errors=True)
 
     @pytest.mark.parametrize(
         'entrance',
@@ -488,18 +492,22 @@ class TestCaseAllCLI:
         """Test CLI."""
         dout = self.test_dir / stack()[0][3]
         dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout) as fl:
+
+        with NamedTemporaryFile(
+            dir=dout, prefix=f'tmp-{next(counter):0>3}-', suffix='.txt'
+        ) as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
+
         result = cli_runner.invoke(
             cli.detect_private_key_cli, [test_file.as_posix(), *args]
         )
         if args:
             assert msg_output in result.output
         else:
-            assert msg_output.format(test_file.as_posix()) in result.output
+            assert msg_output.format(test_file.as_uri()) in result.output
 
     @pytest.mark.parametrize(
         ['args', 'content', 'expected'],

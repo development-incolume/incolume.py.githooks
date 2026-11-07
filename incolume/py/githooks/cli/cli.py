@@ -9,7 +9,7 @@ import platform
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import click
 from icecream import ic
@@ -47,10 +47,6 @@ from incolume.py.githooks.prepare_commit_msg import (
 )
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
 
 logging.warning('Python %s', platform.python_version())
 
@@ -406,15 +402,17 @@ def check_valid_filenames_cli(
 @logging_call(logging.INFO, 'Checking private keys in files.')
 def detect_private_key_cli(
     ctx: click.Context,
-    filenames: Sequence[Path],
-    *,
-    nonexequi: bool = False,
-) -> click.Context:
+    **kwargs: dict[str, Any],
+) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs}\n{ctx.params=}')
+    ctx.params.update(kwargs)
+    logging.warning('Running "%s" with %s', ctx.command_path, ctx.params)
+    filenames = [Path(fl) for fl in ctx.params.get('filenames')]  # type: ignore[union-attr]
+    nonexequi = ctx.params.get('nonexequi')
 
     if nonexequi:
         click.secho(
