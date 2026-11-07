@@ -575,14 +575,9 @@ def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
 )
 @click.argument('commit_source', required=False, help='Commit source')
 @click.argument('commit_hash', required=False, help='Commit hash')
+@click.pass_context
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
-def clean_commit_msg_cli(
-    commit_msg_file: Path,
-    commit_source: str,
-    commit_hash: str,
-    *,
-    nonexequi: bool = False,
-) -> int:
+def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
@@ -597,12 +592,31 @@ def clean_commit_msg_cli(
         commit_hash (str): The commit hash.
 
         nonexequi (bool): if run hook.
+        ctx: context
+        kwargs: key word args.
 
     Returns:
         int: SUCCESS code if the operation completes.
 
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, comand=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    commit_msg_file = (
+        ctx.params.get('commit_msg_file')
+        or find_project_root() / GITCOMMITMSGFL
+    )
+    commit_source = ctx.params.get('commit_source')
+    commit_hash = ctx.params.get('commit_hash')
+    nonexequi = ctx.params.get('nonexequi')
+
+    ic(commit_msg_file, commit_source, commit_hash)
+    commit_msg_file = Path(commit_msg_file)
 
     if nonexequi:
         click.secho(
@@ -610,10 +624,6 @@ def clean_commit_msg_cli(
             fg='yellow',
         )
         return 0
-
-    ic(commit_msg_file, commit_source, commit_hash)
-
-    commit_msg_file = Path(commit_msg_file)
 
     backup = backup_file(commit_msg_file)
     logging.debug(backup)
