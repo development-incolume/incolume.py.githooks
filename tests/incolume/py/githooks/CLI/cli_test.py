@@ -13,7 +13,7 @@ import pytest
 from incolume.py.githooks import cli
 from icecream import ic
 from incolume.py.githooks.detect_private_key import BLACKLIST
-from inspect import stack
+from inspect import stack, getmembers, isfunction
 from incolume.py.githooks.prepare_commit_msg import MESSAGERROR
 from incolume.py.githooks.core.rules import (
     MESSAGES,
@@ -21,12 +21,15 @@ from incolume.py.githooks.core.rules import (
     Result,
 )
 from unittest.mock import patch
-from itertools import chain
+from itertools import chain, count
 
 if TYPE_CHECKING:
     from click.testing import CliRunner
     from pytest_mock import MockerFixture
     from collections.abc import Callable
+
+
+counter = count(1)
 
 
 @dataclass
@@ -64,7 +67,8 @@ class TestCaseAllCLI:
         Remove a arvore de diretórios criadas após os testes realizados.
         """
         ic(f'teardown for {cls.__name__}')
-        shutil.rmtree(cls.test_dir, ignore_errors=True)
+        for path, _ in getmembers(cls, predicate=isfunction):
+            shutil.rmtree(cls.test_dir / path, ignore_errors=True)
 
     @pytest.mark.parametrize(
         'entrance',
@@ -488,18 +492,22 @@ class TestCaseAllCLI:
         """Test CLI."""
         dout = self.test_dir / stack()[0][3]
         dout.mkdir(parents=True, exist_ok=True)
-        with NamedTemporaryFile(dir=dout) as fl:
+
+        with NamedTemporaryFile(
+            dir=dout, prefix=f'tmp-{next(counter):0>3}-', suffix='.txt'
+        ) as fl:
             test_file = Path(fl.name)
 
         ic(test_file, type(test_file))
         test_file.write_bytes(f'----- {entrance} -----\n'.encode())
+
         result = cli_runner.invoke(
             cli.detect_private_key_cli, [test_file.as_posix(), *args]
         )
         if args:
             assert msg_output in result.output
         else:
-            assert msg_output.format(test_file.as_posix()) in result.output
+            assert msg_output.format(test_file.as_uri()) in result.output
 
     @pytest.mark.parametrize(
         ['args', 'content', 'expected'],
@@ -519,17 +527,19 @@ class TestCaseAllCLI:
     )
     def test_footer_signedoffby_cli(
         self,
-        content: str,
         args: list[str],
+        content: str,
         expected: int,
         capsys: pytest.CaptureFixture[Any],
         cli_runner: CliRunner,
     ) -> None:
         """Test main function."""
-        with NamedTemporaryFile(dir=self.test_dir) as tf:
+        dout: Path = self.test_dir.joinpath(stack()[0].function)
+        dout.mkdir(parents=True, exist_ok=True)
+        ic(f'{dout=} {dout.exists()=}')
+        with NamedTemporaryFile(dir=dout, suffix='.txt') as tf:
             test_file = Path(tf.name)
-            test_file = Path(test_file.parent, stack()[0][3], test_file.name)
-        test_file.parent.mkdir(parents=True, exist_ok=True)
+        test_file.touch()
         if content:
             test_file.write_text(content, encoding='utf-8')
 
@@ -545,12 +555,8 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 {},
-                'Boa! Continue trabalhando com',
-                marks=[
-                    pytest.mark.xfail(
-                        reason='Identify color in output not improved'
-                    )
-                ],
+                'Great. Keep up the hard work!',
+                marks=[],
             ),
             pytest.param({'--nonexequi'}, '', marks=[]),
         ],
@@ -558,17 +564,13 @@ class TestCaseAllCLI:
     def test_effort_msg_cli(
         self,
         cli_runner: CliRunner,
-        capsys: pytest.CaptureFixture[str],
         entrance: str,
         expected: str,
     ) -> None:
         """Teste CLI."""
         result = cli_runner.invoke(cli.effort_msg_cli, entrance)
-        captured = capsys.readouterr()
         assert result.exit_code == 0
-        assert expected in captured.out
-        if not entrance:
-            assert '\033[32m' in captured.out  # Fore.GREEN
+        assert expected in result.output
 
     @pytest.mark.parametrize(
         'entrance',

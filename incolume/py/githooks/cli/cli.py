@@ -9,7 +9,7 @@ import platform
 import re
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Any
 
 import click
 from icecream import ic
@@ -29,7 +29,6 @@ from incolume.py.githooks.core.rules import (
     RequestFl,
     Result,
     Status,
-    msg_commit_file,
 )
 from incolume.py.githooks.core.utils import find_project_root
 from incolume.py.githooks.detect_private_key import has_private_key
@@ -48,10 +47,6 @@ from incolume.py.githooks.prepare_commit_msg import (
 )
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
-
 
 logging.warning('Python %s', platform.python_version())
 
@@ -95,15 +90,36 @@ logging.warning('Python %s', platform.python_version())
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking length of first line in commit message.')
 def check_len_first_line_commit_msg_cli(
-    filenames: list[str],
-    min_first_line: int = 10,
-    max_first_line: int = 50,
-    *,
-    nonexequi: bool = False,
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
-    """Check length of first line in commit message."""
+    """Check length of first line in commit message.
+
+    Args:
+      kwargs:
+        filenames: list[str],
+        min_first_line: int = 10,
+        max_first_line: int = 50,
+        nonexequi: bool = False,
+      ctx: contexto CLI
+
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    min_first_line = ctx.params.get('min_first_line') or 10
+    max_first_line = ctx.params.get('max_first_line') or 50
+    nonexequi = ctx.params.get('nonexequi')
     results: list[Result] = []
     result_code: Status = Status.SUCCESS
 
@@ -176,14 +192,31 @@ def check_len_first_line_commit_msg_cli(
     required=False,
     help='Filename for commit message',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
-    commit_msg_file: list[Path],
-    *,
-    nonexequi: bool = False,
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
-    """Check type of commit message."""
-    logging.warning(inspect.stack()[0][3])
+    """Check type of commit message.
+
+    Args:
+      kwargs:
+        commit_msg_file: list[Path],
+        nonexequi: bool = False,
+      ctx: context CLI
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    commit_msg_file = ctx.params.get('commit_msg_file') or []
+    nonexequi = ctx.params.get('nonexequi')
 
     result = check_type_commit_msg(*commit_msg_file)
 
@@ -249,26 +282,44 @@ def check_type_commit_msg_cli(
 )
 @click.pass_context
 @logging_call(logging.INFO, 'Checking valid branchname.')
-def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
+def check_valid_branchname_cli(
     ctx: click.Context,
-    commit_msg_file: Path,
-    commit_source: str,
-    commit_hash: str,
-    *,
-    dev: bool = False,
-    tags: bool = False,
-    main: bool = True,
-    nonexequi: bool = False,
+    **kwargs: dict[str, Any],
 ) -> click.Context:
     """Hookgit for check valid branchname.
 
     Hook designed for stages: pre-commit, pre-push, manual
+    Args:
+      kwargs:
+        commit_msg_file: Path,
+        commit_source: str,
+        commit_hash: str,
+        dev: bool = False,
+        tags: bool = False,
+        main: bool = True,
+        nonexequi: bool = False,
 
     Returns:
         int: 0 to SUCCESS or 1 to FAILURE
 
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+
+    commit_msg_file = ctx.params.get('commit_msg_file ')
+    commit_source = ctx.params.get('commit_source ')
+    commit_hash = ctx.params.get('commit_hash ')
+    dev = ctx.params.get('dev')
+    tags = ctx.params.get('tags')
+    main = ctx.params.get('main')
+    nonexequi = ctx.params.get('nonexequi')
+
     logging.debug(
         'commit_msg_file: %s, commit_source: %s, commit_hash: %s',
         commit_msg_file,
@@ -340,21 +391,27 @@ def check_valid_branchname_cli(  # ruff: ignore[too-many-arguments]
 @logging_call(logging.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
     ctx: click.Context,
-    filenames: Sequence[Path],
-    min_len: int = 3,
-    max_len: int = 256,
-    *,
-    nonexequi: bool = False,
-) -> click.Context:
+    **kwargs: dict[str, Any],
+) -> int:
     """Validate Filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    codes: Status = Status.SUCCESS
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
-    logging.warning(inspect.stack()[0][3])
-    msg = f'{filenames=} {min_len=} {max_len=} {nonexequi=}'
-    logging.debug(msg)
+    codes: Status = Status.SUCCESS
+    filenames = ctx.params.get('filenames')
+    nonexequi = ctx.params.get('nonexequi')
+    min_len = ctx.params.get('min_len')
+    max_len = ctx.params.get('max_len')
 
     if nonexequi:
         click.secho(
@@ -365,7 +422,7 @@ def check_valid_filenames_cli(
 
     results: list[RequestFl] = [
         validate_filename(filename=filename, min_len=min_len, max_len=max_len)
-        for filename in filenames
+        for filename in filenames  # type: ignore[union-attr]
     ]
     for result in results:
         codes |= result.code
@@ -408,15 +465,23 @@ def check_valid_filenames_cli(
 @logging_call(logging.INFO, 'Checking private keys in files.')
 def detect_private_key_cli(
     ctx: click.Context,
-    filenames: Sequence[Path],
-    *,
-    nonexequi: bool = False,
-) -> click.Context:
+    **kwargs: dict[str, Any],
+) -> int:
     """CLI to check private key.
 
     Hook designed for stages: all
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = [Path(fl) for fl in ctx.params.get('filenames')]  # type: ignore[union-attr]
+    nonexequi = ctx.params.get('nonexequi')
 
     if nonexequi:
         click.secho(
@@ -445,7 +510,7 @@ def detect_private_key_cli(
 @click.argument(
     'commit_msg_filename',
     type=Path,
-    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
+    default=None,
     help='Arquivo de mensagem de commit',
 )
 @click.option(
@@ -455,11 +520,13 @@ def detect_private_key_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(
     logging.INFO, 'Processing footer signed-off-by in commit message.'
 )
 def footer_signedoffby_cli(
-    commit_msg_filename: Path = msg_commit_file, *, nonexequi: bool = False
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
     """Process footer signed-off-by in commit message.
 
@@ -480,7 +547,20 @@ def footer_signedoffby_cli(
         None
 
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    commit_msg_filename: Path = (
+        ctx.params.get('commit_msg_filename')
+        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
+    )
+    nonexequi: bool = ctx.params.get('nonexequi', False)
 
     if nonexequi:
         click.secho(
@@ -520,15 +600,23 @@ def footer_signedoffby_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Displaying effort message after commit.')
-def effort_msg_cli(*, nonexequi: bool) -> int:
+def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
-    if nonexequi:
+    if ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
@@ -563,14 +651,9 @@ def effort_msg_cli(*, nonexequi: bool) -> int:
 )
 @click.argument('commit_source', required=False, help='Commit source')
 @click.argument('commit_hash', required=False, help='Commit hash')
+@click.pass_context
 @logging_call(logging.INFO, 'Cleaning commit message help text.')
-def clean_commit_msg_cli(
-    commit_msg_file: Path,
-    commit_source: str,
-    commit_hash: str,
-    *,
-    nonexequi: bool = False,
-) -> int:
+def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Remove the help message.
 
     Remove "# Please enter the commit message..." from help message.
@@ -585,12 +668,31 @@ def clean_commit_msg_cli(
         commit_hash (str): The commit hash.
 
         nonexequi (bool): if run hook.
+        ctx: context
+        kwargs: key word args.
 
     Returns:
         int: SUCCESS code if the operation completes.
 
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    commit_msg_file = (
+        ctx.params.get('commit_msg_file')
+        or find_project_root() / GITCOMMITMSGFL
+    )
+    commit_source = ctx.params.get('commit_source')
+    commit_hash = ctx.params.get('commit_hash')
+    nonexequi = ctx.params.get('nonexequi')
+
+    ic(commit_msg_file, commit_source, commit_hash)
+    commit_msg_file = Path(commit_msg_file)
 
     if nonexequi:
         click.secho(
@@ -598,10 +700,6 @@ def clean_commit_msg_cli(
             fg='yellow',
         )
         return 0
-
-    ic(commit_msg_file, commit_source, commit_hash)
-
-    commit_msg_file = Path(commit_msg_file)
 
     backup = backup_file(commit_msg_file)
     logging.debug(backup)
@@ -659,21 +757,23 @@ def clean_commit_msg_cli(
 @logging_call(logging.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
-    filenames: list[Path | str],
-    *,
-    nonexequi: bool = False,
+    **kwargs: dict[str, Any],
 ) -> int:
     """Validate commit message.
 
     Hook designed for stages: prepare-commit-msg, manual
     """
-    logging.warning(inspect.stack()[0][3])
-    logging.debug(
-        'callable=%s, filenames=%s, nonexequi=%s',
-        inspect.stack()[0][3],
-        filenames,
-        nonexequi,
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
     )
+    ctx.params.update(kwargs)
+
+    nonexequi = ctx.params.get('nonexequi')
+    filenames = ctx.params.get('filenames')
 
     if nonexequi:
         click.secho(
@@ -713,16 +813,23 @@ def validate_format_commit_msg_cli(
 @logging_call(logging.INFO, 'Checking pre-commit installation.')
 def pre_commit_installed_cli(
     ctx: click.Context,
-    *,
-    nonexequi: bool = False,
-) -> None:
+    **kwargs: dict[str, Any],
+) -> int:
     """Validade pre-commit binary instalation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
-    if nonexequi:
+    if ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
@@ -784,15 +891,33 @@ def pre_commit_installed_cli(
     is_flag=True,
     help='Pin a hook message.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
 def effort_random_msg_cli(
-    *, fixed: bool = False, nonexequi: bool = False
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
     """Display randomly success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
+
+    Args:
+      kwargs:
+        fixed: bool = False,
+        nonexequi: bool = False
+      ctx: context CLI
+
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    fixed = ctx.params.get('fixed')
+    nonexequi = ctx.params.get('nonexequi')
 
     if nonexequi:
         click.secho(
@@ -828,9 +953,9 @@ def effort_random_msg_cli(
 @click.argument(
     'commit_msg_file',
     nargs=-1,
-    type=click.Path(exists=True),
-    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL),
-    required=True,
+    type=click.Path(exists=True, dir_okay=False),
+    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
+    required=False,
     help='Filename for commit message',
 )
 @click.argument(
@@ -841,14 +966,34 @@ def effort_random_msg_cli(
 @logging_call(logging.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
-    commit_msg_file: Sequence[Path],
-    commit_source: str,
-    commit_hash: str,
-    *,
-    nonexequi: bool = False,
-) -> click.Context:
+    **kwargs: dict[str, Any],
+) -> int:
     """Proccess commit messages adding git-diff."""
-    logging.warning(inspect.stack()[0][3])
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+
+    commit_msg_file = ctx.params.get('commit_msg_file')
+    commit_source = ctx.params.get('commit_source', '')
+    commit_hash = ctx.params.get('commit_hash', '')
+    nonexequi = ctx.params.get('nonexequi', False)
+
+    match commit_msg_file:
+        case list() | tuple() | set():
+            fl = Path(next(iter(commit_msg_file)))
+        case str():
+            fl = Path(commit_msg_file)
+        case Path():
+            fl = commit_msg_file
+        case None:
+            fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
+
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
         commit_msg_file,
@@ -856,7 +1001,7 @@ def insert_diff_cli(
         commit_hash,
     )
 
-    if nonexequi:
+    if nonexequi or ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',
@@ -864,8 +1009,10 @@ def insert_diff_cli(
         ctx.exit(Status.SUCCESS.value)
 
     diff_output = get_git_diff()
-    logging.debug(diff_output)
-    insert_git_diff(commit_msg_file, diff_output)
+    ic(f'{fl=}')
+    ic(f'{diff_output=}')
+    logging.debug('fl="%s", diff_output="%s"', fl, diff_output)
+    insert_git_diff(fl, diff_output)
 
     ctx.exit(Status.SUCCESS.value)
 
@@ -884,7 +1031,6 @@ def insert_diff_cli(
 )
 @click.argument(
     'commit_msg_filepath',
-    default=find_project_root(Path.cwd()) / GITCOMMITMSGFL,
     type=click.Path(exists=True),
     help='Fullpath to the commit message file',
 )
@@ -902,8 +1048,11 @@ def insert_diff_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 def set_issue_from_branch_cli(
-    commit_msg_filepath: str, commit_type: str, *, nonexequi: bool = False
+    ctx: click.Context,
+    /,
+    **kwargs: dict[str, Any],
 ) -> int:
     """CLI to extract the ticket number from the branch name.
 
@@ -911,7 +1060,23 @@ def set_issue_from_branch_cli(
     -m option (user-provided message)
     If so, it prevents the manually entered message from being overwritten
     """
-    ic(f'{commit_msg_filepath=}, {commit_type=}, {nonexequi=}')
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+
+    commit_msg_filepath = (
+        ctx.params.get('commit_msg_filepath')
+        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
+    )
+    commit_type = ctx.params.get('commit_type')
+    nonexequi = ctx.params.get('nonexequi')
+
     if nonexequi:
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
@@ -929,7 +1094,7 @@ def set_issue_from_branch_cli(
         )
         return 0
 
-    flin: Path = Path(commit_msg_filepath)
+    flin = Path(commit_msg_filepath)
     issue_number = get_issue_from_branch()
     ic(f'{issue_number=}')
 
@@ -978,17 +1143,23 @@ def set_issue_from_branch_cli(
     help='Enable verbose output',
 )
 @click.pass_context
-def cli_group(
-    ctx: click.Context, *, nonexequi: bool = False, verbose: bool = False
-) -> None:
+def cli_group(ctx: click.Context, /, **kwargs: str) -> None:
     """Unifier Grouped for CLI - Command Line Interface."""
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
     ctx.ensure_object(dict)
 
     # Store in context
-    ctx.obj['nonexequi'] = nonexequi
-    ctx.obj['verbose'] = verbose
+    nonexequi = ctx.params.get('nonexequi')
+    verbose = ctx.params.get('verbose')
 
-    if ctx.obj['verbose']:
+    if verbose:
         click.secho('Verbose mode active', fg='cyan')
         ic.enable()
     else:
