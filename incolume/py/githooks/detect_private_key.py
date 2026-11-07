@@ -46,6 +46,8 @@ def has_private_key(*filenames: PathLike[str]) -> Result:
 
     if private_key_files:
         for private_key_file in private_key_files:
-            result.message += f'Private key found: {private_key_file.as_uri()}\n'
+            result.message += (
+                f'Private key found: {private_key_file.as_uri()}\n'
+            )
         result.code |= Status.FAILURE
     return result
