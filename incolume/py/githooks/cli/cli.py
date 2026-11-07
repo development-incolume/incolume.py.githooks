@@ -524,15 +524,23 @@ def footer_signedoffby_cli(
     is_flag=True,
     help='Do not run this hook.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Displaying effort message after commit.')
-def effort_msg_cli(*, nonexequi: bool) -> int:
+def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, comand=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
 
-    if nonexequi:
+    if ctx.params.get('nonexequi'):
         click.secho(
             'Hook not executed due to the `--nonexequi` option.',
             fg='yellow',

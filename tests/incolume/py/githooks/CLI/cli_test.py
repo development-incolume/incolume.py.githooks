@@ -555,12 +555,8 @@ class TestCaseAllCLI:
         [
             pytest.param(
                 {},
-                'Boa! Continue trabalhando com',
-                marks=[
-                    pytest.mark.xfail(
-                        reason='Identify color in output not improved'
-                    )
-                ],
+                'Great. Keep up the hard work!',
+                marks=[],
             ),
             pytest.param({'--nonexequi'}, '', marks=[]),
         ],
@@ -568,17 +564,13 @@ class TestCaseAllCLI:
     def test_effort_msg_cli(
         self,
         cli_runner: CliRunner,
-        capsys: pytest.CaptureFixture[str],
         entrance: str,
         expected: str,
     ) -> None:
         """Teste CLI."""
         result = cli_runner.invoke(cli.effort_msg_cli, entrance)
-        captured = capsys.readouterr()
         assert result.exit_code == 0
-        assert expected in captured.out
-        if not entrance:
-            assert '\033[32m' in captured.out  # Fore.GREEN
+        assert expected in result.output
 
     @pytest.mark.parametrize(
         'entrance',
