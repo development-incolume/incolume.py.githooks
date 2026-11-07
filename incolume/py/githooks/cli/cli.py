@@ -827,15 +827,32 @@ def pre_commit_installed_cli(
     is_flag=True,
     help='Pin a hook message.',
 )
+@click.pass_context
 @logging_call(logging.INFO, 'Displaying commit message after commit.')
 def effort_random_msg_cli(
-    *, fixed: bool = False, nonexequi: bool = False
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
 ) -> int:
     """Display randomly success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
+
+    Args:
+      kwargs:
+        fixed: bool = False,
+        nonexequi: bool = False
+      ctx: context CLI
+
     """
-    logging.warning(inspect.stack()[0][3])
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    fixed = ctx.params.get('fixed')
+    nonexequi = ctx.params.get('nonexequi')
 
     if nonexequi:
         click.secho(
