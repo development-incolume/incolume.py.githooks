@@ -1,0 +1,32 @@
+# mkdocs.yml — configuração da documentação (issue #350)
+# Conteúdo: #351 | Publicação: #352 | URL no pyproject: #353
+
+site_name: incolume.py.githooks
+site_description: Hooks git for incolume projects
+site_url: https://development-incolume.github.io/incolume.py.githooks/
+repo_url: https://github.com/development-incolume/incolume.py.githooks
+repo_name: development-incolume/incolume.py.githooks
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - content.code.copy
+    - navigation.footer
+    - navigation.sections
+    - navigation.tracking
+    - search.highlight
+
+nav:
+  - Início: index.md
+  - Instalação: instalacao.md
+  - Uso dos hooks: hooks.md
+  - Referência do CLI: cli.md
+  - Referência da API: api.md
+  - Regras do projeto: regras.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
