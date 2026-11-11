@@ -94,3 +94,12 @@ repos:
     #   args: [--nonexequi|-N, --version|-V]
 
 ```
+
+## AI agents
+
+AI agents (OpenCode, GitHub Copilot, Codex, ...) follow the rules of this
+repository as any other collaborator. The single source of rules is
+[`AGENTS.md`](AGENTS.md), at the repository root — read it in full before any
+action. Tool-specific instruction files (e.g.
+[`.github/copilot-instructions.md`](.github/copilot-instructions.md)) only
+point to it; rules are never duplicated.
