@@ -43,7 +43,7 @@ que muda estado, commitar ou abrir PR.
 - Exige decisão humana: aprovar dependência nova, abrir PR, bump de versão
   (`uv version`), merge em `dev`/`main` e fechar issue.
 - O agente implementador não mergeia o próprio trabalho; sem integrador
-  designado, abre o PR e para.
+  designado, **pergunta ao responsável antes de abrir o PR** e para.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
