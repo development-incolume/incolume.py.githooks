@@ -129,8 +129,12 @@ identidade de outra pessoa.
 Semver. A versão vive em `pyproject.toml` e só muda por `uv version`, nunca à
 mão.
 
-- **Cada tarefa concluída em `dev`:** `uv version --bump alpha` incrementa o
-  alpha (`1.20.0a1` → `a2` → `a3`…).
+- **Cada tarefa concluída em `dev`:** bump de alpha incrementa o alpha
+  (`1.20.0a1` → `a2` → `a3`…).
+  - Saindo de versão **estável** (ex.: `1.20.0`), `--bump alpha` sozinho
+    falha ("didn't increase the version"); combine componente de release
+    + alpha: `uv version --bump patch --bump alpha` ou
+    `uv version --bump minor --bump alpha`.
 - **Fim de ciclo:** `uv version --bump rc` / `--bump stable` promove a versão.
 - **O commit de versão fica sempre em `dev`, nunca na branch da tarefa:**
 
