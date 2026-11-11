@@ -25,6 +25,16 @@ nav:
   - Referência da API: api.md
   - Regras do projeto: regras.md
 
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ['.']
+          options:
+            show_source: true
+            show_if_no_docstring: false
+
 markdown_extensions:
   - admonition
   - pymdownx.details
