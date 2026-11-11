@@ -42,8 +42,11 @@ que muda estado, commitar ou abrir PR.
   código e documento, rodar `pytest`, `ruff` e `mypy`.
 - Exige decisão humana: aprovar dependência nova, abrir PR, bump de versão
   (`uv version`), merge em `dev`/`main` e fechar issue.
-- O agente implementador não mergeia o próprio trabalho; sem integrador
-  designado, abre o PR e para.
+- O agente implementador não mergeia o próprio trabalho; o merge em `dev` é
+  **local, feito pelo integrador com aprovação explícita do responsável**;
+  sem essa aprovação, o agente para no commit.
+- PR não existe para `dev`; existe **somente para `main`, no fechamento da
+  release** (`dev` → `main`), com testes verdes e revisão.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
@@ -58,6 +61,9 @@ que muda estado, commitar ou abrir PR.
 ## Toolchain
 
 - Python `>=3.10,<4`; desenvolvimento no interpretador mais novo disponível.
+  - Exceção documentada: quando o `uv run` falhar em build nativo (ex.:
+    `pyyaml` no 3.15, sem wheel e sem MSVC), execute com o interpretador
+    estável: `uv run -p 3.10 <comando>`.
 - `uv` para ambiente e dependências: `uv sync --all-packages --all-extras
   --all-groups --locked`.
 - Testes: `pytest` com `.pytest.toml` (doctest-modules, strict-markers,
@@ -118,7 +124,8 @@ identidade de outra pessoa.
   branch antes do merge. Conflito se resolve no rebase, nunca no commit de
   merge.
 - Rebase diário em `dev`; PR com mais de 1 dia sem rebase não entra.
-- PR só entra com testes verdes e revisão do responsável.
+- PR (somente `main`, no fechamento da release) só entra com testes verdes e
+  revisão do responsável.
 - Remova o worktree após o merge e rode `git worktree prune`.
 
 ## Versionamento
@@ -126,8 +133,12 @@ identidade de outra pessoa.
 Semver. A versão vive em `pyproject.toml` e só muda por `uv version`, nunca à
 mão.
 
-- **Cada tarefa concluída em `dev`:** `uv version --bump alpha` incrementa o
-  alpha (`1.20.0a1` → `a2` → `a3`…).
+- **Cada tarefa concluída em `dev`:** bump de alpha incrementa o alpha
+  (`1.20.0a1` → `a2` → `a3`…).
+  - Saindo de versão **estável** (ex.: `1.20.0`), `--bump alpha` sozinho
+    falha ("didn't increase the version"); combine componente de release
+    + alpha: `uv version --bump patch --bump alpha` ou
+    `uv version --bump minor --bump alpha`.
 - **Fim de ciclo:** `uv version --bump rc` / `--bump stable` promove a versão.
 - **O commit de versão fica sempre em `dev`, nunca na branch da tarefa:**
 
