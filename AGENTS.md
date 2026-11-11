@@ -42,8 +42,11 @@ que muda estado, commitar ou abrir PR.
   código e documento, rodar `pytest`, `ruff` e `mypy`.
 - Exige decisão humana: aprovar dependência nova, abrir PR, bump de versão
   (`uv version`), merge em `dev`/`main` e fechar issue.
-- O agente implementador não mergeia o próprio trabalho; sem integrador
-  designado, **pergunta ao responsável antes de abrir o PR** e para.
+- O agente implementador não mergeia o próprio trabalho; o merge em `dev` é
+  **local, feito pelo integrador com aprovação explícita do responsável**;
+  sem essa aprovação, o agente para no commit.
+- PR não existe para `dev`; existe **somente para `main`, no fechamento da
+  release** (`dev` → `main`), com testes verdes e revisão.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
@@ -121,7 +124,8 @@ identidade de outra pessoa.
   branch antes do merge. Conflito se resolve no rebase, nunca no commit de
   merge.
 - Rebase diário em `dev`; PR com mais de 1 dia sem rebase não entra.
-- PR só entra com testes verdes e revisão do responsável.
+- PR (somente `main`, no fechamento da release) só entra com testes verdes e
+  revisão do responsável.
 - Remova o worktree após o merge e rode `git worktree prune`.
 
 ## Versionamento
