@@ -47,13 +47,15 @@ que muda estado, commitar ou abrir PR.
   sem essa aprovação, o agente para no commit.
 - PR não existe para `dev`; existe **somente para `main`, no fechamento da
   release**, com testes verdes e revisão.
-- **Ordem de fechamento da release: `dev` → tag → `main`.**
-  1. Versão estável definida em `dev` (`uv version --bump stable`) e commit
-     `build:` em `dev`.
-  2. Tag anotada criada **em `dev`**, apontando para o commit de versão;
-     mensagem da tag em linha única, com seções `added:`/`changed:`/`fixed:`
+- **Ordem de fechamento da release: `dev` → `tags` → `main`.**
+  1. Trabalho concluído em `dev` (commits + bumps de alpha).
+  2. `dev` entra na branch **`tags`** por `merge --no-ff` (a partir do HEAD de
+     `dev`); a versão estável é definida **na `tags`**
+     (`uv version --bump stable`) com o commit `build:` também lá.
+  3. Tag anotada criada **na branch `tags`**, apontando para o commit de
+     versão; mensagem em linha única, com seções `added:`/`changed:`/`fixed:`
      (o gerador de CHANGELOG lê a anotação linha a linha).
-  3. Só depois, `main` recebe `dev` (PR), já contendo a tag.
+  4. Por fim, `main` recebe `tags` (PR), já contendo a versão e a tag.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
@@ -131,8 +133,8 @@ identidade de outra pessoa.
   branch antes do merge. Conflito se resolve no rebase, nunca no commit de
   merge.
 - Rebase diário em `dev`; PR com mais de 1 dia sem rebase não entra.
-- PR (somente `main`, no fechamento da release, **após a tag em `dev`**) só
-  entra com testes verdes e revisão do responsável.
+- PR (somente `main`, no fechamento da release, **após a tag na branch
+  `tags`**) só entra com testes verdes e revisão do responsável.
 - Remova o worktree após o merge e rode `git worktree prune`.
 
 ## Versionamento
@@ -147,7 +149,8 @@ mão.
     + alpha: `uv version --bump patch --bump alpha` ou
     `uv version --bump minor --bump alpha`.
 - **Fim de ciclo:** `uv version --bump rc` / `--bump stable` promove a versão.
-- **O commit de versão fica sempre em `dev`, nunca na branch da tarefa:**
+- **O commit de versão fechando release fica na branch `tags`, nunca na branch
+  da tarefa; bumps intermediários (alpha/rc) ficam em `dev`:**
 
   ```sh
   git ci -m "build: incolume-py-githooks $(uv version --short)"
