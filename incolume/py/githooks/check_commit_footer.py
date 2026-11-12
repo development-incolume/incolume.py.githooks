@@ -16,16 +16,14 @@ import logging
 import re
 from pathlib import Path
 
-FOOTER_TOKENS: frozenset[str] = frozenset(
-    {
-        'Closes',
-        'Refs',
-        'Signed-off-by',
-        'Co-authored-by',
-        'Reviewed-by',
-        'Acked-by',
-    }
-)
+FOOTER_TOKENS: frozenset[str] = frozenset({
+    'Closes',
+    'Refs',
+    'Signed-off-by',
+    'Co-authored-by',
+    'Reviewed-by',
+    'Acked-by',
+})
 ISSUE_TOKENS: frozenset[str] = frozenset({'Closes', 'Refs'})
 ISSUE_REFERENCE: str = r'#\d+'
 LINE_COMMENT: str = '#'

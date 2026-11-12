@@ -40,101 +40,141 @@ class TestCaseCheckCommitFooter:
 
     def test_sem_rodape_ok(self) -> None:
         """Commit sem rodape: aceito."""
-        assert pkg.check_commit_footer([
-            str(self.commit_file('feat: nova funcionalidade\n\ncorpo da mensagem\n'))
-        ]) == 0
+        assert (
+            pkg.check_commit_footer([
+                str(
+                    self.commit_file(
+                        'feat: nova funcionalidade\n\ncorpo da mensagem\n'
+                    )
+                )
+            ])
+            == 0
+        )
 
     def test_closes_valido(self) -> None:
         """Rodape Closes #<id>: aceito."""
-        assert pkg.check_commit_footer([
-            str(
-                self.commit_file(
-                    'feat: nova funcionalidade\n\nCloses #42\n'
+        assert (
+            pkg.check_commit_footer([
+                str(
+                    self.commit_file(
+                        'feat: nova funcionalidade\n\nCloses #42\n'
+                    )
                 )
-            )
-        ]) == 0
+            ])
+            == 0
+        )
 
     def test_refs_valido(self) -> None:
         """Rodape Refs: #<id>: aceito."""
-        assert pkg.check_commit_footer([
-            str(self.commit_file('docs: ajusta texto\n\nRefs: #7\n'))
-        ]) == 0
+        assert (
+            pkg.check_commit_footer([
+                str(self.commit_file('docs: ajusta texto\n\nRefs: #7\n'))
+            ])
+            == 0
+        )
 
     def test_signedoffby_e_coauthored_validos(self) -> None:
         """Rodapes Signed-off-by e Co-authored-by: aceitos."""
-        assert pkg.check_commit_footer([
-            str(
-                self.commit_file(
-                    'feat: algo\n\n'
-                    'Signed-off-by: Brito <dev@incolume.com.br>\n'
-                    'Co-authored-by: OpenBot <dev@incolume.com.br>\n'
+        assert (
+            pkg.check_commit_footer([
+                str(
+                    self.commit_file(
+                        'feat: algo\n\n'
+                        'Signed-off-by: Brito <dev@incolume.com.br>\n'
+                        'Co-authored-by: OpenBot <dev@incolume.com.br>\n'
+                    )
                 )
-            )
-        ]) == 0
+            ])
+            == 0
+        )
 
     def test_reviewedby_ackedby_validos(self) -> None:
         """Rodapes Reviewed-by e Acked-by: aceitos."""
-        assert pkg.check_commit_footer([
-            str(
-                self.commit_file(
-                    'fix: corrige algo\n\n'
-                    'Reviewed-by: Fulano <dev@incolume.com.br>\n'
-                    'Acked-by: Sicrano <dev@incolume.com.br>\n'
+        assert (
+            pkg.check_commit_footer([
+                str(
+                    self.commit_file(
+                        'fix: corrige algo\n\n'
+                        'Reviewed-by: Fulano <dev@incolume.com.br>\n'
+                        'Acked-by: Sicrano <dev@incolume.com.br>\n'
+                    )
                 )
-            )
-        ]) == 0
+            ])
+            == 0
+        )
 
     def test_comentarios_ignorados(self) -> None:
         """Linhas de comentario do git nao contam como rodape."""
-        assert pkg.check_commit_footer([
-            str(
-                self.commit_file(
-                    'feat: algo\n\nCloses #1\n\n'
-                    '# Please enter the commit message\n'
+        assert (
+            pkg.check_commit_footer([
+                str(
+                    self.commit_file(
+                        'feat: algo\n\nCloses #1\n\n'
+                        '# Please enter the commit message\n'
+                    )
                 )
-            )
-        ]) == 0
+            ])
+            == 0
+        )
 
     def test_token_desconhecido_rejeitado(self) -> None:
         """Rodape com token fora da lista: rejeitado."""
-        assert pkg.check_commit_footer([
-            str(self.commit_file('feat: algo\n\nCloses-by: #42\n'))
-        ]) == 1
+        assert (
+            pkg.check_commit_footer([
+                str(self.commit_file('feat: algo\n\nCloses-by: #42\n'))
+            ])
+            == 1
+        )
 
     def test_issue_fora_de_closes_refs_rejeitada(self) -> None:
         """Referencia a issue em token que nao seja Closes/Refs: rejeitada."""
-        assert pkg.check_commit_footer([
-            str(self.commit_file('feat: algo\n\nReviewed-by: #42\n'))
-        ]) == 1
+        assert (
+            pkg.check_commit_footer([
+                str(self.commit_file('feat: algo\n\nReviewed-by: #42\n'))
+            ])
+            == 1
+        )
 
     def test_rodape_no_ultimo_paragrafo_apenas(self) -> None:
         """Texto parecido com rodape no corpo nao rejeita.
 
         So o ultimo paragrafo e tratado como rodape.
         """
-        assert pkg.check_commit_footer([
-            str(
-                self.commit_file(
-                    'feat: algo\n\nSigned-off-by: vale so no fim\n\nCloses #9\n'
+        assert (
+            pkg.check_commit_footer([
+                str(
+                    self.commit_file(
+                        'feat: algo\n\nSigned-off-by: vale so no fim\n\nCloses #9\n'
+                    )
                 )
-            )
-        ]) == 0
+            ])
+            == 0
+        )
 
     def test_rodape_sem_valor_rejeitado(self) -> None:
         """Rodape sem valor apos o separador: rejeitado."""
-        assert pkg.check_commit_footer([
-            str(self.commit_file('feat: algo\n\nCloses:\n'))
-        ]) == 1
+        assert (
+            pkg.check_commit_footer([
+                str(self.commit_file('feat: algo\n\nCloses:\n'))
+            ])
+            == 1
+        )
 
     def test_verso_closes_sem_espaco_rejeitado(self) -> None:
         """Closes#42 sem espaco/separador: rejeitado."""
-        assert pkg.check_commit_footer([
-            str(self.commit_file('feat: algo\n\nCloses#42\n'))
-        ]) == 1
+        assert (
+            pkg.check_commit_footer([
+                str(self.commit_file('feat: algo\n\nCloses#42\n'))
+            ])
+            == 1
+        )
 
     def test_arquivo_inexistente(self) -> None:
         """Arquivo inexistente: falha."""
-        assert pkg.check_commit_footer([str(self.test_dir / 'nao_existe.txt')]) == 1
+        assert (
+            pkg.check_commit_footer([str(self.test_dir / 'nao_existe.txt')])
+            == 1
+        )
 
     @pytest.mark.parametrize(
         'entry',
@@ -146,6 +186,9 @@ class TestCaseCheckCommitFooter:
     def test_naoexequi(self, entry: str) -> None:
         """Flag -N nao executa o hook."""
         arq = self.commit_file(f'{entry}')
-        assert check_commit_footer_cli(
-            args=['-N', str(arq)], standalone_mode=False
-        ) == 0
+        assert (
+            check_commit_footer_cli(
+                args=['-N', str(arq)], standalone_mode=False
+            )
+            == 0
+        )
