@@ -9,6 +9,7 @@ consumível diretamente pelo pre-commit.
 | comando | função |
 |---|---|
 | `githooks-cli` | grupo chain com todos os comandos |
+| `check-commit-footer` | valida os rodapés do último parágrafo da mensagem |
 | `check-len-first-line` | valida o comprimento da primeira linha da mensagem |
 | `check-type-commit-msg` | valida o tipo da mensagem (Conventional Commits) |
 | `clean-commit-msg` | limpa o arquivo de mensagem de commit |
