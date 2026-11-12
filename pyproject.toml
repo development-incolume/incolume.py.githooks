@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.21.0"
+version = "1.22.1"
 description = "plugin `pre-commit` with Hooks git for incolume projects"
 readme = "README.md"
 license-files = ["LICEN[CS]E*", "docs/vendored/licenses/*.txt", "docs/AUTHORS.md"]
@@ -70,6 +70,7 @@ cli = [
 all = ["notebook", "rich", "click"]
 
 [project.scripts]
+check-commit-footer = "incolume.py.githooks.cli:check_commit_footer_cli"
 check-len-first-line = "incolume.py.githooks.cli:check_len_first_line_commit_msg_cli"
 check-type-commit-msg = "incolume.py.githooks.cli:check_type_commit_msg_cli"
 clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"

@@ -14,6 +14,7 @@ from typing import Any
 import click
 from icecream import ic
 
+from incolume.py.githooks.check_commit_footer import check_commit_footer
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
@@ -1110,6 +1111,78 @@ def set_issue_from_branch_cli(
     return 0
 
 
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-commit-footer',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-commit-footer',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+@logging_call(logging.INFO, 'Checking footers in commit message.')
+def check_commit_footer_cli(
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Check footers of commit message.
+
+    Args:
+      kwargs:
+        filenames: list[str],
+        nonexequi: bool = False,
+      ctx: contexto CLI
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    nonexequi = ctx.params.get('nonexequi')
+
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {filenames=}, {nonexequi=}')
+    logging.warning(inspect.stack()[0][3])
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return int(Status.SUCCESS.value)
+
+    result_code = check_commit_footer(list(filenames))
+
+    if result_code == int(Status.SUCCESS.value):
+        click.secho('Commit footers are valid.', fg='green', file=sys.stdout)
+    else:
+        ermsg = 'The commit message contains invalid footers.'
+        raise click.ClickException(ermsg)
+
+    return int(result_code)
+
+
 @click.group(
     name='githooks-cli',
     chain=True,
@@ -1181,6 +1254,7 @@ cli_group.add_command(effort_msg_cli, name='effort-msg')
 cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
 cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
 cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
+cli_group.add_command(check_commit_footer_cli, name='check-commit-footer')
 cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
 cli_group.add_command(

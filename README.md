@@ -72,14 +72,20 @@ repos:
   # https://github.com/development-incolume/incolume.py.githooks/blob/1.20.0rc1/README.md
   rev: 1.20.0rc1
   hooks:
+    - id: check-commit-footer
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-len-first-line
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
+    - id: check-type-commit-msg
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-precommit-installed
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-branchname
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-filenames
     #   args: ['--min-len=3', '--max-len=256', '--nonexequi|-N', '--version|-V']
+    - id: clean-commit-msg
+    #   args: [--nonexequi|-N, --version|-V]
     - id: detect-key
     #   args: [--nonexequi|-N, --version|-V]
     - id: effort-message
@@ -89,6 +95,8 @@ repos:
     - id: footer-signed-off-by
     #   args: [--nonexequi|-N, --version|-V]
     - id: insert-diff-commit
+    #   args: [--nonexequi|-N, --version|-V]
+    - id: set-issue-from-branch
     #   args: [--nonexequi|-N, --version|-V]
     - id: validate-message-commit
     #   args: [--nonexequi|-N, --version|-V]

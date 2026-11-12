@@ -56,6 +56,25 @@ que muda estado, commitar ou abrir PR.
      versão; mensagem em linha única, com seções `added:`/`changed:`/`fixed:`
      (o gerador de CHANGELOG lê a anotação linha a linha).
   4. Por fim, `main` recebe `tags` (PR), já contendo a versão e a tag.
+- **Procedimentos verificados no fechamento da `1.21.0`** (rito `dev` → `tags`
+  → `main`):
+  - Antes de publicar, conferir ancestralidade: `git merge-base --is-ancestor`
+    de `origin/dev` no tip de `dev` e de `origin/tags` no tip de `tags` — só
+    push fast-forward, sem reescrever o que já está no remoto.
+  - Ordem de publicação: push de `dev`, push de `tags`, depois a tag anotada;
+    se a tag antiga já estiver no remoto apontando para outro commit,
+    `git push -f origin <tag>` **e conferir** com `git ls-remote origin`.
+  - O `CHANGELOG.md` é regenerado **na branch `dev`** durante o fechamento da
+    release: `uv run gcl CHANGELOG.md`, seguido de commit `docs:` (ou incluso
+    no commit `build:` da versão), **antes** do merge `dev` → `tags`; a `tags`
+    recebe o changelog pelo merge, a partir das anotações das tags já
+    existentes.
+  - PR é **de `tags` para `main`**; CI verde antes do merge; `main` termina
+    contendo a versão estável, a tag e o changelog.
+  - Durante o fechamento, `dev` **não recebe** novos commits de tarefa; o
+    próximo ciclo reabre com `uv version --bump minor --bump alpha` em `dev`
+    (funcionalidade nova) — `patch --bump alpha` somente se a sprint trouxe
+    apenas correção de bugs/fix/bugfix.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
@@ -84,8 +103,10 @@ que muda estado, commitar ou abrir PR.
 
 - Qualidade: `uv run ruff check incolume/ tests/` e
   `uv run ruff format --check incolume/ tests/`. Nenhum outro linter.
-- Tipos: `uv run mypy incolume/ tests/` (strict). No CI é
-  `continue-on-error`; localmente, trate erro novo como erro.
+  **Obrigatório antes de todo commit** — o CI roda exatamente esses dois
+  comandos; commit sem os dois verdes quebra a release.
+- Tipos: `uv run mypy incolume/ tests/` (strict). **Obrigatório antes de
+  todo commit** (no CI é `continue-on-error`); erro novo em `mypy` é erro.
 - Line-length 79 (`.ruff.toml`); aspas simples; target py311.
 
 ## Testes
@@ -156,7 +177,9 @@ mão.
   git ci -m "build: incolume-py-githooks $(uv version --short)"
   ```
 
-- `patch` para correção, `minor` para funcionalidade, `major` para quebra.
+- `patch` para **correção de bugs/fix/bugfix apenas**; `minor` para
+  funcionalidade nova; `major` para quebra. O componente do próximo ciclo é
+  escolhido pelo conteúdo da sprint, nunca por conveniência da ferramenta.
 - **`CHANGELOG.md` é gerado** por `incolume-py-changelog` a partir das anotações
   das tags (`git tag -n`); nunca é escrito à mão. A mensagem da tag é
   **linha única** — o gerador trunca mensagens multilinha.
