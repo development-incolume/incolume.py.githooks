@@ -1,3 +1,13 @@
+- id: check-commit-footer
+  name: Incolume - check commit message footers
+  description: Guarantees valid footers in the commit message (Closes/Refs/Signed-off-by/Co-authored-by/Reviewed-by/Acked-by).
+  entry: check-commit-footer
+  language: python
+  pass_filenames: true
+  stages: [commit-msg, manual]
+  require_serial: true
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
 - id: check-len-first-line
   name: Incolume - check length of first line in commit message
   description: Guarantees that the first line of the commit message does not exceed a specified length.
