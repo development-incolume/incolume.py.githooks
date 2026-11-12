@@ -1162,10 +1162,7 @@ def check_commit_footer_cli(
     filenames = ctx.params.get('filenames') or []
     nonexequi = ctx.params.get('nonexequi')
 
-    ic(
-        f'{inspect.stack()[0][3]}: {sys.argv=}, '
-        f'{filenames=}, {nonexequi=}'
-    )
+    ic(f'{inspect.stack()[0][3]}: {sys.argv=}, {filenames=}, {nonexequi=}')
     logging.warning(inspect.stack()[0][3])
 
     if nonexequi:

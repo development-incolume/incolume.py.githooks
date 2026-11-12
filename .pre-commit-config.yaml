@@ -39,6 +39,16 @@ repos:
     - id: ruff-format
       args: [--config, .ruff.toml]
 
+    - id: mypy
+      name: Incolume - mypy type check
+      description: Static type checking with mypy.
+      entry: mypy
+      language: python
+      additional_dependencies: [mypy]
+      types: [python]
+      stages: [pre-commit, manual]
+      args: []
+
 # - repo: https://github.com/development-incolume/incolume.py.githooks
 #   rev: 1.7.0
 #   hooks:
