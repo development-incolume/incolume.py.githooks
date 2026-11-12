@@ -74,12 +74,16 @@ repos:
   hooks:
     - id: check-len-first-line
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
+    - id: check-type-commit-msg
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-precommit-installed
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-branchname
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-filenames
     #   args: ['--min-len=3', '--max-len=256', '--nonexequi|-N', '--version|-V']
+    - id: clean-commit-msg
+    #   args: [--nonexequi|-N, --version|-V]
     - id: detect-key
     #   args: [--nonexequi|-N, --version|-V]
     - id: effort-message
@@ -89,6 +93,8 @@ repos:
     - id: footer-signed-off-by
     #   args: [--nonexequi|-N, --version|-V]
     - id: insert-diff-commit
+    #   args: [--nonexequi|-N, --version|-V]
+    - id: set-issue-from-branch
     #   args: [--nonexequi|-N, --version|-V]
     - id: validate-message-commit
     #   args: [--nonexequi|-N, --version|-V]
