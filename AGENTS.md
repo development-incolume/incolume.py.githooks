@@ -69,7 +69,9 @@ que muda estado, commitar ou abrir PR.
   - PR é **de `tags` para `main`**; CI verde antes do merge; `main` termina
     contendo a versão estável, a tag e o changelog.
   - Durante o fechamento, `dev` **não recebe** novos commits de tarefa; o
-    próximo ciclo reabre com `uv version --bump patch --bump alpha` em `dev`.
+    próximo ciclo reabre com `uv version --bump minor --bump alpha` em `dev`
+    (funcionalidade nova) — `patch --bump alpha` somente se a sprint trouxe
+    apenas correção de bugs/fix/bugfix.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
@@ -170,7 +172,9 @@ mão.
   git ci -m "build: incolume-py-githooks $(uv version --short)"
   ```
 
-- `patch` para correção, `minor` para funcionalidade, `major` para quebra.
+- `patch` para **correção de bugs/fix/bugfix apenas**; `minor` para
+  funcionalidade nova; `major` para quebra. O componente do próximo ciclo é
+  escolhido pelo conteúdo da sprint, nunca por conveniência da ferramenta.
 - **`CHANGELOG.md` é gerado** por `incolume-py-changelog` a partir das anotações
   das tags (`git tag -n`); nunca é escrito à mão. A mensagem da tag é
   **linha única** — o gerador trunca mensagens multilinha.
