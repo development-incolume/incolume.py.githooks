@@ -64,8 +64,11 @@ que muda estado, commitar ou abrir PR.
   - Ordem de publicação: push de `dev`, push de `tags`, depois a tag anotada;
     se a tag antiga já estiver no remoto apontando para outro commit,
     `git push -f origin <tag>` **e conferir** com `git ls-remote origin`.
-  - O `CHANGELOG.md` é regenerado **na branch `tags`** (onde vivem a versão e
-    a tag), a partir das anotações das tags.
+  - O `CHANGELOG.md` é regenerado **na branch `dev`** durante o fechamento da
+    release: `uv run gcl CHANGELOG.md`, seguido de commit `docs:` (ou incluso
+    no commit `build:` da versão), **antes** do merge `dev` → `tags`; a `tags`
+    recebe o changelog pelo merge, a partir das anotações das tags já
+    existentes.
   - PR é **de `tags` para `main`**; CI verde antes do merge; `main` termina
     contendo a versão estável, a tag e o changelog.
   - Durante o fechamento, `dev` **não recebe** novos commits de tarefa; o
