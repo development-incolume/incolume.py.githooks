@@ -100,8 +100,10 @@ que muda estado, commitar ou abrir PR.
 
 - Qualidade: `uv run ruff check incolume/ tests/` e
   `uv run ruff format --check incolume/ tests/`. Nenhum outro linter.
-- Tipos: `uv run mypy incolume/ tests/` (strict). No CI é
-  `continue-on-error`; localmente, trate erro novo como erro.
+  **Obrigatório antes de todo commit** — o CI roda exatamente esses dois
+  comandos; commit sem os dois verdes quebra a release.
+- Tipos: `uv run mypy incolume/ tests/` (strict). **Obrigatório antes de
+  todo commit** (no CI é `continue-on-error`); erro novo em `mypy` é erro.
 - Line-length 79 (`.ruff.toml`); aspas simples; target py311.
 
 ## Testes
