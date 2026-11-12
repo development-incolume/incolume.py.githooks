@@ -2,7 +2,7 @@
 # Conteúdo: #351 | Publicação: #352 | URL no pyproject: #353
 
 site_name: incolume.py.githooks
-site_description: Hooks git for incolume projects
+site_description: plugin `pre-commit` with Hooks git for incolume projects
 site_url: https://development-incolume.github.io/incolume.py.githooks/
 repo_url: https://github.com/development-incolume/incolume.py.githooks
 repo_name: development-incolume/incolume.py.githooks

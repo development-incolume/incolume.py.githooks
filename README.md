@@ -11,7 +11,7 @@
 [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
 ---
 
-Hooks git for incolume projects.
+Plugin `pre-commit` with Hooks git for incolume projects.
 
 ## Usage
 
