@@ -11,7 +11,7 @@
 [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
 ---
 
-Hooks git for incolume projects.
+Plugin `pre-commit` with Hooks git for incolume projects.
 
 ## Usage
 
@@ -94,3 +94,12 @@ repos:
     #   args: [--nonexequi|-N, --version|-V]
 
 ```
+
+## AI agents
+
+AI agents (OpenCode, GitHub Copilot, Codex, ...) follow the rules of this
+repository as any other collaborator. The single source of rules is
+[`AGENTS.md`](AGENTS.md), at the repository root — read it in full before any
+action. Tool-specific instruction files (e.g.
+[`.github/copilot-instructions.md`](.github/copilot-instructions.md)) only
+point to it; rules are never duplicated.

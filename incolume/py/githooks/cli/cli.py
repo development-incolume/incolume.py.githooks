@@ -661,15 +661,10 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     Hook designed for stages: pre-commit, pre-push, manual
 
     Args:
-        commit_msg_file (Path or str): The path to the commit message file.
-
-        commit_source (str): The source of the commit message.
-
-        commit_hash (str): The commit hash.
-
-        nonexequi (bool): if run hook.
         ctx: context
-        kwargs: key word args.
+        kwargs: click params, including ``commit_msg_file`` (path to the
+            commit message file), ``commit_source``, ``commit_hash`` and
+            ``nonexequi``.
 
     Returns:
         int: SUCCESS code if the operation completes.
