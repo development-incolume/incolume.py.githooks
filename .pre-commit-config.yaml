@@ -163,6 +163,18 @@ repos:
       args: []
       always_run: true
 
+    - id: check-commit-footer
+      verbose: true
+      name: Incolume - check commit message footers
+      description: Guarantees valid footers in the commit message.
+      entry: check-commit-footer
+      language: python
+      additional_dependencies: [click, icecream]
+      pass_filenames: true
+      stages: [commit-msg, manual]
+      require_serial: true
+      args: []
+
     - id: insert-diff-commit
       name: Incolume - Insert Git Diff into Commit Message
       entry: insert-diff-commit
