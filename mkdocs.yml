@@ -10,6 +10,8 @@ repo_name: development-incolume/incolume.py.githooks
 theme:
   name: material
   language: pt-BR
+  logo: assets/incolume-py-githooks-white.png
+  favicon: assets/incolume-py-githooks-white.png
   features:
     - content.code.copy
     - navigation.footer
