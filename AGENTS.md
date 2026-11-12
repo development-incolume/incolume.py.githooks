@@ -56,6 +56,20 @@ que muda estado, commitar ou abrir PR.
      versão; mensagem em linha única, com seções `added:`/`changed:`/`fixed:`
      (o gerador de CHANGELOG lê a anotação linha a linha).
   4. Por fim, `main` recebe `tags` (PR), já contendo a versão e a tag.
+- **Procedimentos verificados no fechamento da `1.21.0`** (rito `dev` → `tags`
+  → `main`):
+  - Antes de publicar, conferir ancestralidade: `git merge-base --is-ancestor`
+    de `origin/dev` no tip de `dev` e de `origin/tags` no tip de `tags` — só
+    push fast-forward, sem reescrever o que já está no remoto.
+  - Ordem de publicação: push de `dev`, push de `tags`, depois a tag anotada;
+    se a tag antiga já estiver no remoto apontando para outro commit,
+    `git push -f origin <tag>` **e conferir** com `git ls-remote origin`.
+  - O `CHANGELOG.md` é regenerado **na branch `tags`** (onde vivem a versão e
+    a tag), a partir das anotações das tags.
+  - PR é **de `tags` para `main`**; CI verde antes do merge; `main` termina
+    contendo a versão estável, a tag e o changelog.
+  - Durante o fechamento, `dev` **não recebe** novos commits de tarefa; o
+    próximo ciclo reabre com `uv version --bump patch --bump alpha` em `dev`.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
