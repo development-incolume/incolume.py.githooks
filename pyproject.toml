@@ -88,6 +88,10 @@ set-issue-from-branch = "incolume.py.githooks.cli:set_issue_from_branch_cli"
 [project.gui-scripts]
 spam-gui = "incolume.py.githooks.gui.main:run"
 
+[project.urls]
+Homepage = "https://development-incolume.github.io/incolume.py.githooks/"
+Documentation = "https://development-incolume.github.io/incolume.py.githooks/"
+
 [tool.uv]
 allow-insecure-host = ["https://github.com", "https://gitlab.com"]
 
