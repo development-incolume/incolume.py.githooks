@@ -12,6 +12,8 @@ Referência automática gerada por [mkdocstrings] sobre o código do pacote.
 
 ## Hooks
 
+::: incolume.py.githooks.check_commit_footer
+
 ::: incolume.py.githooks.detect_private_key
 
 ::: incolume.py.githooks.effort_message
