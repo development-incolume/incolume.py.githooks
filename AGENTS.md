@@ -46,7 +46,14 @@ que muda estado, commitar ou abrir PR.
   **local, feito pelo integrador com aprovação explícita do responsável**;
   sem essa aprovação, o agente para no commit.
 - PR não existe para `dev`; existe **somente para `main`, no fechamento da
-  release** (`dev` → `main`), com testes verdes e revisão.
+  release**, com testes verdes e revisão.
+- **Ordem de fechamento da release: `dev` → tag → `main`.**
+  1. Versão estável definida em `dev` (`uv version --bump stable`) e commit
+     `build:` em `dev`.
+  2. Tag anotada criada **em `dev`**, apontando para o commit de versão;
+     mensagem da tag em linha única, com seções `added:`/`changed:`/`fixed:`
+     (o gerador de CHANGELOG lê a anotação linha a linha).
+  3. Só depois, `main` recebe `dev` (PR), já contendo a tag.
 - Configurações específicas de cada ferramenta (ex.: Copilot) referenciam este
   arquivo; regras não se duplicam.
 
@@ -124,8 +131,8 @@ identidade de outra pessoa.
   branch antes do merge. Conflito se resolve no rebase, nunca no commit de
   merge.
 - Rebase diário em `dev`; PR com mais de 1 dia sem rebase não entra.
-- PR (somente `main`, no fechamento da release) só entra com testes verdes e
-  revisão do responsável.
+- PR (somente `main`, no fechamento da release, **após a tag em `dev`**) só
+  entra com testes verdes e revisão do responsável.
 - Remova o worktree após o merge e rode `git worktree prune`.
 
 ## Versionamento
@@ -148,7 +155,8 @@ mão.
 
 - `patch` para correção, `minor` para funcionalidade, `major` para quebra.
 - **`CHANGELOG.md` é gerado** por `incolume-py-changelog` a partir das anotações
-  das tags (`git tag -n`); nunca é escrito à mão.
+  das tags (`git tag -n`); nunca é escrito à mão. A mensagem da tag é
+  **linha única** — o gerador trunca mensagens multilinha.
 
 ## Commits
 
