@@ -5017,7 +5017,9 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>incolume/py/githooks/check_commit_footer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 89</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
 <span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
@@ -5034,9 +5036,7 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 <span class="normal">103</span>
 <span class="normal">104</span>
 <span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__extract_footers</span><span class="p">(</span><span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__extract_footers</span><span class="p">(</span><span class="n">content_lines</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">"""Extract the footer block (last non-empty paragraph).</span>
 
 <span class="sd">    :param content_lines: commit message lines without comments.</span>
@@ -5081,7 +5081,9 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>incolume/py/githooks/check_commit_footer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span>
@@ -5092,9 +5094,7 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__is_body_line</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__is_body_line</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check if a line is a plain body line (not a footer attempt).</span>
 
 <span class="sd">    :param line: line of the last paragraph.</span>
@@ -5133,7 +5133,9 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>incolume/py/githooks/check_commit_footer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
@@ -5161,9 +5163,7 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__is_footer_valid</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__is_footer_valid</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check footers of a single commit message file.</span>
 
 <span class="sd">    :param file: commit message file.</span>
@@ -5219,7 +5219,9 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>incolume/py/githooks/check_commit_footer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
@@ -5239,9 +5241,7 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__is_valid_footer</span><span class="p">(</span><span class="n">footer</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__is_valid_footer</span><span class="p">(</span><span class="n">footer</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check a single footer line.</span>
 
 <span class="sd">    :param footer: footer line.</span>
@@ -5289,7 +5289,9 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>incolume/py/githooks/check_commit_footer.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
 <span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
@@ -5306,9 +5308,7 @@ so e aceita em <code>Closes</code> ou <code>Refs</code>.</p>
 <span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_commit_footer</span><span class="p">(</span><span class="n">filenames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">check_commit_footer</span><span class="p">(</span><span class="n">filenames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Validate footers of commit message file(s).</span>
 
 <span class="sd">    :param filenames: commit message files to validate.</span>
@@ -8714,10 +8714,7 @@ nonexequi: bool = False,</p>
 <span class="normal">1180</span>
 <span class="normal">1181</span>
 <span class="normal">1182</span>
-<span class="normal">1183</span>
-<span class="normal">1184</span>
-<span class="normal">1185</span>
-<span class="normal">1186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+<span class="normal">1183</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
     <span class="n">context_settings</span><span class="o">=</span><span class="n">CONTEXT_SETTINGS_CLICK</span><span class="p">,</span>
     <span class="n">no_args_is_help</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">'check-commit-footer'</span><span class="p">,</span>
@@ -8768,10 +8765,7 @@ nonexequi: bool = False,</p>
     <span class="n">filenames</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'filenames'</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
     <span class="n">nonexequi</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'nonexequi'</span><span class="p">)</span>
 
-    <span class="n">ic</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="si">=}</span><span class="s1">, '</span>
-        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">filenames</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">nonexequi</span><span class="si">=}</span><span class="s1">'</span>
-    <span class="p">)</span>
+    <span class="n">ic</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">filenames</span><span class="si">=}</span><span class="s1">, </span><span class="si">{</span><span class="n">nonexequi</span><span class="si">=}</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">()[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">nonexequi</span><span class="p">:</span>
@@ -10061,7 +10055,10 @@ commit message file), <code>commit_source</code>, <code>commit_hash</code> and
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>incolume/py/githooks/cli/cli.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1189</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1186</span>
+<span class="normal">1187</span>
+<span class="normal">1188</span>
+<span class="normal">1189</span>
 <span class="normal">1190</span>
 <span class="normal">1191</span>
 <span class="normal">1192</span>
@@ -10114,10 +10111,7 @@ commit message file), <code>commit_source</code>, <code>commit_hash</code> and
 <span class="normal">1239</span>
 <span class="normal">1240</span>
 <span class="normal">1241</span>
-<span class="normal">1242</span>
-<span class="normal">1243</span>
-<span class="normal">1244</span>
-<span class="normal">1245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
+<span class="normal">1242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">'githooks-cli'</span><span class="p">,</span>
     <span class="n">chain</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">context_settings</span><span class="o">=</span><span class="n">CONTEXT_SETTINGS_CLICK</span><span class="p">,</span>
