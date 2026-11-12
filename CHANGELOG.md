@@ -17,6 +17,21 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.22.1]	 &#8212; 	2026-11-12:
+### Fixed
+  - Ruff format aplicado nos arquivos do hook check-commit-footer;
+  - Mypy acrescentado ao pre-commit e regras de validacao obrigatorias (ruff check, ruff format, mypy) antes do commit no AGENTS.md (#373).;
+
+## [1.22.0]	 &#8212; 	2026-11-12:
+### Added
+  - Hook check-commit-footer para validar rodapes de commit (Closes/Refs/Signed-off-by/Co-authored-by/Reviewed-by/Acked-by);
+  - Id ativo no .pre-commit-config.yaml local.;
+### Changed
+  - Sincronizacao do contrato .pre-commit-hooks.yaml e README com os 13 hooks;
+  - Documentacao no site mkdocs (hooks, cli, api).;
+### Fixed
+  - Version.txt dessincronizado do pyproject.toml.;
+
 ## [1.21.0]	 &#8212; 	2026-11-12:
 ### Added
   - Site de documentacao proprio do projeto, com guia de instalacao, uso dos hooks, referencia das ferramentas e regras do projeto, publicado em development-incolume.github.io/incolume.py.githooks;
@@ -369,4 +384,6 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.20.0rc1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.19.0...1.20.0rc1
 [1.20.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.20.0rc1...1.20.0
 [1.21.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.20.0...1.21.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.21.0...Unreleased
+[1.22.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.21.0...1.22.0
+[1.22.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.0...1.22.1
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...Unreleased
