@@ -116,12 +116,12 @@ def logging_call(
         Um decorador que adiciona logging à função decorada.
 
     Example:
-
         >>> @logging_call()
         ... @my_decorator
         ... def func() -> None:
         ...     pass
         >>> func()
+
     """
     level = LoggingLevel(level)
 

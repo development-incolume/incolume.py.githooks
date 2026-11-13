@@ -1166,9 +1166,12 @@ def set_type_from_status_cli(
 
     An existing type in the message is never overwritten.
 
-    Hook designed for stages: prepare-commit-msg, manual
+    Args:
+        ctx: click context.
+        kwargs: additional keyword arguments passed by the hook.
 
-    .. versionadded:: 1.23.0a2
+    Returns:
+        0 if the type was injected successfully; 1 otherwise.
 
     """
     ic(f'{kwargs=}\n{ctx.params=}')
@@ -1312,12 +1315,12 @@ def check_manual_version_cli(
     """Check a manual version change against the commit message.
 
     Args:
-      kwargs:
-        filenames: list[str],
-        nonexequi: bool = False,
-      ctx: contexto CLI
+        ctx: click context.
+        kwargs: additional keyword arguments. Expected keys: filenames,
+            nonexequi.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        0 if the manual version check passed; 1 otherwise.
 
     """
     logging.warning(
@@ -1383,12 +1386,12 @@ def check_manual_changelog_cli(
     """Check a manual changelog change against the commit message.
 
     Args:
-      kwargs:
-        filenames: list[str],
-        nonexequi: bool = False,
-      ctx: contexto CLI
+        ctx: click context.
+        kwargs: additional keyword arguments. Expected keys: filenames,
+            nonexequi.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        0 if the manual changelog check passed; 1 otherwise.
 
     """
     logging.warning(
@@ -1454,12 +1457,12 @@ def check_type_from_status_cli(
     """Check the commit type against the staged files.
 
     Args:
-      kwargs:
-        filenames: list[str],
-        nonexequi: bool = False,
-      ctx: contexto CLI
+        ctx: click context.
+        kwargs: additional keyword arguments. Expected keys: filenames,
+            nonexequi.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        0 if the commit type is compatible with the staged files; 1 otherwise.
 
     """
     logging.warning(

@@ -3,8 +3,6 @@
 The heuristic is shared by the ``set-type-from-status`` hook
 (``prepare-commit-msg``) and the ``check-type-from-status`` hook
 (``commit-msg``), so the rule lives here only once.
-
-.. versionadded:: 1.23.0a2
 """
 
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
@@ -130,6 +128,7 @@ def get_staged_files() -> list[str]:
 
     Returns:
         Staged paths, or an empty list when git is unavailable.
+
     """
     try:
         output = subprocess.check_output(
@@ -161,6 +160,7 @@ def declared_type(message: str) -> str:
     Returns:
         The declared type (``feat``, ``fix``, ...) or an empty string when
         the message does not declare one.
+
     """
     return _message_type(message)[1]
 
@@ -182,6 +182,7 @@ def set_type_commit_msg(
 
     Returns:
         Result with the status and a human readable message.
+
     """
     if commit_type == 'message':
         return Result(

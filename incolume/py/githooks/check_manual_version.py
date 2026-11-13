@@ -32,12 +32,13 @@ VERSION_FILENAME: str = 'version.txt'
 def _git(root: Path, *args: str) -> str | None:
     """Executa um comando git de leitura no repositorio.
 
-    :param root: raiz do repositorio.
-    :param args: argumentos do comando git.
-    :return: saida do comando, ou None quando o caminho nao existe no
-        commit ou no indice.
+    Args:
+        root (Path): raiz do repositorio.
+        args (tuple[str]): argumentos do comando git.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        saida do comando, ou None quando o git falha.
+
     """
     try:
         return subprocess.check_output(
@@ -53,10 +54,12 @@ def _git(root: Path, *args: str) -> str | None:
 def _staged_paths(root: Path) -> list[str]:
     """Lista os caminhos alterados no indice.
 
-    :param root: raiz do repositorio.
-    :return: caminhos relativos ao repositorio.
+    Args:
+        root (Path): raiz do repositorio.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        caminhos relativos ao repositorio, um por linha.
+
     """
     output = _git(root, 'diff', '--cached', '--name-only')
     return [line for line in (output or '').splitlines() if line]
@@ -65,10 +68,12 @@ def _staged_paths(root: Path) -> list[str]:
 def _project_version(content: str | None) -> str | None:
     """Extrai ``[project].version`` de um pyproject.toml.
 
-    :param content: conteudo do arquivo, ou None se ausente.
-    :return: versao declarada, ou None quando nao ha versao.
+    Args:
+        content (str | None): conteudo do arquivo, ou None se ausente.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        versao declarada, ou None quando nao ha versao.
+
     """
     if content is None:
         return None
@@ -81,10 +86,12 @@ def _project_version(content: str | None) -> str | None:
 def _version_file(content: str | None) -> str | None:
     """Normaliza o valor de um version.txt.
 
-    :param content: conteudo do arquivo, ou None se ausente.
-    :return: valor sem espacos nas pontas, ou None se ausente.
+    Args:
+        content (str | None): conteudo do arquivo, ou None se ausente.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        valor sem espacos nas pontas, ou None se ausente.
+
     """
     return None if content is None else content.strip()
 
@@ -92,11 +99,13 @@ def _version_file(content: str | None) -> str | None:
 def _staged_version_changed(root: Path, path: str) -> bool:
     """Compara a versao do indice com a versao do HEAD.
 
-    :param root: raiz do repositorio.
-    :param path: caminho relativo do arquivo de versao.
-    :return: True se o valor da versao mudou no indice.
+    Args:
+        root (Path): raiz do repositorio.
+        path (str): caminho relativo do arquivo de versao.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        True se o valor da versao mudou no indice.
+
     """
     index = _git(root, 'show', f':{path}')
     head = _git(root, 'show', f'HEAD:{path}')
@@ -109,14 +118,17 @@ def check_manual_version(
     filenames: list[str],
     repo_root: Path | str | None = None,
 ) -> int:
-    """Validate that a version change is committed with a build message.
+    """Valida que uma mudanca de versao e commitada com mensagem build:.
 
-    :param filenames: arquivos de mensagem de commit.
-    :param repo_root: raiz do repositorio; por padrao, o projeto atual.
-    :return: 0 quando a mensagem e ``build:`` ou a versao nao mudou;
-        1 caso contrario.
+    Args:
+        filenames (list[str]): arquivos de mensagem de commit.
+        repo_root (Path | str | None): raiz do repositorio; por
+            padrao, o projeto atual.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        0 quando a mensagem e ``build:`` ou a versao nao mudou;
+            1 caso contrario.
+
     """
     root = Path(repo_root) if repo_root else find_project_root(Path.cwd())
     messages = [

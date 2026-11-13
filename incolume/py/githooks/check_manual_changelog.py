@@ -24,11 +24,13 @@ CHANGELOG: str = 'CHANGELOG.md'
 def _git(root: Path, *args: str) -> str | None:
     """Executa um comando git de leitura no repositorio.
 
-    :param root: raiz do repositorio.
-    :param args: argumentos do comando git.
-    :return: saida do comando, ou None quando o git falha.
+    Args:
+        root (Path): raiz do repositorio.
+        args (tuple[str]): argumentos do comando git.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        saida do comando, ou None quando o git falha.
+
     """
     try:
         return subprocess.check_output(
@@ -44,10 +46,12 @@ def _git(root: Path, *args: str) -> str | None:
 def _staged_paths(root: Path) -> list[str]:
     """Lista os caminhos alterados no indice.
 
-    :param root: raiz do repositorio.
-    :return: caminhos relativos ao repositorio.
+    Args:
+        root (Path): raiz do repositorio.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        caminhos relativos ao repositorio, um por linha.
+
     """
     output = _git(root, 'diff', '--cached', '--name-only')
     return [line for line in (output or '').splitlines() if line]
@@ -57,14 +61,17 @@ def check_manual_changelog(
     filenames: list[str],
     repo_root: Path | str | None = None,
 ) -> int:
-    """Validate that a changelog change is committed with a build message.
+    """Valida que uma mudanca de changelog e commitada com mensagem build:.
 
-    :param filenames: arquivos de mensagem de commit.
-    :param repo_root: raiz do repositorio; por padrao, o projeto atual.
-    :return: 0 quando a mensagem e ``build:`` ou o changelog nao mudou;
-        1 caso contrario.
+    Args:
+        filenames (list[str]): arquivos de mensagem de commit.
+        repo_root (Path | str | None): raiz do repositorio; por
+            padrao, o projeto atual.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        0 quando a mensagem e ``build:`` ou o changelog nao mudou;
+            1 caso contrario.
+
     """
     root = Path(repo_root) if repo_root else find_project_root(Path.cwd())
     messages = [

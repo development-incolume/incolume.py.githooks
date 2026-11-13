@@ -41,11 +41,13 @@ OBJECTIVE_TYPES: frozenset[str] = frozenset({
 def is_objective_divergence(declared: str, deduced: str) -> bool:
     """Diz se ha divergencia objetiva entre o tipo declarado e o deduzido.
 
-    :param declared: tipo declarado na mensagem de commit.
-    :param deduced: tipo deduzido pelos arquivos stageados.
-    :return: True quando a divergencia e objetiva.
+    Args:
+        declared (str): tipo declarado na mensagem de commit.
+        deduced (str): tipo deduzido pelos arquivos stageados.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        True quando a divergencia e objetiva.
+
     """
     if declared in OBJECTIVE_TYPES and declared != deduced:
         return True
@@ -56,13 +58,16 @@ def check_type_from_status(
     filenames: list[str],
     paths: Sequence[str | Path] | None = None,
 ) -> int:
-    """Validate the commit type against the staged files.
+    """Valida o tipo do commit contra os arquivos stageados.
 
-    :param filenames: arquivos de mensagem de commit.
-    :param paths: caminhos stageados; quando None, lidos do git.
-    :return: 0 quando o tipo e compativel; 1 caso contrario.
+    Args:
+        filenames (list[str]): arquivos de mensagem de commit.
+        paths (Sequence[str | Path] | None): caminhos stageados; quando
+            None, lidos do git.
 
-    .. versionadded:: 1.23.0
+    Returns:
+        0 quando o tipo e compativel; 1 caso contrario.
+
     """
     staged = (
         [str(path) for path in paths]
