@@ -757,7 +757,7 @@ def validate_format_commit_msg_cli(
 ) -> int:
     """Validate commit message.
 
-    Hook designed for stages: prepare-commit-msg, manual
+    Hook designed for stages: commit-msg, manual
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -840,6 +840,7 @@ def pre_commit_installed_cli(
             'pre-commit',
             'pre-push',
             'prepare-commit-msg',
+            'commit-msg',
             'post-commit',
         )
     )
