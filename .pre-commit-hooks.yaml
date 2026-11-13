@@ -8,6 +8,16 @@
   require_serial: true
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
+- id: check-manual-version
+  name: Incolume - check manual version in commit message
+  description: Requires a "build:" commit message when the staged version changes in pyproject.toml or version.txt.
+  entry: check-manual-version
+  language: python
+  pass_filenames: true
+  stages: [commit-msg, manual]
+  require_serial: true
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
 - id: check-len-first-line
   name: Incolume - check length of first line in commit message
   description: Guarantees that the first line of the commit message does not exceed a specified length.
