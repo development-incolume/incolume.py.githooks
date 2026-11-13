@@ -17,6 +17,7 @@ from incolume.py.githooks.cli.cli import (
     insert_diff_cli,
     pre_commit_installed_cli,
     set_issue_from_branch_cli,
+    set_type_from_status_cli,
     validate_format_commit_msg_cli,
 )
 
@@ -37,5 +38,6 @@ __all__ = [
     'insert_diff_cli',
     'pre_commit_installed_cli',
     'set_issue_from_branch_cli',
+    'set_type_from_status_cli',
     'validate_format_commit_msg_cli',
 ]

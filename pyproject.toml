@@ -87,6 +87,7 @@ is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
 is-valid-msg-commit = "incolume.py.githooks.cli:validate_format_commit_msg_cli"
 set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signedoffby_cli"
 set-issue-from-branch = "incolume.py.githooks.cli:set_issue_from_branch_cli"
+set-type-from-status = "incolume.py.githooks.cli:set_type_from_status_cli"
 
 [project.gui-scripts]
 spam-gui = "incolume.py.githooks.gui.main:run"

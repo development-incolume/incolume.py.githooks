@@ -48,6 +48,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_type_commit_msg,
     validate_format_commit_msg,
 )
+from incolume.py.githooks.type_from_status import set_type_commit_msg
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
 
@@ -1117,6 +1118,94 @@ def set_issue_from_branch_cli(
 @click.command(
     context_settings=CONTEXT_SETTINGS_CLICK,
     no_args_is_help=False,
+    name='set-type-from-status',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='set-type-from-status',
+)
+@click.argument(
+    'commit_msg_filepath',
+    type=click.Path(exists=True),
+    help='Fullpath to the commit message file',
+)
+@click.argument(
+    'commit_type',
+    default='',
+    required=False,
+    type=str,
+    help='Commit source informed by git',
+)
+@click.argument(
+    'commit_hash',
+    default='',
+    required=False,
+    type=str,
+    help='Commit hash informed by git',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+def set_type_from_status_cli(
+    ctx: click.Context,
+    /,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Inject the Conventional Commits type deduced from staged files.
+
+    An existing type in the message is never overwritten.
+
+    Hook designed for stages: prepare-commit-msg, manual
+
+    .. versionadded:: 1.23.0a2
+
+    """
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+
+    commit_msg_filepath = ctx.params.get('commit_msg_filepath')
+    commit_type = ctx.params.get('commit_type') or os.environ.get(
+        'PRE_COMMIT_COMMIT_MSG_SOURCE', ''
+    )
+    nonexequi = ctx.params.get('nonexequi')
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
+
+    result: Result = set_type_commit_msg(
+        commit_msg_filepath,
+        commit_type=commit_type,
+    )
+    click.secho(
+        result.message,
+        fg='green' if result.code == Status.SUCCESS else 'red',
+        err=result.code != Status.SUCCESS,
+    )
+    return int(result.code.value)
+
+
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
     name='check-commit-footer',
 )
 @click.version_option(
@@ -1406,6 +1495,7 @@ cli_group.add_command(
 cli_group.add_command(check_manual_version_cli, name='check-manual-version')
 cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
+cli_group.add_command(set_type_from_status_cli, name='set-type-from-status')
 cli_group.add_command(
     validate_format_commit_msg_cli, name='is-valid-msg-commit'
 )
