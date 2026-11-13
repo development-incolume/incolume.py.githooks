@@ -37,6 +37,7 @@ def my_decorator(func: Callable[P, R]) -> Callable[P, R]:
         ...     return x + y
         >>> soma(1, 2)
         3
+
     """
 
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
@@ -64,6 +65,7 @@ def simple_decorator(func: F) -> F:
         ...     return x + y
         >>> soma(1, 2)
         3
+
     """
 
     def wrapper(*args: Any, **kwargs: Any) -> Any:  # ruff: ignore[any-type]
