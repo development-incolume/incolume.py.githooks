@@ -59,7 +59,7 @@ def validate_format_commit_msg(
     """Validate the text of commit message according to current rules.
 
     Stages:
-      - prepare_commit_msg
+      - commit-msg
     """
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
     regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)

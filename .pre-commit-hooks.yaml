@@ -127,8 +127,9 @@
   entry: is-valid-msg-commit
   language: python
   types: []
-  pass_filenames: false
-  stages: [pre-commit, pre-push, manual]
+  pass_filenames: true
+  always_run: true
+  stages: [commit-msg, manual]
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
 

@@ -22,7 +22,7 @@ Model for .pre-commit-config.yaml, bellow:
 ```yaml
 # File .pre-commit-config.yaml
 
-default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, post-commit]
+default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, commit-msg, post-commit]
 repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
