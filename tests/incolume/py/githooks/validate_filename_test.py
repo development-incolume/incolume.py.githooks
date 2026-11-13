@@ -437,7 +437,7 @@ class TestCasePolicyValidFilename:
     def test_rule_filename_notnull(
         self, entrance: str, expected: Result
     ) -> None:
-        """rule_filename_notnull."""
+        """Valida a regra filename_notnull contra o resultado esperado."""
         result = pkg.rule_filename_notnull(RequestFl(filename=entrance))
         assert result.code == expected.code
         if result.code.value:
@@ -463,7 +463,7 @@ class TestCasePolicyValidFilename:
     def test_rule_not_started_with_number(
         self, entrance: str, expected: Result
     ) -> None:
-        """rule_filename_notnull."""
+        """Valida a regra de filename iniciado com número."""
         result = pkg.rule_not_started_with_number(RequestFl(filename=entrance))
         assert result.code == expected.code
         if result.code.value:
@@ -523,7 +523,7 @@ class TestCasePolicyValidFilename:
     def test_rule_has_filename_ends_with_test(
         self, entrance: str, expected: Result
     ) -> None:
-        """rule_filename_notnull."""
+        """Valida a regra de filename terminando com _test."""
         result = pkg.rule_has_filename_ends_with_test(
             RequestFl(filename=entrance)
         )
@@ -585,7 +585,7 @@ class TestCasePolicyValidFilename:
     def test_rule_too_short(
         self, entrance: RequestFl, expected: Result
     ) -> None:
-        """rule_too_short."""
+        """Valida a regra de filename muito curto."""
         result = pkg.rule_too_short(entrance)
         assert result.code == expected.code
         if result.code.value:
@@ -640,7 +640,7 @@ class TestCasePolicyValidFilename:
     def test_rule_too_long(
         self, entrance: RequestFl, expected: Result
     ) -> None:
-        """rule_too_long."""
+        """Valida a regra de filename muito longo."""
         result = pkg.rule_too_long(entrance)
         assert result.code == expected.code
         if result.code.value:
@@ -724,7 +724,7 @@ class TestCasePolicyValidFilename:
         ],
     )
     def test_rule_length(self, entrance: RequestFl, expected: Result) -> None:
-        """rule_length."""
+        """Valida a regra de comprimento de filename."""
         result = pkg.rule_length(entrance)
         assert result.code == expected.code
         if result.code.value:
@@ -873,7 +873,7 @@ class TestCasePolicyValidFilename:
         ],
     )
     def test_audit(self, entrance: MainEntrance, expected: Result) -> None:
-        """Test audit."""
+        """Valida o audit_log do audit contra o esperado."""
         result = pkg.audit(RequestFl(**entrance))
 
         assert expected in result.audit_log

@@ -73,7 +73,7 @@ class TestCaseCompactShutil:
         shutil.rmtree(path)
 
     def test_compact_zip(self) -> None:
-        """Unit test."""
+        """Compacta o diretório em zip e verifica o arquivo gerado."""
         ext = 'zip'
         output_dir = self.PATH / self.PATH.stem
         path = self.PATH.joinpath(inspect.stack()[0][3])
@@ -82,7 +82,7 @@ class TestCaseCompactShutil:
         assert Path(result).is_file()
 
     def test_compact_tar(self) -> None:
-        """Unit test."""
+        """Compacta o diretório em tar e verifica o arquivo gerado."""
         ext = 'tar'
         output_dir = self.PATH / self.PATH.stem
         path = self.PATH.joinpath(inspect.stack()[0][3])
@@ -153,7 +153,7 @@ class TestCaseCompactShutil:
         quantia: int,
         expected: list[str],
     ) -> None:
-        """Unit test."""
+        """Descompacta o arquivo e verifica os arquivos extraídos."""
         extract_dir = self.PATH / inspect.stack()[0][3]
 
         assert filename.is_file()
