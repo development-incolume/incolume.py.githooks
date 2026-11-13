@@ -105,7 +105,7 @@ class TestCasePrepareCommitMsg:
         ],
     )
     def test_messages(self, entrance: list[str], expected: list[str]) -> None:
-        """Test messages."""
+        """Verifica se as mensagens esperadas estão presentes na entrada."""
         assert all(element in entrance for element in expected)
 
     @pytest.mark.parametrize(

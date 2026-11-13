@@ -448,7 +448,7 @@ class TestCaseAllCLI:
         result_expected: Status,
         expected: str,
     ) -> None:
-        """Test CLI."""
+        """Valida a saída da CLI check-valid-filenames para cada entrada."""
         result = cli_runner.invoke(cli.check_valid_filenames_cli, entrance)
         assert result.exit_code == result_expected.value
         assert expected in result.output
@@ -489,7 +489,7 @@ class TestCaseAllCLI:
         args: list[str],
         msg_output: str,
     ) -> None:
-        """Test CLI."""
+        """Valida a saída da CLI detect-key para cada entrada."""
         dout = self.test_dir / stack()[0][3]
         dout.mkdir(parents=True, exist_ok=True)
 
@@ -567,7 +567,7 @@ class TestCaseAllCLI:
         entrance: str,
         expected: str,
     ) -> None:
-        """Teste CLI."""
+        """Valida a saída da CLI effort-msg para cada entrada."""
         result = cli_runner.invoke(cli.effort_msg_cli, entrance)
         assert result.exit_code == 0
         assert expected in result.output
