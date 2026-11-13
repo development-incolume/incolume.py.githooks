@@ -15,6 +15,7 @@ import click
 from icecream import ic
 
 from incolume.py.githooks.check_commit_footer import check_commit_footer
+from incolume.py.githooks.check_manual_changelog import check_manual_changelog
 from incolume.py.githooks.check_manual_version import check_manual_version
 from incolume.py.githooks.core import (
     __package_name__,
@@ -1256,6 +1257,77 @@ def check_manual_version_cli(
     return int(result_code)
 
 
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-manual-changelog',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-manual-changelog',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+@logging_call(logging.INFO, 'Checking manual changelog in commit message.')
+def check_manual_changelog_cli(
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Check a manual changelog change against the commit message.
+
+    Args:
+      kwargs:
+        filenames: list[str],
+        nonexequi: bool = False,
+      ctx: contexto CLI
+
+    .. versionadded:: 1.23.0
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    nonexequi = ctx.params.get('nonexequi')
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return int(Status.SUCCESS.value)
+
+    result_code = check_manual_changelog(list(filenames))
+
+    if result_code == int(Status.SUCCESS.value):
+        click.secho('Manual changelog check passed.', fg='green')
+    else:
+        ermsg = 'The changelog changed without a "build:" commit message.'
+        raise click.ClickException(ermsg)
+
+    return int(result_code)
+
+
 @click.group(
     name='githooks-cli',
     chain=True,
@@ -1328,6 +1400,9 @@ cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
 cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
 cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
 cli_group.add_command(check_commit_footer_cli, name='check-commit-footer')
+cli_group.add_command(
+    check_manual_changelog_cli, name='check-manual-changelog'
+)
 cli_group.add_command(check_manual_version_cli, name='check-manual-version')
 cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
