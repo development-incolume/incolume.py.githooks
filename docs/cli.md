@@ -25,6 +25,7 @@ consumível diretamente pelo pre-commit.
 | `is-valid-msg-commit` | valida o formato da mensagem de commit |
 | `set-footer-signed-off-by` | insere rodapé `Signed-off-by` |
 | `set-issue-from-branch` | extrai a issue do nome da branch para a mensagem |
+| `set-type-from-status` | deduz o tipo da mensagem pelos arquivos staged |
 
 ## Opções
 

@@ -23,6 +23,7 @@ Mudança de nome, id ou argumento é quebra de API.
 | `insert-diff-commit` | `insert-diff-commit` | prepare-commit-msg | insere o `git diff --cached` na mensagem de commit |
 | `validate-message-commit` | `is-valid-msg-commit` | commit-msg | valida o formato da mensagem de commit (Conventional Commits) |
 | `set_issue_from_branch_cli` | `set-issue-from-branch` | prepare-commit-msg | extrai o número da issue do nome da branch e insere na mensagem |
+| `set-type-from-status` | `set-type-from-status` | prepare-commit-msg | deduz o tipo Conventional Commits pelos arquivos staged e insere na mensagem (não sobrescreve tipo existente) |
 
 ## Argumentos comuns
 
