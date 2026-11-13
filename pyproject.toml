@@ -76,6 +76,7 @@ check-len-first-line = "incolume.py.githooks.cli:check_len_first_line_commit_msg
 check-manual-changelog = "incolume.py.githooks.cli:check_manual_changelog_cli"
 check-manual-version = "incolume.py.githooks.cli:check_manual_version_cli"
 check-type-commit-msg = "incolume.py.githooks.cli:check_type_commit_msg_cli"
+check-type-from-status = "incolume.py.githooks.cli:check_type_from_status_cli"
 clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"
 detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.cli:effort_msg_cli"

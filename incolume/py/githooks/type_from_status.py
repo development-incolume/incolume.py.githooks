@@ -157,6 +157,22 @@ def _message_type(message: str) -> tuple[str, str]:
     return header, TypeCommit(match.group(1).upper()).value
 
 
+def declared_type(message: str) -> str:
+    """Return the Conventional Commits type declared in the message.
+
+    Args:
+        message: commit message content.
+
+    Returns:
+        The declared type (``feat``, ``fix``, ...) or an empty string
+        when the message does not declare one.
+
+    .. versionadded:: 1.23.0
+
+    """
+    return _message_type(message)[1]
+
+
 def set_type_commit_msg(
     commit_msg_filepath: Path | str,
     paths: Sequence[str | Path] | None = None,

@@ -102,6 +102,8 @@ repos:
     #   args: [--nonexequi|-N, --version|-V]
     - id: set-issue-from-branch
     #   args: [--nonexequi|-N, --version|-V]
+    - id: check-type-from-status
+    #   args: [--nonexequi|-N, --version|-V]
     - id: set-type-from-status
     #   args: [--nonexequi|-N, --version|-V]
     - id: validate-message-commit
