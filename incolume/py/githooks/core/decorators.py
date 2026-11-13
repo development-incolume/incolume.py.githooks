@@ -1,4 +1,8 @@
-"""Decorators module for githooks utilities."""
+"""Decorators module for githooks utilities.
+
+Módulo que expõe decoradores de função (my_decorator, simple_decorator,
+critical_log_call, logging_call) usados pelos hooks do projeto.
+"""
 
 from __future__ import annotations
 
@@ -19,9 +23,25 @@ F = TypeVar('F', bound=Callable[..., Any])
 
 
 def my_decorator(func: Callable[P, R]) -> Callable[P, R]:
-    """Model decorator."""
+    """Decora uma função para adicionar log antes e depois da chamada.
+
+    Args:
+        func: Função a ser decorada.
+
+    Returns:
+        Uma função wrapper que loga a chamada e invoca `func`.
+
+    Example:
+        >>> @my_decorator
+        ... def soma(x: int, y: int) -> int:
+        ...     return x + y
+        >>> soma(1, 2)
+        3
+
+    """
 
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        """Loga a chamada e invoca `func` antes e depois."""
         ic(f'Before function "{func.__name__}" call')
         result = func(*args, **kwargs)
         ic(f'After function "{func.__name__}" call')
@@ -31,9 +51,25 @@ def my_decorator(func: Callable[P, R]) -> Callable[P, R]:
 
 
 def simple_decorator(func: F) -> F:
-    """Model simple deocrator."""
+    """Decora uma função para adicionar log antes e depois da chamada.
+
+    Args:
+        func: Função a ser decorada.
+
+    Returns:
+        Uma função wrapper que loga a chamada e invoca `func`.
+
+    Example:
+        >>> @simple_decorator
+        ... def soma(x: int, y: int) -> int:
+        ...     return x + y
+        >>> soma(1, 2)
+        3
+
+    """
 
     def wrapper(*args: Any, **kwargs: Any) -> Any:  # ruff: ignore[any-type]
+        """Loga a chamada e invoca `func` antes e depois."""
         ic(f'Before function "{func.__name__}" call')
         result = func(*args, **kwargs)
         ic(f'After function "{func.__name__}" call')
@@ -70,11 +106,21 @@ def critical_log_call(func: Callable[P, R]) -> Callable[P, R]:
 def logging_call(
     level: LoggingLevel = LoggingLevel.DEBUG, message: str = ''
 ) -> Callable[[Callable[P, R]], Callable[P, R]]:
-    """Decoratore to debug function calls.
+    """Decora uma função para adicionar registros de logging.
 
     Args:
-      level::str: Level logging, default is debug;
-      message::str: Message logging, default is ;
+        level: Nível de logging, padrão é DEBUG.
+        message: Modelo de mensagem de logging, padrão é mensagem genérica.
+
+    Returns:
+        Um decorador que adiciona logging à função decorada.
+
+    Example:
+        >>> @logging_call()
+        ... @my_decorator
+        ... def func() -> None:
+        ...     pass
+        >>> func()
 
     """
     level = LoggingLevel(level)

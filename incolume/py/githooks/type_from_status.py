@@ -3,8 +3,6 @@
 The heuristic is shared by the ``set-type-from-status`` hook
 (``prepare-commit-msg``) and the ``check-type-from-status`` hook
 (``commit-msg``), so the rule lives here only once.
-
-.. versionadded:: 1.23.0a2
 """
 
 # ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
@@ -99,8 +97,6 @@ def deduce_type(paths: Sequence[str | Path] | None = None) -> str:
         One of ``build``, ``ci``, ``test``, ``docs``, ``feat``, or an empty
         string when there is nothing staged.
 
-    .. versionadded:: 1.23.0a2
-
     Examples:
         >>> deduce_type(['docs/hooks.md'])
         'docs'
@@ -133,8 +129,6 @@ def get_staged_files() -> list[str]:
     Returns:
         Staged paths, or an empty list when git is unavailable.
 
-    .. versionadded:: 1.23.0a2
-
     """
     try:
         output = subprocess.check_output(
@@ -164,10 +158,8 @@ def declared_type(message: str) -> str:
         message: commit message content.
 
     Returns:
-        The declared type (``feat``, ``fix``, ...) or an empty string
-        when the message does not declare one.
-
-    .. versionadded:: 1.23.0
+        The declared type (``feat``, ``fix``, ...) or an empty string when
+        the message does not declare one.
 
     """
     return _message_type(message)[1]
@@ -190,8 +182,6 @@ def set_type_commit_msg(
 
     Returns:
         Result with the status and a human readable message.
-
-    .. versionadded:: 1.23.0a2
 
     """
     if commit_type == 'message':
