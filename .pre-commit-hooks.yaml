@@ -48,7 +48,7 @@
 
 - id: check-precommit-installed
   name: Incolume - check if pre-commit is installed
-  description: Guarantees pre-commit instalation for project.
+  description: Guarantees pre-commit installation for the project.
   entry: is-precommit-installed
   language: python
   types: [python]
@@ -59,7 +59,7 @@
 
 - id: check-valid-branchname
   name: Incolume - check if is valid branchnames
-  description: Guarantees valid branchname for project.
+  description: Guarantees a valid branch name for the project.
   entry: is-valid-branchname
   language: python
   stages: [pre-commit, pre-push, manual]
@@ -91,7 +91,7 @@
 
 - id: detect-key
   name: Incolume - detect private key
-  description: detects the presence of private keys.
+  description: Detects the presence of private keys.
   entry: detect-key
   language: python
   types: ["file", "non-executable", "python", "text"]
@@ -122,7 +122,7 @@
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: footer-signed-off-by
-  name: Incolume - Seting footer with Signed-off-by
+  name: Incolume - Setting footer with Signed-off-by
   entry: set-footer-signed-off-by  # script is called from root directory
   language: python  # script requires the Python interpreter
   pass_filenames: false
