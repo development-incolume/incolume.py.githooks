@@ -9,6 +9,7 @@ Mudança de nome, id ou argumento é quebra de API.
 | id | entry | stages | função |
 |---|---|---|---|
 | `check-commit-footer` | `check-commit-footer` | commit-msg, manual | valida os rodapés do último parágrafo da mensagem de commit (`Closes`, `Refs`, `Signed-off-by`, `Co-authored-by`, `Reviewed-by`, `Acked-by`; referência `#<id>` só em `Closes`/`Refs`) |
+| `check-manual-changelog` | `check-manual-changelog` | commit-msg, manual | exige mensagem `build:` quando o `CHANGELOG.md` staged muda (comparado com `HEAD`) |
 | `check-manual-version` | `check-manual-version` | commit-msg, manual | exige mensagem `build:` quando a versão staged muda em `[project].version` do `pyproject.toml` ou em `**/version.txt` (compara índice com `HEAD`) |
 | `check-len-first-line` | `check-len-first-line` | prepare-commit-msg | valida o comprimento da primeira linha da mensagem de commit |
 | `check-precommit-installed` | `is-precommit-installed` | pre-commit, pre-push | garante que o pre-commit está instalado no projeto |

@@ -74,6 +74,8 @@ repos:
   hooks:
     - id: check-commit-footer
     #   args: [--nonexequi|-N, --version|-V]
+    - id: check-manual-changelog
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-manual-version
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-len-first-line

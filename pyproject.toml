@@ -72,6 +72,7 @@ all = ["notebook", "rich", "click"]
 [project.scripts]
 check-commit-footer = "incolume.py.githooks.cli:check_commit_footer_cli"
 check-len-first-line = "incolume.py.githooks.cli:check_len_first_line_commit_msg_cli"
+check-manual-changelog = "incolume.py.githooks.cli:check_manual_changelog_cli"
 check-manual-version = "incolume.py.githooks.cli:check_manual_version_cli"
 check-type-commit-msg = "incolume.py.githooks.cli:check_type_commit_msg_cli"
 clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"
