@@ -26,6 +26,7 @@ consumível diretamente pelo pre-commit.
 | `set-footer-signed-off-by` | insere rodapé `Signed-off-by` |
 | `set-issue-from-branch` | extrai a issue do nome da branch para a mensagem |
 | `set-type-from-status` | deduz o tipo da mensagem pelos arquivos staged |
+| `check-type-from-status` | valida o tipo da mensagem contra os arquivos staged |
 
 ## Opções
 

@@ -24,6 +24,7 @@ Mudança de nome, id ou argumento é quebra de API.
 | `validate-message-commit` | `is-valid-msg-commit` | commit-msg | valida o formato da mensagem de commit (Conventional Commits) |
 | `set_issue_from_branch_cli` | `set-issue-from-branch` | prepare-commit-msg | extrai o número da issue do nome da branch e insere na mensagem |
 | `set-type-from-status` | `set-type-from-status` | prepare-commit-msg | deduz o tipo Conventional Commits pelos arquivos staged e insere na mensagem (não sobrescreve tipo existente) |
+| `check-type-from-status` | `check-type-from-status` | commit-msg | bloqueia divergência objetiva entre o tipo declarado na mensagem e o tipo deduzido dos arquivos staged |
 
 ## Argumentos comuns
 

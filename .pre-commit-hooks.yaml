@@ -164,6 +164,16 @@
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
+- id: check-type-from-status
+  name: Incolume - Check commit type from staged files
+  description: Blocks the commit when the declared type diverges objectively from the type deduced from staged paths.
+  entry: check-type-from-status
+  language: python
+  pass_filenames: true
+  stages: [commit-msg, manual]
+  require_serial: true
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
 - id: set-type-from-status
   name: Incolume - Set commit type from staged files
   description: Deduces the Conventional Commits type from staged paths and sets it in the commit message.
