@@ -74,6 +74,8 @@ repos:
   hooks:
     - id: check-commit-footer
     #   args: [--nonexequi|-N, --version|-V]
+    - id: check-manual-version
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-len-first-line
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
     - id: check-type-commit-msg
