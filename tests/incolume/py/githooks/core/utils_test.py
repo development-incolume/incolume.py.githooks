@@ -103,15 +103,15 @@ class TestCaseUtils:
         'entrance',
         [
             pytest.param(
-                EntranceBkp(prefix='file-', regex=r'\.bkp/file-.*\.bkp'),
+                EntranceBkp(prefix='file-', regex=r'.*\.bkp/file-.*\.bkp'),
                 marks=[],
             ),
             pytest.param(
-                EntranceBkp(prefix='fl-', regex=r'.bkp/fl-.*.bkp.1'),
+                EntranceBkp(prefix='fl-', regex=r'.*.bkp/fl-.*.bkp.1'),
                 marks=[],
             ),
             pytest.param(
-                EntranceBkp(ext_fl='.xpto', regex=r'.bkp/.*\.xpto\.bkp\.2'),
+                EntranceBkp(ext_fl='.xpto', regex=r'.*.bkp/.*\.xpto\.bkp\.2'),
                 marks=[],
             ),
             pytest.param(
@@ -119,7 +119,7 @@ class TestCaseUtils:
                     prefix='testfile-',
                     ext_fl='.md',
                     content='test: teste da função `backup_file`\n',
-                    regex=r'.bkp/testfile-.*.bkp.*',
+                    regex=r'.*.bkp/testfile-.*.bkp.*',
                 ),
                 marks=[],
             ),
