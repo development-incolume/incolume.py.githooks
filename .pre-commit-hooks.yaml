@@ -153,23 +153,22 @@
   verbose: false
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
-
-- id: set-type-from-status
-  name: Incolume - Set commit type from staged files
-  description: Inject the Conventional Commits type deduced from staged files.
-  entry: set-type-from-status
+- id: set-issue-from-branch
+  name: Incolume - Set Issue from Branch Name
+  description: CLI to extract the ticket number from the branch name.
+  entry: set-issue-from-branch
   language: python
   pass_filenames: true
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: true
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
-- id: set_issue_from_branch_cli
-  name: Incolume - Set Issue from Branch Name
-  description: CLI to extract the ticket number from the branch name.
-  entry: set-issue-from-branch
+- id: set-type-from-status
+  name: Incolume - Set commit type from staged files
+  description: Inject the Conventional Commits type deduced from staged files.
+  entry: set-type-from-status
   language: python
-  pass_filenames: false
+  pass_filenames: true
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: true
   require_serial: false  # true run in parallel otherwise false
