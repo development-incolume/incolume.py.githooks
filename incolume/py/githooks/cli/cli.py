@@ -293,7 +293,7 @@ def check_valid_branchname_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> click.Context:
-    """Hookgit for check valid branchname.
+    """Check if the branch name is valid.
 
     Hook designed for stages: pre-commit, pre-push, manual
     Args:
@@ -400,7 +400,7 @@ def check_valid_filenames_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Validate Filenames to process.
+    """Validate filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
@@ -817,7 +817,7 @@ def pre_commit_installed_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Validade pre-commit binary instalation.
+    """Validate the pre-commit binary installation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
@@ -900,7 +900,7 @@ def effort_random_msg_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Display randomly success messages after a successful commit.
+    """Display a random success message after a successful commit.
 
     Hook designed for stages: post-commit, manual
 
@@ -971,7 +971,7 @@ def insert_diff_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Proccess commit messages adding git-diff."""
+    """Process commit messages adding git-diff."""
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
