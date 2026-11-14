@@ -1,6 +1,6 @@
 """Module core.utils."""
 
-# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
+# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path, subprocess-without-shell-equals-true]
 
 import inspect
 import itertools
@@ -64,6 +64,48 @@ def find_project_root(
     msg = 'Project root not found (no markers detected).'
     ic(f'{msg} {start_dir=}, {markers=}')
     raise FileNotFoundError(msg)
+
+
+def get_git_path(*parts: str, start_dir: Path | str | None = None) -> Path:
+    """Resolve um caminho dentro do git dir, inclusive em worktree ligada.
+
+    Em worktree ligada `.git` e um arquivo, nao um diretorio; por isso o
+    caminho e pedido ao git (`git rev-parse --git-path`), que conhece o
+    git dir real.
+
+    Args:
+        parts: segmentos de caminho dentro do git dir (ex.: ``hooks``).
+        start_dir: diretorio de onde o git sera consultado; por padrao,
+            o diretorio corrente.
+
+    Returns:
+        O caminho absoluto dentro do git dir.
+
+    Raises:
+        subprocess.CalledProcessError: quando nao ha repositorio git.
+
+    """
+    cwd = Path(start_dir) if start_dir else Path.cwd()
+    output = subprocess.check_output(
+        ['git', 'rev-parse', '--git-path', *parts],
+        cwd=cwd,
+        text=True,
+        shell=False,
+    ).strip()
+    path = Path(output)
+    if not path.is_absolute():
+        path = cwd / path
+    return path.resolve()
+
+
+def get_commit_msg_file() -> Path:
+    """Caminho real do arquivo de mensagem de commit.
+
+    Usa `git rev-parse --git-path COMMIT_EDITMSG`, que devolve o caminho
+    do worktree corrente quando em worktree ligada.
+
+    """
+    return get_git_path('COMMIT_EDITMSG')
 
 
 def get_branchname() -> str:

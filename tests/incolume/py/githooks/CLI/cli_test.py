@@ -1,11 +1,13 @@
 """Test module for CLI."""
 
+# ruff: file-ignore[suspicious-subprocess-import, subprocess-without-shell-equals-true, start-process-with-partial-path]
+
 from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
-import subprocess  # ruff: ignore[suspicious-subprocess-import]
+import subprocess
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import TYPE_CHECKING, Any
 from incolume.py.githooks.core import remove_color_tags
@@ -1066,3 +1068,61 @@ class TestCasePreCommit:
             )
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
+
+    def test_precommit_installed_em_worktree_ligada(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """O hook procura os scripts no git dir real, nao em `.git/` do worktree."""
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        (repo / 'pyproject.toml').write_text(
+            '[project]\nname = "x"\n', encoding='utf-8'
+        )
+        (repo / '.pre-commit-config.yaml').write_text(
+            'repos: []\n', encoding='utf-8'
+        )
+        for args in (
+            ('init',),
+            ('config', 'user.email', 'test@example.com'),
+            ('config', 'user.name', 'test'),
+            ('config', 'commit.gpgsign', 'false'),
+            ('add', '.'),
+            ('commit', '-m', 'build: #1 inicial'),
+            ('worktree', 'add', str(tmp_path / 'wt'), '-b', '1-task'),
+        ):
+            subprocess.run(
+                ['git', *args],
+                cwd=repo,
+                check=True,
+                capture_output=True,
+                shell=False,
+            )
+        hooks_dir = repo / '.git' / 'hooks'
+        for hook in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'commit-msg',
+            'post-commit',
+        ):
+            (hooks_dir / hook).write_text('#!/bin/sh\n', encoding='utf-8')
+        monkeypatch.chdir(tmp_path / 'wt')
+
+        seen: list[Path] = []
+
+        def fake_access(path: str | os.PathLike[str], _mode: int) -> bool:
+            """Registra os paths consultados e so aceita arquivos reais."""
+            seen.append(Path(path))
+            return Path(path).exists()
+
+        monkeypatch.setattr(os, 'access', fake_access)
+        result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
+        assert result.exit_code == 0
+        assert seen
+        assert all(
+            (tmp_path / 'wt').resolve() not in path.resolve().parents
+            for path in seen
+        )
