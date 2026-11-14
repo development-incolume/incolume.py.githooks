@@ -339,25 +339,21 @@ class TestCaseAllCLI:
                 ' Branch name "dev" is protected.',
                 marks=[],
             ),
-            pytest.param(
-                'dev', 0, ['--no-dev'], '', marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'tags', 0, ['--no-tags'], '', marks=[pytest.mark.xfail]
-            ),
+            pytest.param('dev', 0, ['--no-dev'], '', marks=[]),
+            pytest.param('tags', 0, ['--no-tags'], '', marks=[]),
             pytest.param(
                 'main',
                 0,
                 ['', '--no-main'],
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'master',
                 0,
                 ['', '--no-main'],
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
