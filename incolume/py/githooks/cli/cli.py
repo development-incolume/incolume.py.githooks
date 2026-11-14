@@ -113,6 +113,9 @@ def check_len_first_line_commit_msg_cli(
         nonexequi: bool = False,
       ctx: contexto CLI
 
+    Examples:
+        check-len-first-line .git/COMMIT_EDITMSG
+        check-len-first-line --max-first-line 50 .git/COMMIT_EDITMSG
 
     """
     logging.warning(
@@ -213,6 +216,9 @@ def check_type_commit_msg_cli(
         nonexequi: bool = False,
       ctx: context CLI
 
+    Examples:
+        check-type-commit-msg .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -309,6 +315,10 @@ def check_valid_branchname_cli(
     Returns:
         int: 0 to SUCCESS or 1 to FAILURE
 
+    Examples:
+        is-valid-branchname
+        is-valid-branchname --dev
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -403,6 +413,11 @@ def check_valid_filenames_cli(
     """Validate filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
+
+    Examples:
+        is-valid-filename incolume/py/githooks/cli/cli.py
+        is-valid-filename --max-len 256 incolume/py/githooks/cli/cli.py
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -477,6 +492,10 @@ def detect_private_key_cli(
     """CLI to check private key.
 
     Hook designed for stages: all
+
+    Examples:
+        detect-key incolume/py/githooks/cli/cli.py
+
     """
     ic(f'{kwargs}\n{ctx.params=}')
     logging.warning(
@@ -553,6 +572,9 @@ def footer_signedoffby_cli(
     Returns:
         None
 
+    Examples:
+        set-footer-signed-off-by .git/COMMIT_EDITMSG
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -613,6 +635,10 @@ def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
+
+    Examples:
+        effort-msg
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -675,6 +701,9 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
 
     Returns:
         int: SUCCESS code if the operation completes.
+
+    Examples:
+        clean-commit-msg .git/COMMIT_EDITMSG
 
     """
     logging.warning(
@@ -764,6 +793,10 @@ def validate_format_commit_msg_cli(
     """Validate commit message.
 
     Hook designed for stages: commit-msg, manual
+
+    Examples:
+        is-valid-msg-commit .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -820,6 +853,10 @@ def pre_commit_installed_cli(
     """Validate the pre-commit binary installation.
 
     Hook designed for stages: pre-commit, pre-push, manual
+
+    Examples:
+        is-precommit-installed
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -910,6 +947,10 @@ def effort_random_msg_cli(
         nonexequi: bool = False
       ctx: context CLI
 
+    Examples:
+        effort-random-msg
+        effort-random-msg --fixed
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -971,7 +1012,12 @@ def insert_diff_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Process commit messages adding git-diff."""
+    """Process commit messages adding git-diff.
+
+    Examples:
+        insert-diff-commit .git/COMMIT_EDITMSG
+
+    """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1062,6 +1108,10 @@ def set_issue_from_branch_cli(
     Checks whether the hook was called with the
     -m option (user-provided message)
     If so, it prevents the manually entered message from being overwritten
+
+    Examples:
+        set-issue-from-branch .git/COMMIT_EDITMSG
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -1173,6 +1223,9 @@ def set_type_from_status_cli(
     Returns:
         0 if the type was injected successfully; 1 otherwise.
 
+    Examples:
+        set-type-from-status .git/COMMIT_EDITMSG
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -1248,6 +1301,9 @@ def check_commit_footer_cli(
         nonexequi: bool = False,
       ctx: contexto CLI
 
+    Examples:
+        check-commit-footer .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1322,6 +1378,9 @@ def check_manual_version_cli(
     Returns:
         0 if the manual version check passed; 1 otherwise.
 
+    Examples:
+        check-manual-version .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1393,6 +1452,9 @@ def check_manual_changelog_cli(
     Returns:
         0 if the manual changelog check passed; 1 otherwise.
 
+    Examples:
+        check-manual-changelog .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1463,6 +1525,9 @@ def check_type_from_status_cli(
 
     Returns:
         0 if the commit type is compatible with the staged files; 1 otherwise.
+
+    Examples:
+        check-type-from-status .git/COMMIT_EDITMSG
 
     """
     logging.warning(
