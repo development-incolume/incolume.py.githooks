@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
@@ -1069,13 +1070,19 @@ class TestCasePreCommit:
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
 
-    def test_precommit_installed_em_worktree_ligada(
-        self,
-        cli_runner: CliRunner,
-        tmp_path: Path,
-        monkeypatch: pytest.MonkeyPatch,
-    ) -> None:
-        """O hook procura os scripts no git dir real, nao em `.git/` do worktree."""
+    @staticmethod
+    def _git(repo: Path, *args: str) -> None:
+        """Executa um comando git no repositorio."""
+        subprocess.run(
+            ['git', *args],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    def _make_repo(self, tmp_path: Path) -> Path:
+        """Cria um repositorio com config pre-commit."""
         repo = tmp_path / 'repo'
         repo.mkdir()
         (repo / 'pyproject.toml').write_text(
@@ -1091,15 +1098,25 @@ class TestCasePreCommit:
             ('config', 'commit.gpgsign', 'false'),
             ('add', '.'),
             ('commit', '-m', 'build: #1 inicial'),
-            ('worktree', 'add', str(tmp_path / 'wt'), '-b', '1-task'),
         ):
-            subprocess.run(
-                ['git', *args],
-                cwd=repo,
-                check=True,
-                capture_output=True,
-                shell=False,
-            )
+            self._git(repo, *args)
+        return repo
+
+    def _make_worktree(self, tmp_path: Path) -> tuple[Path, Path]:
+        """Cria um repositorio com uma worktree ligada."""
+        repo = self._make_repo(tmp_path)
+        wt = tmp_path / 'wt'
+        self._git(repo, 'worktree', 'add', str(wt), '-b', '1-task')
+        return repo, wt
+
+    def test_precommit_installed_em_worktree_ligada(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """O hook procura os scripts no git dir real, nao em `.git/` do worktree."""
+        repo, wt = self._make_worktree(tmp_path)
         hooks_dir = repo / '.git' / 'hooks'
         for hook in (
             'pre-commit',
@@ -1108,8 +1125,11 @@ class TestCasePreCommit:
             'commit-msg',
             'post-commit',
         ):
-            (hooks_dir / hook).write_text('#!/bin/sh\n', encoding='utf-8')
-        monkeypatch.chdir(tmp_path / 'wt')
+            (hooks_dir / hook).write_text(
+                f'#! {sys.executable}\n', encoding='utf-8'
+            )
+            (hooks_dir / hook).chmod(0o755)
+        monkeypatch.chdir(wt)
 
         seen: list[Path] = []
 
@@ -1122,7 +1142,60 @@ class TestCasePreCommit:
         result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
         assert result.exit_code == 0
         assert seen
-        assert all(
-            (tmp_path / 'wt').resolve() not in path.resolve().parents
-            for path in seen
-        )
+        assert all(wt.resolve() not in path.resolve().parents for path in seen)
+
+    def test_precommit_installed_com_core_hookspath(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """`core.hooksPath` e honrado na procura dos hooks."""
+        repo = self._make_repo(tmp_path)
+        self._git(repo, 'config', 'core.hooksPath', '.git-hooks')
+        hooks = repo / '.git-hooks'
+        hooks.mkdir()
+        for hook in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'commit-msg',
+            'post-commit',
+        ):
+            (hooks / hook).write_text(
+                f'#! {sys.executable}\n', encoding='utf-8'
+            )
+            (hooks / hook).chmod(0o755)
+        monkeypatch.chdir(repo)
+
+        result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
+
+        assert result.exit_code == 0
+
+    def test_precommit_installed_com_interpretador_inexistente(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Hook com interpretador do shebang inexistente e reprovado."""
+        repo = self._make_repo(tmp_path)
+        hooks_dir = repo / '.git' / 'hooks'
+        for hook in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'commit-msg',
+            'post-commit',
+        ):
+            (hooks_dir / hook).write_text(
+                '#! C:/caminho/que/nao/existe/python.exe\n',
+                encoding='utf-8',
+            )
+            (hooks_dir / hook).chmod(0o755)
+        monkeypatch.chdir(repo)
+
+        result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
+
+        assert result.exit_code == 1
+        assert 'interpretador inexistente' in result.output

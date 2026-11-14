@@ -14,8 +14,10 @@ from incolume.py.githooks.core.utils import (
     get_commit_msg_file,
     get_git_diff,
     get_git_path,
+    get_hooks_dir,
     get_issue_from_branch,
     get_signed_off_by,
+    interpreter_missing,
     remove_color_tags,
     subprocess,
 )
@@ -32,8 +34,10 @@ __all__ = [
     'get_commit_msg_file',
     'get_git_diff',
     'get_git_path',
+    'get_hooks_dir',
     'get_issue_from_branch',
     'get_signed_off_by',
+    'interpreter_missing',
     'remove_color_tags',
     'subprocess',
 ]

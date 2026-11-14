@@ -131,6 +131,49 @@ def get_commit_msg_file() -> Path:
     return get_git_path('COMMIT_EDITMSG')
 
 
+def get_hooks_dir() -> Path:
+    """Diretorio de hooks do git, honrando `core.hooksPath` e worktree.
+
+    `git rev-parse --git-path hooks` devolve o caminho real: no git dir
+    comum quando em worktree ligada e no `core.hooksPath` quando
+    configurado.
+
+    Raises:
+        subprocess.CalledProcessError: quando nao ha repositorio git.
+
+    """
+    return get_git_path('hooks')
+
+
+def interpreter_missing(hook: Path) -> bool:
+    """Diz se o interpretador do shebang do hook nao existe.
+
+    O `pre-commit install` grava no script o interpretador do ambiente em
+    que foi rodado; se esse ambiente e removido (ex.: worktree apagada),
+    o hook permanece executavel mas quebra na execucao.
+
+    """
+    try:
+        first_line = hook.read_text(
+            encoding='utf-8', errors='ignore'
+        ).splitlines()[0]
+    except (OSError, IndexError):
+        return False
+    if not first_line.startswith('#!'):
+        return False
+    argv = first_line[2:].strip().split()
+    if not argv:
+        return False
+    executable = argv[0]
+    if executable in {'env', '/usr/bin/env'} or executable.endswith('/env'):
+        if len(argv) == 1:
+            return False
+        executable = argv[1]
+    if Path(executable).exists():
+        return False
+    return shutil.which(executable) is None
+
+
 def get_branchname() -> str:
     """Get current branch name."""
     branch = (

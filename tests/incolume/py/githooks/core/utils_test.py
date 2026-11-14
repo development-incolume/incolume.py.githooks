@@ -11,6 +11,7 @@ import re
 from icecream import ic
 import shutil
 import subprocess
+import sys
 import tempfile
 from dataclasses import dataclass
 
@@ -279,3 +280,88 @@ class TestCaseBackupForaDaArvore:
         assert not (repo / '.bkp').exists()
         assert result.parent.name == '.bkp'
         assert result.parent.parent == (repo / '.git').resolve()
+
+    def test_backup_dir_sem_repositorio(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Sem repositorio git, o backup cai no diretorio temporario."""
+
+        def boom(*_args: object, **_kwargs: object) -> str:
+            raise subprocess.CalledProcessError(1, 'git')
+
+        target = tmp_path / 'COMMIT_EDITMSG'
+        target.write_text('docs: #388 exemplo\n', encoding='utf-8')
+        monkeypatch.setattr(subprocess, 'check_output', boom)
+        result = pkg.backup_file(target)
+        assert result.is_file()
+        assert (
+            result.parent
+            == (
+                Path(tempfile.gettempdir()) / 'incolume-githooks' / '.bkp'
+            ).resolve()
+        )
+
+    def test_backup_dir_caminho_relativo(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Caminho relativo do git dir e resolvido contra o cwd."""
+        target = tmp_path / 'COMMIT_EDITMSG'
+        target.write_text('docs: #388 exemplo\n', encoding='utf-8')
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(
+            subprocess,
+            'check_output',
+            lambda *_args, **_kwargs: '.git/.bkp\n',
+        )
+        result = pkg.backup_file(target)
+        assert result.is_file()
+        assert result.parent.parent == (tmp_path / '.git').resolve()
+
+
+class TestCaseInterpreterMissing:
+    """Deteccao de interpretador inexistente no shebang do hook."""
+
+    def test_sem_shebang(self, tmp_path: Path) -> None:
+        """Arquivo sem shebang nao e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text('echo ola\n', encoding='utf-8')
+        assert pkg.interpreter_missing(hook) is False
+
+    def test_shebang_vazio(self, tmp_path: Path) -> None:
+        """Shebang sem interpretador nao e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text('#!\n', encoding='utf-8')
+        assert pkg.interpreter_missing(hook) is False
+
+    def test_env_sem_argumento(self, tmp_path: Path) -> None:
+        """`env` sem argumento nao e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text('#!/usr/bin/env\n', encoding='utf-8')
+        assert pkg.interpreter_missing(hook) is False
+
+    def test_interpretador_existente(self, tmp_path: Path) -> None:
+        """Interpretador existente nao e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text(f'#! {sys.executable}\n', encoding='utf-8')
+        assert pkg.interpreter_missing(hook) is False
+
+    def test_interpretador_inexistente(self, tmp_path: Path) -> None:
+        """Interpretador inexistente e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text(
+            '#! C:/caminho/que/nao/existe/python.exe\n', encoding='utf-8'
+        )
+        assert pkg.interpreter_missing(hook) is True
+
+    def test_arquivo_inexistente(self, tmp_path: Path) -> None:
+        """Arquivo inexistente nao e considerado quebrado."""
+        assert pkg.interpreter_missing(tmp_path / 'nao-existe') is False
+
+    def test_env_com_argumento_inexistente(self, tmp_path: Path) -> None:
+        """`env` com interpretador inexistente e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text(
+            '#!/usr/bin/env C:/caminho/que/nao/existe/python.exe\n',
+            encoding='utf-8',
+        )
+        assert pkg.interpreter_missing(hook) is True

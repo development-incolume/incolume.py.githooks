@@ -38,7 +38,8 @@ from incolume.py.githooks.core.rules import (
 from incolume.py.githooks.core.utils import (
     find_project_root,
     get_commit_msg_file,
-    get_git_path,
+    get_hooks_dir,
+    interpreter_missing,
 )
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg, effort_random_msg
@@ -886,7 +887,7 @@ def pre_commit_installed_cli(
             fg='red',
         )
     else:
-        hooks_dir = get_git_path('hooks')
+        hooks_dir = get_hooks_dir()
         bins = tuple(
             hooks_dir / x
             for x in (
@@ -904,6 +905,16 @@ def pre_commit_installed_cli(
                 ' but `pre-commit install` was never ran.\n',
                 fg='red',
             )
+        else:
+            broken = [x for x in bins if interpreter_missing(x)]
+            if broken:
+                result |= Status.FAILURE
+                click.secho(
+                    '\n\n`pre-commit` hooks instalados, mas com '
+                    'interpretador inexistente: '
+                    f'{", ".join(x.name for x in broken)}.\n',
+                    fg='red',
+                )
     ctx.exit(result.value)
 
 
