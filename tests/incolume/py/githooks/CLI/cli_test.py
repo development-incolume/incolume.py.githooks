@@ -1027,8 +1027,9 @@ class TestCasePreCommit:
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
 
-    @pytest.mark.xfail
-    def test_precommit_installed2(self, cli_runner: CliRunner) -> None:
+    def test_precommit_installed2(
+        self, cli_runner: CliRunner, tmp_path: Path
+    ) -> None:
         """Test for pre-commit installed."""
         entrance = Entrance(
             msg_file='',
@@ -1039,7 +1040,10 @@ class TestCasePreCommit:
             ),
         )
         with (
-            patch.object(Path, 'cwd', return_value=[]),
+            patch(
+                'incolume.py.githooks.cli.cli.find_project_root',
+                return_value=tmp_path,
+            ),
             patch.object(os, 'access', return_value=False),
         ):
             result = cli_runner.invoke(
