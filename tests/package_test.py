@@ -33,7 +33,7 @@ class TestCasePackage:
         ],
     )
     def test_package(self, entrance: str, expected: str) -> None:
-        """Test package."""
+        """Valida as regexes compiladas contra os padrões esperados."""
         assert entrance == expected
 
     def test_rich_output(self, capsys: pytest.CaptureFixture[str]) -> None:

@@ -1,6 +1,6 @@
 [project]
 name = "incolume-py-githooks"
-version = "1.22.1"
+version = "1.23.0a10"
 description = "plugin `pre-commit` with Hooks git for incolume projects"
 readme = "README.md"
 license-files = ["LICEN[CS]E*", "docs/vendored/licenses/*.txt", "docs/AUTHORS.md"]
@@ -44,6 +44,7 @@ dev = [
     "incolume-py-changelog>=1.3.0",
     "mypy>=2.3.0",
     "pre-commit>=4.3.0",
+    "pyyaml>=6.0",
     "pytest>=9.1.1",
     "pytest-click>=1.1.0",
     "pytest-cov>=7.0.0",
@@ -72,7 +73,10 @@ all = ["notebook", "rich", "click"]
 [project.scripts]
 check-commit-footer = "incolume.py.githooks.cli:check_commit_footer_cli"
 check-len-first-line = "incolume.py.githooks.cli:check_len_first_line_commit_msg_cli"
+check-manual-changelog = "incolume.py.githooks.cli:check_manual_changelog_cli"
+check-manual-version = "incolume.py.githooks.cli:check_manual_version_cli"
 check-type-commit-msg = "incolume.py.githooks.cli:check_type_commit_msg_cli"
+check-type-from-status = "incolume.py.githooks.cli:check_type_from_status_cli"
 clean-commit-msg = "incolume.py.githooks.cli:clean_commit_msg_cli"
 detect-key = "incolume.py.githooks.cli:detect_private_key_cli"
 effort-msg = "incolume.py.githooks.cli:effort_msg_cli"
@@ -85,6 +89,7 @@ is-valid-filename = "incolume.py.githooks.cli:check_valid_filenames_cli"
 is-valid-msg-commit = "incolume.py.githooks.cli:validate_format_commit_msg_cli"
 set-footer-signed-off-by = "incolume.py.githooks.cli:footer_signedoffby_cli"
 set-issue-from-branch = "incolume.py.githooks.cli:set_issue_from_branch_cli"
+set-type-from-status = "incolume.py.githooks.cli:set_type_from_status_cli"
 
 [project.gui-scripts]
 spam-gui = "incolume.py.githooks.gui.main:run"

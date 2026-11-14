@@ -30,12 +30,20 @@ LINE_COMMENT: str = '#'
 
 
 def check_commit_footer(filenames: list[str]) -> int:
-    """Validate footers of commit message file(s).
+    """Valida os rodapés da mensagem de commit conforme Conventional Commits.
 
-    :param filenames: commit message files to validate.
-    :return: 0 se todos os rodapes sao validos; 1 caso contrario.
+    e as regras do AGENTS.md: rodape e o ultimo paragrafo da mensagem;
+    cada linha deve ser ``<token>: <valor>`` (ou ``<token> <valor>``, para
+    ``Closes``/``Refs``), com token em {Closes, Refs, Signed-off-by,
+    Co-authored-by, Reviewed-by, Acked-by}; referencia a issue (``#<id>``)
+    so e aceita em ``Closes`` ou ``Refs``.
 
-    .. versionadded:: 1.22.0
+    Args:
+        filenames (list[str]): arquivos de mensagem de commit a validar.
+
+    Returns:
+        0 se todos os rodipes sao validos; 1 caso contrario.
+
     """
     status: int = 0
     for filename in filenames:
@@ -52,12 +60,14 @@ def check_commit_footer(filenames: list[str]) -> int:
 
 
 def __is_footer_valid(file: Path) -> bool:
-    """Check footers of a single commit message file.
+    """Verifica os rodipes de um unico arquivo de mensagem de commit.
 
-    :param file: commit message file.
-    :return: True se o rodape e valido; False caso contrario.
+    Args:
+        file (Path): arquivo de mensagem de commit.
 
-    .. versionadded:: 1.22.0
+    Returns:
+        True se o rodape e valido; False caso contrario.
+
     """
     content_lines = [
         line
@@ -85,12 +95,14 @@ def __is_footer_valid(file: Path) -> bool:
 
 
 def __extract_footers(content_lines: list[str]) -> list[str]:
-    """Extract the footer block (last non-empty paragraph).
+    """Extrai o bloco de rodapes (ultimo paragrafo nao vazio).
 
-    :param content_lines: commit message lines without comments.
-    :return: lines of the last non-empty paragraph.
+    Args:
+        content_lines (list[str]): linhas do commit sem comentarios.
 
-    .. versionadded:: 1.22.0
+    Returns:
+        linhas do ultimo paragrafo nao vazio.
+
     """
     paragraphs: list[list[str]] = []
     current: list[str] = []
@@ -107,12 +119,14 @@ def __extract_footers(content_lines: list[str]) -> list[str]:
 
 
 def __is_valid_footer(footer: str) -> bool:
-    """Check a single footer line.
+    """Verifica uma unica linha de rodape.
 
-    :param footer: footer line.
-    :return: True se o rodape e valido; False caso contrario.
+    Args:
+        footer (str): linha de rodape.
 
-    .. versionadded:: 1.22.0
+    Returns:
+        True se o rodape e valido; False caso contrario.
+
     """
     match = re.match(
         r'^(?P<token>[A-Za-z-]+):\s*(?P<value>\S.*)$',
@@ -132,12 +146,14 @@ def __is_valid_footer(footer: str) -> bool:
 
 
 def __is_body_line(line: str) -> bool:
-    """Check if a line is a plain body line (not a footer attempt).
+    """Verifica se uma linha e um corpo livre (nao uma tentativa de rodape).
 
-    :param line: line of the last paragraph.
-    :return: True se a linha e corpo livre (sem padrao de rodape).
+    Args:
+        line (str): linha do ultimo paragrafo.
 
-    .. versionadded:: 1.22.0
+    Returns:
+        True se a linha e corpo livre (sem padrao de rodape).
+
     """
     # Linha com referencia a issue fora das formas validas e rodape invalido.
     # Linha com padrao `<token>:` (ou tentativa proxima) e candidata a rodape.

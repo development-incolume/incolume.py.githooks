@@ -1,7 +1,27 @@
 - id: check-commit-footer
   name: Incolume - check commit message footers
-  description: Guarantees valid footers in the commit message (Closes/Refs/Signed-off-by/Co-authored-by/Reviewed-by/Acked-by).
+  description: Check footers of commit message.
   entry: check-commit-footer
+  language: python
+  pass_filenames: true
+  stages: [commit-msg, manual]
+  require_serial: true
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
+- id: check-manual-changelog
+  name: Incolume - check manual changelog in commit message
+  description: Check a manual changelog change against the commit message.
+  entry: check-manual-changelog
+  language: python
+  pass_filenames: true
+  stages: [commit-msg, manual]
+  require_serial: true
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
+- id: check-manual-version
+  name: Incolume - check manual version in commit message
+  description: Check a manual version change against the commit message.
+  entry: check-manual-version
   language: python
   pass_filenames: true
   stages: [commit-msg, manual]
@@ -10,7 +30,7 @@
 
 - id: check-len-first-line
   name: Incolume - check length of first line in commit message
-  description: Guarantees that the first line of the commit message does not exceed a specified length.
+  description: Check length of first line in commit message.
   entry: check-len-first-line
   language: python
   stages: [prepare-commit-msg, manual]
@@ -19,7 +39,7 @@
 
 - id: check-type-commit-msg
   name: Incolume - check type of commit message
-  description: Guarantees that the commit message type is one of Conventional Commits.
+  description: Check type of commit message.
   entry: check-type-commit-msg
   language: python
   stages: [prepare-commit-msg, manual]
@@ -28,7 +48,7 @@
 
 - id: check-precommit-installed
   name: Incolume - check if pre-commit is installed
-  description: Guarantees pre-commit instalation for project.
+  description: Validate the pre-commit binary installation.
   entry: is-precommit-installed
   language: python
   types: [python]
@@ -39,7 +59,7 @@
 
 - id: check-valid-branchname
   name: Incolume - check if is valid branchnames
-  description: Guarantees valid branchname for project.
+  description: Check if the branch name is valid.
   entry: is-valid-branchname
   language: python
   stages: [pre-commit, pre-push, manual]
@@ -48,7 +68,7 @@
 
 - id: check-valid-filenames
   name: Incolume - check if is valid filenames
-  description: Guarantees valid filenames for Python.
+  description: Validate filenames to process.
   entry: is-valid-filename
   language: python
   types: [file, python]
@@ -58,6 +78,7 @@
 
 - id: clean-commit-message
   name: Incolume - Clean Commit message
+  description: Remove the help message.
   entry: clean-commit-msg
   language: python  # script requires the Python interpreter
 #   require_serial: false  # don't run in parallel
@@ -71,7 +92,7 @@
 
 - id: detect-key
   name: Incolume - detect private key
-  description: detects the presence of private keys.
+  description: CLI to check private key.
   entry: detect-key
   language: python
   types: ["file", "non-executable", "python", "text"]
@@ -81,7 +102,7 @@
 
 - id: effort-message
   name: Incolume - Show Message Effort Hook
-  description: Effort message for commit.
+  description: Display success messages after a successful commit.
   entry: effort-msg
   language: python
   pass_filenames: false
@@ -92,7 +113,7 @@
 
 - id: effort-random-message
   name: Incolume - Show Random Message Effort Hook
-  description: Effort message for commit.
+  description: Display a random success message after a successful commit.
   entry: effort-random-msg
   language: python
   pass_filenames: false
@@ -102,7 +123,8 @@
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: footer-signed-off-by
-  name: Incolume - Seting footer with Signed-off-by
+  name: Incolume - Setting footer with Signed-off-by
+  description: Process footer signed-off-by in commit message.
   entry: set-footer-signed-off-by  # script is called from root directory
   language: python  # script requires the Python interpreter
   pass_filenames: false
@@ -113,6 +135,7 @@
 
 - id: insert-diff-commit
   name: Incolume - Insert Git Diff into Commit Message
+  description: Process commit messages adding git-diff.
   entry: insert-diff-commit
   language: python  # script requires the Python interpreter
   pass_filenames: true
@@ -123,21 +146,43 @@
 
 - id: validate-message-commit
   name: Incolume - check if is valid the message commit
-  description: Guarantees valid commit messages.
+  description: Validate commit message.
   entry: is-valid-msg-commit
   language: python
   types: []
-  pass_filenames: false
-  stages: [pre-commit, pre-push, manual]
+  pass_filenames: true
+  always_run: true
+  stages: [commit-msg, manual]
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
 
 - id: set_issue_from_branch_cli
   name: Incolume - Set Issue from Branch Name
-  description: Extracts the issue number from the branch name and sets it in the commit message.
+  description: CLI to extract the ticket number from the branch name.
   entry: set-issue-from-branch
   language: python
   pass_filenames: false
+  stages: [prepare-commit-msg, manual]  # this hook is run at commit time
+  verbose: true
+  require_serial: false  # true run in parallel otherwise false
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
+- id: check-type-from-status
+  name: Incolume - Check commit type from staged files
+  description: Check the commit type against the staged files.
+  entry: check-type-from-status
+  language: python
+  pass_filenames: true
+  stages: [commit-msg, manual]
+  require_serial: true
+  additional_dependencies: [click, icecream]  # Python dependency for the script
+
+- id: set-type-from-status
+  name: Incolume - Set commit type from staged files
+  description: Inject the Conventional Commits type deduced from staged files.
+  entry: set-type-from-status
+  language: python
+  pass_filenames: true
   stages: [prepare-commit-msg, manual]  # this hook is run at commit time
   verbose: true
   require_serial: false  # true run in parallel otherwise false

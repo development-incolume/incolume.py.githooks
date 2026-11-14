@@ -15,6 +15,11 @@ import click
 from icecream import ic
 
 from incolume.py.githooks.check_commit_footer import check_commit_footer
+from incolume.py.githooks.check_manual_changelog import check_manual_changelog
+from incolume.py.githooks.check_manual_version import check_manual_version
+from incolume.py.githooks.check_type_from_status import (
+    check_type_from_status,
+)
 from incolume.py.githooks.core import (
     __package_name__,
     __version__,
@@ -46,6 +51,7 @@ from incolume.py.githooks.prepare_commit_msg import (
     check_type_commit_msg,
     validate_format_commit_msg,
 )
+from incolume.py.githooks.type_from_status import set_type_commit_msg
 from incolume.py.githooks.validate_branchname import ValidateBranchname
 from incolume.py.githooks.validate_filename import validate_filename
 
@@ -287,7 +293,7 @@ def check_valid_branchname_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> click.Context:
-    """Hookgit for check valid branchname.
+    """Check if the branch name is valid.
 
     Hook designed for stages: pre-commit, pre-push, manual
     Args:
@@ -394,7 +400,7 @@ def check_valid_filenames_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Validate Filenames to process.
+    """Validate filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
@@ -757,7 +763,7 @@ def validate_format_commit_msg_cli(
 ) -> int:
     """Validate commit message.
 
-    Hook designed for stages: prepare-commit-msg, manual
+    Hook designed for stages: commit-msg, manual
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -811,7 +817,7 @@ def pre_commit_installed_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Validade pre-commit binary instalation.
+    """Validate the pre-commit binary installation.
 
     Hook designed for stages: pre-commit, pre-push, manual
     """
@@ -840,6 +846,7 @@ def pre_commit_installed_cli(
             'pre-commit',
             'pre-push',
             'prepare-commit-msg',
+            'commit-msg',
             'post-commit',
         )
     )
@@ -893,7 +900,7 @@ def effort_random_msg_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Display randomly success messages after a successful commit.
+    """Display a random success message after a successful commit.
 
     Hook designed for stages: post-commit, manual
 
@@ -964,7 +971,7 @@ def insert_diff_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Proccess commit messages adding git-diff."""
+    """Process commit messages adding git-diff."""
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1114,6 +1121,97 @@ def set_issue_from_branch_cli(
 @click.command(
     context_settings=CONTEXT_SETTINGS_CLICK,
     no_args_is_help=False,
+    name='set-type-from-status',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='set-type-from-status',
+)
+@click.argument(
+    'commit_msg_filepath',
+    type=click.Path(exists=True),
+    help='Fullpath to the commit message file',
+)
+@click.argument(
+    'commit_type',
+    default='',
+    required=False,
+    type=str,
+    help='Commit source informed by git',
+)
+@click.argument(
+    'commit_hash',
+    default='',
+    required=False,
+    type=str,
+    help='Commit hash informed by git',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+def set_type_from_status_cli(
+    ctx: click.Context,
+    /,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Inject the Conventional Commits type deduced from staged files.
+
+    An existing type in the message is never overwritten.
+
+    Args:
+        ctx: click context.
+        kwargs: additional keyword arguments passed by the hook.
+
+    Returns:
+        0 if the type was injected successfully; 1 otherwise.
+
+    """
+    ic(f'{kwargs=}\n{ctx.params=}')
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+
+    commit_msg_filepath = ctx.params.get('commit_msg_filepath')
+    commit_type = ctx.params.get('commit_type') or os.environ.get(
+        'PRE_COMMIT_COMMIT_MSG_SOURCE', ''
+    )
+    nonexequi = ctx.params.get('nonexequi')
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return 0
+
+    result: Result = set_type_commit_msg(
+        commit_msg_filepath,
+        commit_type=commit_type,
+    )
+    click.secho(
+        result.message,
+        fg='green' if result.code == Status.SUCCESS else 'red',
+        err=result.code != Status.SUCCESS,
+    )
+    return int(result.code.value)
+
+
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
     name='check-commit-footer',
 )
 @click.version_option(
@@ -1178,6 +1276,222 @@ def check_commit_footer_cli(
         click.secho('Commit footers are valid.', fg='green', file=sys.stdout)
     else:
         ermsg = 'The commit message contains invalid footers.'
+        raise click.ClickException(ermsg)
+
+    return int(result_code)
+
+
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-manual-version',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-manual-version',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+@logging_call(logging.INFO, 'Checking manual version in commit message.')
+def check_manual_version_cli(
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Check a manual version change against the commit message.
+
+    Args:
+        ctx: click context.
+        kwargs: additional keyword arguments. Expected keys: filenames,
+            nonexequi.
+
+    Returns:
+        0 if the manual version check passed; 1 otherwise.
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    nonexequi = ctx.params.get('nonexequi')
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return int(Status.SUCCESS.value)
+
+    result_code = check_manual_version(list(filenames))
+
+    if result_code == int(Status.SUCCESS.value):
+        click.secho('Manual version check passed.', fg='green')
+    else:
+        ermsg = 'The version changed without a "build:" commit message.'
+        raise click.ClickException(ermsg)
+
+    return int(result_code)
+
+
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-manual-changelog',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-manual-changelog',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+@logging_call(logging.INFO, 'Checking manual changelog in commit message.')
+def check_manual_changelog_cli(
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Check a manual changelog change against the commit message.
+
+    Args:
+        ctx: click context.
+        kwargs: additional keyword arguments. Expected keys: filenames,
+            nonexequi.
+
+    Returns:
+        0 if the manual changelog check passed; 1 otherwise.
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    nonexequi = ctx.params.get('nonexequi')
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return int(Status.SUCCESS.value)
+
+    result_code = check_manual_changelog(list(filenames))
+
+    if result_code == int(Status.SUCCESS.value):
+        click.secho('Manual changelog check passed.', fg='green')
+    else:
+        ermsg = 'The changelog changed without a "build:" commit message.'
+        raise click.ClickException(ermsg)
+
+    return int(result_code)
+
+
+@click.command(
+    context_settings=CONTEXT_SETTINGS_CLICK,
+    no_args_is_help=False,
+    name='check-type-from-status',
+)
+@click.version_option(
+    __version__,
+    '-V',
+    '--version',
+    package_name=__package_name__,
+    prog_name='check-type-from-status',
+)
+@click.argument(
+    'filenames',
+    nargs=-1,
+    type=click.Path(exists=False),
+    help='Filenames to check',
+)
+@click.option(
+    '-N',
+    '--nonexequi',
+    default=False,
+    is_flag=True,
+    help='Do not run this hook.',
+)
+@click.pass_context
+@logging_call(logging.INFO, 'Checking commit type against staged files.')
+def check_type_from_status_cli(
+    ctx: click.Context,
+    **kwargs: dict[str, Any],
+) -> int:
+    """Check the commit type against the staged files.
+
+    Args:
+        ctx: click context.
+        kwargs: additional keyword arguments. Expected keys: filenames,
+            nonexequi.
+
+    Returns:
+        0 if the commit type is compatible with the staged files; 1 otherwise.
+
+    """
+    logging.warning(
+        'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
+        inspect.stack()[0].function,
+        ctx.command_path,
+        ctx.params,
+        kwargs,
+    )
+    ctx.params.update(kwargs)
+    filenames = ctx.params.get('filenames') or []
+    nonexequi = ctx.params.get('nonexequi')
+
+    if nonexequi:
+        click.secho(
+            'Hook not executed due to the `--nonexequi` option.',
+            fg='yellow',
+        )
+        return int(Status.SUCCESS.value)
+
+    result_code = check_type_from_status(list(filenames))
+
+    if result_code == int(Status.SUCCESS.value):
+        click.secho(
+            'Commit type is compatible with the staged files.',
+            fg='green',
+        )
+    else:
+        ermsg = 'The commit type diverges from the staged files.'
         raise click.ClickException(ermsg)
 
     return int(result_code)
@@ -1255,8 +1569,16 @@ cli_group.add_command(effort_random_msg_cli, name='effort-random-msg')
 cli_group.add_command(footer_signedoffby_cli, name='set-footer-signed-off-by')
 cli_group.add_command(insert_diff_cli, name='insert-diff-commit')
 cli_group.add_command(check_commit_footer_cli, name='check-commit-footer')
+cli_group.add_command(
+    check_manual_changelog_cli, name='check-manual-changelog'
+)
+cli_group.add_command(check_manual_version_cli, name='check-manual-version')
+cli_group.add_command(
+    check_type_from_status_cli, name='check-type-from-status'
+)
 cli_group.add_command(pre_commit_installed_cli, name='is-precommit-installed')
 cli_group.add_command(set_issue_from_branch_cli, name='set-issue-from-branch')
+cli_group.add_command(set_type_from_status_cli, name='set-type-from-status')
 cli_group.add_command(
     validate_format_commit_msg_cli, name='is-valid-msg-commit'
 )

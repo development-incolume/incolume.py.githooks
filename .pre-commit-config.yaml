@@ -1,7 +1,7 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 minimum_pre_commit_version: '4.6.2'
-default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, post-commit]
+default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, commit-msg, post-commit]
 fail_fast: false
 
 repos:
@@ -210,11 +210,10 @@ repos:
       name: Incolume - validate message Commit agree with Conventional Commits
       entry: is-valid-msg-commit  # script is called from root directory
       language: python  # script requires the Python interpreter
-      pass_filenames: false
+      pass_filenames: true
       always_run: true
       require_serial: false  # true run in parallel otherwise false
       additional_dependencies: [click, icecream]  # Python dependency for the script
       # files: ^*$  # this catches all .ipynb under examples/
-      types_or: [system-verilog]  #
-      stages: [prepare-commit-msg, pre-commit, commit-msg]  # this hook is run at commit time
+      stages: [commit-msg, manual]  # this hook is run at commit time
       args: []
