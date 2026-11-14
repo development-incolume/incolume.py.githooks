@@ -92,7 +92,7 @@ class TestCaseRules:
     def test_status_missing(
         self, entrance: str, expected: pkg.Status | dict[str, object]
     ) -> None:
-        """Status missing."""
+        """Valida Status para entrada inexistente, aceitando ValueError."""
         try:
             assert pkg.Status(entrance) == expected
         except ValueError:

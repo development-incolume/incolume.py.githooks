@@ -3,7 +3,10 @@
 from incolume.py.githooks.cli.cli import (
     check_commit_footer_cli,
     check_len_first_line_commit_msg_cli,
+    check_manual_changelog_cli,
+    check_manual_version_cli,
     check_type_commit_msg_cli,
+    check_type_from_status_cli,
     check_valid_branchname_cli,
     check_valid_filenames_cli,
     clean_commit_msg_cli,
@@ -15,13 +18,17 @@ from incolume.py.githooks.cli.cli import (
     insert_diff_cli,
     pre_commit_installed_cli,
     set_issue_from_branch_cli,
+    set_type_from_status_cli,
     validate_format_commit_msg_cli,
 )
 
 __all__ = [
     'check_commit_footer_cli',
     'check_len_first_line_commit_msg_cli',
+    'check_manual_changelog_cli',
+    'check_manual_version_cli',
     'check_type_commit_msg_cli',
+    'check_type_from_status_cli',
     'check_valid_branchname_cli',
     'check_valid_filenames_cli',
     'clean_commit_msg_cli',
@@ -33,5 +40,6 @@ __all__ = [
     'insert_diff_cli',
     'pre_commit_installed_cli',
     'set_issue_from_branch_cli',
+    'set_type_from_status_cli',
     'validate_format_commit_msg_cli',
 ]

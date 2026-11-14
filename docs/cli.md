@@ -10,6 +10,8 @@ consumível diretamente pelo pre-commit.
 |---|---|
 | `githooks-cli` | grupo chain com todos os comandos |
 | `check-commit-footer` | valida os rodapés do último parágrafo da mensagem |
+| `check-manual-changelog` | exige `build:` quando o `CHANGELOG.md` staged muda |
+| `check-manual-version` | exige `build:` quando a versão staged muda (`pyproject.toml`/`version.txt`) |
 | `check-len-first-line` | valida o comprimento da primeira linha da mensagem |
 | `check-type-commit-msg` | valida o tipo da mensagem (Conventional Commits) |
 | `clean-commit-msg` | limpa o arquivo de mensagem de commit |
@@ -23,6 +25,8 @@ consumível diretamente pelo pre-commit.
 | `is-valid-msg-commit` | valida o formato da mensagem de commit |
 | `set-footer-signed-off-by` | insere rodapé `Signed-off-by` |
 | `set-issue-from-branch` | extrai a issue do nome da branch para a mensagem |
+| `set-type-from-status` | deduz o tipo da mensagem pelos arquivos staged |
+| `check-type-from-status` | valida o tipo da mensagem contra os arquivos staged |
 
 ## Opções
 

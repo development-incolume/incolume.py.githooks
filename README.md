@@ -22,7 +22,7 @@ Model for .pre-commit-config.yaml, bellow:
 ```yaml
 # File .pre-commit-config.yaml
 
-default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, post-commit]
+default_install_hook_types: [pre-commit, pre-push, prepare-commit-msg, commit-msg, post-commit]
 repos:
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
@@ -74,6 +74,10 @@ repos:
   hooks:
     - id: check-commit-footer
     #   args: [--nonexequi|-N, --version|-V]
+    - id: check-manual-changelog
+    #   args: [--nonexequi|-N, --version|-V]
+    - id: check-manual-version
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-len-first-line
     #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
     - id: check-type-commit-msg
@@ -97,6 +101,10 @@ repos:
     - id: insert-diff-commit
     #   args: [--nonexequi|-N, --version|-V]
     - id: set-issue-from-branch
+    #   args: [--nonexequi|-N, --version|-V]
+    - id: check-type-from-status
+    #   args: [--nonexequi|-N, --version|-V]
+    - id: set-type-from-status
     #   args: [--nonexequi|-N, --version|-V]
     - id: validate-message-commit
     #   args: [--nonexequi|-N, --version|-V]
