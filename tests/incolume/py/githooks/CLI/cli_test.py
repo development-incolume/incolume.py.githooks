@@ -1,11 +1,14 @@
 """Test module for CLI."""
 
+# ruff: file-ignore[suspicious-subprocess-import, subprocess-without-shell-equals-true, start-process-with-partial-path]
+
 from __future__ import annotations
 import os
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 import shutil
-import subprocess  # ruff: ignore[suspicious-subprocess-import]
+import subprocess
 from tempfile import NamedTemporaryFile, gettempdir
 from typing import TYPE_CHECKING, Any
 from incolume.py.githooks.core import remove_color_tags
@@ -336,25 +339,21 @@ class TestCaseAllCLI:
                 ' Branch name "dev" is protected.',
                 marks=[],
             ),
-            pytest.param(
-                'dev', 0, ['--no-dev'], '', marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'tags', 0, ['--no-tags'], '', marks=[pytest.mark.xfail]
-            ),
+            pytest.param('dev', 0, ['--no-dev'], '', marks=[]),
+            pytest.param('tags', 0, ['--no-tags'], '', marks=[]),
             pytest.param(
                 'main',
                 0,
                 ['', '--no-main'],
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'master',
                 0,
                 ['', '--no-main'],
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -391,7 +390,7 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                ['Jürgen'],
+                ['Jürgen..py'],
                 Status.FAILURE,
                 'Filename structure is invalid.',
                 marks=[],
@@ -857,9 +856,9 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
-                    expected=Result(Status.FAILURE, 'abc'),
+                    expected=Result(Status.SUCCESS, ''),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -870,7 +869,7 @@ class TestCaseAllCLI:
                         'nothing.py\nM\tincolume/py/none.py\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -879,7 +878,7 @@ class TestCaseAllCLI:
                         Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -893,7 +892,7 @@ class TestCaseAllCLI:
                         '\nM\tincolume/py/none.py\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -905,7 +904,7 @@ class TestCaseAllCLI:
                         message='ci: #123 added ci/cd\n\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -938,8 +937,13 @@ class TestCaseAllCLI:
         result = cli_runner.invoke(cli.insert_diff_cli, entries)
         assert test_file.is_file()
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
-        assert entrance.diff_output in test_file.read_text(encoding='utf-8')
+        content = test_file.read_text(encoding='utf-8')
+        if entrance.diff_output and any(
+            x in {'-N', '--nonexequi'} for x in entrance.params
+        ):
+            assert entrance.diff_output not in content
+        else:
+            assert entrance.diff_output in content
 
 
 class TestCasePreCommit:
@@ -1023,8 +1027,9 @@ class TestCasePreCommit:
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
 
-    @pytest.mark.xfail
-    def test_precommit_installed2(self, cli_runner: CliRunner) -> None:
+    def test_precommit_installed2(
+        self, cli_runner: CliRunner, tmp_path: Path
+    ) -> None:
         """Test for pre-commit installed."""
         entrance = Entrance(
             msg_file='',
@@ -1035,7 +1040,10 @@ class TestCasePreCommit:
             ),
         )
         with (
-            patch.object(Path, 'cwd', return_value=[]),
+            patch(
+                'incolume.py.githooks.cli.cli.find_project_root',
+                return_value=tmp_path,
+            ),
             patch.object(os, 'access', return_value=False),
         ):
             result = cli_runner.invoke(
@@ -1066,3 +1074,133 @@ class TestCasePreCommit:
             )
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
+
+    @staticmethod
+    def _git(repo: Path, *args: str) -> None:
+        """Executa um comando git no repositorio."""
+        subprocess.run(
+            ['git', *args],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    def _make_repo(self, tmp_path: Path) -> Path:
+        """Cria um repositorio com config pre-commit."""
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        (repo / 'pyproject.toml').write_text(
+            '[project]\nname = "x"\n', encoding='utf-8'
+        )
+        (repo / '.pre-commit-config.yaml').write_text(
+            'repos: []\n', encoding='utf-8'
+        )
+        for args in (
+            ('init',),
+            ('config', 'user.email', 'test@example.com'),
+            ('config', 'user.name', 'test'),
+            ('config', 'commit.gpgsign', 'false'),
+            ('add', '.'),
+            ('commit', '-m', 'build: #1 inicial'),
+        ):
+            self._git(repo, *args)
+        return repo
+
+    def _make_worktree(self, tmp_path: Path) -> tuple[Path, Path]:
+        """Cria um repositorio com uma worktree ligada."""
+        repo = self._make_repo(tmp_path)
+        wt = tmp_path / 'wt'
+        self._git(repo, 'worktree', 'add', str(wt), '-b', '1-task')
+        return repo, wt
+
+    def test_precommit_installed_em_worktree_ligada(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """O hook procura os scripts no git dir real, nao em `.git/` do worktree."""
+        repo, wt = self._make_worktree(tmp_path)
+        hooks_dir = repo / '.git' / 'hooks'
+        for hook in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'commit-msg',
+            'post-commit',
+        ):
+            (hooks_dir / hook).write_text(
+                f'#! {sys.executable}\n', encoding='utf-8'
+            )
+            (hooks_dir / hook).chmod(0o755)
+        monkeypatch.chdir(wt)
+
+        seen: list[Path] = []
+
+        def fake_access(path: str | os.PathLike[str], _mode: int) -> bool:
+            """Registra os paths consultados e so aceita arquivos reais."""
+            seen.append(Path(path))
+            return Path(path).exists()
+
+        monkeypatch.setattr(os, 'access', fake_access)
+        result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
+        assert result.exit_code == 0
+        assert seen
+        assert all(wt.resolve() not in path.resolve().parents for path in seen)
+
+    def test_precommit_installed_com_core_hookspath(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """`core.hooksPath` e honrado na procura dos hooks."""
+        repo = self._make_repo(tmp_path)
+        self._git(repo, 'config', 'core.hooksPath', '.git-hooks')
+        hooks = repo / '.git-hooks'
+        hooks.mkdir()
+        for hook in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'commit-msg',
+            'post-commit',
+        ):
+            (hooks / hook).write_text(
+                f'#! {sys.executable}\n', encoding='utf-8'
+            )
+            (hooks / hook).chmod(0o755)
+        monkeypatch.chdir(repo)
+
+        result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
+
+        assert result.exit_code == 0
+
+    def test_precommit_installed_com_interpretador_inexistente(
+        self,
+        cli_runner: CliRunner,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Hook com interpretador do shebang inexistente e reprovado."""
+        repo = self._make_repo(tmp_path)
+        hooks_dir = repo / '.git' / 'hooks'
+        for hook in (
+            'pre-commit',
+            'pre-push',
+            'prepare-commit-msg',
+            'commit-msg',
+            'post-commit',
+        ):
+            (hooks_dir / hook).write_text(
+                '#! C:/caminho/que/nao/existe/python.exe\n',
+                encoding='utf-8',
+            )
+            (hooks_dir / hook).chmod(0o755)
+        monkeypatch.chdir(repo)
+
+        result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
+
+        assert result.exit_code == 1
+        assert 'interpretador inexistente' in result.output

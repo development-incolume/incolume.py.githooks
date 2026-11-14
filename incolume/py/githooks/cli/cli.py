@@ -31,12 +31,16 @@ from incolume.py.githooks.core import (
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
     CONTEXT_SETTINGS_CLICK,
-    GITCOMMITMSGFL,
     RequestFl,
     Result,
     Status,
 )
-from incolume.py.githooks.core.utils import find_project_root
+from incolume.py.githooks.core.utils import (
+    find_project_root,
+    get_commit_msg_file,
+    get_hooks_dir,
+    interpreter_missing,
+)
 from incolume.py.githooks.detect_private_key import has_private_key
 from incolume.py.githooks.effort_message import effort_msg, effort_random_msg
 from incolume.py.githooks.footer_signedoffby import (
@@ -113,6 +117,9 @@ def check_len_first_line_commit_msg_cli(
         nonexequi: bool = False,
       ctx: contexto CLI
 
+    Examples:
+        check-len-first-line .git/COMMIT_EDITMSG
+        check-len-first-line --max-first-line 50 .git/COMMIT_EDITMSG
 
     """
     logging.warning(
@@ -195,7 +202,6 @@ def check_len_first_line_commit_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True),
-    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filename for commit message',
 )
@@ -213,6 +219,9 @@ def check_type_commit_msg_cli(
         nonexequi: bool = False,
       ctx: context CLI
 
+    Examples:
+        check-type-commit-msg .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -222,7 +231,9 @@ def check_type_commit_msg_cli(
         kwargs,
     )
     ctx.params.update(kwargs)
-    commit_msg_file = ctx.params.get('commit_msg_file') or []
+    commit_msg_file = ctx.params.get('commit_msg_file') or [
+        get_commit_msg_file()
+    ]
     nonexequi = ctx.params.get('nonexequi')
 
     result = check_type_commit_msg(*commit_msg_file)
@@ -308,6 +319,10 @@ def check_valid_branchname_cli(
 
     Returns:
         int: 0 to SUCCESS or 1 to FAILURE
+
+    Examples:
+        is-valid-branchname
+        is-valid-branchname --dev
 
     """
     logging.warning(
@@ -403,6 +418,11 @@ def check_valid_filenames_cli(
     """Validate filenames to process.
 
     Hook designed for stages: pre-commit, pre-push, manual
+
+    Examples:
+        is-valid-filename incolume/py/githooks/cli/cli.py
+        is-valid-filename --max-len 256 incolume/py/githooks/cli/cli.py
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -477,6 +497,10 @@ def detect_private_key_cli(
     """CLI to check private key.
 
     Hook designed for stages: all
+
+    Examples:
+        detect-key incolume/py/githooks/cli/cli.py
+
     """
     ic(f'{kwargs}\n{ctx.params=}')
     logging.warning(
@@ -553,6 +577,9 @@ def footer_signedoffby_cli(
     Returns:
         None
 
+    Examples:
+        set-footer-signed-off-by .git/COMMIT_EDITMSG
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -564,8 +591,7 @@ def footer_signedoffby_cli(
     )
     ctx.params.update(kwargs)
     commit_msg_filename: Path = (
-        ctx.params.get('commit_msg_filename')
-        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
+        ctx.params.get('commit_msg_filename') or get_commit_msg_file()
     )
     nonexequi: bool = ctx.params.get('nonexequi', False)
 
@@ -613,6 +639,10 @@ def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Display success messages after a successful commit.
 
     Hook designed for stages: post-commit, manual
+
+    Examples:
+        effort-msg
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -676,6 +706,9 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     Returns:
         int: SUCCESS code if the operation completes.
 
+    Examples:
+        clean-commit-msg .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -686,8 +719,7 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     )
     ctx.params.update(kwargs)
     commit_msg_file = (
-        ctx.params.get('commit_msg_file')
-        or find_project_root() / GITCOMMITMSGFL
+        ctx.params.get('commit_msg_file') or get_commit_msg_file()
     )
     commit_source = ctx.params.get('commit_source')
     commit_hash = ctx.params.get('commit_hash')
@@ -751,7 +783,6 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     'filenames',
     nargs=-1,
     type=click.Path(exists=False),
-    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filenames for commit messages',
 )
@@ -764,6 +795,10 @@ def validate_format_commit_msg_cli(
     """Validate commit message.
 
     Hook designed for stages: commit-msg, manual
+
+    Examples:
+        is-valid-msg-commit .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -775,7 +810,7 @@ def validate_format_commit_msg_cli(
     ctx.params.update(kwargs)
 
     nonexequi = ctx.params.get('nonexequi')
-    filenames = ctx.params.get('filenames')
+    filenames = ctx.params.get('filenames') or None
 
     if nonexequi:
         click.secho(
@@ -820,6 +855,10 @@ def pre_commit_installed_cli(
     """Validate the pre-commit binary installation.
 
     Hook designed for stages: pre-commit, pre-push, manual
+
+    Examples:
+        is-precommit-installed
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -840,16 +879,6 @@ def pre_commit_installed_cli(
 
     result = Status.SUCCESS
     files = list(find_project_root().glob('.pre-commit-config.yaml'))
-    bins = tuple(
-        find_project_root().joinpath('.git', 'hooks', x)
-        for x in (
-            'pre-commit',
-            'pre-push',
-            'prepare-commit-msg',
-            'commit-msg',
-            'post-commit',
-        )
-    )
     ic(files)
     if not files:
         result |= Status.FAILURE
@@ -857,14 +886,35 @@ def pre_commit_installed_cli(
             '\n\nConfiguration file ".pre-commit-config.yaml" not detected',
             fg='red',
         )
-
-    if files and not all(os.access(x, os.X_OK) for x in bins):
-        result |= Status.FAILURE
-        click.secho(
-            '\n\n`pre-commit` configuration detected,'
-            ' but `pre-commit install` was never ran.\n',
-            fg='red',
+    else:
+        hooks_dir = get_hooks_dir()
+        bins = tuple(
+            hooks_dir / x
+            for x in (
+                'pre-commit',
+                'pre-push',
+                'prepare-commit-msg',
+                'commit-msg',
+                'post-commit',
+            )
         )
+        if not all(os.access(x, os.X_OK) for x in bins):
+            result |= Status.FAILURE
+            click.secho(
+                '\n\n`pre-commit` configuration detected,'
+                ' but `pre-commit install` was never ran.\n',
+                fg='red',
+            )
+        else:
+            broken = [x for x in bins if interpreter_missing(x)]
+            if broken:
+                result |= Status.FAILURE
+                click.secho(
+                    '\n\n`pre-commit` hooks instalados, mas com '
+                    'interpretador inexistente: '
+                    f'{", ".join(x.name for x in broken)}.\n',
+                    fg='red',
+                )
     ctx.exit(result.value)
 
 
@@ -909,6 +959,10 @@ def effort_random_msg_cli(
         fixed: bool = False,
         nonexequi: bool = False
       ctx: context CLI
+
+    Examples:
+        effort-random-msg
+        effort-random-msg --fixed
 
     """
     logging.warning(
@@ -957,7 +1011,6 @@ def effort_random_msg_cli(
     'commit_msg_file',
     nargs=-1,
     type=click.Path(exists=True, dir_okay=False),
-    default=(find_project_root(Path.cwd()) / GITCOMMITMSGFL,),
     required=False,
     help='Filename for commit message',
 )
@@ -971,7 +1024,12 @@ def insert_diff_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
 ) -> int:
-    """Process commit messages adding git-diff."""
+    """Process commit messages adding git-diff.
+
+    Examples:
+        insert-diff-commit .git/COMMIT_EDITMSG
+
+    """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -987,6 +1045,9 @@ def insert_diff_cli(
     commit_hash = ctx.params.get('commit_hash', '')
     nonexequi = ctx.params.get('nonexequi', False)
 
+    if not commit_msg_file:
+        commit_msg_file = get_commit_msg_file()
+
     match commit_msg_file:
         case list() | tuple() | set():
             fl = Path(next(iter(commit_msg_file)))
@@ -995,7 +1056,7 @@ def insert_diff_cli(
         case Path():
             fl = commit_msg_file
         case None:
-            fl = find_project_root(Path.cwd()) / GITCOMMITMSGFL
+            fl = get_commit_msg_file()
 
     logging.debug(
         'commit_msg_file=%s commit_source=%s commit_hash=%s',
@@ -1062,6 +1123,10 @@ def set_issue_from_branch_cli(
     Checks whether the hook was called with the
     -m option (user-provided message)
     If so, it prevents the manually entered message from being overwritten
+
+    Examples:
+        set-issue-from-branch .git/COMMIT_EDITMSG
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -1074,8 +1139,7 @@ def set_issue_from_branch_cli(
     ctx.params.update(kwargs)
 
     commit_msg_filepath = (
-        ctx.params.get('commit_msg_filepath')
-        or find_project_root(Path.cwd()) / GITCOMMITMSGFL
+        ctx.params.get('commit_msg_filepath') or get_commit_msg_file()
     )
     commit_type = ctx.params.get('commit_type')
     nonexequi = ctx.params.get('nonexequi')
@@ -1173,6 +1237,9 @@ def set_type_from_status_cli(
     Returns:
         0 if the type was injected successfully; 1 otherwise.
 
+    Examples:
+        set-type-from-status .git/COMMIT_EDITMSG
+
     """
     ic(f'{kwargs=}\n{ctx.params=}')
     logging.warning(
@@ -1248,6 +1315,9 @@ def check_commit_footer_cli(
         nonexequi: bool = False,
       ctx: contexto CLI
 
+    Examples:
+        check-commit-footer .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1322,6 +1392,9 @@ def check_manual_version_cli(
     Returns:
         0 if the manual version check passed; 1 otherwise.
 
+    Examples:
+        check-manual-version .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1393,6 +1466,9 @@ def check_manual_changelog_cli(
     Returns:
         0 if the manual changelog check passed; 1 otherwise.
 
+    Examples:
+        check-manual-changelog .git/COMMIT_EDITMSG
+
     """
     logging.warning(
         'callable=%s, command=%s, ctx.params=%s, kwargs=%s',
@@ -1463,6 +1539,9 @@ def check_type_from_status_cli(
 
     Returns:
         0 if the commit type is compatible with the staged files; 1 otherwise.
+
+    Examples:
+        check-type-from-status .git/COMMIT_EDITMSG
 
     """
     logging.warning(

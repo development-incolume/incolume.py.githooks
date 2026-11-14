@@ -1,6 +1,7 @@
 """Test module for decorators."""
 
 import logging
+import re
 import pytest
 from incolume.py.githooks.core import decorators, debug_enable
 from incolume.py.githooks.core.rules import LoggingLevel
@@ -28,7 +29,6 @@ class TestCaseDecorators:
         environ.pop('DEBUG_MODE')
         debug_enable()
 
-    @pytest.mark.xfail(reason='probable false/positive')
     def test_my_decorator(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:  # pragma: no cover
@@ -45,9 +45,9 @@ class TestCaseDecorators:
 
         sample_function('abc')
         capture = capsys.readouterr()
-        assert all(e in capture.err for e in expected)
+        output = re.sub(r'\x1b\[[0-9;]*m', '', capture.err)
+        assert all(e in output for e in expected)
 
-    @pytest.mark.xfail(reason='probable false/positive')
     def test_simple_decorator(
         self, capsys: pytest.CaptureFixture[str]
     ) -> None:  # pragma: no cover
@@ -68,7 +68,8 @@ class TestCaseDecorators:
 
         sample_function('abc')
         capture = capsys.readouterr()
-        assert all(e in capture.err for e in expected)
+        output = re.sub(r'\x1b\[[0-9;]*m', '', capture.err)
+        assert all(e in output for e in expected)
 
     @pytest.mark.parametrize(
         ['entrance', 'expected', 'debug_mode'],

@@ -60,8 +60,6 @@ def _is_code(path: str) -> bool:
     Returns:
         True when the path is not a build, ci, test or docs artifact.
 
-    .. versionadded:: 1.23.0a2
-
     """
     name = Path(path).name
     if name in BUILD_FILES or name == 'version.txt':

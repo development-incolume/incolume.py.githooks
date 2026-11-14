@@ -78,7 +78,9 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
     Return True if not start with number.
     """
     request.action = stack()[0][3]
-    if bool(re.match(r'[^0-9][a-zA-Z0-9_]*', request.filename.stem)):
+    if not request.filename.stem or bool(
+        re.match(r'[^0-9][a-zA-Z0-9_]*', request.filename.stem)
+    ):
         return request
     request.code |= Status.FAILURE
     request.messages.append('Filename started with number is invalid.')
@@ -161,6 +163,7 @@ def rule_snake_case(request: RequestFl) -> RequestFl:
     if not request.is_python_file or (
         request.is_python_file
         and SNAKE_CASE_REGEX.search(request.filename.stem)
+        and request.filename.stem == request.filename.stem.lower()
     ):
         return request
 

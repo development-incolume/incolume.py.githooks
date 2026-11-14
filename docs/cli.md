@@ -8,16 +8,17 @@ consumível diretamente pelo pre-commit.
 
 | comando | função |
 |---|---|
-| `githooks-cli` | grupo chain com todos os comandos |
 | `check-commit-footer` | valida os rodapés do último parágrafo da mensagem |
+| `check-len-first-line` | valida o comprimento da primeira linha da mensagem |
 | `check-manual-changelog` | exige `build:` quando o `CHANGELOG.md` staged muda |
 | `check-manual-version` | exige `build:` quando a versão staged muda (`pyproject.toml`/`version.txt`) |
-| `check-len-first-line` | valida o comprimento da primeira linha da mensagem |
 | `check-type-commit-msg` | valida o tipo da mensagem (Conventional Commits) |
+| `check-type-from-status` | valida o tipo da mensagem contra os arquivos staged |
 | `clean-commit-msg` | limpa o arquivo de mensagem de commit |
 | `detect-key` | detecta chaves privadas nos arquivos informados |
 | `effort-msg` | exibe mensagem de esforço pós-commit |
 | `effort-random-msg` | exibe mensagem de esforço aleatória (`--fixed` fixa a mensagem) |
+| `githooks-cli` | grupo chain com todos os comandos |
 | `insert-diff-commit` | insere o `git diff --cached` na mensagem de commit |
 | `is-precommit-installed` | verifica se o pre-commit está instalado |
 | `is-valid-branchname` | valida o nome da branch atual |
@@ -26,7 +27,6 @@ consumível diretamente pelo pre-commit.
 | `set-footer-signed-off-by` | insere rodapé `Signed-off-by` |
 | `set-issue-from-branch` | extrai a issue do nome da branch para a mensagem |
 | `set-type-from-status` | deduz o tipo da mensagem pelos arquivos staged |
-| `check-type-from-status` | valida o tipo da mensagem contra os arquivos staged |
 
 ## Opções
 

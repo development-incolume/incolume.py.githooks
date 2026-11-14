@@ -17,8 +17,6 @@ from typing import Any, Final
 
 from icecream import ic
 
-from incolume.py.githooks.core.utils import find_project_root
-
 with contextlib.suppress(ImportError, ModuleNotFoundError):
     from typing import Self
 
@@ -247,7 +245,7 @@ class RequestFl:
         return bool(re.match(r'^.*tests?.*$', self.filename.parent.as_posix()))
 
 
-FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[a-zA-Z0-9_\-\.]+$'
+FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[\w\-\.]+$'
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
     rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
@@ -261,7 +259,7 @@ RULE_BRANCHNAME: Final[str] = (
 RULE_COMMITFORMAT: Final[str] = (
     r'^(((Merge|Bumping|Revert|build)|(bugfix|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
 )
-SNAKE_CASE: Final[str] = r'^[a-z_0-9]+$'
+SNAKE_CASE: Final[str] = r'^\w+$'
 
 MESSAGES: Final[list[str]] = [
     'Boa! Continue o bom trabalho com a força, Jedi!',
@@ -271,5 +269,3 @@ MESSAGES: Final[list[str]] = [
 CONTEXT_SETTINGS_CLICK: dict[str, list[str]] = {
     'help_option_names': ['-h', '--help'],
 }
-GITCOMMITMSGFL: Final[str] = '.git/COMMIT_EDITMSG'
-msg_commit_file: Path = find_project_root(__file__) / GITCOMMITMSGFL

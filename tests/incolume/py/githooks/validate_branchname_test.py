@@ -355,3 +355,41 @@ class TestCaseValidateBranchname:
         captured = capsys.readouterr()
         assert expected.code.value == result.code.value
         assert not captured.out.strip() or not captured.err.strip()
+
+    @pytest.mark.parametrize(
+        ['entrance', 'kwargs', 'expected_code'],
+        [
+            pytest.param('dev', {}, Status.SUCCESS, marks=[]),
+            pytest.param('development', {}, Status.SUCCESS, marks=[]),
+            pytest.param(
+                'dev', {'protected_dev': False}, Status.SUCCESS, marks=[]
+            ),
+            pytest.param(
+                'development',
+                {'protected_dev': False},
+                Status.SUCCESS,
+                marks=[],
+            ),
+            pytest.param(
+                'dev', {'protected_dev': True}, Status.FAILURE, marks=[]
+            ),
+            pytest.param(
+                'development',
+                {'protected_dev': True},
+                Status.FAILURE,
+                marks=[],
+            ),
+        ],
+    )
+    def test_dev_eh_valido_quando_nao_protegido(
+        self,
+        entrance: str,
+        kwargs: dict[str, Any],
+        expected_code: Status,
+        capsys: pytest.CaptureFixture[str],
+    ) -> None:
+        """`dev`/`development` sao validos quando `protected_dev=False`."""
+        v = ValidateBranchname(branchname=entrance)
+        result = v.is_valid(**kwargs)
+        capsys.readouterr()
+        assert result.code is expected_code
