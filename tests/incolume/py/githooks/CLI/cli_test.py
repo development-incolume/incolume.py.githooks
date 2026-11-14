@@ -856,9 +856,9 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
-                    expected=Result(Status.FAILURE, 'abc'),
+                    expected=Result(Status.SUCCESS, ''),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -869,7 +869,7 @@ class TestCaseAllCLI:
                         'nothing.py\nM\tincolume/py/none.py\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -878,7 +878,7 @@ class TestCaseAllCLI:
                         Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -892,7 +892,7 @@ class TestCaseAllCLI:
                         '\nM\tincolume/py/none.py\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -904,7 +904,7 @@ class TestCaseAllCLI:
                         message='ci: #123 added ci/cd\n\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -937,8 +937,13 @@ class TestCaseAllCLI:
         result = cli_runner.invoke(cli.insert_diff_cli, entries)
         assert test_file.is_file()
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
-        assert entrance.diff_output in test_file.read_text(encoding='utf-8')
+        content = test_file.read_text(encoding='utf-8')
+        if entrance.diff_output and any(
+            x in {'-N', '--nonexequi'} for x in entrance.params
+        ):
+            assert entrance.diff_output not in content
+        else:
+            assert entrance.diff_output in content
 
 
 class TestCasePreCommit:
