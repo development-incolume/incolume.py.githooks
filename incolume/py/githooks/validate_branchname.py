@@ -181,7 +181,10 @@ class ValidateBranchname:
             self.result.code = Status.FAILURE
             msg += self.violation_text
 
-        if self.__is_not_matches_rule(branchname):
+        if not protected_dev and self.__is_branch_dev(branchname):
+            # `dev`/`development` sao nomes validos quando nao protegidos.
+            ic('is dev/development valid branch')
+        elif self.__is_not_matches_rule(branchname):
             ic('is not matches rule')
             self.result.code = Status.FAILURE
             msg += self.violation_text
