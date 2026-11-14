@@ -1128,6 +1128,7 @@ class TestCasePreCommit:
             (hooks_dir / hook).write_text(
                 f'#! {sys.executable}\n', encoding='utf-8'
             )
+            (hooks_dir / hook).chmod(0o755)
         monkeypatch.chdir(wt)
 
         seen: list[Path] = []
@@ -1164,6 +1165,7 @@ class TestCasePreCommit:
             (hooks / hook).write_text(
                 f'#! {sys.executable}\n', encoding='utf-8'
             )
+            (hooks / hook).chmod(0o755)
         monkeypatch.chdir(repo)
 
         result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
@@ -1190,6 +1192,7 @@ class TestCasePreCommit:
                 '#! C:/caminho/que/nao/existe/python.exe\n',
                 encoding='utf-8',
             )
+            (hooks_dir / hook).chmod(0o755)
         monkeypatch.chdir(repo)
 
         result = cli_runner.invoke(cli.pre_commit_installed_cli, [])
