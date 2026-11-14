@@ -11,7 +11,8 @@ Regras Google validadas:
 - nao usar marcadores reST (:param:, :type:, :return:, :raises:, .. versionadded::);
 - Args/Returns/Raises/Examples no estilo Google (nomes de argumento em
   ``Args:``, ``Returns:``, ``Raises:`` e exemplos em ``Examples:``);
-- docstrings nao-vazias para API publica.
+- docstrings nao-vazias para API publica e privada (funcoes, metodos e
+  classes, incluindo as nomeadas com `_`).
 """
 
 from __future__ import annotations
@@ -49,8 +50,6 @@ def _module_docstring_googly(module: ast.Module) -> list[str]:
 def _check_node(node: ast.AST) -> list[str]:
     errors: list[str] = []
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-        if node.name.startswith('_'):
-            return errors
         doc = ast.get_docstring(node)
         if doc is None:
             errors.append(
