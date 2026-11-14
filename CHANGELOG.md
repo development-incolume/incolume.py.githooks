@@ -12,10 +12,23 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [Unreleased]	 &#8212; 	2026-10-19:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+
+## [1.24.0]	 &#8212; 	2026-11-14:
+### Added
+  - Gates de qualidade automaticos (ordenacao alfabetica dos hooks na documentacao, docstrings Google incluindo funcoes privadas, exemplos de uso nos scripts CLI);
+### Changed
+  - Validacao de branch dev/development quando nao protegidos;
+  - Get_git_path() e get_commit_msg_file() para worktrees;
+  - Backup dos hooks em .bkp/ no git dir;
+  - Hooks convertidos para Path com checagem de interpretador do shebang;
+### Fixed
+  - 15 xfailed e 2 xpassed resolvidos;
+  - Cobertura elevada a 100%;
+  - Teste dos decoradores com saida colorida ANSI no Linux.;
 
 ## [1.23.0]	 &#8212; 	2026-11-13:
 ### Added
@@ -58,13 +71,13 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [1.20.0]	 &#8212; 	2026-11-07:
 ### Changed
-  - FatoraÃ§Ã£o performÃ¡tica em diversos trechos de cÃ³digo;
+  - Fatoração performática em diversos trechos de código;
   - Fatorado too-many-arguments (PLR0913) nos scripts CLI;
-  - Melhoria de exibiÃ§Ã£o feedback para CLI;
+  - Melhoria de exibição feedback para CLI;
 
 ## [1.20.0rc1]	 &#8212; 	2026-10-21:
 ### Changed
-  - FatoraÃ§Ã£o performÃ¡tica em diversos trechos de cÃ³digo;
+  - Fatoração performática em diversos trechos de código;
 
 ## [1.19.0]	 &#8212; 	2026-10-19:
 ### Changed
@@ -72,9 +85,9 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Mapeamento para hooks effort-random-message;
   - CLI `is-valid-msg-commit` argumentos extras inexperados;
   - Corrigido erro IndexError/ValueError para entrada do script;
-  - Corrigido dependÃªncias para hooks remotos;
+  - Corrigido dependências para hooks remotos;
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
@@ -83,7 +96,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [1.18.5]	 &#8212; 	2026-10-12:
 ### Changed
-  - Corrigido dependÃªncias para hooks remotos;
+  - Corrigido dependências para hooks remotos;
 
 ## [1.18.4]	 &#8212; 	2026-10-09:
 ### Changed
@@ -103,12 +116,12 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [1.18.0]	 &#8212; 	2026-10-07:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Added
   - Adicionado hook `effort-random-msg`;
   - Adicionado suporte parcial a Python 3.15;
 ### Changed
-  - Cobertura de cÃ³digo com testes ampliada a 100%;
+  - Cobertura de código com testes ampliada a 100%;
 ### Removed
   - Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Security
@@ -119,8 +132,8 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Added
   - Adicionado suporte completo a Python 3.14;
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Changed
   - Migrado totalmente em todos os hooks `argparse` para `click`;
 ### Removed
@@ -131,35 +144,35 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [1.16.0]	 &#8212; 	2026-09-28:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Added
   - Novo hook implementado: effort-ramdon-msg-cli;
 ### Changed
   - Mensagem para nonexequi acrescentada em todos os hooks;
-  - MigraÃ§Ã£o para CLICK em andamento;
+  - Migração para CLICK em andamento;
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
 ## [1.15.0]	 &#8212; 	2026-09-25:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Added
-  - Novo mÃ³dulo utils;
-  - Adicionado gadgets de versÃ£o segura de python;
-  - Adicionado gadget de validaÃ§Ã£o dos testes unitÃ¡rios;
+  - Novo módulo utils;
+  - Adicionado gadgets de versão segura de python;
+  - Adicionado gadget de validação dos testes unitários;
 ### Changed
-  - FunÃ§Ãµes comuns centralizadas no modulo utils;
+  - Funções comuns centralizadas no modulo utils;
 ### Security
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%23006400?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
 ## [1.14.0]	 &#8212; 	2026-09-24:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Added
   - Compatibilidade com Python 3.14;
 ### Changed
@@ -179,62 +192,62 @@ This file was automatically generated for [incolume.py.changelog](https://github
 
 ## [1.13.0]	 &#8212; 	2026-09-22:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Changed
   - Atualizado pyproject.toml com diretivas gui-script, all, cli, keywords, e lincese-files;
   - Reativado hook check-len-first-line;
   - Reativado hook check-valid-filenames;
   - Reativado hook footer-signed-off-by;
-  - Configurado CLI com opÃ§Ã£o de help (-h, --help), versÃ£o (-V --version) e nonexequi (-N, --nonexequi);
+  - Configurado CLI com opção de help (-h, --help), versão (-V --version) e nonexequi (-N, --nonexequi);
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
 ## [1.12.0]	 &#8212; 	2026-09-16:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Added
   - Criado submodulo para CLI;
 ### Changed
-  - Atualizado `coverage` para aceitar configuraÃ§Ã£o via TOML;
+  - Atualizado `coverage` para aceitar configuração via TOML;
   - Hook desativado: check-precommit-installed;
-  - Arquivo de configuraÃ§Ã£o mypy alterado;
-  - Arquivo de configuraÃ§Ã£o do ruff alterado;
+  - Arquivo de configuração mypy alterado;
+  - Arquivo de configuração do ruff alterado;
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.githooks?color=00FFFF);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
 ## [1.11.0]	 &#8212; 	2026-09-04:
 ### Deprecated
-  - SerÃ¡ Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
-  - SerÃ¡ Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.10 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
+  - Será Descontinuado suporte a Python 3.11 conforme Status of Python versions (https://devguide.python.org/versions/#versions);
 ### Changed
-  - Atualizado `pytest` para aceitar configuraÃ§Ã£o via TOML;
-  - Migrado configuraÃ§Ã£o pytest.ini -> pytest.toml;
-  - Ajustes de execuÃ§Ã£o em CI/CD;
+  - Atualizado `pytest` para aceitar configuração via TOML;
+  - Migrado configuração pytest.ini -> pytest.toml;
+  - Ajustes de execução em CI/CD;
 ### Security
   - ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/incolume.py.changelog?color=00FFFF);
 
 ## [1.10.0]	 &#8212; 	2026-09-01:
 ### Added
-  - Adicionado decorador para registro rÃ¡pido de logging;
-  - Adicionado mypy para validaÃ§Ã£o de tipo;
+  - Adicionado decorador para registro rápido de logging;
+  - Adicionado mypy para validação de tipo;
 ### Changed
-  - Ampliado cobertura de cÃ³digo;
+  - Ampliado cobertura de código;
   - Atualizado pacotes excenciais do projeto;
-  - Aplicado design partner policy para validaÃ§Ã£o de nomes de arquivos;
+  - Aplicado design partner policy para validação de nomes de arquivos;
 ### Deprecated
   - Modulo ValidateFilename em conflito tornado obsoleto;
-  - Pacote rich serÃ¡ descontinuado no projeto;
+  - Pacote rich será descontinuado no projeto;
 
 ## [1.9.0]	 &#8212; 	2025-11-19:
 ### Added
   - Adicionado ativos de logo, em formato PNG, XCF e AF;
-  - Registro rÃ¡pido de logging via decoradores;
-  - Logging de eventos detalhados com variÃ¡veis de ambiente do Sistema Operacional;
-  - Modo verboso ativado com variÃ¡veis do sistema operacional;
+  - Registro rápido de logging via decoradores;
+  - Logging de eventos detalhados com variáveis de ambiente do Sistema Operacional;
+  - Modo verboso ativado com variáveis do sistema operacional;
   - Criado modulo `core` com as funcionalidades centrais do pacote;
   - Rules.Status(Enum);
   - Rules.ProtectedBranchName(Enum);
@@ -242,7 +255,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Changed
   - Melhoria no help CLI;
 ### Removed
-  - Modulo `utils` substituÃ­do pelo modulo `core`;
+  - Modulo `utils` substituído pelo modulo `core`;
 
 ## [1.8.0]	 &#8212; 	2025-10-20:
 ### Added
@@ -256,7 +269,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Added
   - Disponibilizado hook check-len-first-line;
 ### Changed
-  - Acrescentado modelo de configuraÃ§Ã£o dos hooks ao README.md;
+  - Acrescentado modelo de configuração dos hooks ao README.md;
 
 ## [1.5.0]	 &#8212; 	2025-10-04:
 ### Added
@@ -266,12 +279,12 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Added
   - Disponibilizado hook footer-signed-off-by;
 ### Changed
-  - AlteraÃ§Ã£o no modo verboso;
+  - Alteração no modo verboso;
   - Atualizado README.md;
 
 ## [1.4.0rc2]	 &#8212; 	2025-10-03:
 ### Changed
-  - AlteraÃ§Ã£o no modo verboso;
+  - Alteração no modo verboso;
 
 ## [1.4.0rc1]	 &#8212; 	2025-10-03:
 ### Added
@@ -285,7 +298,7 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Added
   - Disponibilizado hook effort-message;
 ### Changed
-  - Interfaces para hooks centralizadas no mÃ³dulo CLI;
+  - Interfaces para hooks centralizadas no módulo CLI;
 ### Removed
   - Modulo incolume.py.githooks.pre_commit_installed removido;
 
@@ -293,8 +306,8 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Added
   - Hook `detect-key` disponibilizado;
 ### Changed
-  - Cobertura total do cÃ³digo implementado;
-  - Chamada de hooks com argumentos configurÃ¡veis atravÃ©s do arquivo yaml;
+  - Cobertura total do código implementado;
+  - Chamada de hooks com argumentos configuráveis através do arquivo yaml;
 
 ## [1.0.0]	 &#8212; 	2025-09-26:
 ### Added
@@ -303,9 +316,9 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Hook footer-signed-off-by;
   - Hook clean-commit-message;
   - Hook git-diff;
-  - LanÃ§amento da release 1.0.0 com apenas 1 hook: check-valid-filenames;
+  - Lançamento da release 1.0.0 com apenas 1 hook: check-valid-filenames;
 ### Changed
-  - AmplicaÃ§Ã£o da cobertura para 99% do cÃ³digo;
+  - Amplicação da cobertura para 99% do código;
 ### Removed
   - Hook check-len-first-line-commit-msg;
 
@@ -314,16 +327,16 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - Adicionado hook check-len-first-line-commit-msg;
   - Adicionado Enum para validar tipos do conventional commits;
   - Adicionado hook pre-commit-installed;
-  - Testes unitÃ¡rios para CLI;
-  - Refactor: Cobertura de testes em cÃ³digo Python ampliada;
+  - Testes unitários para CLI;
+  - Refactor: Cobertura de testes em código Python ampliada;
   - Estrutura `assets` definida;
   - Modelos de exemplos retirados da estrutura principal;
 
 ## [0.5.0rc1]	 &#8212; 	2025-09-22:
 ### Added
   - Adicionado hook pre-commit-installed;
-  - Testes unitÃ¡rios para CLI;
-  - Refactor: Cobertura de testes em cÃ³digo Python ampliada;
+  - Testes unitários para CLI;
+  - Refactor: Cobertura de testes em código Python ampliada;
   - Estrutura `assets` definida;
   - Modelos de exemplos retirados da estrutura principal;
 
@@ -331,26 +344,26 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Added
   - Badging `pre-commit`;
   - Acrescentado logo do projeto;
-  - Acrescentado configuraÃ§Ã£o padrÃ£o para editores de cÃ³digo no projeto;
+  - Acrescentado configuração padrão para editores de código no projeto;
   - Acrescentado cores em multiplataforma;
 
 ## [0.3.0]	 &#8212; 	2025-09-15:
 ### Added
   - Adicionado hook check-precommit-installed;
   - Adicionado hook effort-message;
-  - Adicionado hook de validaÃ§Ã£o para filenames em Python;
-  - Acrescentados testes unitÃ¡rios;
+  - Adicionado hook de validação para filenames em Python;
+  - Acrescentados testes unitários;
   - Acrescentado CHANGELOG.md;
-  - Configurado `pre-commit` para gerir e restringir violaÃ§Ã£o de regras;
+  - Configurado `pre-commit` para gerir e restringir violação de regras;
 ### Changed
   - Aplicado QA parcialmente ao projeto;
   - Adicionado suite de teste pytest;
-  - Refinado a configuraÃ§Ã£o pytest conforme padrÃµes JEDI;
-  - Sincronizado versÃ£o do projeto com a versÃ£o do pacote;
+  - Refinado a configuração pytest conforme padrões JEDI;
+  - Sincronizado versão do projeto com a versão do pacote;
 
 ## [0.2.1]	 &#8212; 	2025-09-11:
 ### Changed
-  - ConfiguraÃ§Ã£o do hook detected-key;
+  - Configuração do hook detected-key;
 
 ## [0.2.0]	 &#8212; 	2025-09-11:
 ### Added
@@ -402,4 +415,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.22.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.21.0...1.22.0
 [1.22.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.0...1.22.1
 [1.23.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...1.23.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...Unreleased
+[1.24.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...1.24.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...Unreleased
