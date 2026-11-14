@@ -538,6 +538,14 @@ consumível diretamente pelo pre-commit.</p>
 <td>valida os rodapés do último parágrafo da mensagem</td>
 </tr>
 <tr>
+<td><code>check-manual-changelog</code></td>
+<td>exige <code>build:</code> quando o <code>CHANGELOG.md</code> staged muda</td>
+</tr>
+<tr>
+<td><code>check-manual-version</code></td>
+<td>exige <code>build:</code> quando a versão staged muda (<code>pyproject.toml</code>/<code>version.txt</code>)</td>
+</tr>
+<tr>
 <td><code>check-len-first-line</code></td>
 <td>valida o comprimento da primeira linha da mensagem</td>
 </tr>
@@ -588,6 +596,14 @@ consumível diretamente pelo pre-commit.</p>
 <tr>
 <td><code>set-issue-from-branch</code></td>
 <td>extrai a issue do nome da branch para a mensagem</td>
+</tr>
+<tr>
+<td><code>set-type-from-status</code></td>
+<td>deduz o tipo da mensagem pelos arquivos staged</td>
+</tr>
+<tr>
+<td><code>check-type-from-status</code></td>
+<td>valida o tipo da mensagem contra os arquivos staged</td>
 </tr>
 </tbody>
 </table>
