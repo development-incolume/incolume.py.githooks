@@ -317,6 +317,22 @@ class TestCaseBackupForaDaArvore:
         assert result.is_file()
         assert result.parent.parent == (tmp_path / '.git').resolve()
 
+    def test_backup_dir_caminho_absoluto(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Caminho absoluto do git dir e preservado."""
+        target = tmp_path / 'COMMIT_EDITMSG'
+        target.write_text('docs: #392 exemplo\n', encoding='utf-8')
+        absolute = (tmp_path / '.git' / '.bkp').resolve()
+        monkeypatch.setattr(
+            subprocess,
+            'check_output',
+            lambda *_args, **_kwargs: f'{absolute}\n',
+        )
+        result = pkg.backup_file(target)
+        assert result.is_file()
+        assert result.parent == absolute
+
 
 class TestCaseInterpreterMissing:
     """Deteccao de interpretador inexistente no shebang do hook."""

@@ -176,6 +176,15 @@ class TestCaseCheckCommitFooter:
             == 1
         )
 
+    def test_espaco_em_branco_consecutivo(self) -> None:
+        """Linhas vazias consecutivas sao ignoradas."""
+        assert (
+            pkg.check_commit_footer([
+                str(self.commit_file('\n\nfeat: algo\n\nCloses #1\n'))
+            ])
+            == 0
+        )
+
     @pytest.mark.parametrize(
         'entry',
         [
