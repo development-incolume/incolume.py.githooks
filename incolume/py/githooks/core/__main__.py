@@ -11,11 +11,10 @@ from icecream import ic
 
 ic.disable()
 
-with suppress(ImportError, ModuleNotFoundError):
-    import tomli
-
-with suppress(ImportError, ModuleNotFoundError):
+try:
     import tomllib as tomli
+except ImportError:  # pragma: no cover; Python < 3.11
+    import tomli  # type: ignore[no-redef]
 
 
 confproject = Path(__file__).parents[4] / 'pyproject.toml'
