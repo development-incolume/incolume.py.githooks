@@ -17,6 +17,21 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.23.0]	 &#8212; 	2026-11-13:
+### Added
+  - Hook check-manual-version para detectar edicao manual de versao no pyproject.toml;
+  - Hook check-manual-changelog para detectar edicao manual do CHANGELOG.md;
+  - Hook set-type-from-status para injetar o tipo de commit deduzido do git status;
+  - Hook check-type-from-status para bloquear divergencia objetiva de tipo;
+  - Gates AST de docstrings Google no src e nos testes;
+  - Pyyaml como dependencia de teste.;
+### Changed
+  - Docstrings de src e testes padronizadas em Google;
+  - Documentacao alinhada (mkdocs api, descriptions dos hooks, README).;
+### Fixed
+  - Redefinicao de tomli no core/__main__.py (mypy no-redef);
+  - Validate-message-commit unificado em commit-msg.;
+
 ## [1.22.1]	 &#8212; 	2026-11-12:
 ### Fixed
   - Ruff format aplicado nos arquivos do hook check-commit-footer;
@@ -386,4 +401,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.21.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.20.0...1.21.0
 [1.22.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.21.0...1.22.0
 [1.22.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.0...1.22.1
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...Unreleased
+[1.23.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...1.23.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...Unreleased
