@@ -403,7 +403,9 @@ class TestCasePolicyValidFilename:
             ),
             pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
             pytest.param('jürgen.py', Result(code=Status.SUCCESS, message='')),
-            pytest.param('Jürgen.jsonl', Result(code=Status.SUCCESS, message='')),
+            pytest.param(
+                'Jürgen.jsonl', Result(code=Status.SUCCESS, message='')
+            ),
         ],
     )
     def test_filename_structure(self, entrance: str, expected: Result) -> None:

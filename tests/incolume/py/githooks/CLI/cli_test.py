@@ -390,7 +390,7 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                ['Jürgen'],
+                ['Jürgen..py'],
                 Status.FAILURE,
                 'Filename structure is invalid.',
                 marks=[],
