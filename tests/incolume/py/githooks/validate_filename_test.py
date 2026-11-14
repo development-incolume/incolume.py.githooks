@@ -402,16 +402,8 @@ class TestCasePolicyValidFilename:
                 ),
             ),
             pytest.param('file.0', Result(code=Status.SUCCESS, message='')),
-            pytest.param(
-                'jürgen.py',
-                Result(code=Status.SUCCESS, message=''),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
-            ),
-            pytest.param(
-                'Jürgen.jsonl',
-                Result(code=Status.SUCCESS, message=''),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
-            ),
+            pytest.param('jürgen.py', Result(code=Status.SUCCESS, message='')),
+            pytest.param('Jürgen.jsonl', Result(code=Status.SUCCESS, message='')),
         ],
     )
     def test_filename_structure(self, entrance: str, expected: Result) -> None:
@@ -446,9 +438,7 @@ class TestCasePolicyValidFilename:
     @pytest.mark.parametrize(
         ['entrance', 'expected'],
         [
-            pytest.param(
-                '', Result(code=Status.SUCCESS), marks=[pytest.mark.xfail]
-            ),
+            pytest.param('', Result(code=Status.SUCCESS)),
             pytest.param('abc.py', Result(code=Status.SUCCESS), marks=[]),
             pytest.param(
                 '4u.py',
@@ -814,12 +804,13 @@ class TestCasePolicyValidFilename:
             pytest.param(
                 RequestFl('jürgen.py'),
                 Result(code=Status.SUCCESS, message=''),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
             ),
             pytest.param(
                 RequestFl('Jürgen.py'),
-                Result(code=Status.FAILURE, message='xpto'),
-                marks=[pytest.mark.xfail(reason='Not implemented yet')],
+                Result(
+                    code=Status.FAILURE,
+                    message='Filename is not in snake_case: Jürgen.py',
+                ),
             ),
             pytest.param(
                 RequestFl('Jürgen.jsonl'),
