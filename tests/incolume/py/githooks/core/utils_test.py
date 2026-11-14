@@ -1,5 +1,7 @@
 """Test module."""
 
+# ruff: file-ignore[suspicious-subprocess-import, subprocess-without-shell-equals-true, start-process-with-partial-path]
+
 import pytest
 import incolume.py.githooks.core.utils as pkg
 from tempfile import gettempdir
@@ -8,6 +10,7 @@ import inspect
 import re
 from icecream import ic
 import shutil
+import subprocess
 import tempfile
 from dataclasses import dataclass
 
@@ -145,3 +148,87 @@ class TestCaseUtils:
             re.fullmatch(entrance.regex, result.as_posix())
             for result in results
         )
+
+
+class TestCaseGitPathWorktree:
+    """Resolucao de caminhos git quando `.git` e arquivo (worktree ligada)."""
+
+    @staticmethod
+    def _git(repo: Path, *args: str) -> None:
+        """Executa um comando git no repositorio."""
+        subprocess.run(
+            ['git', *args],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    def _make_repo(self, tmp_path: Path) -> Path:
+        """Cria um repositorio git simples."""
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        (repo / 'pyproject.toml').write_text(
+            '[project]\nname = "x"\n', encoding='utf-8'
+        )
+        (repo / '.pre-commit-config.yaml').write_text(
+            'repos: []\n', encoding='utf-8'
+        )
+        for args in (
+            ('init',),
+            ('config', 'user.email', 'test@example.com'),
+            ('config', 'user.name', 'test'),
+            ('config', 'commit.gpgsign', 'false'),
+        ):
+            self._git(repo, *args)
+        (repo / 'README.md').write_text('x\n', encoding='utf-8')
+        self._git(repo, 'add', '.')
+        self._git(repo, 'commit', '-m', 'build: #1 inicial')
+        return repo
+
+    def _make_worktree(self, tmp_path: Path) -> tuple[Path, Path]:
+        """Cria um repositorio com uma worktree ligada."""
+        repo = self._make_repo(tmp_path)
+        wt = tmp_path / 'wt'
+        self._git(repo, 'worktree', 'add', str(wt), '-b', '1-task')
+        return repo, wt
+
+    def test_hooks_path_em_repositorio_normal(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """`get_git_path` resolve o caminho relativo do git dir."""
+        repo = self._make_repo(tmp_path)
+        monkeypatch.chdir(repo)
+        assert (repo / '.git').is_dir()
+        assert pkg.get_git_path('hooks') == (repo / '.git' / 'hooks').resolve()
+
+    def test_hooks_path_em_worktree_ligada(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """`get_git_path('hooks')` aponta para o git dir real."""
+        repo, wt = self._make_worktree(tmp_path)
+        monkeypatch.chdir(wt)
+        assert (wt / '.git').is_file()
+        assert (
+            pkg.get_git_path('hooks').resolve()
+            == (repo / '.git' / 'hooks').resolve()
+        )
+
+    def test_commit_msg_file_em_worktree_ligada(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """`get_commit_msg_file()` nao trata `.git` como diretorio."""
+        _repo, wt = self._make_worktree(tmp_path)
+        monkeypatch.chdir(wt)
+        msg = pkg.get_commit_msg_file()
+        assert msg.name == 'COMMIT_EDITMSG'
+        assert msg != wt / '.git' / 'COMMIT_EDITMSG'
+        assert msg.parent.is_dir()
+
+    def test_find_project_root_em_worktree_ligada(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """O crawler de root reconhece `.git` arquivo."""
+        _repo, wt = self._make_worktree(tmp_path)
+        monkeypatch.chdir(wt)
+        assert pkg.find_project_root() == wt.resolve()
