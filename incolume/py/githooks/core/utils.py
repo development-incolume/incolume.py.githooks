@@ -8,6 +8,7 @@ import logging
 import re
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Final
 
@@ -22,11 +23,33 @@ MARKERS: Final[tuple[str, ...]] = (
 )
 
 
+def _backup_dir() -> Path:
+    """Diretorio de backup fora da arvore do consumidor.
+
+    Usa `.bkp/` dentro do git dir, que nao e versionado nem aparece no
+    `git status` do consumidor. Sem repositorio git, cai no diretorio
+    temporario do sistema.
+
+    """
+    try:
+        output = subprocess.check_output(
+            ['git', 'rev-parse', '--git-path', '.bkp'],
+            text=True,
+            shell=False,
+        ).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return Path(tempfile.gettempdir()) / 'incolume-githooks' / '.bkp'
+    path = Path(output)
+    if not path.is_absolute():
+        path = Path.cwd() / path
+    return path.resolve()
+
+
 def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
     """Backup file."""
     count = itertools.count(start=start)
     ext = f'.{ext.strip(".")}'
-    bkp_dir = Path('.bkp')
+    bkp_dir = _backup_dir()
     bkp_fl: Path = bkp_dir / f'{filename.stem}{filename.suffix}{ext}'
 
     bkp_dir.mkdir(exist_ok=True, parents=True)

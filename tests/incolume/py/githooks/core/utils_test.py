@@ -232,3 +232,50 @@ class TestCaseGitPathWorktree:
         _repo, wt = self._make_worktree(tmp_path)
         monkeypatch.chdir(wt)
         assert pkg.find_project_root() == wt.resolve()
+
+
+class TestCaseBackupForaDaArvore:
+    """O backup do commit message nao polui a arvore do consumidor."""
+
+    @staticmethod
+    def _git(repo: Path, *args: str) -> None:
+        """Executa um comando git no repositorio."""
+        subprocess.run(
+            ['git', *args],
+            cwd=repo,
+            check=True,
+            capture_output=True,
+            shell=False,
+        )
+
+    def test_backup_fora_da_arvore_do_consumidor(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """`.bkp/` e criado no git dir, nao na raiz do consumidor."""
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        (repo / 'pyproject.toml').write_text(
+            '[project]\nname = "x"\n', encoding='utf-8'
+        )
+        for args in (
+            ('init',),
+            ('config', 'user.email', 'test@example.com'),
+            ('config', 'user.name', 'test'),
+            ('config', 'commit.gpgsign', 'false'),
+            ('add', '.'),
+            ('commit', '-m', 'build: #1 inicial'),
+        ):
+            self._git(repo, *args)
+        target = repo / 'COMMIT_EDITMSG'
+        target.write_text('docs: #388 exemplo\n', encoding='utf-8')
+        monkeypatch.chdir(repo)
+
+        result = pkg.backup_file(target)
+
+        assert result.is_file()
+        assert result.read_text(encoding='utf-8') == target.read_text(
+            encoding='utf-8'
+        )
+        assert not (repo / '.bkp').exists()
+        assert result.parent.name == '.bkp'
+        assert result.parent.parent == (repo / '.git').resolve()
