@@ -74,15 +74,17 @@ repos:
   hooks:
     - id: check-commit-footer
     #   args: [--nonexequi|-N, --version|-V]
+    - id: check-len-first-line
+    #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
     - id: check-manual-changelog
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-manual-version
     #   args: [--nonexequi|-N, --version|-V]
-    - id: check-len-first-line
-    #   args: [--nonexequi|-N, --version|-V, --min-first-line=10, --max-first-line=256]
+    - id: check-precommit-installed
+    #   args: [--nonexequi|-N, --version|-V]
     - id: check-type-commit-msg
     #   args: [--nonexequi|-N, --version|-V]
-    - id: check-precommit-installed
+    - id: check-type-from-status
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-branchname
     #   args: [--nonexequi|-N, --version|-V]
@@ -101,8 +103,6 @@ repos:
     - id: insert-diff-commit
     #   args: [--nonexequi|-N, --version|-V]
     - id: set-issue-from-branch
-    #   args: [--nonexequi|-N, --version|-V]
-    - id: check-type-from-status
     #   args: [--nonexequi|-N, --version|-V]
     - id: set-type-from-status
     #   args: [--nonexequi|-N, --version|-V]

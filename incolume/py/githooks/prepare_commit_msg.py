@@ -18,8 +18,8 @@ from incolume.py.githooks.core.rules import (
     Result,
     Status,
     TypeCommit,
-    msg_commit_file,
 )
+from incolume.py.githooks.core.utils import get_commit_msg_file
 
 COLOR_SUCCESS: Final[str] = 'green'
 COLOR_ERROR: Final[str] = 'red'
@@ -66,7 +66,7 @@ def validate_format_commit_msg(
     logging.debug('%s', regex.pattern)
     ic('filenames=%s', filenames)
 
-    files: list[Path] = [msg_commit_file.resolve()]
+    files: list[Path] = [get_commit_msg_file().resolve()]
     ic(f'{type(filenames)=}, {filenames=}')
 
     if isinstance(filenames, Path | str):

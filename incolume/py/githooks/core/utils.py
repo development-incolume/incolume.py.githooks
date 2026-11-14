@@ -1,6 +1,6 @@
 """Module core.utils."""
 
-# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path]
+# ruff: file-ignore[suspicious-subprocess-import, start-process-with-partial-path, subprocess-without-shell-equals-true]
 
 import inspect
 import itertools
@@ -8,6 +8,7 @@ import logging
 import re
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Final
 
@@ -22,11 +23,33 @@ MARKERS: Final[tuple[str, ...]] = (
 )
 
 
+def _backup_dir() -> Path:
+    """Diretorio de backup fora da arvore do consumidor.
+
+    Usa `.bkp/` dentro do git dir, que nao e versionado nem aparece no
+    `git status` do consumidor. Sem repositorio git, cai no diretorio
+    temporario do sistema.
+
+    """
+    try:
+        output = subprocess.check_output(
+            ['git', 'rev-parse', '--git-path', '.bkp'],
+            text=True,
+            shell=False,
+        ).strip()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return Path(tempfile.gettempdir()) / 'incolume-githooks' / '.bkp'
+    path = Path(output)
+    if not path.is_absolute():
+        path = Path.cwd() / path
+    return path.resolve()
+
+
 def backup_file(filename: Path, ext: str = '.bkp', start: int = 1) -> Path:
     """Backup file."""
     count = itertools.count(start=start)
     ext = f'.{ext.strip(".")}'
-    bkp_dir = Path('.bkp')
+    bkp_dir = _backup_dir()
     bkp_fl: Path = bkp_dir / f'{filename.stem}{filename.suffix}{ext}'
 
     bkp_dir.mkdir(exist_ok=True, parents=True)
@@ -64,6 +87,91 @@ def find_project_root(
     msg = 'Project root not found (no markers detected).'
     ic(f'{msg} {start_dir=}, {markers=}')
     raise FileNotFoundError(msg)
+
+
+def get_git_path(*parts: str, start_dir: Path | str | None = None) -> Path:
+    """Resolve um caminho dentro do git dir, inclusive em worktree ligada.
+
+    Em worktree ligada `.git` e um arquivo, nao um diretorio; por isso o
+    caminho e pedido ao git (`git rev-parse --git-path`), que conhece o
+    git dir real.
+
+    Args:
+        parts: segmentos de caminho dentro do git dir (ex.: ``hooks``).
+        start_dir: diretorio de onde o git sera consultado; por padrao,
+            o diretorio corrente.
+
+    Returns:
+        O caminho absoluto dentro do git dir.
+
+    Raises:
+        subprocess.CalledProcessError: quando nao ha repositorio git.
+
+    """
+    cwd = Path(start_dir) if start_dir else Path.cwd()
+    output = subprocess.check_output(
+        ['git', 'rev-parse', '--git-path', *parts],
+        cwd=cwd,
+        text=True,
+        shell=False,
+    ).strip()
+    path = Path(output)
+    if not path.is_absolute():
+        path = cwd / path
+    return path.resolve()
+
+
+def get_commit_msg_file() -> Path:
+    """Caminho real do arquivo de mensagem de commit.
+
+    Usa `git rev-parse --git-path COMMIT_EDITMSG`, que devolve o caminho
+    do worktree corrente quando em worktree ligada.
+
+    """
+    return get_git_path('COMMIT_EDITMSG')
+
+
+def get_hooks_dir() -> Path:
+    """Diretorio de hooks do git, honrando `core.hooksPath` e worktree.
+
+    `git rev-parse --git-path hooks` devolve o caminho real: no git dir
+    comum quando em worktree ligada e no `core.hooksPath` quando
+    configurado.
+
+    Raises:
+        subprocess.CalledProcessError: quando nao ha repositorio git.
+
+    """
+    return get_git_path('hooks')
+
+
+def interpreter_missing(hook: Path) -> bool:
+    """Diz se o interpretador do shebang do hook nao existe.
+
+    O `pre-commit install` grava no script o interpretador do ambiente em
+    que foi rodado; se esse ambiente e removido (ex.: worktree apagada),
+    o hook permanece executavel mas quebra na execucao.
+
+    """
+    try:
+        first_line = hook.read_text(
+            encoding='utf-8', errors='ignore'
+        ).splitlines()[0]
+    except (OSError, IndexError):
+        return False
+    if not first_line.startswith('#!'):
+        return False
+    argv = first_line[2:].strip().split()
+    if not argv:
+        return False
+    executable = argv[0]
+    if executable in {'env', '/usr/bin/env'} or executable.endswith('/env'):
+        if len(argv) == 1:
+            return False
+        executable = argv[1]
+    if Path(executable).exists():
+        return False
+    return shutil.which(executable) is None
 
 
 def get_branchname() -> str:

@@ -17,6 +17,19 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.24.0]	 &#8212; 	2026-11-14:
+### Added
+  - Gates de qualidade automaticos (ordenacao alfabetica dos hooks na documentacao, docstrings Google incluindo funcoes privadas, exemplos de uso nos scripts CLI);
+### Changed
+  - Validacao de branch dev/development quando nao protegidos;
+  - Get_git_path() e get_commit_msg_file() para worktrees;
+  - Backup dos hooks em .bkp/ no git dir;
+  - Hooks convertidos para Path com checagem de interpretador do shebang;
+### Fixed
+  - 15 xfailed e 2 xpassed resolvidos;
+  - Cobertura elevada a 100%;
+  - Teste dos decoradores com saida colorida ANSI no Linux.;
+
 ## [1.23.0]	 &#8212; 	2026-11-13:
 ### Added
   - Hook check-manual-version para detectar edicao manual de versao no pyproject.toml;
@@ -402,4 +415,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.22.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.21.0...1.22.0
 [1.22.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.0...1.22.1
 [1.23.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...1.23.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...Unreleased
+[1.24.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...1.24.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...Unreleased
