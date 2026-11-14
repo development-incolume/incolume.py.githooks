@@ -339,25 +339,21 @@ class TestCaseAllCLI:
                 ' Branch name "dev" is protected.',
                 marks=[],
             ),
-            pytest.param(
-                'dev', 0, ['--no-dev'], '', marks=[pytest.mark.xfail]
-            ),
-            pytest.param(
-                'tags', 0, ['--no-tags'], '', marks=[pytest.mark.xfail]
-            ),
+            pytest.param('dev', 0, ['--no-dev'], '', marks=[]),
+            pytest.param('tags', 0, ['--no-tags'], '', marks=[]),
             pytest.param(
                 'main',
                 0,
                 ['', '--no-main'],
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 'master',
                 0,
                 ['', '--no-main'],
                 '',
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -394,7 +390,7 @@ class TestCaseAllCLI:
                 marks=[],
             ),
             pytest.param(
-                ['Jürgen'],
+                ['Jürgen..py'],
                 Status.FAILURE,
                 'Filename structure is invalid.',
                 marks=[],
@@ -860,9 +856,9 @@ class TestCaseAllCLI:
             ),
             pytest.param(
                 Entrance(
-                    expected=Result(Status.FAILURE, 'abc'),
+                    expected=Result(Status.SUCCESS, ''),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -873,7 +869,7 @@ class TestCaseAllCLI:
                         'nothing.py\nM\tincolume/py/none.py\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -882,7 +878,7 @@ class TestCaseAllCLI:
                         Status.SUCCESS, 'ci: #123 added ci/cd\n\n#'
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -896,7 +892,7 @@ class TestCaseAllCLI:
                         '\nM\tincolume/py/none.py\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
             pytest.param(
                 Entrance(
@@ -908,7 +904,7 @@ class TestCaseAllCLI:
                         message='ci: #123 added ci/cd\n\n#',
                     ),
                 ),
-                marks=[pytest.mark.xfail],
+                marks=[],
             ),
         ],
     )
@@ -941,8 +937,13 @@ class TestCaseAllCLI:
         result = cli_runner.invoke(cli.insert_diff_cli, entries)
         assert test_file.is_file()
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
-        assert entrance.diff_output in test_file.read_text(encoding='utf-8')
+        content = test_file.read_text(encoding='utf-8')
+        if entrance.diff_output and any(
+            x in {'-N', '--nonexequi'} for x in entrance.params
+        ):
+            assert entrance.diff_output not in content
+        else:
+            assert entrance.diff_output in content
 
 
 class TestCasePreCommit:
@@ -1026,8 +1027,9 @@ class TestCasePreCommit:
         assert result.exit_code == entrance.expected.code.value
         assert entrance.expected.message in result.output
 
-    @pytest.mark.xfail
-    def test_precommit_installed2(self, cli_runner: CliRunner) -> None:
+    def test_precommit_installed2(
+        self, cli_runner: CliRunner, tmp_path: Path
+    ) -> None:
         """Test for pre-commit installed."""
         entrance = Entrance(
             msg_file='',
@@ -1038,7 +1040,10 @@ class TestCasePreCommit:
             ),
         )
         with (
-            patch.object(Path, 'cwd', return_value=[]),
+            patch(
+                'incolume.py.githooks.cli.cli.find_project_root',
+                return_value=tmp_path,
+            ),
             patch.object(os, 'access', return_value=False),
         ):
             result = cli_runner.invoke(

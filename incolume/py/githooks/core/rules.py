@@ -245,7 +245,7 @@ class RequestFl:
         return bool(re.match(r'^.*tests?.*$', self.filename.parent.as_posix()))
 
 
-FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[a-zA-Z0-9_\-\.]+$'
+FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[\w\-\.]+$'
 REGEX_SEMVER: Final[str] = r'^\d+(\.\d+){2}((-\w+\.\d+)|(\w+\d+))?$'
 RULE_BRANCHNAME_REFUSED: Final[str] = (
     rf'^(?=.*({"|".join(RefusedBranchName.to_set())})).*$'  # type: ignore[attr-defined]
@@ -259,7 +259,7 @@ RULE_BRANCHNAME: Final[str] = (
 RULE_COMMITFORMAT: Final[str] = (
     r'^(((Merge|Bumping|Revert|build)|(bugfix|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
 )
-SNAKE_CASE: Final[str] = r'^[a-z_0-9]+$'
+SNAKE_CASE: Final[str] = r'^\w+$'
 
 MESSAGES: Final[list[str]] = [
     'Boa! Continue o bom trabalho com a força, Jedi!',

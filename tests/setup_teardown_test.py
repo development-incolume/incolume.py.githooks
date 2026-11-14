@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import tempfile
 from inspect import stack
-from typing import ClassVar, NoReturn
+from typing import ClassVar
 from collections.abc import Callable
 from icecream import ic
 import pytest
@@ -89,11 +89,6 @@ class TestCaseCompactShutil:
         result = shutil.make_archive(output_dir.as_posix(), ext, path)
         assert output_dir.with_suffix(f'.{ext}') == Path(result)
         assert Path(result).is_file()
-
-    @pytest.mark.xfail(reason='Proposital fail Test')
-    def test_example_xfail(self) -> NoReturn:
-        """Test prepend commit message."""
-        assert pytest.fail('Test not implemented yet')
 
     @pytest.mark.parametrize(
         ['filename', 'type_format', 'quantia', 'expected'],
