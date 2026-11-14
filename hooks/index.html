@@ -560,6 +560,12 @@ Mudança de nome, id ou argumento é quebra de API.</p>
 <td>valida os rodapés do último parágrafo da mensagem de commit (<code>Closes</code>, <code>Refs</code>, <code>Signed-off-by</code>, <code>Co-authored-by</code>, <code>Reviewed-by</code>, <code>Acked-by</code>; referência <code>#&lt;id&gt;</code> só em <code>Closes</code>/<code>Refs</code>)</td>
 </tr>
 <tr>
+<td><code>check-len-first-line</code></td>
+<td><code>check-len-first-line</code></td>
+<td>prepare-commit-msg</td>
+<td>valida o comprimento da primeira linha da mensagem de commit</td>
+</tr>
+<tr>
 <td><code>check-manual-changelog</code></td>
 <td><code>check-manual-changelog</code></td>
 <td>commit-msg, manual</td>
@@ -572,16 +578,16 @@ Mudança de nome, id ou argumento é quebra de API.</p>
 <td>exige mensagem <code>build:</code> quando a versão staged muda em <code>[project].version</code> do <code>pyproject.toml</code> ou em <code>**/version.txt</code> (compara índice com <code>HEAD</code>)</td>
 </tr>
 <tr>
-<td><code>check-len-first-line</code></td>
-<td><code>check-len-first-line</code></td>
-<td>prepare-commit-msg</td>
-<td>valida o comprimento da primeira linha da mensagem de commit</td>
-</tr>
-<tr>
 <td><code>check-precommit-installed</code></td>
 <td><code>is-precommit-installed</code></td>
 <td>pre-commit, pre-push</td>
 <td>garante que o pre-commit está instalado no projeto</td>
+</tr>
+<tr>
+<td><code>check-type-from-status</code></td>
+<td><code>check-type-from-status</code></td>
+<td>commit-msg</td>
+<td>bloqueia divergência objetiva entre o tipo declarado na mensagem e o tipo deduzido dos arquivos staged</td>
 </tr>
 <tr>
 <td><code>check-valid-branchname</code></td>
@@ -632,10 +638,10 @@ Mudança de nome, id ou argumento é quebra de API.</p>
 <td>insere o <code>git diff --cached</code> na mensagem de commit</td>
 </tr>
 <tr>
-<td><code>validate-message-commit</code></td>
-<td><code>is-valid-msg-commit</code></td>
-<td>commit-msg</td>
-<td>valida o formato da mensagem de commit (Conventional Commits)</td>
+<td><code>set-type-from-status</code></td>
+<td><code>set-type-from-status</code></td>
+<td>prepare-commit-msg</td>
+<td>deduz o tipo Conventional Commits pelos arquivos staged e insere na mensagem (não sobrescreve tipo existente)</td>
 </tr>
 <tr>
 <td><code>set_issue_from_branch_cli</code></td>
@@ -644,16 +650,10 @@ Mudança de nome, id ou argumento é quebra de API.</p>
 <td>extrai o número da issue do nome da branch e insere na mensagem</td>
 </tr>
 <tr>
-<td><code>set-type-from-status</code></td>
-<td><code>set-type-from-status</code></td>
-<td>prepare-commit-msg</td>
-<td>deduz o tipo Conventional Commits pelos arquivos staged e insere na mensagem (não sobrescreve tipo existente)</td>
-</tr>
-<tr>
-<td><code>check-type-from-status</code></td>
-<td><code>check-type-from-status</code></td>
+<td><code>validate-message-commit</code></td>
+<td><code>is-valid-msg-commit</code></td>
 <td>commit-msg</td>
-<td>bloqueia divergência objetiva entre o tipo declarado na mensagem e o tipo deduzido dos arquivos staged</td>
+<td>valida o formato da mensagem de commit (Conventional Commits)</td>
 </tr>
 </tbody>
 </table>

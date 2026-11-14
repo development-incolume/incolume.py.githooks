@@ -530,12 +530,12 @@ consumível diretamente pelo pre-commit.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>githooks-cli</code></td>
-<td>grupo chain com todos os comandos</td>
-</tr>
-<tr>
 <td><code>check-commit-footer</code></td>
 <td>valida os rodapés do último parágrafo da mensagem</td>
+</tr>
+<tr>
+<td><code>check-len-first-line</code></td>
+<td>valida o comprimento da primeira linha da mensagem</td>
 </tr>
 <tr>
 <td><code>check-manual-changelog</code></td>
@@ -546,12 +546,12 @@ consumível diretamente pelo pre-commit.</p>
 <td>exige <code>build:</code> quando a versão staged muda (<code>pyproject.toml</code>/<code>version.txt</code>)</td>
 </tr>
 <tr>
-<td><code>check-len-first-line</code></td>
-<td>valida o comprimento da primeira linha da mensagem</td>
-</tr>
-<tr>
 <td><code>check-type-commit-msg</code></td>
 <td>valida o tipo da mensagem (Conventional Commits)</td>
+</tr>
+<tr>
+<td><code>check-type-from-status</code></td>
+<td>valida o tipo da mensagem contra os arquivos staged</td>
 </tr>
 <tr>
 <td><code>clean-commit-msg</code></td>
@@ -568,6 +568,10 @@ consumível diretamente pelo pre-commit.</p>
 <tr>
 <td><code>effort-random-msg</code></td>
 <td>exibe mensagem de esforço aleatória (<code>--fixed</code> fixa a mensagem)</td>
+</tr>
+<tr>
+<td><code>githooks-cli</code></td>
+<td>grupo chain com todos os comandos</td>
 </tr>
 <tr>
 <td><code>insert-diff-commit</code></td>
@@ -600,10 +604,6 @@ consumível diretamente pelo pre-commit.</p>
 <tr>
 <td><code>set-type-from-status</code></td>
 <td>deduz o tipo da mensagem pelos arquivos staged</td>
-</tr>
-<tr>
-<td><code>check-type-from-status</code></td>
-<td>valida o tipo da mensagem contra os arquivos staged</td>
 </tr>
 </tbody>
 </table>
