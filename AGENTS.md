@@ -107,6 +107,8 @@ que muda estado, commitar ou abrir PR.
   comandos; commit sem os dois verdes quebra a release.
 - Tipos: `uv run mypy incolume/ tests/` (strict). **Obrigatório antes de
   todo commit** (no CI é `continue-on-error`); erro novo em `mypy` é erro.
+- Tipos (em paralelo, informativo): `uv run ty check` (config em `ty.toml`);
+  o `ty` não falha o commit nem o CI (CI com `continue-on-error: true`).
 - Line-length 79 (`.ruff.toml`); aspas simples; target py311.
 
 ## Testes

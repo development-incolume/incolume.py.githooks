@@ -49,6 +49,14 @@ repos:
       stages: [pre-commit, manual]
       args: []
 
+- repo: https://github.com/astral-sh/ty-pre-commit
+  # ty version.
+  rev: v0.0.107
+  hooks:
+    # Run the type checker (informativo: nao bloqueia o commit).
+    - id: ty
+      stages: [manual]
+
 # - repo: https://github.com/development-incolume/incolume.py.githooks
 #   rev: 1.7.0
 #   hooks:
