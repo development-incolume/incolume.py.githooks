@@ -381,3 +381,31 @@ class TestCaseInterpreterMissing:
             encoding='utf-8',
         )
         assert pkg.interpreter_missing(hook) is True
+
+    def test_arquivo_vazio(self, tmp_path: Path) -> None:
+        """Arquivo vazio nao e considerado quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text('', encoding='utf-8')
+        assert pkg.interpreter_missing(hook) is False
+
+    def test_install_python_presente(self, tmp_path: Path) -> None:
+        """`INSTALL_PYTHON` valido no corpo do script nao e quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text(
+            '#!/bin/sh\n'
+            '#!/usr/bin/env bash\n'
+            f"INSTALL_PYTHON='{sys.executable}'\n",
+            encoding='utf-8',
+        )
+        assert pkg.interpreter_missing(hook) is False
+
+    def test_install_python_inexistente(self, tmp_path: Path) -> None:
+        """`INSTALL_PYTHON` removido (worktree apagada) e quebrado."""
+        hook = tmp_path / 'pre-commit'
+        hook.write_text(
+            '#!/bin/sh\n'
+            '#!/usr/bin/env bash\n'
+            "INSTALL_PYTHON='C:/caminho/que/nao/existe/python.exe'\n",
+            encoding='utf-8',
+        )
+        assert pkg.interpreter_missing(hook) is True
