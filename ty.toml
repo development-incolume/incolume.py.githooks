@@ -1,0 +1,11 @@
+# ty.toml — configuracao do ty (issue #410)
+# Equivalente ao que existe em .mypy.ini, soh com opcoes que o ty
+# suporta. Flags do mypy sem equivalente no ty ficam registadas no
+# ADR-001 como diferenca de semantica (nao silenciadas).
+
+[environment]
+python-version = "3.11"
+extra-paths = ["incolume", "tests"]
+
+[src]
+include = ["incolume", "tests"]
