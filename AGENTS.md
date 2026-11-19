@@ -208,7 +208,8 @@ Refs: #<id>   |   Closes #<id>
 - Descrição em minúscula, imperativa, sem ponto final.
 - Todo commit que **conclui** uma issue leva o rodapé `Closes #<id>`; commits
   intermediários usam `Refs: #<id>` (ou `#<id>` na descrição).
-- `chore:`, `docs:` e `refactor:` não fecham issue.
+- O rodapé `Closes #<id>` é obrigatório mesmo em `docs:`, `chore:` e
+  `refactor:` quando o commit conclui a issue; nunca feche issue à mão.
 - Dependência aprovada entra como `build(deps): adiciona <lib>`.
 - O próprio repo valida a mensagem: os hooks `check-type-commit-msg`,
   `check-len-first-line` e `validate-message-commit` rodam no prepare-commit;
