@@ -22,6 +22,11 @@ MARKERS: Final[tuple[str, ...]] = (
     '.venv',
 )
 
+_INSTALL_PYTHON_RE: Final[re.Pattern[str]] = re.compile(
+    r"""^\s*INSTALL_PYTHON=(?P<quote>['"])(?P<path>.*?)(?P=quote)\s*$""",
+    re.MULTILINE,
+)
+
 
 def _backup_dir() -> Path:
     """Diretorio de backup fora da arvore do consumidor.
@@ -145,23 +150,42 @@ def get_hooks_dir() -> Path:
     return get_git_path('hooks')
 
 
+def _search_install_python(text: str) -> str | None:
+    """Interpretador gravado pelo `pre-commit install` no script."""
+    match = _INSTALL_PYTHON_RE.search(text)
+    return match.group('path') if match else None
+
+
+def _is_missing(executable: str) -> bool:
+    """Diz se o interpretador nao existe."""
+    if Path(executable).exists():
+        return False
+    return shutil.which(executable) is None
+
+
 def interpreter_missing(hook: Path) -> bool:
-    """Diz se o interpretador do shebang do hook nao existe.
+    """Diz se o interpretador do hook nao existe.
 
     O `pre-commit install` grava no script o interpretador do ambiente em
     que foi rodado; se esse ambiente e removido (ex.: worktree apagada),
-    o hook permanece executavel mas quebra na execucao.
+    o hook permanece executavel mas quebra na execucao. No Windows o
+    proprio pre-commit grava `#!/bin/sh` como primeira linha, entao o
+    shebang nao serve como fonte principal.
 
     """
     try:
-        first_line = hook.read_text(
-            encoding='utf-8', errors='ignore'
-        ).splitlines()[0]
-    except (OSError, IndexError):
+        text = hook.read_text(encoding='utf-8', errors='ignore')
+    except OSError:
         return False
-    if not first_line.startswith('#!'):
+
+    install_python = _search_install_python(text)
+    if install_python is not None:
+        return _is_missing(install_python)
+
+    lines = text.splitlines()
+    if not lines or not lines[0].startswith('#!'):
         return False
-    argv = first_line[2:].strip().split()
+    argv = lines[0][2:].strip().split()
     if not argv:
         return False
     executable = argv[0]
@@ -169,9 +193,7 @@ def interpreter_missing(hook: Path) -> bool:
         if len(argv) == 1:
             return False
         executable = argv[1]
-    if Path(executable).exists():
-        return False
-    return shutil.which(executable) is None
+    return _is_missing(executable)
 
 
 def get_branchname() -> str:

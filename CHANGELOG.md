@@ -17,6 +17,13 @@ This file was automatically generated for [incolume.py.changelog](https://github
   - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
   - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
 
+## [1.25.0]	 &#8212; 	2026-11-19:
+### Changed
+  - Regras de autoria do AGENTS.md atualizadas (#398);
+### Fixed
+  - Check-precommit-installed passa a ler o INSTALL_PYTHON do script (#396);
+  - Hook set-issue-from-branch corrigido no contrato publico (#397);
+
 ## [1.24.0]	 &#8212; 	2026-11-14:
 ### Added
   - Gates de qualidade automaticos (ordenacao alfabetica dos hooks na documentacao, docstrings Google incluindo funcoes privadas, exemplos de uso nos scripts CLI);
@@ -416,4 +423,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.22.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.0...1.22.1
 [1.23.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...1.23.0
 [1.24.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...1.24.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...Unreleased
+[1.25.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...1.25.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.25.0...Unreleased

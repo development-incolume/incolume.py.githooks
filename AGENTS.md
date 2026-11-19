@@ -10,7 +10,7 @@ Este arquivo é lido antes de agir, não depois. O checklist mínimo:
 1. Li este arquivo por inteiro nesta sessão; se ele mudou, reli.
 2. Sei qual issue/tarefa estou atendendo e qual é o teste que prova isso.
 3. Sei em qual branch e worktree estou; branch de tarefa deriva de `dev`.
-4. A identidade local do worktree é `<nome do agente> <dev@incolume.com.br>`.
+4. A identidade local do worktree é `Britodfbr <brito@incolume.com.br>` (o `Author:`); o agente entra como `Co-authored-by`.
 5. Nenhuma dependência nova entra sem aprovação explícita do usuário.
 6. A mudança respeita o escopo da tarefa; tarefa vizinha não se antecipa.
 
@@ -131,15 +131,20 @@ que muda estado, commitar ou abrir PR.
 
 ## Identidade e autoria
 
-Todo commit tem autor nominal. Nenhum agente commita como anônimo nem com a
-identidade de outra pessoa.
+Todo commit tem autor nominal. O `Author:` é o **Brito**
+(`Britodfbr <brito@incolume.com.br>`), a identidade global da máquina, resetada
+no worktree antes de commitar; o agente que executou é creditado como coautor.
 
-- Formato: `<nome do agente> <dev@incolume.com.br>`.
-- `user.email` é sempre `dev@incolume.com.br`.
-- A identidade é local do worktree, definida antes do primeiro commit; não se
-  altera a configuração global da máquina nem a do clone principal.
-- Par de programação: o commit leva o nome de quem conduziu a tarefa; o outro
-  aparece no corpo como `Co-authored-by: <nome> <dev@incolume.com.br>`.
+- `Author:` fixo: `Britodfbr <brito@incolume.com.br>`.
+- `Co-authored-by: OpenBot <335604065+openbotgit[bot]@users.noreply.github.com>`
+  em todo commit de agente OpenBot.
+- `Co-authored-by: <nome do agente> <dev@incolume.com.br>` com o agente que
+  executou (ou o par de programação).
+- A identidade é local do worktree, resetada antes do primeiro commit
+  (`git config user.name "Britodfbr"`,
+  `git config user.email "brito@incolume.com.br"`); não se altera a configuração
+  global da máquina nem a do clone principal.
+- Documento de análise usa `Autor: Brito (Britodfbr)` e o agente como coautor.
 
 ## Git e entrega
 
