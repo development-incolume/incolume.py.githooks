@@ -32,11 +32,12 @@ O `mypy` não sai nesta sprint. Ele permanece com a configuração atual em
 
 | Issue | Tarefa | Artefacto |
 |---|---|---|
-| a abrir | `ty` como dependência de desenvolvimento | `pyproject.toml` |
-| a abrir | configuração do mypy portada para `ty.toml` | `ty.toml` |
-| a abrir | `ty` no fluxo de QA | `.github/workflows/python-package.yml`, `.pre-commit-config.yaml`, `AGENTS.md`, `PRD-001`, `ADR-001`, `SPEC-001` |
-| #408 | `PLAN-002` + ADR + tag `Unreleased` | `docs/analysis_artifacts/`, tag `Unreleased` |
-| a abrir | fechamento da `#256` | commit com `Closes #256` |
+| #409 | `ty` como dependência de desenvolvimento | `pyproject.toml` |
+| #410 | configuração do mypy portada para `ty.toml` | `ty.toml` |
+| #411 | `ty` no fluxo de QA | `.github/workflows/python-package.yml`, `.pre-commit-config.yaml`, `AGENTS.md`, `PRD-001`, `ADR-001`, `SPEC-001` |
+| #412 | `ADR-002` + tag `Unreleased` | `docs/analysis_artifacts/ADR-002-ty.md`, tag `Unreleased` |
+| #408 | `PLAN-002` | `docs/analysis_artifacts/PLAN-002-sprint-ty.md` |
+| #413 | registar `#256` como duplicata da `#257` | `PLAN-002` |
 
 ### 3.1 Dependência
 
@@ -94,7 +95,7 @@ O `mypy` não sai nesta sprint. Ele permanece com a configuração atual em
 | `gcl` falha no Windows (`UnicodeDecodeError`) | bloqueador | regeneração do `CHANGELOG.md` no fechamento; correção no `incolume.py.changelog` em issue própria |
 | flags do mypy sem equivalente no ty | pendência | registadas no `ADR-001` |
 | `#319` | aberta | fora da sprint |
-| `#256` | aberta (duplicada de `#257`, fechada) | fechada por commit com `Closes #256`; fora do escopo |
+| `#256` | fechada (duplicada de `#257`) | fechada por commit com `Closes #256`; fora do escopo |
 
 ## 6. Fora de escopo
 
