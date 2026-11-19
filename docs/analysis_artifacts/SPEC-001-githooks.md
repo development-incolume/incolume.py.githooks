@@ -53,7 +53,10 @@
 
 - Toda alteração tem issue aberta; sem issue, não há branch nem commit.
 - Teste do critério antes da implementação (vermelho → verde → refatorar).
-- Commit atômico; `docs:`, `chore:` e `refactor:` não fecham issue.
+- Commit atômico; o commit que conclui a issue leva `Closes #<id>`
+  (mesmo em `docs:`, `chore:` e `refactor:`).
+- QA antes de commitar: `ruff check`, `ruff format`, `mypy`, `pytest` e,
+  em modo informativo, `uv run ty check`.
 - O agente implementador não mescla o próprio trabalho; o merge em `dev` é
   local, do integrador.
 - PR só existe para `main`, no fechamento da release.

@@ -80,6 +80,8 @@ Contrato público (`.pre-commit-hooks.yaml`), 17 hooks:
   em todos os comandos.
 - Cobertura mínima real de 99.99% (`.coveragerc.toml`).
 - Estilo: line-length 79, aspas simples, target py311.
+- Verificação de tipos em paralelo: `mypy` (obrigatório) e `ty`
+  (`uv run ty check`, config em `ty.toml`), este informativo.
 
 ## 8. Critérios de aceite
 
