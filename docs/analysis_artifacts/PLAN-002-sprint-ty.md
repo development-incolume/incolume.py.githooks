@@ -94,6 +94,7 @@ O `mypy` não sai nesta sprint. Ele permanece com a configuração atual em
 | `gcl` falha no Windows (`UnicodeDecodeError`) | bloqueador | regeneração do `CHANGELOG.md` no fechamento; correção no `incolume.py.changelog` em issue própria |
 | flags do mypy sem equivalente no ty | pendência | registadas no `ADR-001` |
 | `#319` | aberta | fora da sprint |
+| `#256` | aberta (duplicada de `#257`, fechada) | fechada por commit com `Closes #256`; fora do escopo |
 
 ## 6. Fora de escopo
 
