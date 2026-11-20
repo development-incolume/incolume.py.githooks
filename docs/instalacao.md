@@ -10,7 +10,7 @@ Adicione ao `.pre-commit-config.yaml` do projeto consumidor:
 
 ```yaml
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  rev: 1.20.0
+  rev: 1.27.0
   hooks:
     - id: check-len-first-line
     - id: detect-key

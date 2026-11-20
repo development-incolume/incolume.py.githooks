@@ -8,7 +8,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Tests CI/CD](https://github.com/development-incolume/incolume.py.githooks/actions/workflows/python-package.yml/badge.svg)](https://github.com/development-incolume/incolume.py.githooks/actions/workflows/python-package.yml)
-[![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.10%20|%203.11%20|%203.12%20|%203.13%20|%203.14-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
+[![Python Version: -](https://img.shields.io/badge/%20Python%20Version-3.11%20|%203.12%20|%203.13%20|%203.14-/%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
 ---
 
 Plugin `pre-commit` with Hooks git for incolume projects.
@@ -69,8 +69,8 @@ repos:
 
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  # https://github.com/development-incolume/incolume.py.githooks/blob/1.20.0rc1/README.md
-  rev: 1.20.0rc1
+  # https://github.com/development-incolume/incolume.py.githooks/blob/1.27.0/README.md
+  rev: 1.27.0
   hooks:
     - id: check-commit-footer
     #   args: [--nonexequi|-N, --version|-V]
@@ -117,5 +117,5 @@ AI agents (OpenCode, GitHub Copilot, Codex, ...) follow the rules of this
 repository as any other collaborator. The single source of rules is
 [`AGENTS.md`](AGENTS.md), at the repository root — read it in full before any
 action. Tool-specific instruction files (e.g.
-[`.github/copilot-instructions.md`](.github/copilot-instructions.md)) only
+[`.github/instructions.md`](.github/instructions.md)) only
 point to it; rules are never duplicated.

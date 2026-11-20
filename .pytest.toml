@@ -35,7 +35,7 @@ addopts = [
   ]
 
 required_plugins = [
-  "pytest-click",
+  "pytest_click",
   "pytest-cov",
   "pytest-env",
   "pytest-mock"
