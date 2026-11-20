@@ -6,6 +6,7 @@
 [environment]
 python-version = "3.11"
 extra-paths = ["incolume", "tests"]
+root = ["./"]
 
 [src]
 include = ["incolume", "tests"]
