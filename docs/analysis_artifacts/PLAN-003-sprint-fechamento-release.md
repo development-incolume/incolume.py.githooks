@@ -2,7 +2,7 @@
 
 - **Data:** 2026-11-20
 - **Projeto:** incolume.py.githooks
-- **Versão do projeto:** 1.26.0
+- **Versão do projeto:** 1.27.0
 - **Status:** Em execução (2026-11-20)
 - **Autor:** Brito (Britodfbr)
 - **Coautor:** Otto OpenBot

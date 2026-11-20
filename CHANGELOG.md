@@ -5,17 +5,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and [Conventional Commit](https://www.conventionalcommits.org/pt-br/v1.0.0/).
 
-This file was automatically generated for [incolume.py.changelog](https://github.com/development-incolume/incolume.py.changelog/tree/1.3.0)
+This file was automatically generated for [incolume.py.changelog](https://github.com/development-incolume/incolume.py.changelog/tree/1.10.0)
 
 ---
 
 
-## [Unreleased]	 &#8212; 	2026-10-19:
+## [Unreleased]	 &#8212; 	2026-11-19:
+### Changed
+  - Ty adicionado ao QA em paralelo ao mypy;
+  - A substituicao futura do mypy pelo ty fica registrada;
 ### Deprecated
-  - Será Descontinuado suporte a Python 3.11 conformeStatus of Python versions (https://devguide.python.org/versions/#versions);
-### Security
-  - [![Python Version: -](https://img.shields.io/badge/%20Python%20Version-%203.11%20|%203.12%20|%203.13%20|%203.14%20|%203.15-%2332CD32?style=flat&labelColor=4444444)](https://devguide.python.org/versions/#versions);
-  - [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit);
+  - Sera descontinuado o suporte a Python 3.11;
+
+## [1.26.0]	 &#8212; 	2026-11-20:
+### Added
+  - Artefactos de analise criados (#401, #402, #403, #404, #405);
+  - Ty integrado ao fluxo de QA (#409, #411, #414);
+  - ADR-002 e PLAN-002 criados (#412, #408);
+  - Ty.toml com project-manager e root (#415, #416);
+### Changed
+  - AGENTS.md alinhado a spec de QA e ao fechamento de issues (#414, #407);
+### Fixed
+  - #256 fechada como duplicata de #257 (#413);
+
+## [1.25.0]	 &#8212; 	2026-11-19:
+### Changed
+  - Regras de autoria do AGENTS.md atualizadas (#398);
+### Fixed
+  - Check-precommit-installed passa a ler o INSTALL_PYTHON do script (#396);
+  - Hook set-issue-from-branch corrigido no contrato publico (#397);
 
 ## [1.24.0]	 &#8212; 	2026-11-14:
 ### Added
@@ -416,4 +434,6 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.22.1]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.0...1.22.1
 [1.23.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.22.1...1.23.0
 [1.24.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...1.24.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...Unreleased
+[1.25.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...1.25.0
+[1.26.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.25.0...1.26.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.26.0...Unreleased
