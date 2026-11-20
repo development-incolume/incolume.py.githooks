@@ -146,7 +146,7 @@ def _message_type(message: str) -> tuple[str, str]:
     match = TYPE_PATTERN.match(message[len(header) :])
     if not match:
         return header, ''
-    return header, TypeCommit(match.group(1).upper()).value
+    return header, str(TypeCommit(match.group(1).upper()).value)
 
 
 def declared_type(message: str) -> str:

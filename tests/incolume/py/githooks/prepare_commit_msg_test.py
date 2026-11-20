@@ -130,7 +130,9 @@ class TestCasePrepareCommitMsg:
     )
     def test_prepare_commit_msg(self, entrance: Entrance) -> None:
         """Test prepend commit message."""
-        entrance.msg_file.write_text(entrance.msg_commit)  # type: ignore[union-attr]
+        Path(entrance.msg_file).write_text(
+            entrance.msg_commit, encoding='utf-8'
+        )
         result = pkg.validate_format_commit_msg(entrance.msg_file)
         ic(result)
         assert result == entrance.expected
@@ -151,7 +153,9 @@ class TestCasePrepareCommitMsg:
     )
     def test_check_len_first_line_commit_msg(self, entrance: Entrance) -> None:
         """Test for check len first line commit messages."""
-        entrance.msg_file.write_text(entrance.msg_commit)  # type: ignore[union-attr]
+        Path(entrance.msg_file).write_text(
+            entrance.msg_commit, encoding='utf-8'
+        )
         assert pkg.check_max_len_first_line_commit_msg(entrance.msg_file)
 
     @pytest.mark.parametrize(
@@ -264,7 +268,7 @@ class TestCasePrepareCommitMsg:
         test_file.write_bytes(entrance.msg_commit.encode())
         result = pkg.check_type_commit_msg(test_file)
         assert result.code == entrance.expected.code
-        assert entrance.expected.message in result.message
+        assert str(entrance.expected.message) in str(result.message)
         assert result.message == entrance.expected.message
 
     @pytest.mark.parametrize(

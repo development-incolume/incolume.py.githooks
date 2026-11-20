@@ -122,7 +122,7 @@ class TestCaseUtilsModule:
     ) -> None:
         """Test for Enum TypeCommit."""
         if 'expected_exception' in expected:
-            with pytest.raises(**expected):  # type: ignore[arg-type]  # ruff: ignore[pytest-raises-without-exception]
+            with pytest.raises(**expected):  # type: ignore[arg-type]  # ruff: ignore[pytest-raises-without-exception]  # ty: ignore[invalid-context-manager, invalid-argument-type]
                 TypeCommit(entrance)
         else:
             assert TypeCommit(entrance).value == expected

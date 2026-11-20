@@ -13,7 +13,7 @@ import pytest
 
 from incolume.py.githooks.core.rules import Status
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -24,20 +24,20 @@ class TestCaseDetectPrivateKey:
 
     test_dir = Path(gettempdir()) / 'TestCaseDetectPrivateKey'
 
-    def setup_method(self, method: Callable) -> None:  # type: ignore[type-arg]
+    def setup_method(self, method: Callable[..., Any]) -> None:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
         """
-        ic(f'setup for {method.__name__}')
+        ic(f'setup for {getattr(method, "__name__", "")}')
         self.test_dir.mkdir(parents=True, exist_ok=True)
 
-    def teardown_method(self, method: Callable) -> None:  # type: ignore[type-arg]
+    def teardown_method(self, method: Callable[..., Any]) -> None:
         """Teardown method.
 
         Remove a arvore de diretórios criadas após os testes realizados.
         """
-        ic(f'teardown for {method.__name__}')
+        ic(f'teardown for {getattr(method, "__name__", "")}')
         shutil.rmtree(self.test_dir)
 
     @pytest.mark.parametrize(

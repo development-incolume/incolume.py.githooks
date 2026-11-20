@@ -19,13 +19,13 @@ class TestCaseDecorators:
 
     def setup_method(self, method: Callable[[], None]) -> None:
         """Set method."""
-        ic(f'setup execution for {method.__name__}.')
+        ic(f'setup execution for {getattr(method, "__name__", "")}.')
         environ['DEBUG_MODE'] = '1'
         debug_enable()
 
     def teardown_method(self, method: Callable[[], None]) -> None:
         """Teardown method."""
-        ic(f'teardown execution for {method.__name__}.')
+        ic(f'teardown execution for {getattr(method, "__name__", "")}.')
         environ.pop('DEBUG_MODE')
         debug_enable()
 

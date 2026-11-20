@@ -101,14 +101,10 @@ que muda estado, commitar ou abrir PR.
   uv run pytest -m 'not noci' --maxfail=1 --disable-warnings -q
   ```
 
-- Qualidade: `uv run ruff check incolume/ tests/` e
-  `uv run ruff format --check incolume/ tests/`. Nenhum outro linter.
-  **Obrigatório antes de todo commit** — o CI roda exatamente esses dois
-  comandos; commit sem os dois verdes quebra a release.
-- Tipos: `uv run mypy incolume/ tests/` (strict). **Obrigatório antes de
-  todo commit** (no CI é `continue-on-error`); erro novo em `mypy` é erro.
-- Tipos (em paralelo, informativo): `uv run ty check` (config em `ty.toml`);
-  o `ty` não falha o commit nem o CI (CI com `continue-on-error: true`).
+- Antes de commitar, com `d='tests/ incolume/'`:
+  `ruff check --fix $d`, `ruff format $d`, `mypy $d`, `ty check $d`,
+  `pytest -vvv $d`.
+- Cobertura mínima de 99.99% (`.coveragerc.toml`).
 - Line-length 79 (`.ruff.toml`); aspas simples; target py311.
 
 ## Testes

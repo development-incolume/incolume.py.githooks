@@ -25,18 +25,20 @@ ic.disable()
 
 
 def add_class_method_decorator(
-    method: Callable,  # type: ignore[type-arg]
-    method_modo: Callable | None = classmethod,  # type: ignore[type-arg]
-) -> Callable:  # type: ignore[type-arg]
+    method: Callable[..., Any],
+    method_modo: Callable[..., Any] | None = classmethod,
+) -> Callable[..., Any]:
     """Decorate dynamically add a class method into any class."""
 
     def wrapper(cls: Callable[..., Any]) -> Callable[..., Any]:
         """Wrap to add class method."""
         match method_modo:
             case Callable():
-                setattr(cls, method.__name__, method_modo(method))
+                setattr(
+                    cls, getattr(method, '__name__', ''), method_modo(method)
+                )
             case _:
-                setattr(cls, method.__name__, method)
+                setattr(cls, getattr(method, '__name__', ''), method)
         logging.debug(dir(cls))
         return cls
 
@@ -135,9 +137,8 @@ class Status(Enum):
 
     def __or__(self, obj: Self | int) -> Status:
         """Override the | operator to combine Status values."""
-        if isinstance(obj, int):
-            obj = Status(obj)
-        return Status(self.value | obj.value)
+        other = Status(obj) if isinstance(obj, int) else obj
+        return Status(self.value | other.value)
 
     def __ror__(self, value: Self | int) -> Status:
         """Override the | operator to combine Status values."""
@@ -184,7 +185,7 @@ class RequestFl:
     Rules for valid filename.
     """
 
-    filename: Path
+    filename: Path | str
     alphabet: str = field(
         default=ascii_lowercase + digits + '_áàãâéèêíìîóòõôúùûç', repr=False
     )
@@ -206,7 +207,7 @@ class RequestFl:
     @property
     def refname(self) -> str:
         """Getting the reference name."""
-        name = self.filename.stem
+        name = Path(self.filename).stem
         regex = r'' if self.considers_underscore else '_'
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)
@@ -215,34 +216,36 @@ class RequestFl:
     @property
     def has_filename(self) -> bool:
         """Check if filename is null."""
-        return bool(self.filename.name)
+        return bool(Path(self.filename).name)
 
     @property
     def is_conf_test(self) -> bool:
         """Check if filename is conftest.py."""
-        return bool(re.match(r'^conftest.py$', self.filename.name))
+        return bool(re.match(r'^conftest.py$', Path(self.filename).name))
 
     @property
     def is_dundle_init(self) -> bool:
         """Check if filename is dundler init."""
-        return bool(re.match(r'^__init__.py$', self.filename.name))
+        return bool(re.match(r'^__init__.py$', Path(self.filename).name))
 
     @property
     def is_python_file(self) -> bool:
         """Check if python file."""
-        return self.filename.suffix == '.py'
+        return Path(self.filename).suffix == '.py'
 
     @property
     def is_not_test_filename(self) -> bool:
         """Check if python not is a test file."""
         return bool(
-            re.match(r'(?i)^(?:(?!tests?).)*$', self.filename.as_posix())
+            re.match(r'(?i)^(?:(?!tests?).)*$', Path(self.filename).as_posix())
         )
 
     @property
     def has_test_pathname(self) -> bool:
         """Check if path is test."""
-        return bool(re.match(r'^.*tests?.*$', self.filename.parent.as_posix()))
+        return bool(
+            re.match(r'^.*tests?.*$', Path(self.filename).parent.as_posix())
+        )
 
 
 FILENAME_STRUCTURE: Final[str] = r'^(?!.*\.\.)[\w\-\.]+$'

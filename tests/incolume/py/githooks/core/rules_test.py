@@ -96,7 +96,7 @@ class TestCaseRules:
         try:
             assert pkg.Status(entrance) == expected
         except ValueError:
-            with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
+            with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]  # ty: ignore[no-matching-overload]
                 assert pkg.Status(entrance)
 
     @pytest.mark.parametrize(
@@ -196,7 +196,7 @@ class TestCaseRules:
             case int():
                 assert pkg.LoggingLevel(entrance).value == expected
             case dict():
-                with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]
+                with pytest.raises(**expected):  # ruff: ignore[pytest-raises-without-exception]  # ty: ignore[invalid-context-manager]
                     pkg.LoggingLevel(entrance)
             case _:
                 pytest.mark.xfail(reason='Not implemented yet.')
@@ -210,11 +210,11 @@ class TestCaseRules:
         ],
     )
     def test_add_class_method_decorator(
-        self, method: type, mode: str | None, expected: str
+        self, method: Any, mode: str | None, expected: str
     ) -> None:
         """Test add_class_method_decorator."""
 
-        @pkg.add_class_method_decorator(method=method, method_modo=mode)
+        @pkg.add_class_method_decorator(method=method, method_modo=mode)  # ty: ignore[invalid-argument-type]
         class Klass:
             """Fake class for test."""
 
