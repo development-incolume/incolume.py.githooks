@@ -1,0 +1,27 @@
+# ty.toml — configuracao do ty (issue #410)
+# Equivalente ao que existe em .mypy.ini, soh com opcoes que o ty
+# suporta. Flags do mypy sem equivalente no ty ficam registadas no
+# ADR-001 como diferenca de semantica (nao silenciadas).
+
+[environment]
+python-version = "3.11"
+extra-paths = ["incolume", "tests"]
+root = ["./"]
+
+[src]
+include = ["incolume", "tests"]
+
+[analysis]
+# mypy: ignore_missing_imports = true
+allowed-unresolved-imports = ["**"]
+# mypy: strict_equality = true
+strict-equality-semantics = true
+
+[rules]
+# mypy: disallow_any_generics = true
+missing-type-argument = "error"
+# mypy: warn_redundant_casts = true
+redundant-cast = "error"
+
+[project-manager]
+script = "uv"

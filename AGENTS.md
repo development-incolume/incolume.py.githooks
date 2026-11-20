@@ -101,12 +101,10 @@ que muda estado, commitar ou abrir PR.
   uv run pytest -m 'not noci' --maxfail=1 --disable-warnings -q
   ```
 
-- Qualidade: `uv run ruff check incolume/ tests/` e
-  `uv run ruff format --check incolume/ tests/`. Nenhum outro linter.
-  **Obrigatório antes de todo commit** — o CI roda exatamente esses dois
-  comandos; commit sem os dois verdes quebra a release.
-- Tipos: `uv run mypy incolume/ tests/` (strict). **Obrigatório antes de
-  todo commit** (no CI é `continue-on-error`); erro novo em `mypy` é erro.
+- Antes de commitar, com `d='tests/ incolume/'`:
+  `ruff check --fix $d`, `ruff format $d`, `mypy $d`, `ty check $d`,
+  `pytest -vvv $d`.
+- Cobertura mínima de 99.99% (`.coveragerc.toml`).
 - Line-length 79 (`.ruff.toml`); aspas simples; target py311.
 
 ## Testes
@@ -208,7 +206,8 @@ Refs: #<id>   |   Closes #<id>
 - Descrição em minúscula, imperativa, sem ponto final.
 - Todo commit que **conclui** uma issue leva o rodapé `Closes #<id>`; commits
   intermediários usam `Refs: #<id>` (ou `#<id>` na descrição).
-- `chore:`, `docs:` e `refactor:` não fecham issue.
+- O rodapé `Closes #<id>` é obrigatório mesmo em `docs:`, `chore:` e
+  `refactor:` quando o commit conclui a issue; nunca feche issue à mão.
 - Dependência aprovada entra como `build(deps): adiciona <lib>`.
 - O próprio repo valida a mensagem: os hooks `check-type-commit-msg`,
   `check-len-first-line` e `validate-message-commit` rodam no prepare-commit;
