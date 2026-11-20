@@ -31,6 +31,7 @@ from incolume.py.githooks.core import (
 from incolume.py.githooks.core.decorators import logging_call
 from incolume.py.githooks.core.rules import (
     CONTEXT_SETTINGS_CLICK,
+    LoggingLevel,
     RequestFl,
     Result,
     Status,
@@ -102,7 +103,9 @@ logging.warning('Python %s', platform.python_version())
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking length of first line in commit message.')
+@logging_call(
+    LoggingLevel.INFO, 'Checking length of first line in commit message.'
+)
 def check_len_first_line_commit_msg_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -168,7 +171,7 @@ def check_len_first_line_commit_msg_cli(
     for result in results:
         if result_code == Status.SUCCESS:
             click.secho(result.message, fg='green', file=sys.stdout)
-        elif re.match(r'^(?:(?![OK]).)*$', result.message):
+        elif re.match(r'^(?:(?![OK]).)*$', str(result.message)):
             click.secho(result.message, fg='red', err=True)
             ermsg = (
                 'The first line of the commit violates'
@@ -206,7 +209,7 @@ def check_len_first_line_commit_msg_cli(
     help='Filename for commit message',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking type of commit message.')
+@logging_call(LoggingLevel.INFO, 'Checking type of commit message.')
 def check_type_commit_msg_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -299,7 +302,7 @@ def check_type_commit_msg_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking valid branchname.')
+@logging_call(LoggingLevel.INFO, 'Checking valid branchname.')
 def check_valid_branchname_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -356,16 +359,16 @@ def check_valid_branchname_cli(
         ctx.exit(Status.SUCCESS.value)
 
     result = ValidateBranchname().is_valid(
-        protected_dev=dev,
-        protected_tags=tags,
-        protected_main=main,
+        protected_dev=dev or '',
+        protected_tags=tags or '',
+        protected_main=main or '',
     )
 
     if result.code == Status.SUCCESS:
         click.secho(result.message, fg='green')
     else:
         click.secho(result.message, fg='red', err=True)
-        click.ClickException(result.message)
+        click.ClickException(str(result.message))
 
     ctx.exit(result.code.value)
 
@@ -410,7 +413,7 @@ def check_valid_branchname_cli(
     help='Maximum Length of line for filename',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking valid filenames.')
+@logging_call(LoggingLevel.INFO, 'Checking valid filenames.')
 def check_valid_filenames_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -449,7 +452,7 @@ def check_valid_filenames_cli(
 
     results: list[RequestFl] = [
         validate_filename(filename=filename, min_len=min_len, max_len=max_len)
-        for filename in filenames  # type: ignore[union-attr]
+        for filename in filenames or []
     ]
     for result in results:
         codes |= result.code
@@ -489,7 +492,7 @@ def check_valid_filenames_cli(
     help='Filenames to check',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking private keys in files.')
+@logging_call(LoggingLevel.INFO, 'Checking private keys in files.')
 def detect_private_key_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -511,7 +514,7 @@ def detect_private_key_cli(
         kwargs,
     )
     ctx.params.update(kwargs)
-    filenames = [Path(fl) for fl in ctx.params.get('filenames')]  # type: ignore[union-attr]
+    filenames = [Path(fl) for fl in ctx.params.get('filenames') or []]
     nonexequi = ctx.params.get('nonexequi')
 
     if nonexequi:
@@ -634,7 +637,7 @@ def footer_signedoffby_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Displaying effort message after commit.')
+@logging_call(LoggingLevel.INFO, 'Displaying effort message after commit.')
 def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Display success messages after a successful commit.
 
@@ -689,7 +692,7 @@ def effort_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
 @click.argument('commit_source', required=False, help='Commit source')
 @click.argument('commit_hash', required=False, help='Commit hash')
 @click.pass_context
-@logging_call(logging.INFO, 'Cleaning commit message help text.')
+@logging_call(LoggingLevel.INFO, 'Cleaning commit message help text.')
 def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     """Remove the help message.
 
@@ -787,7 +790,7 @@ def clean_commit_msg_cli(ctx: click.Context, **kwargs: dict[str, Any]) -> int:
     help='Filenames for commit messages',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Validating commit message format.')
+@logging_call(LoggingLevel.INFO, 'Validating commit message format.')
 def validate_format_commit_msg_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -847,7 +850,7 @@ def validate_format_commit_msg_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking pre-commit installation.')
+@logging_call(LoggingLevel.INFO, 'Checking pre-commit installation.')
 def pre_commit_installed_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -945,7 +948,7 @@ def pre_commit_installed_cli(
     help='Pin a hook message.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Displaying commit message after commit.')
+@logging_call(LoggingLevel.INFO, 'Displaying commit message after commit.')
 def effort_random_msg_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -983,7 +986,7 @@ def effort_random_msg_cli(
         )
         return 0
 
-    click.secho(effort_random_msg(fixed=fixed), fg='green')
+    click.secho(effort_random_msg(fixed=bool(fixed)), fg='green')
 
     return 0
 
@@ -1019,7 +1022,7 @@ def effort_random_msg_cli(
 )
 @click.argument('commit_hash', default='', required=False, help='Commit hash')
 @click.pass_context
-@logging_call(logging.INFO, 'Inserting git diff into commit message.')
+@logging_call(LoggingLevel.INFO, 'Inserting git diff into commit message.')
 def insert_diff_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -1265,7 +1268,7 @@ def set_type_from_status_cli(
         return 0
 
     result: Result = set_type_commit_msg(
-        commit_msg_filepath,
+        commit_msg_filepath or '',
         commit_type=commit_type,
     )
     click.secho(
@@ -1302,7 +1305,7 @@ def set_type_from_status_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking footers in commit message.')
+@logging_call(LoggingLevel.INFO, 'Checking footers in commit message.')
 def check_commit_footer_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -1377,7 +1380,7 @@ def check_commit_footer_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking manual version in commit message.')
+@logging_call(LoggingLevel.INFO, 'Checking manual version in commit message.')
 def check_manual_version_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -1451,7 +1454,9 @@ def check_manual_version_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking manual changelog in commit message.')
+@logging_call(
+    LoggingLevel.INFO, 'Checking manual changelog in commit message.'
+)
 def check_manual_changelog_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],
@@ -1525,7 +1530,7 @@ def check_manual_changelog_cli(
     help='Do not run this hook.',
 )
 @click.pass_context
-@logging_call(logging.INFO, 'Checking commit type against staged files.')
+@logging_call(LoggingLevel.INFO, 'Checking commit type against staged files.')
 def check_type_from_status_cli(
     ctx: click.Context,
     **kwargs: dict[str, Any],

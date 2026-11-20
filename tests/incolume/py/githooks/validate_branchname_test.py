@@ -56,7 +56,7 @@ class TestCaseValidateBranchname:
     ) -> None:
         """Test if lenght branchname is valid."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_length_valid(branchname) == expected
+        assert v._ValidateBranchname__is_length_valid(branchname) == expected  # ty: ignore[missing-attribute]
         assert v.violation_text == violation_txt
 
     @pytest.mark.parametrize(
@@ -74,7 +74,7 @@ class TestCaseValidateBranchname:
     def test_is_dev_branch(self, *, branchname: str, expected: bool) -> None:
         """Test is_default_branch method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_branch_dev(branchname) == expected
+        assert v._ValidateBranchname__is_branch_dev(branchname) == expected  # ty: ignore[missing-attribute]
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -91,7 +91,7 @@ class TestCaseValidateBranchname:
     def test_is_tags_branch(self, *, branchname: str, expected: bool) -> None:
         """Test is_default_branch method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_branch_tags(branchname) == expected
+        assert v._ValidateBranchname__is_branch_tags(branchname) == expected  # ty: ignore[missing-attribute]
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -109,7 +109,7 @@ class TestCaseValidateBranchname:
     def test_is_main_branch(self, *, branchname: str, expected: bool) -> None:
         """Test is_default_branch method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_branch_main(branchname) == expected
+        assert v._ValidateBranchname__is_branch_main(branchname) == expected  # ty: ignore[missing-attribute]
 
     @pytest.mark.parametrize(
         ['branchname', 'violation_txt', 'expected'],
@@ -127,7 +127,7 @@ class TestCaseValidateBranchname:
     ) -> None:
         """Test is_refused method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_refused(branchname) == expected
+        assert v._ValidateBranchname__is_refused(branchname) == expected  # ty: ignore[missing-attribute]
         assert v.violation_text == violation_txt
 
     @pytest.mark.parametrize(
@@ -141,7 +141,7 @@ class TestCaseValidateBranchname:
     def test_is_branch_main(self, branchname: str, *, expected: bool) -> None:
         """Test is_branch_main method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_branch_main(branchname) is expected
+        assert v._ValidateBranchname__is_branch_main(branchname) is expected  # ty: ignore[missing-attribute]
 
     @pytest.mark.parametrize(
         ['branchname', 'violation_txt', 'expected'],
@@ -191,7 +191,7 @@ class TestCaseValidateBranchname:
         """Test matches_rule method."""
         v = ValidateBranchname()
         assert (
-            v._ValidateBranchname__is_not_matches_rule(branchname) == expected
+            v._ValidateBranchname__is_not_matches_rule(branchname) == expected  # ty: ignore[missing-attribute]
         )
         assert v.violation_text == violation_txt
 
@@ -212,7 +212,7 @@ class TestCaseValidateBranchname:
     ) -> None:
         """Test is_github_branch method."""
         v = ValidateBranchname()
-        assert v._ValidateBranchname__is_github_branch(branchname) is expected
+        assert v._ValidateBranchname__is_github_branch(branchname) is expected  # ty: ignore[missing-attribute]
 
     @pytest.mark.parametrize(
         ['branchname', 'expected'],
@@ -232,7 +232,7 @@ class TestCaseValidateBranchname:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert (
-            v._ValidateBranchname__is_enhancement_epoch(branchname) is expected
+            v._ValidateBranchname__is_enhancement_epoch(branchname) is expected  # ty: ignore[missing-attribute]
         )
 
     @pytest.mark.parametrize(
@@ -254,7 +254,7 @@ class TestCaseValidateBranchname:
         """Test is_github_branch method."""
         v = ValidateBranchname()
         assert (
-            v._ValidateBranchname__is_incolume_branch_rule(branchname)
+            v._ValidateBranchname__is_incolume_branch_rule(branchname)  # ty: ignore[missing-attribute]
             is expected
         )
 

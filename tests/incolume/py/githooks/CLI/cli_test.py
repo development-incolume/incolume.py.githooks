@@ -55,12 +55,12 @@ class TestCaseAllCLI:
 
     test_dir = Path(gettempdir()) / stack()[0][3]
 
-    def setup_method(self, method: Callable) -> None:  # type: ignore[type-arg]
+    def setup_method(self, method: Callable[..., Any]) -> None:
         """Set method.
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
         """
-        ic(f'setup for {method.__name__}')
+        ic(f'setup for {getattr(method, "__name__", "")}')
         self.test_dir.mkdir(parents=True, exist_ok=True)
 
     @classmethod
@@ -791,7 +791,7 @@ class TestCaseAllCLI:
         entry: list[str] = [test_file.as_posix(), *entrance.params]
 
         result = cli_runner.invoke(cli.validate_format_commit_msg_cli, entry)
-        assert entrance.expected.message in result.output
+        assert str(entrance.expected.message) in result.output
         assert result.exit_code == entrance.expected.code
 
     @pytest.mark.parametrize(
@@ -1004,7 +1004,7 @@ class TestCasePreCommit:
             cli.pre_commit_installed_cli, entrance.params
         )
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
+        assert str(entrance.expected.message) in result.output
 
     def test_precommit_installed1(self, cli_runner: CliRunner) -> None:
         """Test for pre-commit installed."""
@@ -1025,7 +1025,7 @@ class TestCasePreCommit:
                 cli.pre_commit_installed_cli, entrance.params
             )
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
+        assert str(entrance.expected.message) in result.output
 
     def test_precommit_installed2(
         self, cli_runner: CliRunner, tmp_path: Path
@@ -1050,7 +1050,7 @@ class TestCasePreCommit:
                 cli.pre_commit_installed_cli, entrance.params
             )
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
+        assert str(entrance.expected.message) in result.output
 
     def test_precommit_installed3(self, cli_runner: CliRunner) -> None:
         """Test for pre-commit installed."""
@@ -1073,7 +1073,7 @@ class TestCasePreCommit:
                 cli.pre_commit_installed_cli, entrance.params
             )
         assert result.exit_code == entrance.expected.code.value
-        assert entrance.expected.message in result.output
+        assert str(entrance.expected.message) in result.output
 
     @staticmethod
     def _git(repo: Path, *args: str) -> None:

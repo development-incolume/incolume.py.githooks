@@ -42,3 +42,6 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.highlight
   - pymdownx.superfences
+
+exclude_docs: |
+  analysis_artifacts/*

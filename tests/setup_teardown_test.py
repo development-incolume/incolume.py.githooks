@@ -56,8 +56,8 @@ class TestCaseCompactShutil:
 
         Cria a estrutura em arvore de diretórios necessários para os testes.
         """
-        ic(f'setup execution for {method.__name__}.')
-        (path := self.PATH.joinpath(method.__name__)).mkdir(
+        ic(f'setup execution for {getattr(method, "__name__", "")}.')
+        (path := self.PATH.joinpath(getattr(method, '__name__', ''))).mkdir(
             parents=True,
             exist_ok=True,
         )
@@ -68,8 +68,8 @@ class TestCaseCompactShutil:
 
         Remove a arvore de diretórios criadas após os testes realizados.
         """
-        ic(f'teardown after execution for {method.__name__} ')
-        path = self.PATH.joinpath(method.__name__)
+        ic(f'teardown after execution for {getattr(method, "__name__", "")} ')
+        path = self.PATH.joinpath(getattr(method, '__name__', ''))
         shutil.rmtree(path)
 
     def test_compact_zip(self) -> None:
