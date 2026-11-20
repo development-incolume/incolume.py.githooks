@@ -10,6 +10,7 @@ from functools import reduce
 from inspect import stack
 from pathlib import Path
 from string import ascii_lowercase, digits
+from typing import Any
 
 from deprecated import deprecated
 from icecream import ic
@@ -48,7 +49,9 @@ def audit(request: RequestFl) -> RequestFl:
 def rule_filename_structure(request: RequestFl) -> RequestFl:
     """Rule for structure filename."""
     request.action = stack()[0][3]
-    structure_fail = FILENAME_STRUCTURE_REGEX.search(request.filename.name)
+    structure_fail = FILENAME_STRUCTURE_REGEX.search(
+        Path(request.filename).name
+    )
 
     if bool(structure_fail):
         return request
@@ -78,8 +81,8 @@ def rule_not_started_with_number(request: RequestFl) -> RequestFl:
     Return True if not start with number.
     """
     request.action = stack()[0][3]
-    if not request.filename.stem or bool(
-        re.match(r'[^0-9][a-zA-Z0-9_]*', request.filename.stem)
+    if not Path(request.filename).stem or bool(
+        re.match(r'[^0-9][a-zA-Z0-9_]*', Path(request.filename).stem)
     ):
         return request
     request.code |= Status.FAILURE
@@ -96,7 +99,7 @@ def rule_has_filename_ends_with_test(request: RequestFl) -> RequestFl:
 
     if (request.is_python_file and request.is_not_test_filename) or (
         request.has_test_pathname
-        and bool(re.match(r'^.*_tests?$', request.filename.stem))
+        and bool(re.match(r'^.*_tests?$', Path(request.filename).stem))
     ):
         return request
     request.code |= Status.FAILURE
@@ -115,9 +118,8 @@ def rule_too_short(request: RequestFl) -> RequestFl:
         return request
 
     request.code |= Status.FAILURE
-    request.messages.append(
-        f'Filename too short ({request.min_len}+): {request.filename.name}'
-    )
+    name = Path(request.filename).name
+    request.messages.append(f'Filename too short ({request.min_len}+): {name}')
     return request
 
 
@@ -129,9 +131,8 @@ def rule_too_long(request: RequestFl) -> RequestFl:
         return request
 
     request.code |= Status.FAILURE
-    request.messages.append(
-        f'Filename too long ({request.max_len}-): {request.filename.name}'
-    )
+    name = Path(request.filename).name
+    request.messages.append(f'Filename too long ({request.max_len}-): {name}')
     return request
 
 
@@ -147,12 +148,14 @@ def rule_length(request: RequestFl) -> RequestFl:
 
     request.code |= Status.FAILURE
     if length < request.min_len:
+        name = Path(request.filename).name
         request.messages.append(
-            f'Filename too short ({request.min_len}+): {request.filename.name}'
+            f'Filename too short ({request.min_len}+): {name}'
         )
     if length > request.max_len:
+        name = Path(request.filename).name
         request.messages.append(
-            f'Filename too long ({request.max_len}-): {request.filename.name}'
+            f'Filename too long ({request.max_len}-): {name}'
         )
     return request
 
@@ -162,20 +165,21 @@ def rule_snake_case(request: RequestFl) -> RequestFl:
     request.action = stack()[0][3]
     if not request.is_python_file or (
         request.is_python_file
-        and SNAKE_CASE_REGEX.search(request.filename.stem)
-        and request.filename.stem == request.filename.stem.lower()
+        and SNAKE_CASE_REGEX.search(Path(request.filename).stem)
+        and Path(request.filename).stem == Path(request.filename).stem.lower()
     ):
         return request
 
     request.code |= Status.FAILURE
     request.messages.append(
-        f'Filename is not in snake_case: {request.filename.name}'
+        f'Filename is not in snake_case: {Path(request.filename).name}'
     )
     return request
 
 
 def validate_filename(
-    filename: str, **kwargs: dict[str, str | Path]
+    filename: str,
+    **kwargs: Any,  # ruff: ignore[any-type]
 ) -> RequestFl:
     """Check if a filename is valid.
 
@@ -198,7 +202,7 @@ def validate_filename(
         RequestFl(filename=WindowsPath('module/valid_name.py'), min_len=3, max_len=256, requires_audit=False, required_role=None, action='rule_has_filename_ends_with_test', code=<Status.SUCCESS: 0>)
 
     """  # ruff:ignore[line-too-long]
-    flname: Path = Path(filename or kwargs.get('filename', ''))  # type: ignore[arg-type]
+    flname: Path = Path(filename or kwargs.get('filename', ''))
     min_len = kwargs.get('min_len', 3)
     max_len = kwargs.get('max_len', 256)
     considers_underscore = kwargs.get('considers_underscore', True)
@@ -239,7 +243,7 @@ class ValidateFilename:
     considers_underscore: bool = True
     min_len: int = 3
     max_len: int = 256
-    code: int = field(default=Status.SUCCESS, init=False)
+    code: Status = field(default=Status.SUCCESS, init=False)
     message: str = field(default='', init=False)
 
     def __post_init__(self) -> None:
@@ -249,7 +253,7 @@ class ValidateFilename:
     @property
     def refname(self) -> str:
         """Getting the reference name."""
-        name = self.filename.stem  # type: ignore[union-attr]
+        name = Path(self.filename).stem
         regex = r'[^a-z0-9_]' if self.considers_underscore else r'[^a-z0-9]'
         refname = re.sub(regex, '', name)
         ic(name, len(name), refname, len(refname), self.min_len, self.max_len)

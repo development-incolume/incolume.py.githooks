@@ -42,9 +42,9 @@ def my_decorator(func: Callable[P, R]) -> Callable[P, R]:
 
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         """Loga a chamada e invoca `func` antes e depois."""
-        ic(f'Before function "{func.__name__}" call')
+        ic(f'Before function "{getattr(func, "__name__", "")}" call')
         result = func(*args, **kwargs)
-        ic(f'After function "{func.__name__}" call')
+        ic(f'After function "{getattr(func, "__name__", "")}" call')
         return result
 
     return wrapper
@@ -70,9 +70,9 @@ def simple_decorator(func: F) -> F:
 
     def wrapper(*args: Any, **kwargs: Any) -> Any:  # ruff: ignore[any-type]
         """Loga a chamada e invoca `func` antes e depois."""
-        ic(f'Before function "{func.__name__}" call')
+        ic(f'Before function "{getattr(func, "__name__", "")}" call')
         result = func(*args, **kwargs)
-        ic(f'After function "{func.__name__}" call')
+        ic(f'After function "{getattr(func, "__name__", "")}" call')
         return result
 
     return cast('F', wrapper)
@@ -89,13 +89,14 @@ def critical_log_call(func: Callable[P, R]) -> Callable[P, R]:
 
         if debug:
             ic.enable()
-            ic(f'Calling function: {func.__name__}')
+            ic(f'Calling function: {getattr(func, "__name__", "")}')
             ic(f'Arguments: {args}, {kwargs}')
 
         result = func(*args, **kwargs)
 
         logging.critical(
-            'Function **%s** called with critial status.', func.__name__
+            'Function **%s** called with critial status.',
+            getattr(func, '__name__', ''),
         )
 
         return result
@@ -138,7 +139,7 @@ def logging_call(
             if debug:
                 ic.enable()
                 executable = (
-                    f'Calling function: {func.__name__},',
+                    f'Calling function: {getattr(func, "__name__", "")},',
                     f' Arguments: {args}, {kwargs}',
                 )
                 ic(executable)
@@ -146,7 +147,7 @@ def logging_call(
             result = func(*args, **kwargs)
 
             getattr(logging, level.name.casefold())(
-                message.format(func.__name__)
+                message.format(getattr(func, '__name__', ''))
             )
             return result
 

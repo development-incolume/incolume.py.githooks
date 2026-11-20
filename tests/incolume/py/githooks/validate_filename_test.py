@@ -12,7 +12,6 @@ from incolume.py.githooks.core.rules import (
     Result,
     Status,
     RequestFl,
-    MainEntrance,
 )
 import incolume.py.githooks.validate_filename as pkg
 from inspect import stack
@@ -52,7 +51,7 @@ class TestCaseValidFilename:
     ) -> None:
         """Test the initialization of the ValidateFilename class."""
         vf = pkg.ValidateFilename(filename=filefortest)
-        assert filefortest.as_posix() in vf.filename.as_posix()
+        assert filefortest.as_posix() in Path(vf.filename).as_posix()
         assert getattr(vf, entrance) == expected
 
     def test_refname(self, filefortest: Path) -> None:
@@ -130,10 +129,10 @@ class TestCaseValidateFileName:
                 {'filename': '0_Invalid_Name.py'},
                 Result(
                     Status.FAILURE,
-                    {
+                    [
                         'Filename is not in snake_case: 0_Invalid_Name.py',
                         'Filename started with number is invalid.',
-                    },
+                    ],
                 ),
                 marks=[],
             ),  # Not snake_case
@@ -865,7 +864,9 @@ class TestCasePolicyValidFilename:
             ),
         ],
     )
-    def test_audit(self, entrance: MainEntrance, expected: Result) -> None:
+    def test_audit(
+        self, entrance: Mapping[str, Any], expected: Result
+    ) -> None:
         """Valida o audit_log do audit contra o esperado."""
         result = pkg.audit(RequestFl(**entrance))
 
@@ -908,7 +909,7 @@ class TestCasePolicyValidFilename:
                         pkg.rule_has_filename_ends_with_test,
                     ],
                 },
-                Result(code=Status.FAILURE, message={}),
+                Result(code=Status.FAILURE, message=''),
                 marks=[],
             ),
         ],

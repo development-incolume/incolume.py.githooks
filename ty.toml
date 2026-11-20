@@ -9,3 +9,15 @@ extra-paths = ["incolume", "tests"]
 
 [src]
 include = ["incolume", "tests"]
+
+[analysis]
+# mypy: ignore_missing_imports = true
+allowed-unresolved-imports = ["**"]
+# mypy: strict_equality = true
+strict-equality-semantics = true
+
+[rules]
+# mypy: disallow_any_generics = true
+missing-type-argument = "error"
+# mypy: warn_redundant_casts = true
+redundant-cast = "error"
