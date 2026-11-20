@@ -44,11 +44,9 @@ jobs:
       run: uv run pre-commit run --all-files
 
     - name: Check with mypy
-      continue-on-error: true
       run: uv run mypy incolume/ tests/
 
     - name: Check with ty
-      continue-on-error: true
       run: uv run ty check
 
     - name: Lint check
