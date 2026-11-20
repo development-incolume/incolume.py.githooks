@@ -17,6 +17,16 @@ This file was automatically generated for [incolume.py.changelog](https://github
 ### Deprecated
   - Sera descontinuado o suporte a Python 3.11;
 
+## [1.27.0]	 &#8212; 	2026-11-20:
+### Added
+  - PLAN-003 e PLAN-004 criados (#424, #427);
+### Changed
+  - Documentação de fecho de release e rito de release (#421, #422, #423), instructions do agente renomeado (#418), dependências atualizadas (#420);
+### Fixed
+  - Hook mypy fora do bloco do ruff-pre-commit (#425), pre-commit pinado em 4.6.0 (#426);
+### Removed
+  - Suporte a Python 3.10 (#420);
+
 ## [1.26.0]	 &#8212; 	2026-11-20:
 ### Added
   - Artefactos de analise criados (#401, #402, #403, #404, #405);
@@ -436,4 +446,5 @@ This file was automatically generated for [incolume.py.changelog](https://github
 [1.24.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.23.0...1.24.0
 [1.25.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.24.0...1.25.0
 [1.26.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.25.0...1.26.0
-[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.26.0...Unreleased
+[1.27.0]: https://github.com/development-incolume/incolume.py.githooks/compare/1.26.0...1.27.0
+[Unreleased]: https://github.com/development-incolume/incolume.py.githooks/compare/1.27.0...Unreleased
