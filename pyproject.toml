@@ -44,7 +44,7 @@ dependencies = [
 dev = [
     "incolume-py-changelog>=1.10.0",
     "mypy>=2.4.1",
-    "pre-commit>=4.6.2",
+    "pre-commit==4.6.0",
     "pyyaml>=6.0.3",
     "pytest>=9.2.0",
     "pytest-click>=2.0.0",
