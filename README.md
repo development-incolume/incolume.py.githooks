@@ -69,8 +69,8 @@ repos:
 
 
 - repo: https://github.com/development-incolume/incolume.py.githooks
-  # https://github.com/development-incolume/incolume.py.githooks/blob/1.26.0/README.md
-  rev: 1.26.0
+  # https://github.com/development-incolume/incolume.py.githooks/blob/1.27.0/README.md
+  rev: 1.27.0
   hooks:
     - id: check-commit-footer
     #   args: [--nonexequi|-N, --version|-V]
