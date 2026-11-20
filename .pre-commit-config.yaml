@@ -39,15 +39,6 @@ repos:
     - id: ruff-format
       args: [--config, .ruff.toml]
 
-    - id: mypy
-      name: Incolume - mypy type check
-      description: Static type checking with mypy.
-      entry: mypy
-      language: python
-      additional_dependencies: [mypy]
-      types: [python]
-      stages: [pre-commit, manual]
-      args: []
 
 - repo: https://github.com/astral-sh/ty-pre-commit
   # ty version.
@@ -76,6 +67,15 @@ repos:
 
 - repo: local
   hooks:
+    - id: mypy
+      name: Incolume - mypy type check
+      description: Static type checking with mypy.
+      entry: mypy
+      language: python
+      additional_dependencies: [mypy==2.4.1]
+      types: [python]
+      stages: [pre-commit, manual]
+      args: []
     - id: check-len-first-line
       verbose: true
       name: Incolume - check length of first line in commit message
