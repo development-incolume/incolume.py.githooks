@@ -38,6 +38,8 @@ O `mypy` não sai nesta sprint. Ele permanece com a configuração atual em
 | #412 | `ADR-002` + tag `Unreleased` | `docs/analysis_artifacts/ADR-002-ty.md`, tag `Unreleased` |
 | #408 | `PLAN-002` | `docs/analysis_artifacts/PLAN-002-sprint-ty.md` |
 | #413 | registar `#256` como duplicata da `#257` | `PLAN-002` |
+| #415 | `[project-manager]` com `script = "uv"` no `ty.toml` | `ty.toml` |
+| #416 | `root = ["./"]` no `[environment]` do `ty.toml` | `ty.toml` |
 
 ### 3.1 Dependência
 
