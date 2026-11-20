@@ -15,6 +15,7 @@ from icecream import ic
 from incolume.py.githooks.core import get_branchname
 from incolume.py.githooks.core.rules import (
     RULE_COMMITFORMAT,
+    RULE_TYPE,
     Result,
     Status,
     TypeCommit,
@@ -62,7 +63,7 @@ def validate_format_commit_msg(
       - commit-msg
     """
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
-    regex = re.compile(RULE_COMMITFORMAT, flags=re.IGNORECASE)
+    regex = re.compile(RULE_COMMITFORMAT)
     logging.debug('%s', regex.pattern)
     ic('filenames=%s', filenames)
 
@@ -95,14 +96,16 @@ def validate_format_commit_msg(
 
 def check_type_commit_msg(commit_msg_filepath: Path | str = '') -> Result:
     """Check type commit messagem."""
-    regex = re.compile(
-        rf'^({"|".join(TypeCommit.to_set())})(\([\w\W\s]+\))?\!?:'
-    )
+    regex = re.compile(RULE_TYPE)
     logging.info('active type commit regex: %s', regex)
 
-    commit_msg_filepath = Path(commit_msg_filepath)
+    filepath = (
+        Path(commit_msg_filepath)
+        if commit_msg_filepath
+        else get_commit_msg_file()
+    )
     result = Result(Status.SUCCESS, MESSAGESUCCESS)
-    commit_message = commit_msg_filepath.read_bytes().decode().strip()
+    commit_message = filepath.read_bytes().decode().strip()
 
     # Example validation: Ensure message starts with a type (e.g., feat, fix, chore)
     if not regex.match(commit_message):

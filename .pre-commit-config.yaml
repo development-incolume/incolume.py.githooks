@@ -107,7 +107,6 @@ repos:
       language: python
       additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [prepare-commit-msg, manual]
-      args: [-N]
 
     - id: check-valid-branchname
       name: Incolume - check if is valid branchnames
