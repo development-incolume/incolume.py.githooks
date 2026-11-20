@@ -4,7 +4,6 @@ Torna multiplos iteráveis em um único iterador, processando-os
 sequencialmente de forma eficiente em memória (lazy evaluation).
 """
 
-from collections.abc import Sequence
 from itertools import chain
 
 from icecream import ic

@@ -185,4 +185,3 @@
   stages: [commit-msg, manual]
   require_serial: false  # true run in parallel otherwise false
   additional_dependencies: [click, icecream]  # Python dependency for the script
-
