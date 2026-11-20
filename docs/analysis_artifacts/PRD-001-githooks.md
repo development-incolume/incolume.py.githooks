@@ -74,7 +74,7 @@ Contrato público (`.pre-commit-hooks.yaml`), 17 hooks:
 
 ## 7. Requisitos não-funcionais
 
-- Python `>=3.10,<4`; dependências enxutas (`click`, `colorama`,
+- Python `>=3.11,<4`; dependências enxutas (`click`, `colorama`,
   `deprecated`, `icecream`, `tqdm`, `tomli` em `<3.11`).
 - CLI em grupo chain `githooks-cli`, com `-N/--nonexequi` e `-V/--version`
   em todos os comandos.

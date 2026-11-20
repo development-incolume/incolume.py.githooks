@@ -93,10 +93,10 @@ que muda estado, commitar ou abrir PR.
 
 ## Toolchain
 
-- Python `>=3.10,<4`; desenvolvimento no interpretador mais novo disponível.
+- Python `>=3.11,<4`; desenvolvimento no interpretador mais novo disponível.
   - Exceção documentada: quando o `uv run` falhar em build nativo (ex.:
     `pyyaml` no 3.15, sem wheel e sem MSVC), execute com o interpretador
-    estável: `uv run -p 3.10 <comando>`.
+    estável: `uv run -p 3.11 <comando>`.
 - `uv` para ambiente e dependências: `uv sync --all-packages --all-extras
   --all-groups --locked`.
 - Testes: `pytest` com `.pytest.toml` (doctest-modules, strict-markers,
