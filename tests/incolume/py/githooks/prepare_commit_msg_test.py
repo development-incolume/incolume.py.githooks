@@ -168,25 +168,27 @@ class TestCasePrepareCommitMsg:
         assert result == entrance.expected
 
     @pytest.mark.parametrize(
-        'entrance',
+        ['msg_commit', 'len_line', 'expected_code'],
         [
-            pytest.param(
-                Entrance(msg_file=test_dir / 'abc.txt', msg_commit='a' * 50)
-            ),
-            pytest.param(
-                Entrance(msg_file=test_dir / 'bcd.txt', msg_commit='b' * 49)
-            ),
-            pytest.param(
-                Entrance(msg_file=test_dir / 'bcd.txt', msg_commit='b' * 1000)
-            ),
+            pytest.param('a' * 50, 50, Status.SUCCESS, marks=[]),
+            pytest.param('a' * 51, 50, Status.FAILURE, marks=[]),
+            pytest.param('b' * 49, 50, Status.SUCCESS, marks=[]),
+            pytest.param('b' * 1000, 50, Status.FAILURE, marks=[]),
+            # `max_first_line` abaixo de 50 tem de ser respeitado.
+            pytest.param('c' * 6, 5, Status.FAILURE, marks=[]),
+            pytest.param('c' * 4, 5, Status.SUCCESS, marks=[]),
         ],
     )
-    def test_check_len_first_line_commit_msg(self, entrance: Entrance) -> None:
-        """Test for check len first line commit messages."""
-        Path(entrance.msg_file).write_text(
-            entrance.msg_commit, encoding='utf-8'
+    def test_check_max_len_first_line_commit_msg(
+        self, msg_commit: str, len_line: int, expected_code: Status
+    ) -> None:
+        """`check_max_len_first_line_commit_msg` respeita `len_line`."""
+        msg_file = self.test_dir / 'max_len.txt'
+        msg_file.write_text(msg_commit, encoding='utf-8')
+        result = pkg.check_max_len_first_line_commit_msg(
+            msg_file, len_line=len_line
         )
-        assert pkg.check_max_len_first_line_commit_msg(entrance.msg_file)
+        assert result.code == expected_code
 
     @pytest.mark.parametrize(
         'entrance',

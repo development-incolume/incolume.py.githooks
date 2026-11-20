@@ -134,7 +134,7 @@ class TestCaseAllCLI:
                         Status.FAILURE,
                         [
                             'Error: Commit subject line has an insufficient number of 10 characters allowed (4 of 10).',
-                            'Error: The first line of the commit violates the defined minimum limits. (min: 10 and max: 50)',
+                            'Error: The first line of the commit violates the defined minimum limits. (min: 4 and max: 5)',
                         ],
                     ),
                 ),

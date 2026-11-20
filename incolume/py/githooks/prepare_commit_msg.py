@@ -158,7 +158,6 @@ def check_max_len_first_line_commit_msg(
 
     """
     commit_msg_filepath = Path(commit_msg_filepath)
-    len_line = max(50, len_line)
     result = Result(
         Status.SUCCESS,
         'Commit maximum length for message is validated [OK]',
