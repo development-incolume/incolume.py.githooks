@@ -56,6 +56,11 @@ que muda estado, commitar ou abrir PR.
      versão; mensagem em linha única, com seções `added:`/`changed:`/`fixed:`
      (o gerador de CHANGELOG lê a anotação linha a linha).
   4. Por fim, `main` recebe `tags` (PR), já contendo a versão e a tag.
+  5. Documentação de fecho: antes de criar a tag, atualizar
+     - a «Versão do projeto» em `docs/analysis_artifacts/`;
+     - o `rev:` do hook em `README.md` e nos yaml de configuração
+       (`.pre-commit-config.yaml`, `.pre-commit-hooks.yaml`);
+     - as referências de versão em `mkdocs.yml`.
 - **Procedimentos verificados no fechamento da `1.21.0`** (rito `dev` → `tags`
   → `main`):
   - Antes de publicar, conferir ancestralidade: `git merge-base --is-ancestor`
@@ -88,10 +93,10 @@ que muda estado, commitar ou abrir PR.
 
 ## Toolchain
 
-- Python `>=3.10,<4`; desenvolvimento no interpretador mais novo disponível.
+- Python `>=3.11,<4`; desenvolvimento no interpretador mais novo disponível.
   - Exceção documentada: quando o `uv run` falhar em build nativo (ex.:
     `pyyaml` no 3.15, sem wheel e sem MSVC), execute com o interpretador
-    estável: `uv run -p 3.10 <comando>`.
+    estável: `uv run -p 3.11 <comando>`.
 - `uv` para ambiente e dependências: `uv sync --all-packages --all-extras
   --all-groups --locked`.
 - Testes: `pytest` com `.pytest.toml` (doctest-modules, strict-markers,
