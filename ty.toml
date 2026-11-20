@@ -21,3 +21,6 @@ strict-equality-semantics = true
 missing-type-argument = "error"
 # mypy: warn_redundant_casts = true
 redundant-cast = "error"
+
+[project-manager]
+script = "uv"
