@@ -259,8 +259,9 @@ RULE_BRANCHNAME_NOT_REFUSED: Final[str] = (
 RULE_BRANCHNAME: Final[str] = (
     r'^((enhancement-\d{,11})|(feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùüç\-_]+))$'
 )
+RULE_TYPE: Final[str] = rf'^({"|".join(TypeCommit.to_tuple())})(?![a-z])'  # type: ignore[attr-defined]
 RULE_COMMITFORMAT: Final[str] = (
-    r'^(((Merge|Bumping|Revert|build)|(bugfix|chore|ci|docs|feat|feature|fix|other|perf|refactor|revert|style|test)(\(.*\))?\!?: #[0-9]+) .*(\n.*)*)$'
+    rf'^((Merge|Bumping|Revert) .*|({"|".join(TypeCommit.to_tuple())})(\(.*\))?\!?: (?:#[0-9]+ )?\S.*(\n.*)*)$'  # type: ignore[attr-defined]
 )
 SNAKE_CASE: Final[str] = r'^\w+$'
 

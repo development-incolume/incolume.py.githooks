@@ -126,6 +126,36 @@ class TestCasePrepareCommitMsg:
                 ),
                 marks=[],
             ),
+            pytest.param(
+                Entrance(
+                    msg_file=test_dir / 'valid-msg-sem-issue.txt',
+                    msg_commit='feat: configuração ruff',
+                    expected=Result(Status.SUCCESS, pkg.MESSAGESUCCESS),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_file=test_dir / 'valid-msg-issue-000.txt',
+                    msg_commit='feat: #000 configuração ruff',
+                    expected=Result(Status.SUCCESS, pkg.MESSAGESUCCESS),
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_file=test_dir / 'invalid-msg-bugfix.txt',
+                    msg_commit='bugfix: configuração ruff',
+                ),
+                marks=[],
+            ),
+            pytest.param(
+                Entrance(
+                    msg_file=test_dir / 'invalid-msg-case.txt',
+                    msg_commit='Feat: configuração ruff',
+                ),
+                marks=[],
+            ),
         ],
     )
     def test_prepare_commit_msg(self, entrance: Entrance) -> None:
@@ -270,6 +300,30 @@ class TestCasePrepareCommitMsg:
         assert result.code == entrance.expected.code
         assert str(entrance.expected.message) in str(result.message)
         assert result.message == entrance.expected.message
+
+    def test_check_type_commit_msg_without_file(self) -> None:
+        """Sem arquivo, usa COMMIT_EDITMSG e nao levanta IsADirectoryError."""
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(b'feat: fake feature')
+        with patch.object(pkg, 'get_commit_msg_file', return_value=test_file):
+            result = pkg.check_type_commit_msg()
+        assert result.code == Status.SUCCESS
+        assert result.message == pkg.MESSAGESUCCESS
+
+    @pytest.mark.parametrize('tipo', sorted(pkg.TypeCommit.to_set()))
+    def test_rules_single_type_list(self, tipo: str) -> None:
+        """Tipo e formato partilham a mesma lista de tipos."""
+        assert re.match(pkg.RULE_TYPE, f'{tipo}: x')
+        assert re.match(pkg.RULE_COMMITFORMAT, f'{tipo}: x')
+
+    @pytest.mark.parametrize(
+        'tipo', ['bugfix', 'feature', 'other', 'Feat', 'added']
+    )
+    def test_rules_reject_out_of_list(self, tipo: str) -> None:
+        """Tipos fora da lista sao rejeitados pelas duas regras."""
+        assert not re.match(pkg.RULE_TYPE, f'{tipo}: x')
+        assert not re.match(pkg.RULE_COMMITFORMAT, f'{tipo}: x')
 
     @pytest.mark.parametrize(
         ['entrance', 'len_line'],
