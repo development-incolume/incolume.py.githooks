@@ -1,7 +1,7 @@
 # incolume.py.githooks
 
-**Hooks git para projetos incolume**, distribuídos como fonte de hooks
-[pre-commit] para os projetos consumidores.
+**Hooks git para projetos incolume**, distribuídos como plugins hooks para
+pacote pre-commit.
 
 ## O que é
 
