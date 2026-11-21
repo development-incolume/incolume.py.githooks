@@ -215,7 +215,7 @@ repos:
       additional_dependencies: [click, icecream]  # Python dependency for the script
       pass_filenames: true
       stages: [prepare-commit-msg, manual]  # this hook is run at commit time
-      args: [-N]
+      args: []
 
     - id: validate-message-commit
       verbose: true
