@@ -112,20 +112,6 @@ repos:
 
 ```
 
-## Instalação
-
-Via pip/uv (a partir do repositório):
-
-```sh
-pip install git+https://github.com/development-incolume/incolume.py.githooks.git
-```
-
-ou, com `uv`:
-
-```sh
-uv tool install git+https://github.com/development-incolume/incolume.py.githooks.git
-```
-
 ## AI agents
 
 AI agents (OpenCode, GitHub Copilot, Codex, ...) follow the rules of this
