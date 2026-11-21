@@ -327,6 +327,43 @@ class TestCasePrepareCommitMsg:
         assert not re.match(pkg.RULE_TYPE, f'{tipo}: x')
         assert not re.match(pkg.RULE_COMMITFORMAT, f'{tipo}: x')
 
+    @pytest.mark.parametrize('tipo', sorted(pkg.TypeCommit.to_set()))
+    def test_rules_accept_issue_prefix(self, tipo: str) -> None:
+        """Regras aceitam o prefixo [ISSUE-n] do set-issue-from-branch."""
+        assert re.match(pkg.RULE_TYPE, f'[ISSUE-434] {tipo}: x')
+        assert re.match(pkg.RULE_COMMITFORMAT, f'[ISSUE-434] {tipo}: x')
+
+    @pytest.mark.parametrize(
+        'msg',
+        ['[ISSUE-434] other: x', '[ISSUE-abc] fix: x'],
+    )
+    def test_rules_reject_invalid_issue_prefix(self, msg: str) -> None:
+        """Prefixo malformado ou tipo fora da lista seguem rejeitados."""
+        assert not re.match(pkg.RULE_TYPE, msg)
+        assert not re.match(pkg.RULE_COMMITFORMAT, msg)
+
+    def test_rules_reject_issue_prefix_without_description(self) -> None:
+        """Formato exige descricao apos o tipo, mesmo com prefixo."""
+        assert not re.match(pkg.RULE_COMMITFORMAT, '[ISSUE-434] fix:')
+
+    def test_check_type_commit_msg_with_issue_prefix(self) -> None:
+        """Mensagem prefixada pelo set-issue-from-branch passa no tipo."""
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(b'[ISSUE-434] fix: #434 ativa hooks')
+        result = pkg.check_type_commit_msg(test_file)
+        assert result.code == Status.SUCCESS
+        assert result.message == pkg.MESSAGESUCCESS
+
+    def test_validate_format_commit_msg_with_issue_prefix(self) -> None:
+        """Mensagem prefixada passa na validacao de formato."""
+        with NamedTemporaryFile(dir=self.test_dir) as fl:
+            test_file = Path(fl.name)
+        test_file.write_bytes(b'[ISSUE-434] fix: #434 ativa hooks')
+        result = pkg.validate_format_commit_msg(test_file)
+        assert result.code == Status.SUCCESS
+        assert result.message == pkg.MESSAGESUCCESS
+
     @pytest.mark.parametrize(
         ['entrance', 'len_line'],
         [

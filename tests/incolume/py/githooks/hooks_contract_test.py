@@ -118,3 +118,24 @@ class TestCaseProtectedBranchesContract:
         }
         result = ValidateBranchname().is_valid(branchname=branch, **kwargs)
         assert result.code == Status.FAILURE
+
+
+class TestCaseActiveMessageHooksContract:
+    """Contrato: hooks de mensagem da #434 ativos, sem `--nonexequi`."""
+
+    def _config_hooks(self) -> dict[str, dict[str, Any]]:
+        """Mapa `id` -> bloco do hook no `.pre-commit-config.yaml`."""
+        repos = _load('.pre-commit-config.yaml')['repos']
+        return {
+            cast('dict[str, Any]', hook)['id']: cast('dict[str, Any]', hook)
+            for repo in repos
+            for hook in repo.get('hooks', [])
+        }
+
+    @pytest.mark.parametrize(
+        'hook_id', ['check-type-commit-msg', 'set-issue-from-branch-cli']
+    )
+    def test_hook_ativo_sem_nonexequi(self, hook_id: str) -> None:
+        """Hook declarado no config roda sem `-N`/`--nonexequi` nos args."""
+        args = self._config_hooks()[hook_id].get('args', [])
+        assert not {'-N', '--nonexequi'} & set(args)

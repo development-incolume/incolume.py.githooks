@@ -259,9 +259,12 @@ RULE_BRANCHNAME_NOT_REFUSED: Final[str] = (
 RULE_BRANCHNAME: Final[str] = (
     r'^((enhancement-\d{,11})|(feature|feat|bug|bugfix|fix|refactor)/(epoch|issue)#([0-9]+)|([0-9]+\-[a-z0-9áàãâéèêíìóòõôúùüç\-_]+))$'
 )
-RULE_TYPE: Final[str] = rf'^({"|".join(TypeCommit.to_tuple())})(?![a-z])'  # type: ignore[attr-defined]
+# Prefixo opcional inserido pelo hook set-issue-from-branch.
+RULE_TYPE: Final[str] = (
+    rf'^(\[ISSUE-\d+\]\s*)?({"|".join(TypeCommit.to_tuple())})(?![a-z])'  # type: ignore[attr-defined]
+)
 RULE_COMMITFORMAT: Final[str] = (
-    rf'^((Merge|Bumping|Revert) .*|({"|".join(TypeCommit.to_tuple())})(\(.*\))?\!?: (?:#[0-9]+ )?\S.*(\n.*)*)$'  # type: ignore[attr-defined]
+    rf'^(\[ISSUE-\d+\]\s*)?((Merge|Bumping|Revert) .*|({"|".join(TypeCommit.to_tuple())})(\(.*\))?\!?: (?:#[0-9]+ )?\S.*(\n.*)*)$'  # type: ignore[attr-defined]
 )
 SNAKE_CASE: Final[str] = r'^\w+$'
 

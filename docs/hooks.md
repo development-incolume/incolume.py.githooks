@@ -13,6 +13,7 @@ Mudança de nome, id ou argumento é quebra de API.
 | `check-manual-changelog` | `check-manual-changelog` | commit-msg, manual | exige mensagem `build:` quando o `CHANGELOG.md` staged muda (comparado com `HEAD`) |
 | `check-manual-version` | `check-manual-version` | commit-msg, manual | exige mensagem `build:` quando a versão staged muda em `[project].version` do `pyproject.toml` ou em `**/version.txt` (compara índice com `HEAD`) |
 | `check-precommit-installed` | `is-precommit-installed` | pre-commit, pre-push | garante que o pre-commit está instalado no projeto |
+| `check-type-commit-msg` | `check-type-commit-msg` | prepare-commit-msg, manual | valida o tipo da mensagem de commit pela lista Conventional Commits (aceita o prefixo `[ISSUE-<n>]`) |
 | `check-type-from-status` | `check-type-from-status` | commit-msg | bloqueia divergência objetiva entre o tipo declarado na mensagem e o tipo deduzido dos arquivos staged |
 | `check-valid-branchname` | `is-valid-branchname` | pre-commit, pre-push | valida o nome da branch atual (protegidas e padrões válidos) |
 | `check-valid-filenames` | `is-valid-filename` | pre-commit, pre-push | valida nomes de arquivo Python (snake_case, comprimento, localização de testes) |
@@ -22,9 +23,9 @@ Mudança de nome, id ou argumento é quebra de API.
 | `effort-random-message` | `effort-random-msg` | post-commit | exibe mensagem de esforço aleatória após o commit |
 | `footer-signed-off-by` | `set-footer-signed-off-by` | prepare-commit-msg | insere rodapé `Signed-off-by` via `git interpret-trailers` |
 | `insert-diff-commit` | `insert-diff-commit` | prepare-commit-msg | insere o `git diff --cached` na mensagem de commit |
-| `set-issue-from-branch` | `set-issue-from-branch` | prepare-commit-msg | extrai o número da issue do nome da branch e insere na mensagem |
+| `set-issue-from-branch` | `set-issue-from-branch` | prepare-commit-msg | extrai o número da issue do nome da branch e insere o prefixo `[ISSUE-<n>] ` na mensagem |
 | `set-type-from-status` | `set-type-from-status` | prepare-commit-msg | deduz o tipo Conventional Commits pelos arquivos staged e insere na mensagem (não sobrescreve tipo existente) |
-| `validate-message-commit` | `is-valid-msg-commit` | commit-msg | valida o formato da mensagem de commit (Conventional Commits) |
+| `validate-message-commit` | `is-valid-msg-commit` | commit-msg | valida o formato da mensagem de commit (Conventional Commits; aceita o prefixo opcional `[ISSUE-<n>]`) |
 
 ## Argumentos comuns
 

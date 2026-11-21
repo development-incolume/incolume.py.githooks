@@ -27,7 +27,7 @@ class TestCasePackage:
             ),
             pytest.param(
                 RULE_COMMITFORMAT,
-                '^((Merge|Bumping|Revert) .*|(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\\(.*\\))?\\!?: (?:#[0-9]+ )?\\S.*(\\n.*)*)$',
+                '^(\\[ISSUE-\\d+\\]\\s*)?((Merge|Bumping|Revert) .*|(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\\(.*\\))?\\!?: (?:#[0-9]+ )?\\S.*(\\n.*)*)$',
                 marks=[],
             ),
         ],
