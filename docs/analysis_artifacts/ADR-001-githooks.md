@@ -127,6 +127,6 @@ poluir o site.
 ## Pendência — equivalência mypy → ty
 
 A configuração `ty.toml` traduz só `python_version` e `mypy_path`.
-As demais flags estritas de `.mypy.ini` não t��m equivalente direto
+As demais flags estritas de `.mypy.ini` não têm equivalente direto
 mapeado nesta sprint; ficam como diferença de semântica a tratar na
 substituição futura, registada no ADR-002.
