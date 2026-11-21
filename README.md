@@ -64,6 +64,7 @@ repos:
     - id: mixed-line-ending
     - id: name-tests-test
     - id: no-commit-to-branch
+      args: [--branch, main, --branch, master, --branch, dev, --branch, tags]
     - id: pretty-format-json
     - id: trailing-whitespace
 
@@ -87,7 +88,7 @@ repos:
     - id: check-type-from-status
     #   args: [--nonexequi|-N, --version|-V]
     - id: check-valid-branchname
-    #   args: [--nonexequi|-N, --version|-V]
+    #   args: [--dev, --tags, --nonexequi|-N, --version|-V]
     - id: check-valid-filenames
     #   args: ['--min-len=3', '--max-len=256', '--nonexequi|-N', '--version|-V']
     - id: clean-commit-msg
