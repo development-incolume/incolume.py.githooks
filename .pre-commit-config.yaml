@@ -26,6 +26,7 @@ repos:
     - id: forbid-submodules
     - id: name-tests-test
     - id: no-commit-to-branch
+      args: [--branch, main, --branch, master, --branch, dev, --branch, tags]
     - id: pretty-format-json
     - id: trailing-whitespace
 
@@ -115,7 +116,7 @@ repos:
       language: python
       additional_dependencies: [click, icecream]  # Python dependency for the script
       stages: [pre-commit, pre-push, manual]
-      args: []
+      args: [--dev, --tags]
 
     - id: check-valid-filenames
       name: Incolume - check if is valid filenames

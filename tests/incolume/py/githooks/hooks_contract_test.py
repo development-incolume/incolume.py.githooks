@@ -9,6 +9,8 @@ import pytest
 import yaml
 
 from incolume.py.githooks import cli
+from incolume.py.githooks.core.rules import Status
+from incolume.py.githooks.validate_branchname import ValidateBranchname
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -74,3 +76,45 @@ class TestCaseValidateMessageCommitContract:
         docstring = cli.validate_format_commit_msg_cli.__doc__ or ''
         assert 'commit-msg' in docstring
         assert 'prepare-commit-msg' not in docstring
+
+
+class TestCaseProtectedBranchesContract:
+    """Contrato: `dev` e `tags` protegidos no config do repo e no modelo."""
+
+    def _config_hooks(self) -> dict[str, dict[str, Any]]:
+        """Mapa `id` -> bloco do hook no `.pre-commit-config.yaml`."""
+        repos = _load('.pre-commit-config.yaml')['repos']
+        return {
+            cast('dict[str, Any]', hook)['id']: cast('dict[str, Any]', hook)
+            for repo in repos
+            for hook in repo.get('hooks', [])
+        }
+
+    def test_no_commit_to_branch_protege_dev_e_tags(self) -> None:
+        """`no-commit-to-branch` bloqueia commit em `dev` e `tags`."""
+        args = self._config_hooks()['no-commit-to-branch'].get('args', [])
+        protegidas = set(args[1::2])
+        assert {'main', 'master', 'dev', 'tags'} <= protegidas
+
+    def test_check_valid_branchname_protege_dev_e_tags(self) -> None:
+        """`is-valid-branchname` passa a rodar com `--dev --tags`."""
+        args = self._config_hooks()['check-valid-branchname'].get('args', [])
+        assert '--dev' in args
+        assert '--tags' in args
+
+    def test_readme_model_reflete_protecao(self) -> None:
+        """O modelo do README mostra a mesma protecao."""
+        modelo = (REPO_ROOT / 'README.md').read_text(encoding='utf-8')
+        assert '--branch, dev' in modelo
+        assert '--branch, tags' in modelo
+        assert '--dev, --tags' in modelo
+
+    @pytest.mark.parametrize('branch', ['dev', 'tags'])
+    def test_validate_branchname_rejeita_dev_e_tags(self, branch: str) -> None:
+        """O validador rejeita `dev`/`tags` quando protegidos."""
+        kwargs: dict[str, Any] = {
+            'protected_dev': True,
+            'protected_tags': True,
+        }
+        result = ValidateBranchname().is_valid(branchname=branch, **kwargs)
+        assert result.code == Status.FAILURE
