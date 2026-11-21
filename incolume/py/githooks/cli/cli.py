@@ -175,7 +175,8 @@ def check_len_first_line_commit_msg_cli(
             click.secho(result.message, fg='red', err=True)
             ermsg = (
                 'The first line of the commit violates'
-                ' the defined minimum limits. (min: 10 and max: 50)'
+                ' the defined minimum limits. '
+                f'(min: {min_first_line} and max: {max_first_line})'
             )
             raise click.ClickException(ermsg)
 
