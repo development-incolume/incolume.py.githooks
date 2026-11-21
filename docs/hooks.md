@@ -27,6 +27,42 @@ Mudança de nome, id ou argumento é quebra de API.
 | `set-type-from-status` | `set-type-from-status` | prepare-commit-msg | deduz o tipo Conventional Commits pelos arquivos staged e insere na mensagem (não sobrescreve tipo existente) |
 | `validate-message-commit` | `is-valid-msg-commit` | commit-msg | valida o formato da mensagem de commit (Conventional Commits; aceita o prefixo opcional `[ISSUE-<n>]`) |
 
+## Hooks publicados não usados neste repositório
+
+Os hooks abaixo fazem parte do contrato público, mas o próprio repositório
+não os ativa no seu `.pre-commit-config.yaml`. O mapa é travado por teste
+de contrato (`tests/incolume/py/githooks/unused_hooks_contract_test.py`).
+Ativar qualquer um deles aqui é mudança de comportamento e exige issue
+própria.
+
+### `check-manual-changelog`
+
+Compara o índice com `HEAD` sem isenção de merge: bloquearia o merge do
+rito `dev → tags`, em que o `CHANGELOG.md` chega legitimamente pelo merge.
+Também contradiz o `AGENTS.md`, que permite commit `docs:` de changelog
+no fechamento da release.
+
+### `check-manual-version`
+
+Compara o índice com `HEAD` sem isenção de merge: bloquearia o merge do
+rito `dev → tags`, em que a versão estável é definida na branch `tags`.
+
+### `check-precommit-installed`
+
+Comentado no config local desde a #82. É estruturalmente inerte aqui: se
+o hook roda, é via pre-commit, que já prova a própria instalação.
+
+### `check-type-from-status`
+
+Deduz `feat` de mudança em código produto e bloquearia commits `docs:` ou
+`test:` que tocam docstrings/doctests — caso comum neste repositório, em
+que os exemplos de docstring rodam como teste.
+
+### `set-type-from-status`
+
+Redundante no fluxo local: o autor declara o tipo na mensagem e o
+`check-type-commit-msg` já o valida.
+
 ## Argumentos comuns
 
 Todos os comandos aceitam:
