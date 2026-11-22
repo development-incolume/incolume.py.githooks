@@ -98,6 +98,13 @@ config, e ela apodreceu sem sinal.
 | P1 (a–h) | sem issue | melhorias de teste do `.pre-commit-config.yaml` |
 | `deprecated 3.0.1` | dependência | marcador `python_full_version >= '3.12'`; o Brito decide se sobe `requires-python` |
 
+Transporte (2026-11-22, #444): as sobras sem issue — melhorias de teste
+**a, b, d, g**, a decisão do `deprecated 3.0.1` e a limpeza da branch
+`319-validacoes-independentes` — passam ao PLAN-006
+(`PLAN-006-sprint-sobras-qa.md`), junto com a evolução da #437
+(`insert-diff-commit`). As melhorias **c, e, f, h** já foram cobertas
+pelas #435, #432, #433 e #431.
+
 ## 5. Fora de escopo
 
 - Subir o `requires-python` para `>=3.12`.
